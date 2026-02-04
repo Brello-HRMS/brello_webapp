@@ -10,7 +10,7 @@ import unusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 
 export default defineConfig([
-  globalIgnores(['dist', 'build', 'node_modules', 'coverage', '.husky']),
+  globalIgnores(['dist', 'build', 'node_modules', 'coverage', '.husky/**']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
