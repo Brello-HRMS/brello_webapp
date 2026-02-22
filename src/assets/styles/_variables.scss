@@ -1,30 +1,51 @@
 // Default Platform Theme
 :root {
   // Colors
-  --color-primary: #646cff;
-  --color-primary-hover: #535bf2;
-  --color-secondary: #4b5563;
-  --color-background: #ffffff;
+  --color-primary: #392a46;
+  --color-primary-hover: #7f56d9;
+  --color-secondary: #475467;
+  --color-primary-purple: #8300ff;
+  --color-primary-border: #7f56d9;
+  --color-gray: #f3f4f6;
+  --color-background: #fcfcfd;
   --color-surface: #f9fafb;
   --color-text-primary: #213547;
   --color-text-secondary: #6b7280;
   --color-border: #e5e7eb;
+  --color-white: #ffffff;
 
   // Typography
-  --font-family-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-base: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   --font-size-base: 16px;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
+  --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
   // Spacing
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
   --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
   --spacing-6: 1.5rem;
   --spacing-8: 2rem;
 
   // Layout
   --container-max-width: 1280px;
   --header-height: 64px;
+
+  // Sidebar
+  --sidebar-width-expanded: 200px;
+  --sidebar-width-collapsed: 64px;
+
+  // Shadows
+  --shadow-card: 0px 2px 13px 0px #4754670d, 0px 12px 30px 0px #47546708;
+  --shadow-menu-selected: 0px 4px 14px 0px #47546714, 0px 12px 20px 0px #47546705;
+  --shadow-button: 0px 1px 2px 0px #1018280d;
+
+  // Border Radius
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
