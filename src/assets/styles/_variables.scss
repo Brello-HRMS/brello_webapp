@@ -1,0 +1,30 @@
+// Default Platform Theme
+:root {
+  // Colors
+  --color-primary: #646cff;
+  --color-primary-hover: #535bf2;
+  --color-secondary: #4b5563;
+  --color-background: #ffffff;
+  --color-surface: #f9fafb;
+  --color-text-primary: #213547;
+  --color-text-secondary: #6b7280;
+  --color-border: #e5e7eb;
+
+  // Typography
+  --font-family-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-size-base: 16px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  // Spacing
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+
+  // Layout
+  --container-max-width: 1280px;
+  --header-height: 64px;
+}
