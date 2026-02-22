@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 import { type SubMenuItem } from '../sidebarConfig';
+
 import styles from './ExpandedSubMenu.module.scss';
 
 interface ExpandedSubMenuProps {

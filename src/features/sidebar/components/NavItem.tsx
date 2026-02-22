@@ -4,8 +4,8 @@ import { ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { type MenuItem } from '../sidebarConfig';
-import styles from './NavItem.module.scss';
 
+import styles from './NavItem.module.scss';
 import { ExpandedSubMenu } from './ExpandedSubMenu';
 import { CollapsedHoverSubMenu } from './CollapsedHoverSubMenu';
 

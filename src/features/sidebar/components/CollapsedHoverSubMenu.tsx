@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 import { type MenuItem } from '../sidebarConfig';
-import styles from './CollapsedHoverSubMenu.module.scss';
 
+import styles from './CollapsedHoverSubMenu.module.scss';
 interface CollapsedHoverSubMenuProps {
   item: MenuItem;
   isActive: (path: string) => boolean;
