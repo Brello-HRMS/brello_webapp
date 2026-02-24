@@ -1,0 +1,48 @@
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+  gap: var(--spacing-3);
+
+  &:hover {
+    background-color: var(--color-gray);
+    color: var(--color-primary);
+  }
+
+  &.active {
+    background-color: var(--color-white);
+    color: var(--color-primary);
+    box-shadow: var(--shadow-menu-selected);
+  }
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.itemLabel {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
