@@ -1,0 +1,50 @@
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+
+    .required {
+        color: red;
+    }
+}
+
+.input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &::placeholder {
+        color: var(--color-text-secondary);
+    }
+
+    &:focus {
+        border-color: var(--color-primary-purple);
+        box-shadow: 0 0 0 2px var(--color-border);
+    }
+}
+
+.submitButton {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 0.875rem;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: var(--spacing-2);
+
+    &:hover {
+        background-color: var(--color-primary-hover);
+    }
+}
