@@ -1,0 +1,88 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--spacing-1);
+    color: var(--color-text-primary);
+    transition: color 0.2s ease;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+
+    &::placeholder {
+        color: var(--color-text-secondary);
+    }
+
+    &:hover {
+        border-color: var(--color-primary-hover);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary-purple);
+        box-shadow: 0 0 0 4px rgba(131, 0, 255, 0.1);
+    }
+
+    &.withIcon {
+        padding-left: 2.5rem;
+    }
+}
+
+.icon {
+    position: absolute;
+    left: 0.875rem;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// When the input inside the container is focused, change the label color
+.container:focus-within .label {
+    color: var(--color-primary-purple);
+}
+
+// Error state styling
+.hasError {
+    .label {
+        color: #ef4444;
+    }
+
+    .input {
+        border-color: #ef4444;
+
+        &:focus {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+    }
+
+    .icon {
+        color: #ef4444;
+    }
+}
+
+.errorMessage {
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: var(--spacing-1);
+}
