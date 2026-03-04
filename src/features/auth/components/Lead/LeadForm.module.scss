@@ -1,0 +1,65 @@
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    background: none;
+    border: none;
+    color: var(--color-text-primary);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    margin-bottom: var(--spacing-6);
+    padding: 0;
+
+    .backIcon {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.uploadSection {
+    margin-bottom: var(--spacing-6);
+}
+
+.uploadLabel {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-2);
+    cursor: pointer;
+}
+
+.uploadBox {
+    width: 64px;
+    height: 64px;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: var(--color-white);
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        border-color: var(--color-primary-purple);
+        background-color: var(--color-surface);
+    }
+}
+
+.uploadIconPlaceholder {
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary-purple);
+    fill: var(--color-primary-purple);
+    transform: rotate(-15deg);
+}
+
+.hiddenInput {
+    display: none;
+}

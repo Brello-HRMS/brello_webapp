@@ -5,25 +5,27 @@ import styles from './Input.module.scss';
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  icon?: React.ReactNode;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className, ...props }, ref) => {
+  ({ label, error, icon, className, ...props }, ref) => {
     return (
-      <div className={`${styles.wrapper} ${className || ''}`}>
+      <div className={`${styles.container} ${error ? styles.hasError : ''}`}>
         {label && (
           <label className={styles.label} htmlFor={props.id || props.name}>
             {label}
-            {props.required && <span className={styles.required}>*</span>}
           </label>
         )}
-        <input
-          ref={ref}
-          className={`${styles.input} ${error ? styles.inputError : ''}`}
-          id={props.id || props.name}
-          {...props}
-        />
-        {error && <span className={styles.error}>{error}</span>}
+        <div className={styles.inputWrapper}>
+          {icon && <span className={styles.icon}>{icon}</span>}
+          <input
+            {...props}
+            ref={ref}
+            className={`${styles.input} ${icon ? styles.withIcon : ''} ${className || ''}`}
+          />
+        </div>
+        {error && <span className={styles.errorMessage}>{error}</span>}
       </div>
     );
   },
