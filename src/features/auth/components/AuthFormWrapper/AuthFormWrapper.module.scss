@@ -6,47 +6,47 @@
 
 .title {
     font-size: 1.8rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-primary);
-    margin-bottom: var(--spacing-2);
+    font-weight: 700;
+    color: var(--color-primary, #392a46);
+    margin-bottom: var(--spacing-2, 0.5rem);
     line-height: 1.2;
 }
 
 .subtitle {
     font-size: 1rem;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-6);
+    color: var(--color-text-secondary, #6b7280);
+    margin-bottom: var(--spacing-6, 1.5rem);
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
+    gap: var(--spacing-4, 1rem);
 }
 
 .divider {
     display: flex;
     align-items: center;
     text-align: center;
-    margin: var(--spacing-6) 0;
+    margin: var(--spacing-6, 1.5rem) 0;
 
     &::before,
     &::after {
         content: '';
         flex: 1;
-        border-bottom: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border, #e5e7eb);
     }
 
     .dividerText {
-        padding: 0 var(--spacing-4);
-        color: var(--color-text-secondary);
+        padding: 0 var(--spacing-4, 1rem);
+        color: var(--color-text-secondary, #6b7280);
         font-size: 0.875rem;
     }
 }
 
 .socialButtons {
     display: flex;
-    gap: var(--spacing-4);
+    gap: var(--spacing-4, 1rem);
 }
 
 .socialBtn {
@@ -54,19 +54,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-2);
+    gap: var(--spacing-2, 0.5rem);
     padding: 0.75rem;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    background: white;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-md, 8px);
     font-size: 0.95rem;
-    font-weight: var(--font-weight-medium);
-    color: var(--color-text-primary);
+    font-weight: 500;
+    color: var(--color-text-primary, #374151);
     cursor: pointer;
     transition: background-color 0.2s;
 
     &:hover {
-        background-color: var(--color-gray);
+        background-color: var(--color-gray, #f3f4f6);
     }
 }
 

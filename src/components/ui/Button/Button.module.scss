@@ -17,7 +17,8 @@
 
 /* Variants */
 .primary {
-  background-color: #3b2859; /* The dark purple from the button in the image */
+  background-color: #3b2859;
+  /* The dark purple from the button in the image */
   color: white;
 
   &:hover:not(:disabled) {
