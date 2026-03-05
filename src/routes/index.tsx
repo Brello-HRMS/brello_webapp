@@ -4,7 +4,7 @@ import { MainLayout } from '../components/layout/MainLayout';
 import HomePage from '../pages/HomePage';
 import DepartmentPage from '../pages/DepartmentPage';
 import { AuthLayout } from '../features/auth/components/AuthLayout/AuthLayout';
-// import { LoginForm } from '../features/auth/components/LoginForm/LoginForm';
+import { Login } from '../features/auth/components/Login/Login';
 // import { LeadForm } from '../features/auth/components/Lead/leadForm';
 // import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
 
@@ -13,10 +13,10 @@ const router = createBrowserRouter([
     path: '/auth',
     element: <AuthLayout />,
     children: [
-      // {
-      //   path: 'login',
-      //   element: <LoginForm />,
-      // },
+      {
+        path: 'login',
+        element: <Login />,
+      },
       // {
       //   path: 'lead',
       //   element: <LeadForm />,
