@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
+import { useRegister } from '../../api/useRegister';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Input } from '../../../../components/ui/Input/Input';
@@ -28,6 +29,8 @@ export const RegisterForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const { mutate: registerLead, isPending, error: apiError } = useRegister();
+
   const {
     register,
     handleSubmit,
@@ -35,9 +38,26 @@ export const RegisterForm: React.FC = () => {
     getValues,
   } = useForm<RegisterFormData>();
 
-  const onSubmit = () => {
-    // Proceed to OTP sequence
-    navigate('/auth/otp');
+  const onSubmit = (data: RegisterFormData) => {
+    registerLead(
+      {
+        email: data.email,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        phone: data.phone,
+        password: data.password,
+        plan_id: '225aa6ec-82e3-4563-a99a-3decfd3e7884',
+        location: 'India',
+        device: 'MacOS - Chrome',
+        source: 'website',
+      },
+      {
+        onSuccess: () => {
+          // Proceed to OTP sequence, passing the email
+          navigate('/auth/otp', { state: { email: data.email } });
+        },
+      },
+    );
   };
 
   return (
@@ -147,8 +167,14 @@ export const RegisterForm: React.FC = () => {
         <span className={elementsStyles.error}>{errors.agreeToTerms.message}</span>
       )}
 
-      <Button type="submit" variant="primary">
-        Continue
+      {apiError && (
+        <span className={elementsStyles.error} style={{ display: 'block', marginBottom: '16px' }}>
+          {(apiError as Error)?.message || 'Registration failed. Please try again.'}
+        </span>
+      )}
+
+      <Button type="submit" variant="primary" disabled={isPending}>
+        {isPending ? 'Registering...' : 'Continue'}
       </Button>
 
       <div className={styles.loginLink}>
