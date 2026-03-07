@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
+import { useVerifyOtp } from '../../api/useVerifyOtp';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Button } from '../../../../components/ui/Button/Button';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
@@ -10,9 +11,20 @@ import styles from './OtpForm.module.scss';
 
 export const OtpForm: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email as string | undefined;
+
+  const { mutate: verifyOtp, isPending, error: apiError } = useVerifyOtp();
+
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [timeLeft, setTimeLeft] = useState(29);
+
+  useEffect(() => {
+    if (!email) {
+      navigate('/auth/register', { replace: true });
+    }
+  }, [email, navigate]);
 
   useEffect(() => {
     if (timeLeft <= 0) return;
@@ -65,8 +77,15 @@ export const OtpForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const otpCode = otp.join('');
-    if (otpCode.length === 6) {
-      navigate('/auth/lead');
+    if (otpCode.length === 6 && email) {
+      verifyOtp(
+        { email, otp: otpCode },
+        {
+          onSuccess: () => {
+            navigate('/auth/lead');
+          },
+        },
+      );
     }
   };
 
@@ -79,7 +98,7 @@ export const OtpForm: React.FC = () => {
 
       <AuthFormWrapper
         title="Login to your account"
-        subtitle="Enter your verification code sent to you at example@compay.com"
+        subtitle={`Enter your verification code sent to you at ${email || 'your email'}`}
         onSubmit={handleSubmit}
         showSocials={false}
       >
@@ -114,8 +133,16 @@ export const OtpForm: React.FC = () => {
         </div>
 
         <div className={styles.actions}>
-          <Button type="submit" variant="primary" disabled={otp.join('').length !== 6}>
-            Continue
+          {apiError && (
+            <span
+              className={elementsStyles.error}
+              style={{ display: 'block', marginBottom: '16px' }}
+            >
+              {(apiError as Error)?.message || 'OTP Verification failed.'}
+            </span>
+          )}
+          <Button type="submit" variant="primary" disabled={otp.join('').length !== 6 || isPending}>
+            {isPending ? 'Verifying...' : 'Continue'}
           </Button>
         </div>
 
