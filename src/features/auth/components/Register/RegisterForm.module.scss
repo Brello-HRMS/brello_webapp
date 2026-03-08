@@ -1,0 +1,67 @@
+.passwordWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+        width: 100%;
+        padding-right: 2.5rem; // make space for the eye icon
+    }
+}
+
+.eyeBtn {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--color-text-secondary, #6b7280);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    &:hover {
+        color: var(--color-text-primary, #111827);
+    }
+}
+
+.phoneInputWrapper {
+    display: flex;
+    align-items: stretch;
+
+    .countryCode {
+        background-color: var(--color-surface, #f9fafb);
+        border: 1px solid var(--color-border, #e5e7eb);
+        border-right: none;
+        border-top-left-radius: var(--radius-md, 8px);
+        border-bottom-left-radius: var(--radius-md, 8px);
+        padding: 0 0.5rem;
+        color: var(--color-text-primary, #111827);
+        font-size: 0.875rem;
+        outline: none;
+    }
+
+    .phoneInput {
+        flex: 1;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}
+
+.loginLink {
+    text-align: center;
+    margin-top: var(--spacing-4, 1rem);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #6b7280);
+
+    span {
+        color: var(--color-primary-purple, #8300ff);
+        font-weight: 600;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

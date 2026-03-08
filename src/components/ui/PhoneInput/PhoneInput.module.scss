@@ -13,70 +13,78 @@
 }
 
 .inputWrapper {
-    position: relative;
     display: flex;
     align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    transition: all 0.2s ease;
+    overflow: hidden;
+
+    &:hover {
+        border-color: var(--color-primary-hover);
+    }
+
+    &:focus-within {
+        outline: none;
+        border-color: var(--color-primary-purple);
+        box-shadow: 0 0 0 4px rgba(131, 0, 255, 0.1);
+    }
+}
+
+.prefix {
+    padding: 0 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    align-self: stretch;
+    transition: all 0.2s ease;
 }
 
 .input {
     width: 100%;
     padding: 0.625rem 0.875rem;
     font-size: 0.875rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background-color: var(--color-white);
+    border: none;
+    background-color: transparent;
     color: var(--color-text-primary);
-    transition: all 0.2s ease;
+    outline: none;
 
     &::placeholder {
         color: var(--color-text-secondary);
     }
-
-    &:hover {
-        border-color: var(--color-primary-hover);
-    }
-
-    &:focus {
-        outline: none;
-        border-color: var(--color-primary-purple);
-        box-shadow: 0 0 0 4px rgba(131, 0, 255, 0.1);
-    }
-
-    &.withIcon {
-        padding-left: 2.5rem;
-    }
 }
 
-.icon {
-    position: absolute;
-    left: 0.875rem;
-    color: var(--color-text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-// When the input inside the container is focused, change the label color
 .container:focus-within .label {
     color: var(--color-primary-purple);
 }
 
-// Error state styling
+.container:focus-within .prefix {
+    border-right-color: var(--color-primary-purple);
+    color: var(--color-primary-purple);
+}
+
 .hasError {
     .label {
         color: #ef4444;
     }
 
-    .input {
+    .inputWrapper {
         border-color: #ef4444;
 
-        &:focus {
+        &:focus-within {
             border-color: #ef4444;
             box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
         }
     }
 
-    .icon {
+    .prefix {
+        border-right-color: #ef4444;
         color: #ef4444;
     }
 }
