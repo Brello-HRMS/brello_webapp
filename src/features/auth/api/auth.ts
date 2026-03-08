@@ -1,44 +1,49 @@
+import { envVars } from '../../../common/envVars';
 import { apiClient } from '../../../lib/axios';
-
-export type RegisterRequest = {
-  email: string;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  password: string;
-  plan_id: string;
-  location?: string;
-  device?: string;
-  source?: string;
-};
-
-// Update this according to your actual API response
-export type RegisterResponse = {
-  message: string;
-  data?: unknown;
-};
-
-export type VerifyOtpRequest = {
-  email: string;
-  otp: string;
-};
-
-// Update this according to your actual API response
-export type VerifyOtpResponse = {
-  message: string;
-  data?: unknown;
-};
+import type {
+  LoginRequest,
+  LoginResponse,
+  LoginWithOtpRequest,
+  RegisterRequest,
+  RegisterResponse,
+  VerifyLoginOtpRequest,
+  VerifyOtpRequest,
+  VerifyOtpResponse,
+  SetupCompanyRequest,
+  SetupCompanyResponse,
+  GetIndustryTypesResponse,
+} from './authType';
 
 /**
  * Registers a new lead.
  */
 export const registerLead = async (data: RegisterRequest): Promise<RegisterResponse> => {
-  return apiClient.post('/leads/register', data);
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/leads/register`, data);
 };
 
 /**
  * Verifies the OTP for a lead.
  */
 export const verifyOtp = async (data: VerifyOtpRequest): Promise<VerifyOtpResponse> => {
-  return apiClient.post('/leads/verify-otp', data);
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/leads/verify-otp`, data);
+};
+
+export const login = async (data: LoginRequest): Promise<LoginResponse> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/login`, data);
+};
+
+export const loginWithOTP = async (data: LoginWithOtpRequest): Promise<void> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/login/send-otp`, data);
+};
+
+export const verifyLoginOtp = async (data: VerifyLoginOtpRequest): Promise<LoginResponse> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/login/verify-otp`, data);
+};
+
+export const setupCompany = async (data: SetupCompanyRequest): Promise<SetupCompanyResponse> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/organizations/setup`, data);
+};
+
+export const getIndustryTypes = async (): Promise<GetIndustryTypesResponse> => {
+  return apiClient.get(`${envVars.BRELLO_BASE_API}/industry-types`);
 };

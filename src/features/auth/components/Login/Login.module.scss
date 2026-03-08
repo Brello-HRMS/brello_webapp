@@ -13,4 +13,11 @@
 .submitBtn {
   margin-top: 0.5rem;
   padding: 0.875rem; // Make it a bit taller like in the image
+  width: 100%;
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
 }

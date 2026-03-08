@@ -1,9 +1,9 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-import { env } from '../config/env';
+import { envVars } from '../common/envVars';
 
 // --- Configuration & Initialization ---
-const baseURL = env.API_URL;
+const baseURL = envVars.BRELLO_BASE_API;
 
 export const apiClient = axios.create({
   baseURL,

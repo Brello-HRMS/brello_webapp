@@ -2,10 +2,12 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Input } from '../../../../components/ui/Input/Input';
 import { Button } from '../../../../components/ui/Button/Button';
+import { useLoginWithOTP } from '../../api/useLogin';
 
 import styles from './Login.module.scss';
 
@@ -16,18 +18,31 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
+  const { mutate: loginWithOTP, isPending: isLoginWithOTPPending, error: loginWithOTPError } = useLoginWithOTP({
+    onSuccess: () => {
+      const email = watch('email');
+      navigate('/auth/otp', { state: { email, resource: 'login' } });
+    },
+    onError: (err) => {
+      console.error('Login with OTP failed', err);
+    }
+  });
+
   const onSubmit = (data: LoginFormValues) => {
-    // In a real app, you would send this to your backend
-    // console.log('Sending OTP to:', data.email);
-    alert(`Sending OTP to ${data.email}`);
+    loginWithOTP({
+      email: data.email,
+    });
   };
 
   return (
@@ -37,7 +52,7 @@ export const Login: React.FC = () => {
         subtitle="Get started for free today!"
         onSubmit={handleSubmit(onSubmit)}
         showSocials={true}
-        socialDividerText="Or register with"
+        socialDividerText="Or login with"
       >
         <div className={styles.formBody}>
           <Input
@@ -47,8 +62,15 @@ export const Login: React.FC = () => {
             error={errors.email?.message}
             {...register('email')}
           />
-          <Button type="submit" variant="primary" fullWidth className={styles.submitBtn}>
-            Send OTP
+
+          {loginWithOTPError && (
+            <p className={styles.errorMessage}>
+              {loginWithOTPError.message || 'Login failed. Please try again.'}
+            </p>
+          )}
+
+          <Button type="submit" variant="primary" className={styles.submitBtn} disabled={isLoginWithOTPPending}>
+            {isLoginWithOTPPending ? 'Sending...' : 'Send OTP'}
           </Button>
         </div>
       </AuthFormWrapper>
