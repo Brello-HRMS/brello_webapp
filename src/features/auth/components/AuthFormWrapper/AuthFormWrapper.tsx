@@ -28,7 +28,7 @@ export const AuthFormWrapper: React.FC<AuthFormWrapperProps> = ({
         {children}
       </form>
 
-      {showSocials && (
+      {/* {showSocials && (
         <>
           <div className={styles.divider}>
             <span className={styles.dividerText}>{socialDividerText}</span>
@@ -43,7 +43,7 @@ export const AuthFormWrapper: React.FC<AuthFormWrapperProps> = ({
             </button>
           </div>
         </>
-      )}
+      )} */}
     </div>
   );
 };
