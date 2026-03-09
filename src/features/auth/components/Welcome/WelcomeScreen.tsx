@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
+import { Button } from '../../../../components/ui/Button/Button';
 
 import styles from './WelcomeScreen.module.scss';
 
@@ -36,13 +36,13 @@ export const WelcomeScreen: React.FC = () => {
 
       <p className={styles.footerText}>Your HR Engine is waiting to be started!</p>
 
-      <button
-        className={elementsStyles.submitButton}
-        style={{ width: '100%', maxWidth: '400px', marginTop: '1px' }}
+      <Button
+        variant="primary"
+        style={{ width: '100%', maxWidth: '450px' }}
         onClick={() => navigate('/')}
       >
         Get Started
-      </button>
+      </Button>
     </div>
   );
 };

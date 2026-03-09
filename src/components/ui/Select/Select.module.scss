@@ -7,7 +7,6 @@
 .label {
     font-size: 12px;
     font-weight: var(--font-weight-medium);
-    // margin-bottom: var(--spacing-1);
     color: var(--color-text-primary);
     transition: color 0.2s ease;
 }
@@ -17,25 +16,23 @@
     margin-left: 2px;
 }
 
-.inputWrapper {
+.selectWrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.input {
+.select {
     width: 100%;
-    padding: 0.425rem 0.475rem;
+    padding: 0.425rem 2.25rem 0.425rem 0.475rem; // right padding for chevron
     font-size: 0.875rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     background-color: var(--color-white);
     color: var(--color-text-primary);
     transition: all 0.2s ease;
-
-    &::placeholder {
-        color: var(--color-text-secondary);
-    }
+    appearance: none; // hide native arrow
+    cursor: pointer;
 
     &:hover {
         border-color: var(--color-primary-hover);
@@ -43,69 +40,52 @@
 
     &:focus {
         outline: none;
-        border-color: var(--color-primary-purple);
-        // box-shadow: 0 0 0 4px rgba(131, 0, 255, 0.1);
+        border-color: var(--color-primary);
     }
 
-    &.withIcon {
-        padding-left: 2.5rem;
-    }
-
-    &.withEye {
-        padding-right: 2.5rem;
+    // placeholder option styling
+    &:invalid,
+    option[value=''][disabled] {
+        color: var(--color-text-secondary);
     }
 }
 
-.icon {
-    position: absolute;
-    left: 0.875rem;
-    color: var(--color-text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.eyeToggle {
+.chevron {
     position: absolute;
     right: 0.6rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    padding: 0.25rem;
-    cursor: pointer;
+    pointer-events: none; // let clicks pass through to the select
     color: var(--color-text-secondary);
-    border-radius: var(--radius-sm);
     transition: color 0.2s ease;
-
-    &:hover {
-        color: var(--color-text-primary);
-    }
 }
 
-// When the input inside the container is focused, change the label color
+// focus-within changes chevron color
+.selectWrapper:focus-within .chevron {
+    color: var(--color-primary);
+}
+
+// focus-within changes label color
 .container:focus-within .label {
-    color: var(--color-primary-purple);
+    color: var(--color-primary);
 }
 
-// Error state styling
+// Error state
 .hasError {
     .label {
         color: #ef4444;
         font-size: 12px;
     }
 
-    .input {
+    .select {
         border-color: #ef4444;
 
         &:focus {
             border-color: #ef4444;
-            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
         }
     }
 
-    .icon {
+    .chevron {
         color: #ef4444;
     }
 }
@@ -113,5 +93,4 @@
 .errorMessage {
     font-size: 10px;
     color: #ef4444;
-    // margin-top: var(--spacing-1);
 }

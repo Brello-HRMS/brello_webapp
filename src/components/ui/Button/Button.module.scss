@@ -9,6 +9,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid transparent;
+    margin-top: 20px;
     position: relative;
 
     &:disabled {
@@ -18,16 +19,17 @@
 }
 
 .primary {
-    background-color: var(--color-primary-purple);
+    background-color: #392A46;
     color: var(--color-white);
+    box-shadow: 0 1px 2px 0 #1018280D;
 
     &:hover:not(:disabled) {
-        background-color: #6b00d6; // slightly darker purple
+        background-color: #2e2139; // slightly darker
     }
 
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 4px rgba(131, 0, 255, 0.1);
+        box-shadow: 0 0 0 4px rgba(57, 42, 70, 0.2), 0 1px 2px 0 #1018280D;
     }
 }
 

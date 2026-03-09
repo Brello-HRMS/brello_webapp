@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,9 +25,6 @@ type RegisterFormData = {
 
 export const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const { mutate: registerLead, isPending, error: apiError } = useRegister();
 
   const {
@@ -111,47 +107,25 @@ export const RegisterForm: React.FC = () => {
         />
       </div>
 
-      <div className={styles.passwordWrapper}>
-        <Input
-          label="Password *"
-          {...register('password', {
-            required: 'Password is required',
-            minLength: { value: 6, message: 'Minimum 6 characters' },
-          })}
-          type={showPassword ? 'text' : 'password'}
-          // placeholder="Create password"
-          error={errors.password?.message}
-        />
-        <button
-          type="button"
-          className={styles.eyeBtn}
-          onClick={() => setShowPassword(!showPassword)}
-          tabIndex={-1}
-        >
-          {/* {showPassword ? <Eye size={18} /> : <EyeOff size={18} />} */}
-        </button>
-      </div>
+      <Input
+        label="Password *"
+        {...register('password', {
+          required: 'Password is required',
+          minLength: { value: 6, message: 'Minimum 6 characters' },
+        })}
+        type="password"
+        error={errors.password?.message}
+      />
 
-      <div className={styles.passwordWrapper}>
-        <Input
-          label="Confirm Password *"
-          {...register('confirmPassword', {
-            required: 'Please confirm password',
-            validate: (value) => value === getValues('password') || 'Passwords do not match',
-          })}
-          type={showConfirmPassword ? 'text' : 'password'}
-          // placeholder="Confirm your password"
-          error={errors.confirmPassword?.message}
-        />
-        <button
-          type="button"
-          className={styles.eyeBtn}
-          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          tabIndex={-1}
-        >
-          {/* {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />} */}
-        </button>
-      </div>
+      <Input
+        label="Confirm Password *"
+        {...register('confirmPassword', {
+          required: 'Please confirm password',
+          validate: (value) => value === getValues('password') || 'Passwords do not match',
+        })}
+        type="password"
+        error={errors.confirmPassword?.message}
+      />
 
       <div className={elementsStyles.checkboxGroup}>
         <input
