@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Layers } from 'lucide-react';
+import { Layers } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { useSetupCompany } from '../../api/useSetupCompany';
@@ -8,9 +8,10 @@ import { useIndustryTypes } from '../../api/useIndustryTypes';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Button } from '../../../../components/ui/Button/Button';
+import { Input } from '../../../../components/ui/Input/Input';
+import { Select } from '../../../../components/ui/Select/Select';
 
 import styles from './LeadForm.module.scss';
-// import { Button } from '../../../../../components/ui/Button/Button';
 
 type LeadFormData = {
   logo?: FileList;
@@ -30,7 +31,11 @@ export const LeadForm: React.FC = () => {
     formState: { errors },
   } = useForm<LeadFormData>();
 
-  const { mutate: setupCompany, isPending, error: apiError } = useSetupCompany({
+  const {
+    mutate: setupCompany,
+    isPending,
+    error: apiError,
+  } = useSetupCompany({
     onSuccess: () => {
       navigate('/auth/welcome');
     },
@@ -40,10 +45,7 @@ export const LeadForm: React.FC = () => {
   const industryTypes = industryTypesResp?.data || [];
 
   const onSubmit = (data: LeadFormData) => {
-    if (!userId) {
-      console.error('User ID is missing');
-      return;
-    }
+    if (!userId) return;
     setupCompany({
       name: data.companyName,
       subdomain: data.workspaceURL,
@@ -54,11 +56,6 @@ export const LeadForm: React.FC = () => {
 
   return (
     <div>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        <ArrowLeft className={styles.backIcon} />
-        Back
-      </button>
-
       <AuthFormWrapper
         title="Tell us about you company."
         subtitle="This helps us set up workspace correctly."
@@ -81,62 +78,36 @@ export const LeadForm: React.FC = () => {
           </label>
         </div>
 
-        <div className={elementsStyles.inputGroup}>
-          <label htmlFor="companyName">Company name</label>
-          <input
-            type="text"
-            id="companyName"
-            className={elementsStyles.input}
-            placeholder="Company name"
-            {...register('companyName', { required: 'Please enter your company name' })}
-          />
-          {errors.companyName && (
-            <span className={elementsStyles.error}>{errors.companyName.message}</span>
-          )}
-        </div>
+        <Input
+          label="Company name *"
+          id="companyName"
+          type="text"
+          placeholder="Company name"
+          {...register('companyName', { required: 'Please enter your company name' })}
+          error={errors.companyName?.message}
+        />
 
-        <div className={elementsStyles.inputGroup}>
-          <label htmlFor="workspaceURL">Workspace URL</label>
-          <input
-            type="text"
-            id="workspaceURL"
-            className={elementsStyles.input}
-            placeholder="Workspace URL"
-            {...register('workspaceURL', { required: 'Please enter your workspace URL' })}
-          />
-          {errors.workspaceURL && (
-            <span className={elementsStyles.error}>{errors.workspaceURL.message}</span>
-          )}
-        </div>
+        <Input
+          label="Workspace URL *"
+          id="workspaceURL"
+          type="text"
+          placeholder="Workspace URL"
+          {...register('workspaceURL', { required: 'Please enter your workspace URL' })}
+          error={errors.workspaceURL?.message}
+        />
 
-        <div className={elementsStyles.inputGroup}>
-          <label htmlFor="industry">Industry / Business Type</label>
-          <select
-            id="industry"
-            className={elementsStyles.input}
-            defaultValue=""
-            {...register('industry', { required: 'Please select an industry' })}
-            disabled={isIndustryTypesLoading}
-          >
-            <option value="" disabled>
-              {isIndustryTypesLoading ? 'Loading industries...' : 'Select an industry'}
-            </option>
-            {industryTypes.map((industry) => (
-              <option key={industry.id} value={industry.id}>
-                {industry.name}
-              </option>
-            ))}
-          </select>
-          {errors.industry && (
-            <span className={elementsStyles.error}>{errors.industry.message}</span>
-          )}
-        </div>
+        <Select
+          label="Industry / Business Type *"
+          id="industry"
+          placeholder={isIndustryTypesLoading ? 'Loading industries...' : 'Select an industry'}
+          options={industryTypes.map((industry) => ({ value: industry.id, label: industry.name }))}
+          disabled={isIndustryTypesLoading}
+          {...register('industry', { required: 'Please select an industry' })}
+          error={errors.industry?.message}
+        />
 
         {apiError && (
-          <span
-            className={elementsStyles.error}
-            style={{ display: 'block', marginBottom: '16px' }}
-          >
+          <span className={elementsStyles.error} style={{ display: 'block', marginBottom: '16px' }}>
             {(apiError as Error)?.message || 'Company setup failed.'}
           </span>
         )}

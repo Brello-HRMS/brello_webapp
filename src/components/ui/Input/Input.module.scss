@@ -7,9 +7,14 @@
 .label {
   font-size: 0.875rem;
   font-weight: var(--font-weight-medium);
-  margin-bottom: var(--spacing-1);
+  // margin-bottom: var(--spacing-1);
   color: var(--color-text-primary);
   transition: color 0.2s ease;
+}
+
+.asterisk {
+  color: #ef4444;
+  margin-left: 2px;
 }
 
 .inputWrapper {
@@ -56,6 +61,25 @@
   justify-content: center;
 }
 
+.eyeToggle {
+  position: absolute;
+  right: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+}
+
 // When the input inside the container is focused, change the label color
 .container:focus-within .label {
   color: var(--color-primary-purple);
@@ -65,6 +89,7 @@
 .hasError {
   .label {
     color: #ef4444;
+    font-size: 12px;
   }
 
   .input {
@@ -82,7 +107,7 @@
 }
 
 .errorMessage {
-  font-size: 0.75rem;
+  font-size: 10px;
   color: #ef4444;
-  margin-top: var(--spacing-1);
+  // margin-top: var(--spacing-1);
 }
