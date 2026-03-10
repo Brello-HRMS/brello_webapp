@@ -5,24 +5,66 @@ import {
   Globe,
   LogOut,
   PanelLeftClose,
+  PanelRightClose,
   Settings,
 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { ThemeCustomizer } from '../../../features/theme/ThemeCustomizer';
 import profileAvatar from '../../../assets/image/dummy_profile.png';
 import { Popover } from '../../common/Popover';
+import { useMediaQuery } from '../../../hooks/useMediaQuery';
 
 import styles from './Header.module.scss';
 
-export const Header: React.FC = () => {
+export interface HeaderProps {
+  isSidebarCollapsed: boolean;
+  toggleSidebar: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapsed }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 601px)');
+  const location = useLocation();
+
+  const pathname = location.pathname.split('/').filter(Boolean);
+  const lastPathname = pathname[pathname.length - 1];
+  const breadcrumbText = lastPathname.charAt(0).toUpperCase() + lastPathname.slice(1);
+
+  const profileActionItems = [
+    ...(!isDesktop
+      ? [
+          {
+            icon: <Bell size={16} />,
+            title: 'Notification',
+            action: () => {
+              setIsProfileOpen(false);
+            },
+          },
+          {
+            icon: <Settings size={16} />,
+            title: 'Setting',
+            action: () => {
+              setIsProfileOpen(false);
+            },
+          },
+        ]
+      : []),
+    {
+      icon: <LogOut size={16} />,
+      title: 'Logout',
+      action: () => {
+        setIsProfileOpen(false);
+      },
+    },
+  ];
 
   return (
     <header className={styles.header}>
       <div className={styles.leftSection}>
-        <button className="icon-button" aria-label="Toggle Navigation">
-          <PanelLeftClose size={20} />
+        <button className="icon-button" aria-label="Toggle Navigation" onClick={toggleSidebar}>
+          {isSidebarCollapsed ? <PanelRightClose size={20} /> : <PanelLeftClose size={20} />}
         </button>
 
         <div className={styles.divider} />
@@ -30,7 +72,7 @@ export const Header: React.FC = () => {
         <div className={styles.breadcrumb}>
           <Globe size={18} className={styles.breadcrumbIcon} />
           <ChevronRight size={16} className={styles.chevronIcon} />
-          <span className={styles.breadcrumbText}>Departments</span>
+          <span className={styles.breadcrumbText}>{breadcrumbText}</span>
         </div>
       </div>
 
@@ -38,16 +80,20 @@ export const Header: React.FC = () => {
         <div className={styles.actions}>
           <ThemeCustomizer />
 
-          <button className={`icon-button ${styles.desktopOnlyAction}`} aria-label="Settings">
-            <Settings size={20} />
-          </button>
+          {isDesktop && (
+            <>
+              <button className={`icon-button`} aria-label="Settings">
+                <Settings size={20} />
+              </button>
 
-          <button className={`icon-button ${styles.desktopOnlyAction}`} aria-label="Notifications">
-            <div className={styles.notificationWrapper}>
-              <Bell size={20} />
-              <span className={styles.notificationDot} />
-            </div>
-          </button>
+              <button className={`icon-button`} aria-label="Notifications">
+                <div className={styles.notificationWrapper}>
+                  <Bell size={20} />
+                  <span className={styles.notificationDot} />
+                </div>
+              </button>
+            </>
+          )}
         </div>
 
         <Popover
@@ -70,31 +116,7 @@ export const Header: React.FC = () => {
               />
             </div>
           }
-          items={[
-            {
-              icon: <Bell size={16} />,
-              title: 'Notification',
-              action: () => {
-                setIsProfileOpen(false);
-              },
-              className: styles.mobileOnlyItem,
-            },
-            {
-              icon: <Settings size={16} />,
-              title: 'Setting',
-              action: () => {
-                setIsProfileOpen(false);
-              },
-              className: styles.mobileOnlyItem,
-            },
-            {
-              icon: <LogOut size={16} />,
-              title: 'Logout',
-              action: () => {
-                setIsProfileOpen(false);
-              },
-            },
-          ]}
+          items={profileActionItems}
         />
       </div>
     </header>

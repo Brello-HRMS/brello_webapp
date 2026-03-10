@@ -1,32 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Command, Layers, ChevronsLeft } from 'lucide-react';
+import { Search, Command, Layers } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { MENU_ITEMS, type MenuItem } from './sidebarConfig';
 import styles from './Sidebar.module.scss';
 import { NavItem } from './components/NavItem';
 
-export const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export interface SidebarProps {
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
+}
+
+export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const location = useLocation();
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-
-    const handleMediaQueryChange = (event: MediaQueryListEvent | MediaQueryList) => {
-      if (event.matches) {
-        setIsCollapsed(true);
-      }
-    };
-
-    handleMediaQueryChange(mediaQuery);
-
-    mediaQuery.addEventListener('change', handleMediaQueryChange);
-    return () => mediaQuery.removeEventListener('change', handleMediaQueryChange);
-  }, []);
 
   const toggleMenu = (label: string) => {
     if (isCollapsed) return;
@@ -58,11 +47,6 @@ export const Sidebar = () => {
           >
             Layers
           </motion.span>
-        )}
-        {!isCollapsed && (
-          <div onClick={() => setIsCollapsed(!isCollapsed)} className={styles.collapseBtn}>
-            <ChevronsLeft size={20} />
-          </div>
         )}
       </div>
 
