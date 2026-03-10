@@ -32,32 +32,7 @@
 }
 
 .leftSection {
-  gap: clamp(0.5rem, 0.2857rem + 0.9524vw, 1rem);
-}
-
-.iconButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: none;
-  background: transparent;
-  color: var(--color-secondary);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-
-  &:hover {
-    background-color: var(--color-surface);
-    color: var(--color-text-primary);
-  }
-
-  svg {
-    stroke-width: 2px;
-  }
+  gap: 4px;
 }
 
 .divider {
@@ -70,10 +45,7 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: clamp(0.25rem, 0.1429rem + 0.4762vw, 0.5rem);
-  padding: 4px clamp(0.25rem, 0.1429rem + 0.4762vw, 0.5rem);
-  border-radius: var(--radius-sm);
-  background-color: var(--color-surface);
+  gap: 8px;
 
   .breadcrumbIcon,
   .chevronIcon {
@@ -84,17 +56,20 @@
     font-size: clamp(0.75rem, 0.6607rem + 0.2381vw, 0.875rem);
     font-weight: 600;
     color: var(--color-text-primary);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    padding: 4px clamp(0.25rem, 0.1429rem + 0.4762vw, 0.5rem);
   }
 }
 
 .rightSection {
-  gap: clamp(0.75rem, 0.4286rem + 1.4286vw, 1.5rem);
+  gap: 8px;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: clamp(0.5rem, 0.2857rem + 0.9524vw, 1rem);
+  gap: 4px;
 }
 
 .notificationWrapper {
@@ -142,6 +117,15 @@
       color: var(--color-secondary);
     }
   }
+
+  .profileChevron {
+    color: var(--color-secondary);
+    transition: transform 0.2s ease;
+
+    &.isOpen {
+      transform: rotate(180deg);
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -157,5 +141,17 @@
 
   .divider {
     display: none;
+  }
+}
+
+.mobileOnlyItem {
+  @media (min-width: 601px) {
+    display: none !important;
+  }
+}
+
+.desktopOnlyAction {
+  @media (max-width: 600px) {
+    display: none !important;
   }
 }
