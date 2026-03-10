@@ -1,0 +1,161 @@
+@use '../../../assets/styles/variables';
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  justify-content: space-between;
+  height: 96px;
+  padding: 0 clamp(1rem, 0.7857rem + 0.9524vw, 1.5rem);
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      270deg,
+      var(--color-white) 0%,
+      var(--color-header-bottom-gradient) 50%,
+      var(--color-white) 100%
+    );
+  }
+}
+
+.leftSection,
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.leftSection {
+  gap: clamp(0.5rem, 0.2857rem + 0.9524vw, 1rem);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: var(--color-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+  }
+
+  svg {
+    stroke-width: 2px;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--color-border);
+  margin: 0 4px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.25rem, 0.1429rem + 0.4762vw, 0.5rem);
+  padding: 4px clamp(0.25rem, 0.1429rem + 0.4762vw, 0.5rem);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+
+  .breadcrumbIcon,
+  .chevronIcon {
+    color: var(--color-secondary);
+  }
+
+  .breadcrumbText {
+    font-size: clamp(0.75rem, 0.6607rem + 0.2381vw, 0.875rem);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+}
+
+.rightSection {
+  gap: clamp(0.75rem, 0.4286rem + 1.4286vw, 1.5rem);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.2857rem + 0.9524vw, 1rem);
+}
+
+.notificationWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .notificationDot {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-error);
+    border-radius: 50%;
+    border: 1px solid var(--color-white);
+  }
+}
+
+.profileWidget {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 0.3929rem + 0.4762vw, 0.75rem);
+  cursor: pointer;
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+
+    .profileName {
+      font-size: clamp(0.75rem, 0.6607rem + 0.2381vw, 0.875rem);
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .profileRole {
+      font-size: clamp(0.625rem, 0.5357rem + 0.2381vw, 0.75rem);
+      color: var(--color-secondary);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .profileInfo {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .breadcrumbText {
+    display: none;
+  }
+
+  .divider {
+    display: none;
+  }
+}
