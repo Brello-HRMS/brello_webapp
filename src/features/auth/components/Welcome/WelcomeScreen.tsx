@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '../../../../components/ui/Button/Button';
+import welcomeImage from '../../../../assets/welcom.png';
 
 import styles from './WelcomeScreen.module.scss';
 
@@ -10,7 +11,12 @@ export const WelcomeScreen: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.confettiIcon}>🎉</div>
+      <div className={styles.confettiIcon}>
+        {/* <img src={confettiIllustration} alt="Confetti" className={styles.confettiIcon} /> */}
+        {/* <img src={confettiIllustration} alt="Confetti" className={styles.confettiIcon} /> */}
+        <img src={welcomeImage} alt="Welcome" className={styles.confettiIcon} />
+      </div>
+
       <h1 className={styles.title}>Welcome to Brello!</h1>
 
       <div className={styles.badge}>⏱ Trial: 30 Days Remaining</div>

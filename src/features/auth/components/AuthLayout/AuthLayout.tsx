@@ -1,6 +1,9 @@
 import React, { type ReactNode } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+
 import { ArrowLeft, Layers } from 'lucide-react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+
+import onboardingIllustration from '../../../../assets/Onboarding illustration 2.svg';
 
 import styles from './AuthLayout.module.scss';
 
@@ -18,14 +21,11 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
     <div className={styles.container}>
       {/* Left side artistic background */}
       <div className={styles.leftPanel}>
-        <div className={styles.shapeGroup}>
-          <div className={styles.purpleCircleTop} />
-          <div className={styles.tealQuarter} />
-          <div className={styles.lightPurplePetal} />
-          <div className={styles.darkGreenCorner} />
-          <div className={styles.purpleHalfBottom} />
-          <div className={styles.whiteGlow} />
-        </div>
+        <img
+          src={onboardingIllustration}
+          alt="Background illustration"
+          className={styles.illustration}
+        />
       </div>
 
       {/* Right side form area */}

@@ -35,6 +35,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
             type={inputType}
             ref={ref}
+            onChange={(e) => {
+              if (type === 'text' || !type) {
+                e.target.value = e.target.value.replace(/[0-9]/g, '');
+              }
+              props.onChange?.(e);
+            }}
             className={`${styles.input} ${icon ? styles.withIcon : ''} ${isPassword ? styles.withEye : ''} ${className || ''}`}
           />
           {isPassword && (
