@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, memo } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import {
   Search,
   LayoutGrid,
@@ -11,6 +11,8 @@ import {
   ArrowDownNarrowWide,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+import { useOnClickOutside } from '../../../hooks/useOnClickOutside';
 
 import styles from './ListControls.module.scss';
 
@@ -70,17 +72,7 @@ export const ListControls: React.FC<ListControlsProps> = memo(
     const [isSortOpen, setIsSortOpen] = useState(false);
     const sortRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-
-    // Close sort dropdown when clicking outside
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
-          setIsSortOpen(false);
-        }
-      };
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+    useOnClickOutside(sortRef, () => setIsSortOpen(false));
 
     const handleSortSelect = (value: string) => {
       onSortChange?.(value);
