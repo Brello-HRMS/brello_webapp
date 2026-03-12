@@ -19,41 +19,6 @@
   background: #ffffff;
 }
 
-.header {
-  height: 80px;
-  background-color: transparent;
-  padding: 0 var(--spacing-8);
-  display: flex;
-  align-items: center;
-
-  .nav {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.headerInfo {
-  .title {
-    font-size: 1.5rem;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-primary);
-  }
-
-  .subtitle {
-    font-size: 0.875rem;
-    color: var(--color-secondary);
-    margin-top: 4px;
-  }
-}
-
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-4);
-}
-
 .main {
   flex: 1;
   overflow-y: auto;
