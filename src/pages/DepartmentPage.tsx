@@ -1,15 +1,29 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Download, Plus } from 'lucide-react';
 
-import { DataTable } from '../components/common/DataTable';
-import { NoDataFound } from '../components/common/NoDataFound';
-import { ListControls, type ViewType, type SortOption } from '../components/common';
-import no_department from '../assets/svg/department/no_department_found.svg';
-import { PageHeader } from '../components/common/PageHeader/PageHeader';
-import { Button } from '../components/common/Button/Button';
-import { departmentList } from '../features/department/data/departmentData';
+import {
+  Banknote,
+  Code2,
+  Download,
+  FileText,
+  Headset,
+  Palette,
+  Plus,
+  Tv,
+  Users,
+  Wallet,
+} from 'lucide-react';
+
+import { DataTable, NoDataFound, PageHeader, Button, ListControls } from '../components/common';
+import { DepartmentCard } from '../features/department/components/DepartmentCard/DepartmentCard';
 import { departmentColumns } from '../features/department/columns/departmentColumns';
 import { useDebounce } from '../hooks/useDebounce';
+import { departmentList } from '../features/department/data/departmentData';
+import no_department from '../assets/svg/department/no_department_found.svg';
+
+import styles from './DepartmentPage.module.scss';
+
+import type { LucideIcon } from 'lucide-react';
+import type { ViewType, SortOption } from '../components/common';
 
 const sortOptions: SortOption[] = [
   { label: 'Alphabetical (A-Z)', value: 'az' },
@@ -18,7 +32,19 @@ const sortOptions: SortOption[] = [
   { label: 'Oldest First', value: 'oldest' },
 ];
 
+const departmentConfigs: Record<string, { icon: LucideIcon; bg: string; color: string }> = {
+  Engineering: { icon: Code2, bg: '#f0f5ff', color: '#2b59ff' },
+  Marketing: { icon: Tv, bg: '#ecfdf3', color: '#12b76a' },
+  'Human Resource': { icon: Users, bg: '#fef6ee', color: '#f79009' },
+  Design: { icon: Palette, bg: '#f9f5ff', color: '#7f56d9' },
+  'Customer Success': { icon: Headset, bg: '#fef2f2', color: '#f04438' },
+  Sales: { icon: Wallet, bg: '#fff7ed', color: '#c2410c' },
+  Finance: { icon: Banknote, bg: '#fef3f2', color: '#b42318' },
+  'Legal Ops': { icon: FileText, bg: '#eff8ff', color: '#2e90fa' },
+};
+
 const DepartmentPage = () => {
+  // ... rest of the component
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,7 +124,10 @@ const DepartmentPage = () => {
   }
 
   return (
-    <div style={{ opacity: isLoading ? 0.4 : 1, transition: 'opacity 0.2s' }}>
+    <div
+      className={styles.container}
+      style={{ opacity: isLoading ? 0.4 : 1, transition: 'opacity 0.2s' }}
+    >
       <PageHeader
         title="Departments"
         subtitle="Define and manage company departments."
@@ -126,37 +155,38 @@ const DepartmentPage = () => {
         onSortChange={setSelectedSort}
         onFilterClick={() => {}}
       />
-
       {viewType === 'grid' ? (
-        <div
-          style={{
-            padding: '24px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '24px',
-          }}
-        >
-          {filteredAndSortedData.map((department) => (
-            <div
-              key={department.id}
-              style={{
-                padding: '20px',
-                border: '1px solid var(--color-border)',
-                borderRadius: '12px',
-                background: 'var(--color-white)',
-              }}
-            >
-              <h3 style={{ margin: '0 0 8px 0' }}>{department.name}</h3>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px', margin: '0' }}>
-                {department.designation}
-              </p>
-            </div>
-          ))}
-          {filteredAndSortedData.length === 0 && (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-              No departments found matching your search.
-            </div>
-          )}
+        <div className={styles.grid}>
+          {filteredAndSortedData
+            .slice(
+              pagination.pageIndex * pagination.pageSize,
+              (pagination.pageIndex + 1) * pagination.pageSize,
+            )
+            .map((item, index) => {
+              const names = Object.keys(departmentConfigs);
+              const deptName = names[index % names.length];
+              const config = departmentConfigs[deptName];
+
+              return (
+                <DepartmentCard
+                  key={item.id}
+                  name={deptName}
+                  code={`Code: ${deptName.substring(0, 3).toUpperCase()}-0${index + 1}`}
+                  status={index === 2 || index === 7 ? 'Inactive' : 'Active'}
+                  icon={config.icon}
+                  iconBg={config.bg}
+                  iconColor={config.color}
+                  members={[
+                    'https://i.pravatar.cc/150?u=1',
+                    'https://i.pravatar.cc/150?u=2',
+                    'https://i.pravatar.cc/150?u=3',
+                    'https://i.pravatar.cc/150?u=4',
+                    'https://i.pravatar.cc/150?u=5',
+                  ]}
+                  onActionClick={() => {}}
+                />
+              );
+            })}
         </div>
       ) : (
         <DataTable

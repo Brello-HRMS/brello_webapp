@@ -1,0 +1,123 @@
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 20px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(71, 84, 103, 0.12);
+    border-color: var(--color-primary-purple);
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  color: var(--color-icon-gray);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.name {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-header);
+  margin: 0;
+}
+
+.code {
+  font-family: 'DM Mono', 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.count {
+  font-size: 14px;
+  color: var(--color-primary-purple);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-surface);
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+
+  &.active {
+    background: var(--color-success-50);
+    color: var(--color-success-700);
+    border: 1px solid var(--color-success-200);
+
+    .statusDot {
+      background: var(--color-success-700);
+    }
+  }
+
+  &.inactive {
+    background: var(--color-gray-50);
+    color: var(--color-gray-700);
+    border: 1px solid var(--color-gray-200);
+
+    .statusDot {
+      background: var(--color-gray-700);
+    }
+  }
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
