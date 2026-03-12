@@ -399,3 +399,18 @@
     font-weight: var(--font-weight-medium);
   }
 }
+// Utility to hide table and controls when only pagination is needed
+:global(.pagination-only) {
+  border: none;
+  box-shadow: none;
+
+  .tableControls,
+  .tableWrapper {
+    display: none !important;
+  }
+
+  .pagination {
+    border-top: none;
+    background: transparent;
+  }
+}
