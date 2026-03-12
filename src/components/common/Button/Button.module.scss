@@ -1,0 +1,42 @@
+@use '../../../assets/styles/variables';
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-base);
+  font-size: clamp(0.75rem, 0.6607rem + 0.2381vw, 0.875rem);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  svg {
+    stroke-width: 2px;
+  }
+}
+
+.secondary {
+  background-color: var(--color-white);
+  border: 1px solid #d0d5dd;
+  color: var(--color-text-primary-500);
+  box-shadow: var(--shadow-button);
+
+  &:hover {
+    background-color: var(--color-gray);
+  }
+}
+
+.primary {
+  background-color: var(--color-primary-purple);
+  border: 1px solid var(--color-primary-purple);
+  color: var(--color-white);
+  box-shadow: var(--shadow-button);
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
