@@ -1,10 +1,13 @@
 import React from 'react';
+import { Download, Plus } from 'lucide-react';
 
 import { NoDataFound } from '../components/common/NoDataFound';
 import no_department from '../assets/svg/department/no_department_found.svg';
+import { PageHeader } from '../components/common/PageHeader/PageHeader';
+import { Button } from '../components/common/Button/Button';
 
 const DepartmentPage = () => {
-  const [departmentList] = React.useState([]);
+  const [departmentList] = React.useState(['sd']);
 
   const handleAddDepartment = () => {};
 
@@ -22,7 +25,26 @@ const DepartmentPage = () => {
     );
   }
 
-  return <div>DepartmentPage dsf</div>;
+  return (
+    <div>
+      <PageHeader
+        title="Departments"
+        subtitle="Define and manage company departments."
+        actions={
+          <>
+            <Button variant="secondary">
+              <Download size={16} />
+              Export
+            </Button>
+            <Button variant="primary">
+              <Plus size={16} />
+              Add department
+            </Button>
+          </>
+        }
+      />
+    </div>
+  );
 };
 
 export default DepartmentPage;
