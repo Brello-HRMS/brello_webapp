@@ -14,12 +14,28 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
       <div className={`${styles.container} ${error ? styles.hasError : ''}`}>
         {label && (
           <label className={styles.label} htmlFor={props.id || props.name}>
-            {label}
+            {label.includes('*') ? (
+              <>
+                {label.replace('*', '')}
+                <span className={styles.asterisk}>*</span>
+              </>
+            ) : (
+              label
+            )}
           </label>
         )}
         <div className={styles.inputWrapper}>
           <div className={styles.prefix}>{countryCode}</div>
-          <input type="tel" {...props} ref={ref} className={`${styles.input} ${className || ''}`} />
+          <input
+            type="tel"
+            {...props}
+            ref={ref}
+            onChange={(e) => {
+              e.target.value = e.target.value.replace(/\D/g, '');
+              props.onChange?.(e);
+            }}
+            className={`${styles.input} ${className || ''}`}
+          />
         </div>
         {error && <span className={styles.errorMessage}>{error}</span>}
       </div>

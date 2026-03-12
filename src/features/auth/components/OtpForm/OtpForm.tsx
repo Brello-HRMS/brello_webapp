@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 
 import { useVerifyOtp } from '../../api/useVerifyOtp';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
@@ -114,11 +113,6 @@ export const OtpForm: React.FC = () => {
 
   return (
     <div>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        <ArrowLeft className={styles.backIcon} />
-        Back
-      </button>
-
       <AuthFormWrapper
         title="Login to your account"
         subtitle={`Enter your verification code sent to you at ${email || 'your email'}`}
