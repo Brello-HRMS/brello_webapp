@@ -361,3 +361,19 @@
   background: rgba(255, 255, 255, 0.9) !important;
   box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.05);
 }
+
+// Utility to hide table and controls when only pagination is needed
+:global(.pagination-only) {
+  border: none;
+  box-shadow: none;
+
+  .tableControls,
+  .tableWrapper {
+    display: none !important;
+  }
+
+  .pagination {
+    border-top: none;
+    background: transparent;
+  }
+}
