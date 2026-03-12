@@ -34,22 +34,22 @@ export default defineConfig([
       ],
       'unused-imports/no-unused-imports': 'error',
       'import/order': 'off',
-      //     'import/order': [
-      //   'error',
-      //   {
-      //     groups: [
-      //       'builtin',
-      //       'external',
-      //       'internal',
-      //       'parent',
-      //       'sibling',
-      //       'index',
-      //       'object',
-      //       'type',
-      //     ],
-      //     'newlines-between': 'always',
-      //   },
-      // ],
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+            'type',
+          ],
+          'newlines-between': 'always',
+        },
+      ],
       'prettier/prettier': 'error',
     },
     plugins: {
