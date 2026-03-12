@@ -6,9 +6,10 @@ import { useVerifyOtp } from '../../api/useVerifyOtp';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Button } from '../../../../components/ui/Button/Button';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
+import { useVerifyLoginOtp } from '../../api/useLogin';
 
 import styles from './OtpForm.module.scss';
-import { useVerifyLoginOtp } from '../../api/useLogin';
+
 import type { LoginResponse } from '../../api/authType';
 
 export const OtpForm: React.FC = () => {
@@ -19,7 +20,7 @@ export const OtpForm: React.FC = () => {
 
   const { mutate: verifyOtp, isPending, error: apiError } = useVerifyOtp();
 
-  const { mutate: verifyLoginOtp, isPending: isVerifyLoginOTPPending, error: verifyLoginOTPError } = useVerifyLoginOtp();
+  const { mutate: verifyLoginOtp } = useVerifyLoginOtp();
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -83,23 +84,31 @@ export const OtpForm: React.FC = () => {
     e.preventDefault();
     const otpCode = otp.join('');
     if (otpCode.length === 6 && email) {
-      resource === 'login' ? verifyLoginOtp({ email, otp: otpCode, device_fingerprint: 'admin_panel' }, {
-        onSuccess: (data: LoginResponse) => {
-          const { user, setup_required } = data.data;
-          if (setup_required) {
-            navigate('/auth/lead', { state: { userId: user.id } });
-          } else {
-            navigate('/');
-          }
-        },
-      }) : verifyOtp(
-        { email, otp: otpCode },
-        {
-          onSuccess: () => {
-            navigate('/auth/login');
+      if (resource === 'login') {
+        verifyLoginOtp(
+          { email, otp: otpCode, device_fingerprint: 'admin_panel' },
+          {
+            onSuccess: (data: LoginResponse) => {
+              const { user, setup_required } = data.data;
+              sessionStorage.setItem('auth_response', JSON.stringify(data));
+              if (setup_required) {
+                navigate('/auth/lead', { state: { userId: user.id } });
+              } else {
+                navigate('/');
+              }
+            },
           },
-        },
-      );
+        );
+      } else {
+        verifyOtp(
+          { email, otp: otpCode },
+          {
+            onSuccess: () => {
+              navigate('/auth/login');
+            },
+          },
+        );
+      }
     }
   };
 

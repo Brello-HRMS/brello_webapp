@@ -48,8 +48,8 @@ export type LoginData = {
   user: User;
   expires_in: number;
   defaultAppId: string;
-  availableApps: any[];
-  setup_required: boolean;
+  availableApps: string[];
+  setup_required?: boolean;
 };
 
 export type LoginResponse = {

@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, redirect } from 'react-router-dom';
 
 import { MainLayout } from '../components/layout/MainLayout';
 import HomePage from '../pages/HomePage';
@@ -12,10 +12,38 @@ import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
 // import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
 
+const isAuthenticated = () => {
+  const authResponse = sessionStorage.getItem('auth_response');
+  if (authResponse) {
+    try {
+      const parsed = JSON.parse(authResponse);
+      return !!parsed?.data?.access_token;
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};
+
+const protectedLoader = () => {
+  if (!isAuthenticated()) {
+    return redirect('/auth/login');
+  }
+  return null;
+};
+
+const publicLoader = () => {
+  if (isAuthenticated()) {
+    return redirect('/');
+  }
+  return null;
+};
+
 const router = createBrowserRouter([
   {
     path: '/auth',
     element: <AuthLayout />,
+    loader: publicLoader,
     children: [
       {
         path: 'login',
@@ -59,6 +87,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
+    loader: protectedLoader,
     children: [
       {
         path: '/',

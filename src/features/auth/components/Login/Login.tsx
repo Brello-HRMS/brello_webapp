@@ -24,19 +24,23 @@ export const Login: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  const { mutate: loginWithOTP, isPending: isLoginWithOTPPending, error: loginWithOTPError } = useLoginWithOTP({
+  const {
+    mutate: loginWithOTP,
+    isPending: isLoginWithOTPPending,
+    error: loginWithOTPError,
+  } = useLoginWithOTP({
     onSuccess: () => {
       const email = watch('email');
       navigate('/auth/otp', { state: { email, resource: 'login' } });
     },
     onError: (err) => {
-      console.error('Login with OTP failed', err);
-    }
+      alert(err.message || 'Login failed. Please try again.');
+    },
   });
 
   const onSubmit = (data: LoginFormValues) => {
@@ -51,8 +55,6 @@ export const Login: React.FC = () => {
         title="Manage employees easily starting from now"
         subtitle="Get started for free today!"
         onSubmit={handleSubmit(onSubmit)}
-        showSocials={true}
-        socialDividerText="Or login with"
       >
         <div className={styles.formBody}>
           <Input
@@ -69,7 +71,12 @@ export const Login: React.FC = () => {
             </p>
           )}
 
-          <Button type="submit" variant="primary" className={styles.submitBtn} disabled={isLoginWithOTPPending}>
+          <Button
+            type="submit"
+            variant="primary"
+            className={styles.submitBtn}
+            disabled={isLoginWithOTPPending}
+          >
             {isLoginWithOTPPending ? 'Sending...' : 'Send OTP'}
           </Button>
         </div>
