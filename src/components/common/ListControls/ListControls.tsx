@@ -23,6 +23,11 @@ export interface SortOption {
   value: string;
 }
 
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
 interface ListControlsProps {
   // Search
   showSearch?: boolean;
@@ -34,6 +39,10 @@ interface ListControlsProps {
   showFilters?: boolean;
   filterCount?: number;
   onFilterClick?: () => void;
+  filterOptions?: FilterOption[];
+  selectedFilter?: string;
+  onFilterChange?: (value: string) => void;
+  filterTitle?: string;
 
   // View Switcher
   showViewSwitcher?: boolean;
@@ -59,6 +68,10 @@ export const ListControls: React.FC<ListControlsProps> = memo(
     showFilters = true,
     filterCount = 0,
     onFilterClick,
+    filterOptions = [],
+    selectedFilter = '',
+    onFilterChange,
+    filterTitle = 'Filter',
     showViewSwitcher = true,
     viewType = 'grid',
     onViewTypeChange,
@@ -70,13 +83,23 @@ export const ListControls: React.FC<ListControlsProps> = memo(
   }) => {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [isSortOpen, setIsSortOpen] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
     const sortRef = useRef<HTMLDivElement>(null);
+    const filterRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
     useOnClickOutside(sortRef, () => setIsSortOpen(false));
+    useOnClickOutside(filterRef, () => setIsFilterOpen(false));
 
     const handleSortSelect = (value: string) => {
       onSortChange?.(value);
       setIsSortOpen(false);
+    };
+
+    const handleFilterSelect = (value: string) => {
+      onFilterChange?.(value);
+      setIsFilterOpen(false);
     };
 
     const handleSearchIconClick = () => {
@@ -112,11 +135,56 @@ export const ListControls: React.FC<ListControlsProps> = memo(
           )}
 
           {showFilters && (
-            <button className={styles.actionButton} onClick={onFilterClick}>
-              <ListFilter size={18} strokeWidth={3} />
-              <span>Filters</span>
-              {filterCount > 0 && <span className={styles.badge}>{filterCount}</span>}
-            </button>
+            <div className={styles.sortDropdown} ref={filterRef}>
+              <button
+                className={`${styles.actionButton} ${isFilterOpen ? styles.active : ''}`}
+                onClick={() => {
+                  if (filterOptions.length > 0 && !onFilterClick) {
+                    setIsFilterOpen(!isFilterOpen);
+                  } else {
+                    onFilterClick?.();
+                  }
+                }}
+              >
+                <ListFilter size={18} strokeWidth={3} />
+                <span>Filters</span>
+                {filterCount > 0 && <span className={styles.badge}>{filterCount}</span>}
+              </button>
+
+              <AnimatePresence>
+                {isFilterOpen && filterOptions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className={styles.dropdownMenu}
+                    style={{ left: 0, right: 'auto' }}
+                  >
+                    <div className={styles.dropdownHeader}>
+                      <h4>{filterTitle}</h4>
+                      <button onClick={() => setIsFilterOpen(false)}>
+                        <X size={18} />
+                      </button>
+                    </div>
+                    {filterOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        className={`${styles.dropdownItem} ${
+                          selectedFilter === option.value ? styles.selected : ''
+                        }`}
+                        onClick={() => handleFilterSelect(option.value)}
+                      >
+                        <span>{option.label}</span>
+                        {selectedFilter === option.value && (
+                          <Check size={16} className={styles.checkIcon} />
+                        )}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           )}
         </div>
 

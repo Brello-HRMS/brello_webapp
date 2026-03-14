@@ -1,39 +1,40 @@
-import { MoreVertical } from 'lucide-react';
+import React from 'react';
+import { Users } from 'lucide-react';
 
 import { AvatarGroup } from '../../../../components/common/AvatarGroup/AvatarGroup';
+import { StatusBadge } from '../../../../components/common/StatusBadge/StatusBadge';
+import { DepartmentActionMenu } from '../DepartmentActionMenu/DepartmentActionMenu';
 
 import styles from './DepartmentCard.module.scss';
 
+import type { Department } from '../../api/departmentType';
+
 export interface DepartmentCardProps {
-  name: string;
-  code: string;
-  status: 'Active' | 'Inactive';
-  members: string[];
-  icon: string;
-  iconBg: string;
-  iconColor: string;
+  department: Department;
+  iconBg?: string;
+  iconColor?: string;
   onActionClick?: () => void;
 }
 
 export const DepartmentCard: React.FC<DepartmentCardProps> = ({
-  name,
-  code,
-  status,
-  members,
-  icon,
-  iconBg,
-  iconColor,
+  department,
+  iconBg = 'var(--color-gray-50)',
+  iconColor = 'var(--color-primary-purple)',
   onActionClick,
 }) => {
+  const { name, code, status, icon } = department;
+
   return (
     <div className={styles.card}>
       <div className={styles.header}>
         <div className={styles.iconWrapper} style={{ backgroundColor: iconBg, color: iconColor }}>
-          <img src={icon} alt={name} width={24} height={24} className={styles.icon} />
+          {icon ? (
+            <img src={icon} alt={name} width={24} height={24} className={styles.icon} />
+          ) : (
+            <Users size={24} />
+          )}
         </div>
-        <button className={styles.actionButton} onClick={onActionClick}>
-          <MoreVertical size={20} />
-        </button>
+        <DepartmentActionMenu departmentId={department.id} onEdit={onActionClick} />
       </div>
 
       <div className={styles.content}>
@@ -42,12 +43,17 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
       </div>
 
       <div className={styles.footer}>
-        <AvatarGroup avatars={members} max={3} size={24} />
+        <AvatarGroup
+          avatars={[
+            'https://i.pravatar.cc/150?u=1',
+            'https://i.pravatar.cc/150?u=2',
+            'https://i.pravatar.cc/150?u=3',
+          ]}
+          max={3}
+          size={24}
+        />
 
-        <div className={`${styles.statusBadge} ${styles[status.toLowerCase()]}`}>
-          <span className={styles.statusDot}></span>
-          {status}
-        </div>
+        <StatusBadge status={status} />
       </div>
     </div>
   );
