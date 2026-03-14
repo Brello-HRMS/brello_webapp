@@ -1,91 +1,84 @@
-import { Eye } from 'lucide-react';
+import { Users } from 'lucide-react';
+
+import { StatusBadge } from '../../../components/common';
+import { Status } from '../../../types/common';
+import { ActionsCell } from '../components/ActionsCell';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Employee } from '../data/departmentData';
+import type { Department } from '../api/departmentType';
 
-export const departmentColumns: ColumnDef<Employee>[] = [
-  {
-    accessorKey: 'id',
-    header: 'Employee ID',
-    cell: ({ getValue }) => (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <strong>{getValue() as string}</strong>
-      </div>
-    ),
-  },
+export const departmentColumns: ColumnDef<Department>[] = [
   {
     accessorKey: 'name',
-    header: 'Employee Name',
+    header: 'Department Name',
+    size: 250,
+    cell: (info) => {
+      const department = info.row.original;
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+          {department.icon ? (
+            <img
+              src={department.icon}
+              alt=""
+              style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+            />
+          ) : (
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--color-gray-50)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--color-icon-gray)',
+              }}
+            >
+              <Users size={16} />
+            </div>
+          )}
+          <span>{info.getValue() as string}</span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'code',
+    header: 'Code',
+    size: 150,
+  },
+  {
+    accessorKey: 'description',
+    header: 'Description',
+    size: 350,
     cell: (info) => (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <img
-          src={(info.row.original as Employee).avatar}
-          alt=""
-          style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-        />
-        <span>{info.getValue() as string}</span>
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'designation',
-    header: 'Designation',
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email',
-  },
-  {
-    accessorKey: 'phone',
-    header: 'Phone',
-  },
-  {
-    accessorKey: 'location',
-    header: 'Location',
-  },
-  {
-    accessorKey: 'type',
-    header: 'Type',
-    cell: (info) => (
-      <span
+      <div
         style={{
-          padding: '4px 12px',
-          borderRadius: '16px',
-          background: info.getValue() === 'Office' ? '#ecfdf3' : '#fff7ed',
-          color: info.getValue() === 'Office' ? '#027a48' : '#c2410c',
-          fontSize: '12px',
-          fontWeight: 500,
+          maxWidth: '300px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         }}
+        title={info.getValue() as string}
       >
-        • {info.getValue() as string}
-      </span>
+        {info.getValue() as string}
+      </div>
     ),
   },
   {
     accessorKey: 'status',
     header: 'Status',
-    cell: (info) => (
-      <span
-        style={{
-          padding: '4px 12px',
-          borderRadius: '6px',
-          background: '#f2f4f7',
-          color: '#344054',
-          fontSize: '12px',
-          fontWeight: 500,
-        }}
-      >
-        {info.getValue() as string}
-      </span>
-    ),
+    size: 150,
+    cell: (info) => {
+      const status = info.getValue() as Status;
+      return <StatusBadge status={status} />;
+    },
   },
   {
     id: 'actions',
     header: 'Actions',
-    cell: () => (
-      <button style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#667085' }}>
-        <Eye size={18} />
-      </button>
-    ),
+    size: 150,
+    cell: ActionsCell,
   },
 ];

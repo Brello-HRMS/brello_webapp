@@ -72,7 +72,7 @@ export const DataTable = <TData, TValue>({
       </div>
 
       <div className={styles.tableWrapper}>
-        <table className={styles.table} style={{ width: table.getTotalSize() }}>
+        <table className={styles.table} style={{ width: '100%', minWidth: table.getTotalSize() }}>
           <TableHead table={table} />
           <TableBody table={table} />
         </table>
