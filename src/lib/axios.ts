@@ -10,6 +10,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // --- Helper Functions ---
@@ -19,9 +20,18 @@ export const apiClient = axios.create({
  * @returns {string | null} The token or null if not found.
  */
 function getAuthToken(): string | null {
-  // Replace this with standard auth token retrieval logic (e.g., localStorage, Zustand store, etc.)
-  // Keeping it isolated here per the "keep functions small and single-responsibility" rule.
-  return localStorage.getItem('auth_token');
+  const authResponseStr = sessionStorage.getItem('auth_response');
+  if (authResponseStr) {
+    try {
+      const authResponse = JSON.parse(authResponseStr);
+      if (authResponse?.data?.access_token) {
+        return authResponse.data.access_token;
+      }
+    } catch {
+      // Ignored
+    }
+  }
+  return null;
 }
 
 /**
@@ -29,8 +39,9 @@ function getAuthToken(): string | null {
  */
 function handleUnauthorizedClient() {
   // Clear the token and potentially trigger a redirect or auth state change
-  localStorage.removeItem('auth_token');
-  window.location.href = '/login'; // Or use a global event/state manager
+  sessionStorage.removeItem('auth_response');
+  sessionStorage.removeItem('access_token');
+  window.location.href = '/auth/login'; // Or use a global event/state manager
 }
 
 /**

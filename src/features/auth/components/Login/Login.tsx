@@ -8,6 +8,7 @@ import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Input } from '../../../../components/ui/Input/Input';
 import { Button } from '../../../../components/ui/Button/Button';
 import { useLoginWithOTP } from '../../api/useLogin';
+import { showToast } from '../../../ToastFeature/ShowToast';
 
 import styles from './Login.module.scss';
 
@@ -37,10 +38,9 @@ export const Login: React.FC = () => {
     onSuccess: () => {
       const email = getValues('email');
       navigate('/auth/otp', { state: { email, resource: 'login' } });
+      showToast('OTP sent successfully', 'success');
     },
-    onError: (_err) => {
-      // Error is handled by the UI via loginWithOTPError
-    },
+    onError: (err) => showToast(err.message || 'Login failed. Please try again.', 'error'),
   });
 
   const onSubmit = (data: LoginFormValues) => {
@@ -55,8 +55,6 @@ export const Login: React.FC = () => {
         title="Manage employees easily starting from now"
         subtitle="Get started for free today!"
         onSubmit={handleSubmit(onSubmit)}
-        showSocials={true}
-        socialDividerText="Or login with"
       >
         <div className={styles.formBody}>
           <Input
