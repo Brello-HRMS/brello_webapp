@@ -1,0 +1,45 @@
+@use '../../../assets/styles/variables';
+
+.headerContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: clamp(24px, 4vw, 35px);
+  margin-bottom: clamp(32px, 5vw, 48px);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-bold);
+  font-size: clamp(1.25rem, 4vw, 1.75rem); // 20px to 28px
+  line-height: 100%;
+  color: var(--color-text-primary-500);
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+  font-size: clamp(0.75rem, 2vw, 0.875rem); // 12px to 14px
+  line-height: 24px;
+  color: var(--color-secondary);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

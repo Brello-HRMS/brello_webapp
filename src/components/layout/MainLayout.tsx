@@ -1,26 +1,37 @@
+import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import { Sidebar } from '../../features/sidebar/Sidebar';
-import { ThemeCustomizer } from '../../features/theme/ThemeCustomizer';
 
+import { Header } from './Header';
 import styles from './MainLayout.module.scss';
 
 export const MainLayout = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 768px)');
+
+    const handleMediaQueryChange = (event: MediaQueryListEvent | MediaQueryList) => {
+      if (event.matches) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+
+    handleMediaQueryChange(mediaQuery);
+
+    mediaQuery.addEventListener('change', handleMediaQueryChange);
+    return () => mediaQuery.removeEventListener('change', handleMediaQueryChange);
+  }, []);
+
   return (
     <div className={styles.layout}>
-      <Sidebar />
+      <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
       <div className={styles.contentWrapper}>
-        <header className={styles.header}>
-          <nav className={styles.nav}>
-            <div className={styles.headerInfo}>
-              <div className={styles.title}>Welcome back, Adam!</div>
-              <div className={styles.subtitle}>Here's what's happening today.</div>
-            </div>
-            <div className={styles.headerActions}>
-              <ThemeCustomizer />
-            </div>
-          </nav>
-        </header>
+        <Header
+          isSidebarCollapsed={isSidebarCollapsed}
+          toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        />
         <main className={styles.main}>
           <Outlet />
         </main>
