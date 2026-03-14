@@ -4,14 +4,12 @@ import { AvatarGroup } from '../../../../components/common/AvatarGroup/AvatarGro
 
 import styles from './DepartmentCard.module.scss';
 
-import type { LucideIcon } from 'lucide-react';
-
 export interface DepartmentCardProps {
   name: string;
   code: string;
   status: 'Active' | 'Inactive';
   members: string[];
-  icon: LucideIcon;
+  icon: string;
   iconBg: string;
   iconColor: string;
   onActionClick?: () => void;
@@ -22,7 +20,7 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
   code,
   status,
   members,
-  icon: Icon,
+  icon,
   iconBg,
   iconColor,
   onActionClick,
@@ -31,7 +29,7 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
     <div className={styles.card}>
       <div className={styles.header}>
         <div className={styles.iconWrapper} style={{ backgroundColor: iconBg, color: iconColor }}>
-          <Icon size={24} className={styles.icon} />
+          <img src={icon} alt={name} width={24} height={24} className={styles.icon} />
         </div>
         <button className={styles.actionButton} onClick={onActionClick}>
           <MoreVertical size={20} />

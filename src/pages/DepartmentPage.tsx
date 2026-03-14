@@ -1,17 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-
-import {
-  Banknote,
-  Code2,
-  Download,
-  FileText,
-  Headset,
-  Palette,
-  Plus,
-  Tv,
-  Users,
-  Wallet,
-} from 'lucide-react';
+import { Download, Plus } from 'lucide-react';
 
 import { DataTable, NoDataFound, PageHeader, Button, ListControls } from '../components/common';
 import { DepartmentCard } from '../features/department/components/DepartmentCard/DepartmentCard';
@@ -22,7 +10,6 @@ import no_department from '../assets/svg/department/no_department_found.svg';
 
 import styles from './DepartmentPage.module.scss';
 
-import type { LucideIcon } from 'lucide-react';
 import type { ViewType, SortOption } from '../components/common';
 
 const sortOptions: SortOption[] = [
@@ -32,15 +19,15 @@ const sortOptions: SortOption[] = [
   { label: 'Oldest First', value: 'oldest' },
 ];
 
-const departmentConfigs: Record<string, { icon: LucideIcon; bg: string; color: string }> = {
-  Engineering: { icon: Code2, bg: '#f0f5ff', color: '#2b59ff' },
-  Marketing: { icon: Tv, bg: '#ecfdf3', color: '#12b76a' },
-  'Human Resource': { icon: Users, bg: '#fef6ee', color: '#f79009' },
-  Design: { icon: Palette, bg: '#f9f5ff', color: '#7f56d9' },
-  'Customer Success': { icon: Headset, bg: '#fef2f2', color: '#f04438' },
-  Sales: { icon: Wallet, bg: '#fff7ed', color: '#c2410c' },
-  Finance: { icon: Banknote, bg: '#fef3f2', color: '#b42318' },
-  'Legal Ops': { icon: FileText, bg: '#eff8ff', color: '#2e90fa' },
+const departmentConfigs: Record<string, { icon: string; bg: string; color: string }> = {
+  Engineering: { icon: '', bg: '#f0f5ff', color: '#2b59ff' },
+  Marketing: { icon: '', bg: '#ecfdf3', color: '#12b76a' },
+  'Human Resource': { icon: '', bg: '#fef6ee', color: '#f79009' },
+  Design: { icon: '', bg: '#f9f5ff', color: '#7f56d9' },
+  'Customer Success': { icon: '', bg: '#fef2f2', color: '#f04438' },
+  Sales: { icon: '', bg: '#fff7ed', color: '#c2410c' },
+  Finance: { icon: '', bg: '#fef3f2', color: '#b42318' },
+  'Legal Ops': { icon: '', bg: '#eff8ff', color: '#2e90fa' },
 };
 
 const DepartmentPage = () => {
