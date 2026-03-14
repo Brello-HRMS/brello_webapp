@@ -1,0 +1,97 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.label {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--spacing-1);
+    color: var(--color-text-primary);
+    transition: color 0.2s ease;
+}
+
+.asterisk {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.selectWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.select {
+    width: 100%;
+    padding: 0.7rem 0.475rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-white);
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+    appearance: none; // hide native arrow
+    cursor: pointer;
+
+    &:hover {
+        border-color: var(--color-primary-hover);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+    }
+
+    // placeholder option styling
+    &:invalid,
+    option[value=''][disabled] {
+        color: var(--color-text-secondary);
+    }
+}
+
+.chevron {
+    position: absolute;
+    right: 0.6rem;
+    display: flex;
+    align-items: center;
+    pointer-events: none; // let clicks pass through to the select
+    color: var(--color-text-secondary);
+    transition: color 0.2s ease;
+}
+
+// focus-within changes chevron color
+.selectWrapper:focus-within .chevron {
+    color: var(--color-primary);
+}
+
+// focus-within changes label color
+.container:focus-within .label {
+    color: var(--color-primary);
+}
+
+// Error state
+.hasError {
+    .label {
+        color: #ef4444;
+        font-size: 12px;
+    }
+
+    .select {
+        border-color: #ef4444;
+
+        &:focus {
+            border-color: #ef4444;
+        }
+    }
+
+    .chevron {
+        color: #ef4444;
+    }
+}
+
+.errorMessage {
+    font-size: 10px;
+    color: #ef4444;
+}
