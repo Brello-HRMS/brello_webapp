@@ -6,7 +6,7 @@
   justify-content: space-between;
   gap: 16px;
   margin-top: clamp(20px, 4vw, 28px);
-  margin-bottom: clamp(24px, 5vw, 28px);
+  margin-bottom: clamp(20px, 5vw, 24px);
 
   @media (min-width: 768px) {
     flex-direction: row;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Banknote,
   Code2,
@@ -17,6 +17,7 @@ import { DepartmentCard } from '../features/department/components/DepartmentCard
 import { departmentColumns } from '../features/department/columns/departmentColumns';
 import { departmentList } from '../features/department/data/departmentData';
 import no_department from '../assets/svg/department/no_department_found.svg';
+import { useDebounce } from '../hooks/useDebounce';
 
 import styles from './DepartmentPage.module.scss';
 
@@ -24,10 +25,10 @@ import type { LucideIcon } from 'lucide-react';
 import type { ViewType, SortOption } from '../components/common';
 
 const sortOptions: SortOption[] = [
-  { label: 'Newest First', value: 'newest' },
-  { label: 'Oldest First', value: 'oldest' },
   { label: 'Alphabetical (A-Z)', value: 'az' },
   { label: 'Alphabetical (Z-A)', value: 'za' },
+  { label: 'Newest First', value: 'newest' },
+  { label: 'Oldest First', value: 'oldest' },
 ];
 
 const departmentConfigs: Record<string, { icon: LucideIcon; bg: string; color: string }> = {
@@ -42,27 +43,64 @@ const departmentConfigs: Record<string, { icon: LucideIcon; bg: string; color: s
 };
 
 const DepartmentPage = () => {
-  // ... rest of the component
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
-  const [data] = useState(departmentList);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewType, setViewType] = useState<ViewType>('grid');
-  const [selectedSort, setSelectedSort] = useState('newest');
+  const [selectedSort, setSelectedSort] = useState('az');
 
-  const fetchDepartments = () => {
-    setTimeout(() => {
-      setIsLoading(true);
-    }, 0);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-    return () => clearTimeout(timer);
-  };
+  const filteredAndSortedData = useMemo(() => {
+    let result = [...departmentList];
+
+    // Search logic
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
+      result = result.filter(
+        (department) =>
+          department.name.toLowerCase().includes(query) ||
+          department.email.toLowerCase().includes(query) ||
+          department.designation.toLowerCase().includes(query) ||
+          department.location.toLowerCase().includes(query) ||
+          department.status.toLowerCase().includes(query) ||
+          department.type.toLowerCase().includes(query),
+      );
+    }
+
+    // Sort logic
+    result.sort((departmentA, departmentB) => {
+      switch (selectedSort) {
+        case 'az':
+          return departmentA.name.localeCompare(departmentB.name);
+        case 'za':
+          return departmentB.name.localeCompare(departmentA.name);
+        case 'newest':
+          // Assuming higher ID or later entry means newer if no date field exists
+          return departmentB.id.localeCompare(departmentA.id);
+        case 'oldest':
+          return departmentA.id.localeCompare(departmentB.id);
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [debouncedSearchQuery, selectedSort]);
 
   useEffect(() => {
-    fetchDepartments();
+    const loadDepartments = async () => {
+      setIsLoading(true);
+
+      try {
+        // simulate API
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadDepartments();
   }, [pagination]);
 
   const handleAddDepartment = () => {
@@ -104,7 +142,6 @@ const DepartmentPage = () => {
           </>
         }
       />
-
       <ListControls
         searchPlaceholder="Search department..."
         searchQuery={searchQuery}
@@ -118,7 +155,7 @@ const DepartmentPage = () => {
       />
       {viewType === 'grid' ? (
         <div className={styles.grid}>
-          {data
+          {filteredAndSortedData
             .slice(
               pagination.pageIndex * pagination.pageSize,
               (pagination.pageIndex + 1) * pagination.pageSize,
@@ -152,7 +189,7 @@ const DepartmentPage = () => {
       ) : (
         <DataTable
           columns={departmentColumns}
-          data={data}
+          data={filteredAndSortedData}
           pagination={pagination}
           onPaginationChange={setPagination}
         />

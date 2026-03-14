@@ -377,3 +377,19 @@
     background: transparent;
   }
 }
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-12);
+  color: var(--color-text-secondary);
+  gap: var(--spacing-4);
+  text-align: center;
+
+  p {
+    font-size: 16px;
+    font-weight: var(--font-weight-medium);
+  }
+}
