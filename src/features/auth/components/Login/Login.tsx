@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Input } from '../../../../components/ui/Input/Input';
 import { Button } from '../../../../components/ui/Button/Button';
 import { useLoginWithOTP } from '../../api/useLogin';
+import { showToast } from '../../../ToastFeature/ShowToast';
 
 import styles from './Login.module.scss';
 
@@ -19,12 +20,12 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>('');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
@@ -35,15 +36,14 @@ export const Login: React.FC = () => {
     error: loginWithOTPError,
   } = useLoginWithOTP({
     onSuccess: () => {
-      const email = watch('email');
       navigate('/auth/otp', { state: { email, resource: 'login' } });
+      showToast('OTP sent successfully', 'success');
     },
-    onError: (err) => {
-      alert(err.message || 'Login failed. Please try again.');
-    },
+    onError: (err) => showToast(err.message || 'Login failed. Please try again.', 'error'),
   });
 
   const onSubmit = (data: LoginFormValues) => {
+    setEmail(data.email);
     loginWithOTP({
       email: data.email,
     });
