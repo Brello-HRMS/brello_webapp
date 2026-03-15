@@ -5,7 +5,7 @@ import { Status } from '../../../types/common';
 import { ActionsCell } from '../components/ActionsCell';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Department } from '../api/departmentType';
+import type { Department } from '../types/departmentType';
 
 export const departmentColumns: ColumnDef<Department>[] = [
   {

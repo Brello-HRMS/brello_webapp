@@ -7,7 +7,7 @@ import { DepartmentActionMenu } from '../DepartmentActionMenu/DepartmentActionMe
 
 import styles from './DepartmentCard.module.scss';
 
-import type { Department } from '../../api/departmentType';
+import type { Department } from '../../types/departmentType';
 
 export interface DepartmentCardProps {
   department: Department;
