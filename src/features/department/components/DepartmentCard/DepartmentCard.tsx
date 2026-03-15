@@ -13,14 +13,14 @@ export interface DepartmentCardProps {
   department: Department;
   iconBg?: string;
   iconColor?: string;
-  onActionClick?: () => void;
+  onEditClick?: () => void;
 }
 
 export const DepartmentCard: React.FC<DepartmentCardProps> = ({
   department,
   iconBg = 'var(--color-gray-50)',
   iconColor = 'var(--color-primary-purple)',
-  onActionClick,
+  onEditClick,
 }) => {
   const { name, code, status, icon } = department;
 
@@ -34,7 +34,7 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
             <Users size={24} />
           )}
         </div>
-        <DepartmentActionMenu departmentId={department.id} onEdit={onActionClick} />
+        <DepartmentActionMenu department={department} onEdit={onEditClick} />
       </div>
 
       <div className={styles.content}>
