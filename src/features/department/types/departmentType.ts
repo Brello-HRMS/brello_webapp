@@ -15,7 +15,7 @@ export interface Department {
   created_at: string;
   updated_at: string;
   modified_by: string;
-  employee_count: number;
+  memberAvatars: string[];
   modified_at: string | null;
   deleted_by: string | null;
   deleted_at: string | null;
@@ -23,7 +23,15 @@ export interface Department {
 
 export interface GetDepartmentsResponse {
   success: boolean;
-  data: Department[];
+  data: {
+    data: Department[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
   timestamp: string;
 }
 
@@ -31,6 +39,9 @@ export interface GetDepartmentsParams {
   status?: DepartmentStatus;
   sort_by?: string;
   sort_order?: SortOrder;
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 export interface UpdateDepartmentParams {
   name?: string;

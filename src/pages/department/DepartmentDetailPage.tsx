@@ -29,7 +29,7 @@ const DepartmentDetailPage = () => {
   // In a real app, we would fetch the specific department details
   // For now, we'll find it from the list or just use dummy info
   const { data: response, isLoading } = useDepartments();
-  const department = response?.data?.find((d) => d.id === id);
+  const department = response?.data?.data?.find((department) => department.id === id);
 
   useEffect(() => {
     if (!isLoading && department && department.status === Status.INACTIVE) {

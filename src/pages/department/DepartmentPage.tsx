@@ -65,23 +65,19 @@ const DepartmentPage = () => {
       status: selectedStatus === 'ALL' ? undefined : (selectedStatus as Status),
       sort_by: sortBy,
       sort_order: sortOrder as SortOrder,
+      page: pagination.pageIndex + 1,
+      limit: pagination.pageSize,
+      search: debouncedSearchQuery || undefined,
     };
-  }, [selectedSort, selectedStatus]);
+  }, [selectedSort, selectedStatus, pagination, debouncedSearchQuery]);
 
   const { data: response, isLoading } = useDepartments(queryParams);
 
-  const departmentList = useMemo(() => response?.data || [], [response]);
+  const departmentList = useMemo(() => response?.data?.data || [], [response]);
 
   const filteredData = useMemo(() => {
-    if (!debouncedSearchQuery) return departmentList;
-    const query = debouncedSearchQuery.toLowerCase();
-    return departmentList.filter(
-      (dept: Department) =>
-        dept.name.toLowerCase().includes(query) ||
-        dept.code.toLowerCase().includes(query) ||
-        dept.description.toLowerCase().includes(query),
-    );
-  }, [debouncedSearchQuery, departmentList]);
+    return departmentList;
+  }, [departmentList]);
 
   const handleAddDepartment = useCallback(() => {
     // Logic to add department
@@ -89,7 +85,7 @@ const DepartmentPage = () => {
 
   const handleDeactivateClick = useCallback((dept: Department) => {
     setSelectedDepartment(dept);
-    if (dept.employee_count > 0) {
+    if (dept.memberAvatars?.length > 0) {
       setShowCannotDeactivateModal(true);
     } else {
       setShowDeactivateModal(true);
@@ -149,20 +145,15 @@ const DepartmentPage = () => {
 
       return (
         <div className={styles.grid}>
-          {filteredData
-            .slice(
-              pagination.pageIndex * pagination.pageSize,
-              (pagination.pageIndex + 1) * pagination.pageSize,
-            )
-            .map((item) => (
-              <DepartmentCard
-                key={item.id}
-                department={item}
-                onEditClick={() => {}} // Placeholder for edit
-                onToggleStatus={() => handleDeactivateClick(item)}
-                onDelete={() => handleDeleteClick(item)}
-              />
-            ))}
+          {departmentList.map((item) => (
+            <DepartmentCard
+              key={item.id}
+              department={item}
+              onEditClick={() => {}} // Placeholder for edit
+              onToggleStatus={() => handleDeactivateClick(item)}
+              onDelete={() => handleDeleteClick(item)}
+            />
+          ))}
         </div>
       );
     }
@@ -170,9 +161,11 @@ const DepartmentPage = () => {
     return (
       <DataTable
         columns={departmentColumns}
-        data={filteredData}
+        data={departmentList}
         pagination={pagination}
         onPaginationChange={setPagination}
+        manualPagination={true}
+        pageCount={response?.data?.meta?.totalPages || 0}
       />
     );
   };
@@ -246,8 +239,8 @@ const DepartmentPage = () => {
         title="Cannot Deactivate Department"
         alertMessage={
           <>
-            <strong>Action Blocked:</strong> {selectedDepartment?.employee_count} active employees
-            assigned.
+            <strong>Action Blocked:</strong> {selectedDepartment?.memberAvatars?.length} active
+            employees assigned.
           </>
         }
         description="Departments with active employees cannot be deactivated or deleted to protect data integrity and payroll accuracy. Reassign all active members to a different department before you can deactivate the department."

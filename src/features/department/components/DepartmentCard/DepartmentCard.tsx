@@ -68,15 +68,7 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
       </div>
 
       <div className={styles.footer}>
-        <AvatarGroup
-          avatars={[
-            'https://i.pravatar.cc/150?u=1',
-            'https://i.pravatar.cc/150?u=2',
-            'https://i.pravatar.cc/150?u=3',
-          ]}
-          max={3}
-          size={24}
-        />
+        <AvatarGroup avatars={department.memberAvatars || []} max={3} size={24} />
 
         <StatusBadge status={status} />
       </div>
