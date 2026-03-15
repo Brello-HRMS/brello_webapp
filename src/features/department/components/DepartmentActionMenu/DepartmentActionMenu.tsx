@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, MoreVertical, Power } from 'lucide-react';
+import { Edit2, Trash2, MoreVertical, Power, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Popover } from '../../../../components/common/Popover/Popover';
 import { useDeleteDepartment } from '../../hooks/useDeleteDepartment';
@@ -20,6 +21,7 @@ export const DepartmentActionMenu: React.FC<DepartmentActionMenuProps> = ({
   onEdit,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
   const { mutate: deleteDept } = useDeleteDepartment();
   const { mutate: updateDept } = useUpdateDepartment();
 
@@ -43,6 +45,14 @@ export const DepartmentActionMenu: React.FC<DepartmentActionMenuProps> = ({
   };
 
   const menuItems = [
+    {
+      icon: <Eye size={16} />,
+      title: 'View',
+      action: () => {
+        navigate(`/organisation/departments/${department.id}`);
+        setIsOpen(false);
+      },
+    },
     {
       icon: <Edit2 size={16} />,
       title: 'Edit',

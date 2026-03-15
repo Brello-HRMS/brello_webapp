@@ -41,7 +41,7 @@
   margin: 0 4px;
 }
 
-.breadcrumb {
+.breadcrumbsContainer {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -51,13 +51,20 @@
     color: var(--color-secondary);
   }
 
-  .breadcrumbText {
-    font-size: clamp(0.75rem, 0.6607rem + 0.2381vw, 0.875rem);
-    font-weight: 600;
-    color: var(--color-text-primary);
-    border-radius: var(--radius-sm);
-    background-color: var(--color-surface);
-    padding: 4px clamp(0.25rem, 0.1429rem + 0.4762vw, 0.5rem);
+  .breadcrumbPill {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    background-color: var(--color-gray-50);
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+
+    &.active {
+      color: var(--color-text-primary);
+      font-weight: 600;
+      background-color: var(--color-gray-100);
+    }
   }
 }
 

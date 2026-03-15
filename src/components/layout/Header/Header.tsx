@@ -8,7 +8,7 @@ import {
   PanelRightClose,
   Settings,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ThemeCustomizer } from '../../../features/theme/ThemeCustomizer';
@@ -28,9 +28,15 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
 
-  const pathname = location.pathname.split('/').filter(Boolean);
-  const lastPathname = pathname.length > 0 ? pathname[pathname.length - 1] : '';
-  const breadcrumbText = lastPathname.charAt(0).toUpperCase() + lastPathname.slice(1);
+  const breadcrumbs = useMemo(() => {
+    const segments = location.pathname.split('/').filter(Boolean);
+
+    return segments.map((segment: string) => {
+      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+
+      return { label, path: segment };
+    });
+  }, [location.pathname]);
 
   const profileActionItems = [
     ...(!isDesktop
@@ -69,10 +75,15 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
 
         <div className={styles.divider} />
 
-        <div className={styles.breadcrumb}>
+        <div className={styles.breadcrumbsContainer}>
           <Globe size={18} className={styles.breadcrumbIcon} />
-          <ChevronRight size={16} className={styles.chevronIcon} />
-          <span className={styles.breadcrumbText}>{breadcrumbText}</span>
+
+          {breadcrumbs.map((crumb: { path: string; label: string }) => (
+            <React.Fragment key={crumb.path}>
+              <ChevronRight size={16} className={styles.chevronIcon} />
+              <div className={`${styles.breadcrumbPill}`}>{crumb.label}</div>
+            </React.Fragment>
+          ))}
         </div>
       </div>
 

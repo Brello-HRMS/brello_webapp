@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { AvatarGroup } from '../../../../components/common/AvatarGroup/AvatarGroup';
 import { StatusBadge } from '../../../../components/common/StatusBadge/StatusBadge';
@@ -23,9 +24,14 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
   onEditClick,
 }) => {
   const { name, code, status, icon } = department;
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/organisation/departments/${department.id}`);
+  };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={handleCardClick} style={{ cursor: 'pointer' }}>
       <div className={styles.header}>
         <div className={styles.iconWrapper} style={{ backgroundColor: iconBg, color: iconColor }}>
           {icon ? (
