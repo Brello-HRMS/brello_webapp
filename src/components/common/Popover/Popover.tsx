@@ -10,6 +10,7 @@ export interface PopoverAction {
   action: () => void;
   color?: string;
   className?: string;
+  disabled?: boolean;
 }
 
 export interface PopoverProps {
@@ -47,13 +48,17 @@ export const Popover: React.FC<PopoverProps> = ({
           {items?.map((item, index) => (
             <button
               key={index}
-              className={`${styles.menuItem} ${item.className || ''}`.trim()}
+              className={`${styles.menuItem} ${item.className || ''} ${
+                item.disabled ? styles.disabled : ''
+              }`.trim()}
               onClick={(e) => {
                 e.stopPropagation();
+                if (item.disabled) return;
                 item.action();
                 setIsOpen(false);
               }}
-              style={item.color ? { color: item.color } : {}}
+              style={item.color && !item.disabled ? { color: item.color } : {}}
+              disabled={item.disabled}
             >
               {item.icon && <span className={styles.iconWrapper}>{item.icon}</span>}
               <span className={styles.label}>{item.title}</span>

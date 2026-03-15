@@ -8,12 +8,12 @@
   flex-direction: column;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 24px -8px rgba(71, 84, 103, 0.12);
     border-color: var(--color-primary-purple);
+    z-index: 10;
   }
 }
 

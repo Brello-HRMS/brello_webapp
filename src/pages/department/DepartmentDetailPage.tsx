@@ -1,17 +1,17 @@
-import { useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, Download } from 'lucide-react';
 
-import { Button, DataTable, ListControls, PageHeader } from '../components/common';
-import { employeeColumns } from '../features/department/columns/employeeColumns';
-import { DUMMY_EMPLOYEES } from '../features/department/data/dummyEmployees';
-import { useDepartments } from '../features/department/hooks/useDepartments';
-import { useDebounce } from '../hooks/useDebounce';
-import { SortOrder } from '../types/common';
+import { Button, DataTable, ListControls, PageHeader, WarningModal } from '../../components/common';
+import { employeeColumns } from '../../features/department/columns/employeeColumns';
+import { DUMMY_EMPLOYEES } from '../../features/department/data/dummyEmployees';
+import { useDepartments } from '../../features/department/hooks/useDepartments';
+import { useDebounce } from '../../hooks/useDebounce';
+import { SortOrder, Status } from '../../types/common';
 
 import styles from './DepartmentDetailPage.module.scss';
 
-import type { SortOption } from '../components/common';
+import type { SortOption } from '../../components/common';
 
 const SORT_OPTIONS: SortOption[] = [
   { label: 'Alphabetical (A-Z)', value: `name:${SortOrder.ASC}` },
@@ -23,11 +23,19 @@ const DepartmentDetailPage = () => {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [searchQuery, setSearchQuery] = useState('');
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const navigate = useNavigate();
 
   // In a real app, we would fetch the specific department details
   // For now, we'll find it from the list or just use dummy info
-  const { data: response } = useDepartments();
+  const { data: response, isLoading } = useDepartments();
   const department = response?.data?.find((d) => d.id === id);
+
+  useEffect(() => {
+    if (!isLoading && department && department.status === Status.INACTIVE) {
+      navigate('/organisation/departments');
+    }
+  }, [department, isLoading, navigate]);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -77,10 +85,7 @@ const DepartmentDetailPage = () => {
         filterTitle="Filters"
         showViewSwitcher={false}
         selectedCount={Object.keys(rowSelection).length}
-        onDelete={() => {
-          // In a real app, this would call an API or update state
-          setRowSelection({});
-        }}
+        onDelete={() => setShowDeleteModal(true)}
       />
 
       <DataTable
@@ -92,6 +97,19 @@ const DepartmentDetailPage = () => {
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
         rowIdField="employeeId"
+      />
+
+      <WarningModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Selected Employees?"
+        description={`Are you sure want to delete the ${Object.keys(rowSelection).length} selected employees? This action cannot be undone.`}
+        actionLabel="Delete"
+        onAction={() => {
+          // API Logic
+          setRowSelection({});
+          setShowDeleteModal(false);
+        }}
       />
     </div>
   );

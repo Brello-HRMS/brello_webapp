@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-import no_department from '../assets/svg/department/no_department_found.svg';
+import no_department from '../../assets/svg/department/no_department_found.svg';
 import {
   Button,
   DataTable,
@@ -9,16 +10,21 @@ import {
   ListControls,
   NoDataFound,
   PageHeader,
-} from '../components/common';
-import { departmentColumns } from '../features/department/columns/departmentColumns';
-import { DepartmentCard } from '../features/department/components/DepartmentCard/DepartmentCard';
-import { useDepartments } from '../features/department/hooks/useDepartments';
-import { useDebounce } from '../hooks/useDebounce';
-import { SortOrder, Status } from '../types/common';
+  WarningModal,
+  AlertModal,
+} from '../../components/common';
+import { departmentColumns } from '../../features/department/columns/departmentColumns';
+import { DepartmentCard } from '../../features/department/components/DepartmentCard/DepartmentCard';
+import { useDeleteDepartment } from '../../features/department/hooks/useDeleteDepartment';
+import { useDepartments } from '../../features/department/hooks/useDepartments';
+import { useUpdateDepartment } from '../../features/department/hooks/useUpdateDepartment';
+import { useDebounce } from '../../hooks/useDebounce';
+import { SortOrder, Status } from '../../types/common';
 
 import styles from './DepartmentPage.module.scss';
 
-import type { SortOption, ViewType } from '../components/common';
+import type { SortOption, ViewType } from '../../components/common';
+import type { Department } from '../../features/department/types/departmentType';
 
 const SORT_OPTIONS: SortOption[] = [
   { label: 'Alphabetical (A-Z)', value: `name:${SortOrder.ASC}` },
@@ -40,6 +46,17 @@ const DepartmentPage = () => {
   const [selectedSort, setSelectedSort] = useState(`name:${SortOrder.ASC}`);
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
+  // Modal states
+  const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const [showCannotDeactivateModal, setShowCannotDeactivateModal] = useState(false);
+  const [showDeleteDeptModal, setShowDeleteDeptModal] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
+
+  const { mutate: deleteDept } = useDeleteDepartment();
+  const { mutate: updateDept } = useUpdateDepartment();
+
+  const navigate = useNavigate();
+
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const queryParams = useMemo(() => {
@@ -59,7 +76,7 @@ const DepartmentPage = () => {
     if (!debouncedSearchQuery) return departmentList;
     const query = debouncedSearchQuery.toLowerCase();
     return departmentList.filter(
-      (dept) =>
+      (dept: Department) =>
         dept.name.toLowerCase().includes(query) ||
         dept.code.toLowerCase().includes(query) ||
         dept.description.toLowerCase().includes(query),
@@ -70,9 +87,43 @@ const DepartmentPage = () => {
     // Logic to add department
   }, []);
 
-  const handleEditClick = useCallback(() => {
-    // Logic for action click
+  const handleDeactivateClick = useCallback((dept: Department) => {
+    setSelectedDepartment(dept);
+    if (dept.employee_count > 0) {
+      setShowCannotDeactivateModal(true);
+    } else {
+      setShowDeactivateModal(true);
+    }
   }, []);
+
+  const handleDeleteClick = useCallback((dept: Department) => {
+    setSelectedDepartment(dept);
+    setShowDeleteDeptModal(true);
+  }, []);
+
+  const handleDeactivate = useCallback(() => {
+    if (selectedDepartment) {
+      updateDept(
+        {
+          id: selectedDepartment.id,
+          params: {
+            status: selectedDepartment.status === Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE,
+          },
+        },
+        {
+          onSuccess: () => setShowDeactivateModal(false),
+        },
+      );
+    }
+  }, [selectedDepartment, updateDept]);
+
+  const handleDeleteDept = useCallback(() => {
+    if (selectedDepartment) {
+      deleteDept(selectedDepartment.id, {
+        onSuccess: () => setShowDeleteDeptModal(false),
+      });
+    }
+  }, [selectedDepartment, deleteDept]);
 
   const excelExportData = useMemo(() => {
     return filteredData.map((dept) => ({
@@ -104,7 +155,13 @@ const DepartmentPage = () => {
               (pagination.pageIndex + 1) * pagination.pageSize,
             )
             .map((item) => (
-              <DepartmentCard key={item.id} department={item} onEditClick={handleEditClick} />
+              <DepartmentCard
+                key={item.id}
+                department={item}
+                onEditClick={() => {}} // Placeholder for edit
+                onToggleStatus={() => handleDeactivateClick(item)}
+                onDelete={() => handleDeleteClick(item)}
+              />
             ))}
         </div>
       );
@@ -173,6 +230,42 @@ const DepartmentPage = () => {
       />
 
       {renderContent()}
+
+      <WarningModal
+        isOpen={showDeactivateModal}
+        onClose={() => setShowDeactivateModal(false)}
+        title="Deactivate Department?"
+        description={`Deactivate the ${selectedDepartment?.name} department? It will no longer be available for new employee assignments.`}
+        actionLabel="Deactivate"
+        onAction={handleDeactivate}
+      />
+
+      <AlertModal
+        isOpen={showCannotDeactivateModal}
+        onClose={() => setShowCannotDeactivateModal(false)}
+        title="Cannot Deactivate Department"
+        alertMessage={
+          <>
+            <strong>Action Blocked:</strong> {selectedDepartment?.employee_count} active employees
+            assigned.
+          </>
+        }
+        description="Departments with active employees cannot be deactivated or deleted to protect data integrity and payroll accuracy. Reassign all active members to a different department before you can deactivate the department."
+        actionLabel="View Employees"
+        onAction={() => {
+          setShowCannotDeactivateModal(false);
+          navigate(`/organisation/departments/${selectedDepartment?.id}`);
+        }}
+      />
+
+      <WarningModal
+        isOpen={showDeleteDeptModal}
+        onClose={() => setShowDeleteDeptModal(false)}
+        title="Delete Department?"
+        description={`Are you sure you want to delete the ${selectedDepartment?.name} department? This action cannot be undone.`}
+        actionLabel="Delete"
+        onAction={handleDeleteDept}
+      />
     </div>
   );
 };

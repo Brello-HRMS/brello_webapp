@@ -11,9 +11,9 @@ import { LeadForm } from '../features/auth/components/Lead/LeadForm';
 import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen';
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
 // import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
-import DepartmentPage from '../pages/DepartmentPage';
-import DepartmentDetailPage from '../pages/DepartmentDetailPage';
 import EmployeeProfilePage from '../pages/EmployeeProfilePage';
+import DepartmentPage from '../pages/department/DepartmentPage';
+import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');

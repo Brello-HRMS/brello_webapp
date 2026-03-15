@@ -40,3 +40,25 @@
     filter: brightness(0.9);
   }
 }
+
+.danger {
+  background-color: #df2224;
+  border: 1px solid #df2224;
+  color: var(--color-white);
+  box-shadow: var(--shadow-button);
+
+  &:hover {
+    background-color: #c91f21;
+    border-color: #c91f21;
+  }
+}
+
+.ghost {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-primary-500);
+
+  &:hover {
+    background-color: var(--color-gray-50);
+  }
+}

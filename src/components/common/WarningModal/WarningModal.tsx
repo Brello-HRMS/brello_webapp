@@ -11,6 +11,7 @@ export interface WarningModalProps extends Omit<ModalProps, 'children'> {
   description: ReactNode;
   actionLabel: string;
   onAction: () => void;
+  actionVariant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   isActionLoading?: boolean;
 }
 
@@ -21,6 +22,7 @@ export const WarningModal: React.FC<WarningModalProps> = ({
   description,
   actionLabel,
   onAction,
+  actionVariant,
   isActionLoading = false,
   className = '',
   ...rest
@@ -52,7 +54,12 @@ export const WarningModal: React.FC<WarningModalProps> = ({
         >
           Cancel
         </Button>
-        <Button className={styles.actionButton} onClick={onAction} disabled={isActionLoading}>
+        <Button
+          variant={actionVariant || 'danger'}
+          className={styles.actionButton}
+          onClick={onAction}
+          disabled={isActionLoading}
+        >
           {actionLabel}
         </Button>
       </div>
