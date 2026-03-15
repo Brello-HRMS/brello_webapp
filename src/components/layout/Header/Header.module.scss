@@ -49,6 +49,13 @@
   .breadcrumbIcon,
   .chevronIcon {
     color: var(--color-secondary);
+    flex-shrink: 0;
+  }
+
+  .breadcrumbSegment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .breadcrumbPill {
@@ -140,12 +147,48 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .breadcrumbIcon {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .breadcrumbSegment:nth-child(1) {
+    display: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .breadcrumbSegment:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (max-width: 764px) {
+  .breadcrumbSegment:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .notificationButton {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .settingsButton {
+    display: none;
+  }
+}
+
 @media (max-width: 600px) {
-  .breadcrumbText {
+  .divider {
     display: none;
   }
 
-  .divider {
+  .breadcrumbSegment {
     display: none;
   }
 }
