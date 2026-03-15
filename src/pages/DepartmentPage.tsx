@@ -71,7 +71,7 @@ const DepartmentPage = () => {
     // Logic to add department
   }, []);
 
-  const handleActionClick = useCallback(() => {
+  const handleEditClick = useCallback(() => {
     // Logic for action click
   }, []);
 
@@ -105,7 +105,7 @@ const DepartmentPage = () => {
               (pagination.pageIndex + 1) * pagination.pageSize,
             )
             .map((item) => (
-              <DepartmentCard key={item.id} department={item} onActionClick={handleActionClick} />
+              <DepartmentCard key={item.id} department={item} onEditClick={handleEditClick} />
             ))}
         </div>
       );

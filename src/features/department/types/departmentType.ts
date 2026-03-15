@@ -31,3 +31,7 @@ export interface GetDepartmentsParams {
   sort_by?: string;
   sort_order?: SortOrder;
 }
+export interface UpdateDepartmentParams {
+  name?: string;
+  status?: DepartmentStatus;
+}

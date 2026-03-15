@@ -2,7 +2,7 @@ import { Users } from 'lucide-react';
 
 import { StatusBadge } from '../../../components/common';
 import { Status } from '../../../types/common';
-import { ActionsCell } from '../components/ActionsCell';
+import { DepartmentActionMenu } from '../components/DepartmentActionMenu/DepartmentActionMenu';
 
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Department } from '../types/departmentType';
@@ -79,6 +79,6 @@ export const departmentColumns: ColumnDef<Department>[] = [
     id: 'actions',
     header: 'Actions',
     size: 150,
-    cell: ActionsCell,
+    cell: (info) => <DepartmentActionMenu department={info.row.original} />,
   },
 ];
