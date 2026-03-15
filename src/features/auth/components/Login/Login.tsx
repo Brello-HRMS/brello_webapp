@@ -8,6 +8,7 @@ import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Input } from '../../../../components/ui/Input/Input';
 import { Button } from '../../../../components/ui/Button/Button';
 import { useLoginWithOTP } from '../../api/useLogin';
+import { showToast } from '../../../ToastFeature/ShowToast';
 
 import styles from './Login.module.scss';
 
@@ -37,10 +38,9 @@ export const Login: React.FC = () => {
     onSuccess: () => {
       const email = getValues('email');
       navigate('/auth/otp', { state: { email, resource: 'login' } });
+      showToast('OTP sent successfully', 'success');
     },
-    onError: () => {
-      // console.error('Login with OTP failed', err);
-    },
+    onError: (err) => showToast(err.message || 'Login failed. Please try again.', 'error'),
   });
 
   const onSubmit = (data: LoginFormValues) => {
