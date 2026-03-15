@@ -18,6 +18,9 @@ export interface DepartmentCardProps {
   onEditClick?: () => void;
   onToggleStatus?: () => void;
   onDelete?: () => void;
+  isSelecting?: boolean;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
 export const DepartmentCard: React.FC<DepartmentCardProps> = ({
@@ -27,12 +30,19 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
   onEditClick,
   onToggleStatus,
   onDelete,
+  isSelecting = false,
+  isSelected = false,
+  onSelect,
 }) => {
   const { name, code, status, icon } = department;
   const navigate = useNavigate();
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (isSelecting) {
+      onSelect?.();
+      return;
+    }
     if (status === Status.INACTIVE) return;
     navigate(`/organisation/departments/${department.id}`);
   };
@@ -41,9 +51,11 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
 
   return (
     <div
-      className={styles.card}
+      className={`${styles.card} ${isSelecting ? styles.selecting : ''} ${
+        isSelected ? styles.selected : ''
+      }`}
       onClick={handleCardClick}
-      style={{ cursor: isInactive ? 'default' : 'pointer' }}
+      style={{ cursor: isInactive && !isSelecting ? 'default' : 'pointer' }}
     >
       <div className={styles.header}>
         <div className={styles.iconWrapper} style={{ backgroundColor: iconBg, color: iconColor }}>
@@ -53,13 +65,14 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
             <Users size={24} />
           )}
         </div>
-
-        <DepartmentActionMenu
-          department={department}
-          onEdit={onEditClick}
-          onToggleStatus={onToggleStatus}
-          onDelete={onDelete}
-        />
+        {!isSelecting && (
+          <DepartmentActionMenu
+            department={department}
+            onEdit={onEditClick}
+            onToggleStatus={onToggleStatus}
+            onDelete={onDelete}
+          />
+        )}
       </div>
 
       <div className={styles.content}>

@@ -133,6 +133,16 @@
     border-color: var(--color-border-hover);
     color: var(--color-text-primary-500);
   }
+
+  &.active {
+    border-color: var(--color-primary-purple);
+    background-color: #f9f5ff;
+    color: var(--color-primary-purple);
+
+    svg {
+      color: var(--color-primary-purple);
+    }
+  }
 }
 
 .badge {

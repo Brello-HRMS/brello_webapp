@@ -10,6 +10,7 @@ import {
   StretchHorizontal,
   ArrowDownNarrowWide,
   Trash2,
+  MousePointerSquareDashed,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -61,6 +62,10 @@ interface ListControlsProps {
   onDelete?: () => void;
 
   // Visibility toggle
+  showMultiSelect?: boolean;
+  isMultiSelectActive?: boolean;
+  onMultiSelectToggle?: () => void;
+
   className?: string;
 }
 
@@ -86,6 +91,9 @@ export const ListControls: React.FC<ListControlsProps> = memo(
     onSortChange,
     selectedCount = 0,
     onDelete,
+    showMultiSelect = false,
+    isMultiSelectActive = false,
+    onMultiSelectToggle,
     className = '',
   }) => {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -192,6 +200,16 @@ export const ListControls: React.FC<ListControlsProps> = memo(
                 )}
               </AnimatePresence>
             </div>
+          )}
+
+          {showMultiSelect && (
+            <button
+              className={`${styles.actionButton} ${isMultiSelectActive ? styles.active : ''}`}
+              onClick={onMultiSelectToggle}
+            >
+              <MousePointerSquareDashed size={18} />
+              <span>Multi-select</span>
+            </button>
           )}
         </div>
 

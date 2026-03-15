@@ -52,7 +52,12 @@ const DepartmentPage = () => {
   const [showCannotDeactivateModal, setShowCannotDeactivateModal] = useState(false);
   const [showDeleteDeptModal, setShowDeleteDeptModal] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const [isAddDepartmentOpen, setIsAddDepartmentOpen] = useState(false);
+
+  // Multi-select state
+  const [isMultiSelectActive, setIsMultiSelectActive] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
 
   const { mutate: deleteDept } = useDeleteDepartment();
   const { mutate: updateDept } = useUpdateDepartment();
@@ -82,6 +87,12 @@ const DepartmentPage = () => {
   }, [departmentList]);
 
   const handleAddDepartment = useCallback(() => {
+    setEditingDepartment(null);
+    setIsAddDepartmentOpen(true);
+  }, []);
+
+  const handleEditDepartment = useCallback((dept: Department) => {
+    setEditingDepartment(dept);
     setIsAddDepartmentOpen(true);
   }, []);
 
@@ -124,13 +135,24 @@ const DepartmentPage = () => {
   }, [selectedDepartment, deleteDept]);
 
   const excelExportData = useMemo(() => {
-    return filteredData.map((dept) => ({
+    const dataToExport = isMultiSelectActive
+      ? filteredData.filter((dept) => selectedIds[dept.id])
+      : filteredData;
+
+    return dataToExport.map((dept) => ({
       Name: dept.name,
       Code: dept.code,
       Description: dept.description,
       Status: dept.status,
     }));
-  }, [filteredData]);
+  }, [filteredData, isMultiSelectActive, selectedIds]);
+
+  const handleToggleSelection = useCallback((id: string) => {
+    setSelectedIds((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  }, []);
 
   const renderContent = () => {
     if (viewType === 'grid') {
@@ -151,9 +173,12 @@ const DepartmentPage = () => {
             <DepartmentCard
               key={item.id}
               department={item}
-              onEditClick={() => {}} // Placeholder for edit
+              onEditClick={() => handleEditDepartment(item)}
               onToggleStatus={() => handleDeactivateClick(item)}
               onDelete={() => handleDeleteClick(item)}
+              isSelecting={isMultiSelectActive}
+              isSelected={!!selectedIds[item.id]}
+              onSelect={() => handleToggleSelection(item.id)}
             />
           ))}
         </div>
@@ -168,6 +193,10 @@ const DepartmentPage = () => {
         onPaginationChange={setPagination}
         manualPagination={true}
         pageCount={response?.data?.meta?.totalPages || 0}
+        enableRowSelection={isMultiSelectActive}
+        rowSelection={selectedIds}
+        onRowSelectionChange={setSelectedIds}
+        rowIdField="id"
       />
     );
   };
@@ -198,10 +227,22 @@ const DepartmentPage = () => {
               data={excelExportData}
               filename="departments.xlsx"
               sheetName="Departments"
-              buttonText="Export"
+              buttonText={
+                isMultiSelectActive
+                  ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
+                  : 'Export All'
+              }
               variant="secondary"
+              disabled={
+                isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
+              }
             />
-            <Button variant="primary" onClick={handleAddDepartment}>
+            <Button
+              variant="primary"
+              onClick={handleAddDepartment}
+              disabled={isMultiSelectActive}
+              title={isMultiSelectActive ? 'Disable multi-select to add department' : undefined}
+            >
               <Plus size={16} />
               Add department
             </Button>
@@ -222,6 +263,14 @@ const DepartmentPage = () => {
         selectedFilter={selectedStatus}
         onFilterChange={setSelectedStatus}
         filterTitle="Filter"
+        showMultiSelect={true}
+        isMultiSelectActive={isMultiSelectActive}
+        onMultiSelectToggle={() => {
+          setIsMultiSelectActive(!isMultiSelectActive);
+          if (isMultiSelectActive) {
+            setSelectedIds({});
+          }
+        }}
       />
 
       {renderContent()}
@@ -263,8 +312,13 @@ const DepartmentPage = () => {
       />
 
       <AddDepartmentModal
+        key={isAddDepartmentOpen ? editingDepartment?.id || 'new' : 'closed'}
         open={isAddDepartmentOpen}
-        onClose={() => setIsAddDepartmentOpen(false)}
+        onClose={() => {
+          setIsAddDepartmentOpen(false);
+          setEditingDepartment(null);
+        }}
+        department={editingDepartment}
       />
     </div>
   );

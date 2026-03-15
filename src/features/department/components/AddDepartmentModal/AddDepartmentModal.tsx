@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Code, Tv, Users, Gamepad2, Headphones, Layers, FileText, Banknote } from 'lucide-react';
 
 import { Dialog, Button } from '../../../../components/common';
 import { Input } from '../../../../components/ui/Input/Input';
 import { useCreateDepartment } from '../../hooks/useCreateDepartment';
+import { useUpdateDepartment } from '../../hooks/useUpdateDepartment';
 import { Status } from '../../../../types/common';
 
 import styles from './AddDepartmentModal.module.scss';
@@ -11,6 +12,7 @@ import styles from './AddDepartmentModal.module.scss';
 interface AddDepartmentModalProps {
   open: boolean;
   onClose: () => void;
+  department?: Department | null;
 }
 
 const icons = [
@@ -24,16 +26,48 @@ const icons = [
   { id: 'banknote', component: <Banknote size={20} /> },
 ];
 
-export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, onClose }) => {
-  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    code: '',
-    description: '',
-    isActive: true,
-  });
+import type { Department } from '../../types/departmentType';
 
-  const { mutate: createDept, isPending } = useCreateDepartment();
+const initialFormState = {
+  name: '',
+  code: '',
+  description: '',
+  isActive: true,
+};
+
+export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({
+  open,
+  onClose,
+  department,
+}) => {
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+  const [formData, setFormData] = useState(initialFormState);
+
+  const { mutate: createDept, isPending: isCreating } = useCreateDepartment();
+  const { mutate: updateDept, isPending: isUpdating } = useUpdateDepartment();
+
+  const isPending = isCreating || isUpdating;
+  const isEdit = !!department;
+
+  useEffect(() => {
+    if (open) {
+      const handleOpen = () => {
+        if (department) {
+          setFormData({
+            name: department.name,
+            code: department.code,
+            description: department.description || '',
+            isActive: department.status === Status.ACTIVE,
+          });
+        } else {
+          setFormData(initialFormState);
+        }
+
+        setSelectedIcon(null);
+      };
+      handleOpen();
+    }
+  }, [open]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -46,21 +80,30 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, on
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createDept(
-      {
-        name: formData.name,
-        code: formData.code.toUpperCase(),
-        description: formData.description,
-        status: formData.isActive ? Status.ACTIVE : Status.INACTIVE,
-      },
-      {
+
+    const payload = {
+      name: formData.name,
+      code: formData.code.toUpperCase(),
+      description: formData.description,
+      status: formData.isActive ? Status.ACTIVE : Status.INACTIVE,
+    };
+
+    if (isEdit && department) {
+      updateDept(
+        { id: department.id, params: payload },
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        },
+      );
+    } else {
+      createDept(payload, {
         onSuccess: () => {
           onClose();
-          setFormData({ name: '', code: '', description: '', isActive: true });
-          setSelectedIcon(null);
         },
-      },
-    );
+      });
+    }
   };
 
   const actions = (
@@ -81,14 +124,14 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, on
         className={styles.saveAction}
         isLoading={isPending}
       >
-        Create department
+        {isEdit ? 'Save changes' : 'Create department'}
       </Button>
     </div>
   );
 
   return (
     <Dialog
-      title="Add New Department"
+      title={isEdit ? 'Edit Department' : 'Add New Department'}
       open={open}
       onClose={onClose}
       actions={actions}
@@ -120,7 +163,7 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, on
             required
             placeholder="e.g., FIN-001"
             name="code"
-            value={formData.code}
+            value={formData.code.toUpperCase()}
             onChange={handleInputChange}
           />
         </div>

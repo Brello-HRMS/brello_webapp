@@ -45,6 +45,8 @@ export interface GetDepartmentsParams {
 }
 export interface UpdateDepartmentParams {
   name?: string;
+  code?: string;
+  description?: string;
   status?: DepartmentStatus;
 }
 

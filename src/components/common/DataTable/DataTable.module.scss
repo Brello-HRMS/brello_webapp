@@ -353,6 +353,12 @@
       border-bottom: none;
     }
   }
+
+  &.selectedRow {
+    .td {
+      background: rgba(127, 86, 217, 0.04);
+    }
+  }
 }
 
 .pinnedHeader,

@@ -15,6 +15,31 @@
     border-color: var(--color-primary-purple);
     z-index: 10;
   }
+
+  &.selecting {
+    opacity: 0.6;
+    border-color: var(--color-border);
+
+    &:hover {
+      opacity: 0.9;
+      border-color: var(--color-primary-200);
+      background-color: var(--color-primary-50);
+    }
+  }
+
+  &.selected {
+    opacity: 1;
+    border-color: var(--color-primary-purple);
+    background-color: rgba(127, 86, 217, 0.05); // Very light purple
+    box-shadow: 0 0 0 2px rgba(127, 86, 217, 0.1);
+  }
+}
+
+.selectionIndicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
 }
 
 .header {
@@ -83,4 +108,9 @@
   align-items: center;
   padding-top: var(--spacing-2);
   border-top: 1px solid var(--color-surface);
+}
+
+.card.selecting:not(.selected):not(:hover) {
+  opacity: 0.4;
+  filter: grayscale(0.5);
 }
