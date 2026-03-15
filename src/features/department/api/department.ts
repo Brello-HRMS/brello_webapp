@@ -1,7 +1,7 @@
 import { apiClient } from '../../../lib/axios';
 import { envVars } from '../../../utils/envVars';
 
-import type { GetDepartmentsParams, GetDepartmentsResponse } from './departmentType';
+import type { GetDepartmentsParams, GetDepartmentsResponse } from '../types/departmentType';
 
 export const getDepartments = async (
   params?: GetDepartmentsParams,

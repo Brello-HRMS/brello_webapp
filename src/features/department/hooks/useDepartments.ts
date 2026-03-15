@@ -5,7 +5,7 @@ import { showToast } from '../../ToastFeature/ShowToast';
 
 import type { ApiError } from '../../../types/common';
 import type { UseQueryOptions } from '@tanstack/react-query';
-import type { GetDepartmentsParams, GetDepartmentsResponse } from '../api/departmentType';
+import type { GetDepartmentsParams, GetDepartmentsResponse } from '../types/departmentType';
 
 export const useDepartments = (
   params?: GetDepartmentsParams,

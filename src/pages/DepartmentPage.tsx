@@ -1,8 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Download, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import no_department from '../assets/svg/department/no_department_found.svg';
-import { Button, DataTable, ListControls, NoDataFound, PageHeader } from '../components/common';
+import {
+  Button,
+  DataTable,
+  ExcelExport,
+  ListControls,
+  NoDataFound,
+  PageHeader,
+} from '../components/common';
 import { departmentColumns } from '../features/department/columns/departmentColumns';
 import { DepartmentCard } from '../features/department/components/DepartmentCard/DepartmentCard';
 import { useDepartments } from '../features/department/hooks/useDepartments';
@@ -67,6 +74,15 @@ const DepartmentPage = () => {
     // Logic for action click
   }, []);
 
+  const excelExportData = useMemo(() => {
+    return filteredData.map((dept) => ({
+      Name: dept.name,
+      Code: dept.code,
+      Description: dept.description,
+      Status: dept.status,
+    }));
+  }, [filteredData]);
+
   const renderContent = () => {
     if (viewType === 'grid') {
       if (filteredData.length === 0) {
@@ -126,10 +142,13 @@ const DepartmentPage = () => {
         subtitle="Define and manage company departments."
         actions={
           <>
-            <Button variant="secondary">
-              <Download size={16} />
-              Export
-            </Button>
+            <ExcelExport
+              data={excelExportData}
+              filename="departments.xlsx"
+              sheetName="Departments"
+              buttonText="Export"
+              variant="secondary"
+            />
             <Button variant="primary" onClick={handleAddDepartment}>
               <Plus size={16} />
               Add department
