@@ -18,7 +18,6 @@ export const getDepartments = async (
 export const deleteDepartment = async (id: string): Promise<void> => {
   return apiClient.delete(`${envVars.BRELLO_BASE_API}/departments/${id}`);
 };
-
 export const updateDepartment = async (
   id: string,
   params: UpdateDepartmentParams,
