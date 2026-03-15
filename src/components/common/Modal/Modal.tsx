@@ -1,8 +1,8 @@
 import React, { type ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
 
 import styles from './Modal.module.scss';
-import { X } from 'lucide-react';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -22,6 +22,7 @@ export const Modal: React.FC<ModalProps> = ({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     return () => setMounted(false);
   }, []);
