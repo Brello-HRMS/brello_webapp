@@ -9,6 +9,7 @@ import {
   ListFilter,
   StretchHorizontal,
   ArrowDownNarrowWide,
+  Trash2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -55,6 +56,10 @@ interface ListControlsProps {
   selectedSort?: string;
   onSortChange?: (value: string) => void;
 
+  // Selection
+  selectedCount?: number;
+  onDelete?: () => void;
+
   // Visibility toggle
   className?: string;
 }
@@ -79,6 +84,8 @@ export const ListControls: React.FC<ListControlsProps> = memo(
     sortOptions = [],
     selectedSort = '',
     onSortChange,
+    selectedCount = 0,
+    onDelete,
     className = '',
   }) => {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -189,6 +196,21 @@ export const ListControls: React.FC<ListControlsProps> = memo(
         </div>
 
         <div className={styles.rightSection}>
+          <AnimatePresence>
+            {selectedCount > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                className={styles.deleteButton}
+                onClick={onDelete}
+              >
+                <Trash2 size={18} />
+                <span>Delete</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+
           {showViewSwitcher && (
             <div className={styles.viewSwitcher}>
               <button

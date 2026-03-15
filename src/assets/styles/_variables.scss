@@ -4,11 +4,18 @@
   --color-primary: #392a46;
   --color-primary-hover: #7f56d9;
   --color-primary-purple: #8300ff;
+  --color-primary-purple-hover: rgba(131, 0, 255, 0.02);
   --color-primary-border: #7f56d9;
+  --color-primary-50: rgba(127, 86, 217, 0.1);
   --color-secondary: #475467;
+
+  // Shadows
+  --color-shadow-light: rgba(0, 0, 0, 0.05);
+  --color-shadow-medium: rgba(0, 0, 0, 0.1);
 
   // Base Colors
   --color-white: #ffffff;
+  --color-white-transparent: rgba(255, 255, 255, 0.9);
   --color-black: #141414;
 
   // Semantic Colors (Success, Error, Gray)
@@ -19,9 +26,15 @@
   --color-gray-200: #eaecf0;
   --color-gray-500: #d0d5dd;
   --color-gray-700: #344054;
-  --color-error: #dc3545;
-  --color-error-destructive: #ef4444;
-  --color-error-50: #fef3f2;
+  --color-error: #ef4444; // red/500
+  --color-error-destructive: #ef4444; // red/500
+  --color-error-50: #fef2f2; // red/50
+  --color-error-100: #fee4e2;
+  --color-error-700: #b42318;
+
+  // Shadow for buttons
+  --shadow-button: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  --shadow-button-error: 0px 1px 2px 0px rgba(16, 24, 40, 0.02);
 
   // Text Colors
   --color-text-primary: #213547;

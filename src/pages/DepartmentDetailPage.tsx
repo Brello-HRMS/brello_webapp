@@ -22,6 +22,7 @@ const DepartmentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [searchQuery, setSearchQuery] = useState('');
+  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
   // In a real app, we would fetch the specific department details
   // For now, we'll find it from the list or just use dummy info
@@ -79,6 +80,11 @@ const DepartmentDetailPage = () => {
         onFilterChange={() => {}}
         filterTitle="Filters"
         showViewSwitcher={false}
+        selectedCount={Object.keys(rowSelection).length}
+        onDelete={() => {
+          // In a real app, this would call an API or update state
+          setRowSelection({});
+        }}
       />
 
       <DataTable
@@ -86,6 +92,10 @@ const DepartmentDetailPage = () => {
         data={filteredEmployees}
         pagination={pagination}
         onPaginationChange={setPagination}
+        enableRowSelection
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
+        rowIdField="employeeId"
       />
     </div>
   );

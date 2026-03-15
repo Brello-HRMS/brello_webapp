@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -6,7 +6,11 @@ import {
   type ColumnPinningState,
   type VisibilityState,
   type PaginationState,
+  type RowSelectionState,
+  type ColumnDef,
 } from '@tanstack/react-table';
+
+import { Checkbox } from '../Checkbox/Checkbox';
 
 import styles from './DataTable.module.scss';
 import { TableHead } from './components/TableHead';
@@ -26,6 +30,9 @@ export const DataTable = <TData, TValue>({
   onPaginationChange,
   pageCount,
   manualPagination = false,
+  enableRowSelection = false,
+  rowSelection,
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
@@ -36,18 +43,58 @@ export const DataTable = <TData, TValue>({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
+
+  const tableColumns: ColumnDef<TData, TValue>[] = useMemo(() => {
+    if (!enableRowSelection) return columns;
+
+    return [
+      {
+        id: 'selection',
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            indeterminate={table.getIsSomePageRowsSelected()}
+            onChange={table.getToggleAllPageRowsSelectedHandler()}
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            disabled={!row.getCanSelect()}
+            indeterminate={row.getIsSomeSelected()}
+            onChange={row.getToggleSelectedHandler()}
+          />
+        ),
+        size: 50,
+        enableResizing: false,
+        enablePinning: true,
+      },
+      ...columns,
+    ];
+  }, [columns, enableRowSelection]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     state: {
       columnVisibility,
       columnPinning,
       pagination: pagination || internalPagination,
+      rowSelection: rowSelection || internalRowSelection,
     },
     onColumnVisibilityChange: setColumnVisibility,
     onColumnPinningChange: setColumnPinning,
+    onRowSelectionChange: (updater) => {
+      const next =
+        typeof updater === 'function' ? updater(rowSelection || internalRowSelection) : updater;
+      if (onRowSelectionChange) {
+        onRowSelectionChange(next);
+      } else {
+        setInternalRowSelection(next);
+      }
+    },
     onPaginationChange: (updater) => {
       const next =
         typeof updater === 'function' ? updater(pagination || internalPagination) : updater;
