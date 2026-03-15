@@ -9,9 +9,6 @@ import { PhoneInput } from '../../../../components/ui/PhoneInput/PhoneInput';
 import { Button } from '../../../../components/ui/Button/Button';
 
 import styles from './RegisterForm.module.scss';
-// import { Input } from '../../../../../components/ui/Input/Input';
-// import { PhoneInput } from '../../../../../components/ui/PhoneInput/PhoneInput';
-// import { Button } from '../../../../../components/ui/Button/Button';
 
 type RegisterFormData = {
   firstName: string;
@@ -49,7 +46,6 @@ export const RegisterForm: React.FC = () => {
       },
       {
         onSuccess: () => {
-          // Proceed to OTP sequence, passing the email
           navigate('/auth/otp', { state: { email: data.email } });
         },
       },
@@ -66,13 +62,11 @@ export const RegisterForm: React.FC = () => {
         <Input
           label="First Name *"
           {...register('firstName', { required: 'First name is required' })}
-          // placeholder="Smith"
           error={errors.firstName?.message}
         />
         <Input
           label="Last Name *"
           {...register('lastName', { required: 'Last name is required' })}
-          // placeholder="Elizabath"
           error={errors.lastName?.message}
         />
       </div>
@@ -88,7 +82,6 @@ export const RegisterForm: React.FC = () => {
             },
           })}
           type="email"
-          // placeholder="example@company.com"
           error={errors.email?.message}
         />
         <PhoneInput
@@ -100,7 +93,6 @@ export const RegisterForm: React.FC = () => {
               message: 'Phone number must be exactly 10 digits',
             },
           })}
-          // placeholder="90000-00009"
           error={errors.phone?.message}
         />
       </div>

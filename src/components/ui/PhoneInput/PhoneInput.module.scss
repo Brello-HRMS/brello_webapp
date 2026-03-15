@@ -13,7 +13,7 @@
 }
 
 .asterisk {
-  color: #ef4444;
+  color: var(--color-error-2);
   margin-left: 2px;
 }
 
@@ -76,27 +76,27 @@
 
 .hasError {
   .label {
-    color: #ef4444;
+    color: var(--color-error-2);
     font-size: 12px;
   }
 
   .inputWrapper {
-    border-color: #ef4444;
+    border-color: var(--color-error-2);
 
     &:focus-within {
-      border-color: #ef4444;
+      border-color: var(--color-error-2);
       box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
     }
   }
 
   .prefix {
-    border-right-color: #ef4444;
-    color: #ef4444;
+    border-right-color: var(--color-error-2);
+    color: var(--color-error-2);
   }
 }
 
 .errorMessage {
   font-size: 10px;
-  color: #ef4444;
+  color: var(--color-error-2);
   // margin-top: var(--spacing-1);
 }
