@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, MoreVertical, Power, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Edit2, Trash2, MoreVertical, Power } from 'lucide-react';
 
 import { Popover } from '../../../../components/common/Popover/Popover';
 import { Status } from '../../../../types/common';

@@ -22,6 +22,7 @@ const DepartmentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [searchQuery, setSearchQuery] = useState('');
+
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
