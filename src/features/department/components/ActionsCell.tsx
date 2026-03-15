@@ -3,7 +3,7 @@ import React from 'react';
 import { TableActions } from '../../../components/common';
 import { useDeleteDepartment } from '../hooks/useDeleteDepartment';
 
-import type { Department } from '../api/departmentType';
+import type { Department } from '../types/departmentType';
 
 interface ActionsCellProps {
   row: {
