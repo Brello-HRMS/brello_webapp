@@ -67,7 +67,7 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({
       };
       handleOpen();
     }
-  }, [open]);
+  }, [open, department]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

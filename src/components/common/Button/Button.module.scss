@@ -62,3 +62,8 @@
     background-color: var(--color-gray-50);
   }
 }
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -1,84 +1,76 @@
-import { Users } from 'lucide-react';
-
+import { TableActions } from '../../../components/common';
 import { StatusBadge } from '../../../components/common';
 import { Status } from '../../../types/common';
-import { DepartmentActionMenu } from '../components/DepartmentActionMenu/DepartmentActionMenu';
 
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Department } from '../types/departmentType';
 
-export const departmentColumns: ColumnDef<Department>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Department Name',
-    size: 250,
-    cell: (info) => {
-      const department = info.row.original;
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
-          {department.icon ? (
-            <img
-              src={department.icon}
-              alt=""
-              style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-            />
-          ) : (
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--color-gray-50)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-icon-gray)',
-              }}
-            >
-              <Users size={16} />
-            </div>
-          )}
-          <span>{info.getValue() as string}</span>
-        </div>
-      );
+interface DepartmentColumnProps {
+  isMultiSelectActive: boolean;
+  onView: (department: Department) => void;
+  onEdit: (department: Department) => void;
+  onDelete: (department: Department) => void;
+}
+
+export const departmentColumns = ({
+  isMultiSelectActive,
+  onView,
+  onEdit,
+  onDelete,
+}: DepartmentColumnProps): ColumnDef<Department>[] => {
+  return [
+    {
+      accessorKey: 'code',
+      header: 'Code',
+      size: 150,
+      cell: (info) => (
+        <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>
+          {info.getValue() as string}
+        </span>
+      ),
     },
-  },
-  {
-    accessorKey: 'code',
-    header: 'Code',
-    size: 150,
-  },
-  {
-    accessorKey: 'description',
-    header: 'Description',
-    size: 350,
-    cell: (info) => (
-      <div
-        style={{
-          maxWidth: '300px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-        title={info.getValue() as string}
-      >
-        {info.getValue() as string}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    size: 150,
-    cell: (info) => {
-      const status = info.getValue() as Status;
-      return <StatusBadge status={status} />;
+    {
+      accessorKey: 'name',
+      header: 'Department Name',
+      size: 250,
+      cell: (info) => {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+            <span>{info.getValue() as string}</span>
+          </div>
+        );
+      },
     },
-  },
-  {
-    id: 'actions',
-    header: 'Actions',
-    size: 150,
-    cell: (info) => <DepartmentActionMenu department={info.row.original} />,
-  },
-];
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      size: 150,
+      cell: (info) => {
+        const status = info.getValue() as Status;
+        return <StatusBadge status={status} />;
+      },
+    },
+    {
+      id: 'members',
+      header: 'Members',
+      size: 150,
+      cell: (info) => {
+        const count = info.row.original.memberAvatars?.length || 0;
+        return <span>{count} members</span>;
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      size: 100,
+      cell: (info) =>
+        isMultiSelectActive ? null : (
+          <TableActions
+            onView={() => onView(info.row.original)}
+            onEdit={() => onEdit(info.row.original)}
+            onDelete={() => onDelete(info.row.original)}
+          />
+        ),
+    },
+  ];
+};

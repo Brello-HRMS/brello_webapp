@@ -154,6 +154,13 @@ const DepartmentPage = () => {
     }));
   }, []);
 
+  const handleView = useCallback(
+    (dept: Department) => {
+      navigate(`/organisation/departments/${dept.id}`);
+    },
+    [navigate],
+  );
+
   const renderContent = () => {
     if (viewType === 'grid') {
       if (filteredData.length === 0) {
@@ -187,7 +194,12 @@ const DepartmentPage = () => {
 
     return (
       <DataTable
-        columns={departmentColumns}
+        columns={departmentColumns({
+          isMultiSelectActive,
+          onView: handleView,
+          onEdit: handleEditDepartment,
+          onDelete: handleDeleteClick,
+        })}
         data={departmentList}
         pagination={pagination}
         onPaginationChange={setPagination}
