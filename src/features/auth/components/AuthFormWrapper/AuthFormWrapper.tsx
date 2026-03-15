@@ -7,8 +7,8 @@ interface AuthFormWrapperProps {
   subtitle?: string;
   children: ReactNode;
   onSubmit: (e: FormEvent) => void;
-  showSocials?: boolean;
-  socialDividerText?: string;
+  // showSocials?: boolean;
+  // socialDividerText?: string;
 }
 
 export const AuthFormWrapper: React.FC<AuthFormWrapperProps> = ({
@@ -16,8 +16,8 @@ export const AuthFormWrapper: React.FC<AuthFormWrapperProps> = ({
   subtitle,
   children,
   onSubmit,
-  showSocials = true,
-  socialDividerText = 'Or register with',
+  // showSocials = true,
+  // socialDividerText = 'Or register with',
 }) => {
   return (
     <div className={styles.container}>
@@ -28,7 +28,7 @@ export const AuthFormWrapper: React.FC<AuthFormWrapperProps> = ({
         {children}
       </form>
 
-      {showSocials && (
+      {/* {showSocials && (
         <>
           <div className={styles.divider}>
             <span className={styles.dividerText}>{socialDividerText}</span>
@@ -43,7 +43,7 @@ export const AuthFormWrapper: React.FC<AuthFormWrapperProps> = ({
             </button>
           </div>
         </>
-      )}
+      )} */}
     </div>
   );
 };
