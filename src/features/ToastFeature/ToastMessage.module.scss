@@ -1,35 +1,30 @@
-.container{
-    border-radius: 12px;
-    // padding-block: 1rem;
-    // padding-inline-start: 1rem;
-    // border: 1px solid black;
+.container {
+  border-radius: 12px;
 
-    .messageContainer{
-        display: flex;
-        gap: 1rem;
-        // border: 1px solid black;
-    }
+  .messageContainer {
+    display: flex;
+    gap: 1rem;
+  }
 
-    .textContainer{
-        display: flex;
-        flex-direction: column;
-        h4{
-            color: var(--color-text-primary);
-        }
-        p{
-            color: var(--color-text-secondary);
-        }
-        // border: 1px solid black;
+  .textContainer {
+    display: flex;
+    flex-direction: column;
+    h4 {
+      color: var(--color-text-primary);
     }
+    p {
+      color: var(--color-text-secondary);
+    }
+  }
 }
 
 .Toastify__close-button {
   padding: 8px;
   margin-left: 10px;
   align-self: flex-start;
-  svg{
+  svg {
     position: absolute;
     right: 12px;
-    top: 50px  !important;
+    top: 50px !important;
   }
 }
