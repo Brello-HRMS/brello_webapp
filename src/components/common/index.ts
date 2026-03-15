@@ -9,3 +9,4 @@ export * from './ExcelExport/ExcelExport';
 export * from './Checkbox/Checkbox';
 export * from './AlertModal/AlertModal';
 export * from './WarningModal/WarningModal';
+export * from './Dialog/Dialog';

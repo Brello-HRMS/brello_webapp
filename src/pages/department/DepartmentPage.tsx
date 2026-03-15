@@ -20,6 +20,7 @@ import { useDepartments } from '../../features/department/hooks/useDepartments';
 import { useUpdateDepartment } from '../../features/department/hooks/useUpdateDepartment';
 import { useDebounce } from '../../hooks/useDebounce';
 import { SortOrder, Status } from '../../types/common';
+import { AddDepartmentModal } from '../../features/department/components/AddDepartmentModal/AddDepartmentModal';
 
 import styles from './DepartmentPage.module.scss';
 
@@ -51,6 +52,7 @@ const DepartmentPage = () => {
   const [showCannotDeactivateModal, setShowCannotDeactivateModal] = useState(false);
   const [showDeleteDeptModal, setShowDeleteDeptModal] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState<Department | null>(null);
+  const [isAddDepartmentOpen, setIsAddDepartmentOpen] = useState(false);
 
   const { mutate: deleteDept } = useDeleteDepartment();
   const { mutate: updateDept } = useUpdateDepartment();
@@ -80,7 +82,7 @@ const DepartmentPage = () => {
   }, [departmentList]);
 
   const handleAddDepartment = useCallback(() => {
-    // Logic to add department
+    setIsAddDepartmentOpen(true);
   }, []);
 
   const handleDeactivateClick = useCallback((dept: Department) => {
@@ -258,6 +260,11 @@ const DepartmentPage = () => {
         description={`Are you sure you want to delete the ${selectedDepartment?.name} department? This action cannot be undone.`}
         actionLabel="Delete"
         onAction={handleDeleteDept}
+      />
+
+      <AddDepartmentModal
+        open={isAddDepartmentOpen}
+        onClose={() => setIsAddDepartmentOpen(false)}
       />
     </div>
   );
