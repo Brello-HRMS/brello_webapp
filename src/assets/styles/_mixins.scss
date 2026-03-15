@@ -1,0 +1,13 @@
+@use 'sass:math';
+@use 'sass:string';
+
+@function font-clamp($min-size, $max-size, $min-vw: 320px, $max-vw: 1440px) {
+  $factor: math.div(1, $max-vw - $min-vw) * ($max-size - $min-size);
+  $calc-value: string.unquote('#{ $min-size - ($min-vw * $factor) } + #{ 100vw * $factor }');
+
+  @return clamp($min-size, $calc-value, $max-size);
+}
+
+@mixin text-clamp($min-size, $max-size) {
+  font-size: font-clamp($min-size, $max-size);
+}
