@@ -33,7 +33,7 @@ export default defineConfig([
         },
       ],
       'unused-imports/no-unused-imports': 'error',
-      // 'import/order': 'off',
+      'import/order': 'off',
       'import/order': [
         'error',
         {
