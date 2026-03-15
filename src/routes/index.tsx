@@ -13,6 +13,7 @@ import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
 // import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
 import DepartmentPage from '../pages/DepartmentPage';
 import DepartmentDetailPage from '../pages/DepartmentDetailPage';
+import EmployeeProfilePage from '../pages/EmployeeProfilePage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
       {
         path: 'organisation/departments/:id',
         element: <DepartmentDetailPage />,
+      },
+      {
+        path: 'employee/profile/:id',
+        element: <EmployeeProfilePage />,
       },
       {
         path: '*',

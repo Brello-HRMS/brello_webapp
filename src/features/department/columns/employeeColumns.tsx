@@ -1,4 +1,4 @@
-import { Eye } from 'lucide-react';
+import { ActionCell } from '../components/ActionCell';
 
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Employee } from '../data/dummyEmployees';
@@ -76,20 +76,6 @@ export const employeeColumns: ColumnDef<Employee>[] = [
     id: 'actions',
     header: 'Actions',
     size: 100,
-    cell: () => (
-      <button
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          color: 'var(--color-text-secondary)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Eye size={18} />
-      </button>
-    ),
+    cell: (info) => <ActionCell employeeId={info.row.original.employeeId} />,
   },
 ];

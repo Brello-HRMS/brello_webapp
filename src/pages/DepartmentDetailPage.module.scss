@@ -5,22 +5,27 @@
   padding-bottom: 24px;
 }
 
-.headerInfo {
-  display: flex;
+.memberCount {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  font-size: 14px;
-  color: var(--color-text-secondary);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  padding: 2px 8px; // 2px top/bottom, 8px left/right
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: var(--font-weight-medium);
+  color: #344054; // text-secondary (700)
+  white-space: nowrap;
+  box-shadow: var(--shadow-button-error); // Subtle shadow
 }
 
-.memberCount {
-  background-color: var(--color-gray-100);
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-text-primary);
+.codeValue {
+  font-family: var(--font-family-mono);
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary); // #475467
 }
 
 .codeLabel {

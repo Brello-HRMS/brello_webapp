@@ -45,13 +45,9 @@ const DepartmentDetailPage = () => {
   return (
     <div className={styles.container}>
       <PageHeader
-        title={`${department?.name || 'Design'} Department`}
-        subtitle={
-          <div className={styles.headerInfo}>
-            <span className={styles.memberCount}>{filteredEmployees.length} Members</span>
-            <span className={styles.codeLabel}>Code: {department?.code || 'DS-07'}</span>
-          </div>
-        }
+        title={`${department?.name} Department`}
+        titleExtra={<span className={styles.memberCount}>{filteredEmployees.length} Members</span>}
+        subtitle={<span className={styles.codeValue}>Code: {department?.code}</span>}
         actions={
           <>
             <Button variant="secondary">
