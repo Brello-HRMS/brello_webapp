@@ -1,4 +1,4 @@
-import { envVars } from '../../../common/envVars';
+import { envVars } from '../../../utils/envVars';
 import { apiClient } from '../../../lib/axios';
 
 import type {
