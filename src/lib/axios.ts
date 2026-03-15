@@ -1,6 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
-import { envVars } from '../common/envVars';
+import { envVars } from '../utils/envVars';
 
 // --- Configuration & Initialization ---
 const baseURL = envVars.BRELLO_BASE_API;

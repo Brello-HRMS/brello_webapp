@@ -1,0 +1,128 @@
+.selectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &:hover,
+  &.active {
+    border-color: var(--color-primary-purple);
+    box-shadow: 0 0 0 2px rgba(131, 0, 255, 0.05);
+  }
+
+  &.active {
+    .chevron {
+      transform: rotate(180deg);
+    }
+  }
+
+  .selectedLabel {
+    color: var(--color-text-primary);
+  }
+
+  .chevron {
+    color: var(--color-text-secondary);
+    transition: transform 0.2s ease;
+  }
+}
+
+.selectMenu {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-menu-selected);
+  padding: var(--spacing-1);
+  z-index: 1000;
+  animation: slideIn 0.2s ease-out;
+  max-height: 300px;
+  overflow-y: auto;
+
+  &.top {
+    bottom: calc(100% + var(--spacing-1));
+  }
+
+  &.bottom {
+    top: calc(100% + var(--spacing-1));
+  }
+}
+
+.selectOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 2px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    background: var(--color-gray-lighter);
+  }
+
+  &.selected {
+    background: rgba(131, 1, 255, 0.08);
+
+    .optionLabel {
+      color: var(--color-primary-purple);
+    }
+
+    .checkIcon {
+      color: var(--color-primary-purple);
+    }
+  }
+}
+
+.optionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.optionLabel {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+}
+
+.optionDescription {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.checkIcon {
+  color: var(--color-primary-purple);
+  flex-shrink: 0;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

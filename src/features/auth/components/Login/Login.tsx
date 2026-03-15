@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -20,12 +20,12 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string>('');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
@@ -36,6 +36,7 @@ export const Login: React.FC = () => {
     error: loginWithOTPError,
   } = useLoginWithOTP({
     onSuccess: () => {
+      const email = getValues('email');
       navigate('/auth/otp', { state: { email, resource: 'login' } });
       showToast('OTP sent successfully', 'success');
     },
@@ -43,7 +44,6 @@ export const Login: React.FC = () => {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    setEmail(data.email);
     loginWithOTP({
       email: data.email,
     });

@@ -117,7 +117,6 @@ export const OtpForm: React.FC = () => {
         title="Login to your account"
         subtitle={`Enter your verification code sent to you at ${email || 'your email'}`}
         onSubmit={handleSubmit}
-        showSocials={false}
       >
         <div className={styles.otpSection}>
           <label className={elementsStyles.label}>
@@ -140,7 +139,7 @@ export const OtpForm: React.FC = () => {
                     onChange={(e) => handleChange(e.target, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
                     className={styles.otpInput}
-                    placeholder="0"
+                    // placeholder="0"
                   />
                   {index === 2 && <span className={styles.separator}>-</span>}
                 </React.Fragment>
@@ -166,7 +165,7 @@ export const OtpForm: React.FC = () => {
         <div className={styles.resendAction}>
           {timeLeft > 0 ? (
             <p className={styles.timerText}>
-              Resend code in 00:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}s
+              Resend code in 10:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}s
             </p>
           ) : (
             <button type="button" onClick={handleResend} className={styles.resendButton}>

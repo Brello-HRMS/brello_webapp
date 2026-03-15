@@ -14,7 +14,8 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const showBackButton = ['/auth/otp', '/auth/lead'].includes(location.pathname);
+  const showBackButton = /^\/auth\/(otp|lead)\/?$/i.test(location.pathname);
+  const showLogoContent = /^\/auth\/(login|otp)\/?$/i.test(location.pathname);
 
   return (
     <div className={styles.container}>
@@ -36,10 +37,12 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               Back
             </button>
           )}
-          <div className={styles.logoWrapper}>
-            <Layers className={styles.logoIcon} />
-            <span className={styles.logoText}>Layers</span>
-          </div>
+          {showLogoContent && (
+            <div className={styles.logoWrapper}>
+              <Layers className={styles.logoIcon} />
+              <span className={styles.logoText}>Layers</span>
+            </div>
+          )}
           {children || <Outlet />}
         </div>
       </div>
