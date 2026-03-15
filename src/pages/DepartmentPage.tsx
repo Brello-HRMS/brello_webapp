@@ -4,6 +4,7 @@ import { Download, Plus } from 'lucide-react';
 import { DataTable, NoDataFound, PageHeader, Button, ListControls } from '../components/common';
 import { DepartmentCard } from '../features/department/components/DepartmentCard/DepartmentCard';
 import { departmentColumns } from '../features/department/columns/departmentColumns';
+import { AddDepartmentModal } from '../features/department/components/AddDepartmentModal/AddDepartmentModal';
 import { departmentList } from '../features/department/data/departmentData';
 import no_department from '../assets/svg/department/no_department_found.svg';
 import { useDebounce } from '../hooks/useDebounce';
@@ -36,6 +37,7 @@ const DepartmentPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [selectedSort, setSelectedSort] = useState('az');
+  const [isAddDepartmentOpen, setIsAddDepartmentOpen] = useState(false);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -92,97 +94,110 @@ const DepartmentPage = () => {
   }, [pagination]);
 
   const handleAddDepartment = () => {
-    // Logic to add department
+    setIsAddDepartmentOpen(true);
   };
 
   if (departmentList.length === 0) {
     return (
-      <NoDataFound
-        title="No Departments Added Yet"
-        description="Set up your first department to structure your organization and keep your workforce efficiently managed and organized."
-        noDataImage={no_department}
-        noDataImageAlt="No Department Found"
-        buttonText="Add New Department"
-        showButtonIcon
-        onButtonClick={handleAddDepartment}
-      />
+      <>
+        <NoDataFound
+          title="No Departments Added Yet"
+          description="Set up your first department to structure your organization and keep your workforce efficiently managed and organized."
+          noDataImage={no_department}
+          noDataImageAlt="No Department Found"
+          buttonText="Add New Department"
+          showButtonIcon
+          onButtonClick={handleAddDepartment}
+        />
+        <AddDepartmentModal
+          open={isAddDepartmentOpen}
+          onClose={() => setIsAddDepartmentOpen(false)}
+        />
+      </>
     );
   }
 
   return (
-    <div
-      className={styles.container}
-      style={{ opacity: isLoading ? 0.4 : 1, transition: 'opacity 0.2s' }}
-    >
-      <PageHeader
-        title="Departments"
-        subtitle="Define and manage company departments."
-        actions={
-          <>
-            <Button variant="secondary">
-              <Download size={16} />
-              Export
-            </Button>
-            <Button variant="primary">
-              <Plus size={16} />
-              Add department
-            </Button>
-          </>
-        }
-      />
-      <ListControls
-        searchPlaceholder="Search department..."
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        viewType={viewType}
-        onViewTypeChange={setViewType}
-        sortOptions={sortOptions}
-        selectedSort={selectedSort}
-        onSortChange={setSelectedSort}
-        onFilterClick={() => {}}
-      />
-      {viewType === 'grid' ? (
-        <div className={styles.grid}>
-          {filteredAndSortedData
-            .slice(
-              pagination.pageIndex * pagination.pageSize,
-              (pagination.pageIndex + 1) * pagination.pageSize,
-            )
-            .map((item, index) => {
-              const names = Object.keys(departmentConfigs);
-              const deptName = names[index % names.length];
-              const config = departmentConfigs[deptName];
-
-              return (
-                <DepartmentCard
-                  key={item.id}
-                  name={deptName}
-                  code={`Code: ${deptName.substring(0, 3).toUpperCase()}-0${index + 1}`}
-                  status={index === 2 || index === 7 ? 'Inactive' : 'Active'}
-                  icon={config.icon}
-                  iconBg={config.bg}
-                  iconColor={config.color}
-                  members={[
-                    'https://i.pravatar.cc/150?u=1',
-                    'https://i.pravatar.cc/150?u=2',
-                    'https://i.pravatar.cc/150?u=3',
-                    'https://i.pravatar.cc/150?u=4',
-                    'https://i.pravatar.cc/150?u=5',
-                  ]}
-                  onActionClick={() => {}}
-                />
-              );
-            })}
-        </div>
-      ) : (
-        <DataTable
-          columns={departmentColumns}
-          data={filteredAndSortedData}
-          pagination={pagination}
-          onPaginationChange={setPagination}
+    <>
+      <div
+        className={styles.container}
+        style={{ opacity: isLoading ? 0.4 : 1, transition: 'opacity 0.2s' }}
+      >
+        <PageHeader
+          title="Departments"
+          subtitle="Define and manage company departments."
+          actions={
+            <>
+              <Button variant="secondary">
+                <Download size={16} />
+                Export
+              </Button>
+              <Button variant="primary" onClick={handleAddDepartment}>
+                <Plus size={16} />
+                Add department
+              </Button>
+            </>
+          }
         />
-      )}
-    </div>
+        <ListControls
+          searchPlaceholder="Search department..."
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          viewType={viewType}
+          onViewTypeChange={setViewType}
+          sortOptions={sortOptions}
+          selectedSort={selectedSort}
+          onSortChange={setSelectedSort}
+          onFilterClick={() => {}}
+        />
+        {viewType === 'grid' ? (
+          <div className={styles.grid}>
+            {filteredAndSortedData
+              .slice(
+                pagination.pageIndex * pagination.pageSize,
+                (pagination.pageIndex + 1) * pagination.pageSize,
+              )
+              .map((item, index) => {
+                const names = Object.keys(departmentConfigs);
+                const deptName = names[index % names.length];
+                const config = departmentConfigs[deptName];
+
+                return (
+                  <DepartmentCard
+                    key={item.id}
+                    name={deptName}
+                    code={`Code: ${deptName.substring(0, 3).toUpperCase()}-0${index + 1}`}
+                    status={index === 2 || index === 7 ? 'Inactive' : 'Active'}
+                    icon={config.icon}
+                    iconBg={config.bg}
+                    iconColor={config.color}
+                    members={[
+                      'https://i.pravatar.cc/150?u=1',
+                      'https://i.pravatar.cc/150?u=2',
+                      'https://i.pravatar.cc/150?u=3',
+                      'https://i.pravatar.cc/150?u=4',
+                      'https://i.pravatar.cc/150?u=5',
+                    ]}
+                    onActionClick={() => {}}
+                  />
+                );
+              })}
+          </div>
+        ) : (
+          <DataTable
+            columns={departmentColumns}
+            data={filteredAndSortedData}
+            pagination={pagination}
+            onPaginationChange={setPagination}
+          />
+        )}
+      </div>
+
+      <AddDepartmentModal
+        open={isAddDepartmentOpen}
+        onClose={() => setIsAddDepartmentOpen(false)}
+      />
+    </>
   );
 };
 
