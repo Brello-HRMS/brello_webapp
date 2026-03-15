@@ -1,11 +1,13 @@
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
+
+import { login, loginWithOTP, verifyLoginOtp } from './auth';
+
 import type {
   LoginRequest,
   LoginResponse,
   LoginWithOtpRequest,
   VerifyLoginOtpRequest,
 } from './authType';
-import { login, loginWithOTP, verifyLoginOtp } from './auth';
 
 export const useLogin = (options?: UseMutationOptions<LoginResponse, Error, LoginRequest>) => {
   return useMutation({

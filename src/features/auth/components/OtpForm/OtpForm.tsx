@@ -120,7 +120,6 @@ export const OtpForm: React.FC = () => {
         title="Login to your account"
         subtitle={`Enter your verification code sent to you at ${email || 'your email'}`}
         onSubmit={handleSubmit}
-        showSocials={false}
       >
         <div className={styles.otpSection}>
           <label className={elementsStyles.label}>

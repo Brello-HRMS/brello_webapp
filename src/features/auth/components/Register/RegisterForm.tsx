@@ -61,8 +61,6 @@ export const RegisterForm: React.FC = () => {
       title="Create your account."
       subtitle="Sign up to get started with Brello today!"
       onSubmit={handleSubmit(onSubmit)}
-      showSocials={true}
-      socialDividerText="Or register with"
     >
       <div className={elementsStyles.row}>
         <Input

@@ -60,7 +60,6 @@ export const LeadForm: React.FC = () => {
         title="Tell us about you company."
         subtitle="This helps us set up workspace correctly."
         onSubmit={handleSubmit(onSubmit)}
-        showSocials={false}
       >
         <div className={styles.uploadSection}>
           <div className={styles.uploadBox}>

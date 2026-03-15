@@ -42,13 +42,19 @@ export type User = {
   organization_id: string | null;
 };
 
+export type Apps = {
+  id: string;
+  name: string;
+  priority: number;
+};
+
 export type LoginData = {
   access_token: string;
   refresh_token: string;
   user: User;
   expires_in: number;
   defaultAppId: string;
-  availableApps: any[];
+  availableApps: Apps[];
   setup_required: boolean;
 };
 

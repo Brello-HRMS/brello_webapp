@@ -1,6 +1,8 @@
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-import type { SetupCompanyRequest, SetupCompanyResponse } from './authType';
+
 import { setupCompany } from './auth';
+
+import type { SetupCompanyRequest, SetupCompanyResponse } from './authType';
 
 export const useSetupCompany = (
   options?: UseMutationOptions<SetupCompanyResponse, Error, SetupCompanyRequest>,

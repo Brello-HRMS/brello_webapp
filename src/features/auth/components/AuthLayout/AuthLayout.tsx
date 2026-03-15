@@ -1,5 +1,4 @@
 import React, { type ReactNode } from 'react';
-
 import { ArrowLeft, Layers } from 'lucide-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
