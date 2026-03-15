@@ -6,6 +6,7 @@ import { AuthLayout } from '../features/auth/components/AuthLayout/AuthLayout';
 // import { LoginForm } from '../features/auth/components/LoginForm/LoginForm';
 // import { LeadForm } from '../features/auth/components/Lead/leadForm';
 // import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
+import DepartmentPage from '../pages/DepartmentPage';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <HomePage />,
+      },
+      {
+        path: 'organisation/departments',
+        element: <DepartmentPage />,
       },
       {
         path: '*',
