@@ -6,6 +6,7 @@ import type {
   GetDepartmentsParams,
   GetDepartmentsResponse,
   UpdateDepartmentParams,
+  CreateDepartmentParams,
 } from '../types/departmentType';
 
 export const getDepartments = async (
@@ -27,4 +28,8 @@ export const updateDepartment = async (
 
 export const getDepartmentById = async (id: string): Promise<Department> => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/departments/${id}`);
+};
+
+export const createDepartment = async (params: CreateDepartmentParams): Promise<Department> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/departments`, params);
 };

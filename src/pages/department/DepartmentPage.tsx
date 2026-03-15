@@ -229,9 +229,9 @@ const DepartmentPage = () => {
       <WarningModal
         isOpen={showDeactivateModal}
         onClose={() => setShowDeactivateModal(false)}
-        title="Deactivate Department?"
+        title={`${selectedDepartment?.status === Status.ACTIVE ? 'Deactivate' : 'Activate'} ${selectedDepartment?.name} Department?`}
         description={`Deactivate the ${selectedDepartment?.name} department? It will no longer be available for new employee assignments.`}
-        actionLabel="Deactivate"
+        actionLabel={selectedDepartment?.status === Status.ACTIVE ? 'Deactivate' : 'Activate'}
         onAction={handleDeactivate}
       />
 

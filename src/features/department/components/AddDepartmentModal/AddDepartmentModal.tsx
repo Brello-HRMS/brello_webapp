@@ -3,6 +3,8 @@ import { Code, Tv, Users, Gamepad2, Headphones, Layers, FileText, Banknote } fro
 
 import { Dialog, Button } from '../../../../components/common';
 import { Input } from '../../../../components/ui/Input/Input';
+import { useCreateDepartment } from '../../hooks/useCreateDepartment';
+import { Status } from '../../../../types/common';
 
 import styles from './AddDepartmentModal.module.scss';
 
@@ -24,13 +26,61 @@ const icons = [
 
 export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, onClose }) => {
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    code: '',
+    description: '',
+    isActive: true,
+  });
+
+  const { mutate: createDept, isPending } = useCreateDepartment();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleToggleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, isActive: e.target.checked }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createDept(
+      {
+        name: formData.name,
+        code: formData.code.toUpperCase(),
+        description: formData.description,
+        status: formData.isActive ? Status.ACTIVE : Status.INACTIVE,
+      },
+      {
+        onSuccess: () => {
+          onClose();
+          setFormData({ name: '', code: '', description: '', isActive: true });
+          setSelectedIcon(null);
+        },
+      },
+    );
+  };
 
   const actions = (
     <div className={styles.actions}>
-      <Button variant="secondary" onClick={onClose} type="button" className={styles.cancelAction}>
+      <Button
+        variant="secondary"
+        onClick={onClose}
+        type="button"
+        className={styles.cancelAction}
+        disabled={isPending}
+      >
         Cancel
       </Button>
-      <Button variant="primary" onClick={onClose} type="submit" className={styles.saveAction}>
+      <Button
+        variant="primary"
+        onClick={handleSubmit}
+        type="submit"
+        className={styles.saveAction}
+        isLoading={isPending}
+      >
         Create department
       </Button>
     </div>
@@ -57,16 +107,31 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, on
             label="Department Name*"
             required
             placeholder="e.g., Finance"
-            name="department_name"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
           />
         </div>
 
         <div className={styles.formGroup}>
           <Input
+            type="text"
             label="Department Code*"
             required
             placeholder="e.g., FIN-001"
-            name="department_code"
+            name="code"
+            value={formData.code}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <Input
+            label="Description"
+            placeholder="Enter department description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
           />
         </div>
 
@@ -78,7 +143,7 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({ open, on
           <div className={styles.toggleContainer}>
             <span className={styles.activeText}>Active</span>
             <label className={styles.switch}>
-              <input type="checkbox" defaultChecked />
+              <input type="checkbox" checked={formData.isActive} onChange={handleToggleChange} />
               <span className={styles.slider}></span>
             </label>
           </div>
