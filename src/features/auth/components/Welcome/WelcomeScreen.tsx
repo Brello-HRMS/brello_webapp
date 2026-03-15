@@ -12,8 +12,6 @@ export const WelcomeScreen: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.confettiIcon}>
-        {/* <img src={confettiIllustration} alt="Confetti" className={styles.confettiIcon} /> */}
-        {/* <img src={confettiIllustration} alt="Confetti" className={styles.confettiIcon} /> */}
         <img src={welcomeImage} alt="Welcome" className={styles.confettiIcon} />
       </div>
 
