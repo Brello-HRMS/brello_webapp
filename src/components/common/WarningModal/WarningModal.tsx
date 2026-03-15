@@ -3,7 +3,6 @@ import { AlertTriangle } from 'lucide-react';
 
 import { Modal, type ModalProps } from '../Modal/Modal';
 import { Button } from '../Button/Button';
-
 import styles from './WarningModal.module.scss';
 
 export interface WarningModalProps extends Omit<ModalProps, 'children'> {
