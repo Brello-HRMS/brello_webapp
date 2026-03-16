@@ -30,7 +30,9 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
 
   const pathname = location.pathname.split('/').filter(Boolean);
   const lastPathname = pathname[pathname.length - 1];
-  const breadcrumbText = lastPathname.charAt(0).toUpperCase() + lastPathname.slice(1);
+  const breadcrumbText = lastPathname
+    ? lastPathname.charAt(0).toUpperCase() + lastPathname.slice(1)
+    : 'Home';
 
   const profileActionItems = [
     ...(!isDesktop
