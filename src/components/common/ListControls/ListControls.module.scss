@@ -10,9 +10,10 @@
   flex-wrap: wrap;
   margin-bottom: var(--spacing-3);
 
-  @media (max-width: 768px) {
+  @media (max-width: 994px) {
     flex-direction: column;
     align-items: stretch;
+    gap: var(--spacing-3);
   }
 }
 
@@ -33,7 +34,7 @@
   align-items: center;
   gap: var(--spacing-3);
 
-  @media (max-width: 768px) {
+  @media (max-width: 996px) {
     justify-content: flex-end;
   }
 }
@@ -65,12 +66,12 @@
 
   &.active {
     border-color: var(--color-primary-border);
-    box-shadow: 0 0 0 4px rgba(127, 86, 217, 0.1);
+    box-shadow: 0 0 0 4px var(--color-primary-50);
   }
 }
 
 .searchIcon {
-  color: #667085;
+  color: var(--color-icon-gray);
   flex-shrink: 0;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -92,7 +93,7 @@
   padding: 0;
 
   &::placeholder {
-    color: #667085;
+    color: var(--color-icon-gray);
     opacity: 0.8;
   }
 
@@ -105,11 +106,15 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  color: #667085;
+  color: var(--color-icon-gray);
   font-size: 1rem;
   letter-spacing: -0.5px;
   pointer-events: none;
   opacity: 0.7;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 }
 
 .actionButton {
@@ -132,6 +137,22 @@
     background-color: var(--color-surface);
     border-color: var(--color-border-hover);
     color: var(--color-text-primary-500);
+  }
+
+  span {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  &.active {
+    border-color: var(--color-primary-purple);
+    background-color: #f9f5ff;
+    color: var(--color-primary-purple);
+
+    svg {
+      color: var(--color-primary-purple);
+    }
   }
 }
 
@@ -157,6 +178,30 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   height: 40px;
+}
+
+.deleteButton {
+  @extend .actionButton;
+  color: var(--color-error-destructive);
+  border-color: var(--color-error-destructive);
+  background-color: var(--color-error-50);
+  padding: 10px 12px;
+  font-size: 0.875rem; // 14px
+  line-height: 1.428; // 20px
+  box-shadow: var(--shadow-button-error);
+  gap: 4px;
+
+  &:hover {
+    background-color: var(--color-error-100);
+    border-color: var(--color-error);
+    color: var(--color-error-700);
+  }
+
+  svg {
+    stroke: currentColor;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .viewButton {
@@ -208,6 +253,12 @@
 
     svg {
       color: var(--color-primary-purple);
+    }
+  }
+
+  span {
+    @media (max-width: 768px) {
+      display: block !important;
     }
   }
 }

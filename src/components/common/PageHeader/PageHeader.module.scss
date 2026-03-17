@@ -17,7 +17,18 @@
 .titleSection {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.titleExtra {
+  display: flex;
+  align-items: center;
 }
 
 .title {

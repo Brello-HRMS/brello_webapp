@@ -8,7 +8,7 @@ import {
   PanelRightClose,
   Settings,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ThemeCustomizer } from '../../../features/theme/ThemeCustomizer';
@@ -28,12 +28,21 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
 
-  const pathname = location.pathname.split('/').filter(Boolean);
-  const lastPathname = pathname.length > 0 ? pathname[pathname.length - 1] : '';
-  const breadcrumbText = lastPathname?.charAt(0).toUpperCase() + lastPathname.slice(1) || 'Home';
+  const breadcrumbs = useMemo(() => {
+    const segments = location.pathname.split('/').filter(Boolean);
+
+    return segments.map((segment: string) => {
+      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+
+      return { label, path: segment };
+    });
+  }, [location.pathname]);
+
+  const showNotification = useMediaQuery('(min-width: 801px)');
+  const showSettings = useMediaQuery('(min-width: 701px)');
 
   const profileActionItems = [
-    ...(!isDesktop
+    ...(!showNotification
       ? [
           {
             icon: <Bell size={16} />,
@@ -42,6 +51,10 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
               setIsProfileOpen(false);
             },
           },
+        ]
+      : []),
+    ...(!showSettings
+      ? [
           {
             icon: <Settings size={16} />,
             title: 'Setting',
@@ -67,12 +80,17 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
           {isSidebarCollapsed ? <PanelRightClose size={20} /> : <PanelLeftClose size={20} />}
         </button>
 
-        <div className={styles.divider} />
+        {isDesktop && <div className={styles.divider} />}
 
-        <div className={styles.breadcrumb}>
-          <Globe size={18} className={styles.breadcrumbIcon} />
-          <ChevronRight size={16} className={styles.chevronIcon} />
-          <span className={styles.breadcrumbText}>{breadcrumbText}</span>
+        <div className={styles.breadcrumbsContainer}>
+          {isDesktop && <Globe size={18} className={styles.breadcrumbIcon} />}
+
+          {breadcrumbs.map((crumb: { path: string; label: string }, index: number) => (
+            <div key={crumb.path} className={styles.breadcrumbSegment}>
+              {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
+              <div className={styles.breadcrumbPill}>{crumb.label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -82,16 +100,23 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
 
           {isDesktop && (
             <>
-              <button className={`icon-button`} aria-label="Settings">
-                <Settings size={20} />
-              </button>
+              {showSettings && (
+                <button className={`icon-button ${styles.settingsButton}`} aria-label="Settings">
+                  <Settings size={20} />
+                </button>
+              )}
 
-              <button className={`icon-button`} aria-label="Notifications">
-                <div className={styles.notificationWrapper}>
-                  <Bell size={20} />
-                  <span className={styles.notificationDot} />
-                </div>
-              </button>
+              {showNotification && (
+                <button
+                  className={`icon-button ${styles.notificationButton}`}
+                  aria-label="Notifications"
+                >
+                  <div className={styles.notificationWrapper}>
+                    <Bell size={20} />
+                    <span className={styles.notificationDot} />
+                  </div>
+                </button>
+              )}
             </>
           )}
         </div>

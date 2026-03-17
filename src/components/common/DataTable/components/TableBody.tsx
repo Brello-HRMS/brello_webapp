@@ -10,32 +10,40 @@ export const TableBody = <TData,>({ table }: TableBodyProps<TData>) => {
   return (
     <tbody>
       {table.getRowModel().rows.length > 0 ? (
-        table.getRowModel().rows.map((row) => (
-          <tr key={row.id} className={styles.row}>
-            {row.getVisibleCells().map((cell) => {
-              const isPinned = cell.column.getIsPinned();
-              return (
-                <td
-                  key={cell.id}
-                  className={`${styles.td} ${isPinned ? styles.pinnedCell : ''}`}
-                  style={{
-                    left: isPinned === 'left' ? `${cell.column.getStart('left')}px` : undefined,
-                    right: isPinned === 'right' ? `${cell.column.getAfter('right')}px` : undefined,
-                    position: isPinned ? 'sticky' : 'relative',
-                    zIndex: isPinned ? 5 : 1,
-                    borderRight:
-                      isPinned === 'left' ? '2px solid var(--color-primary-purple)' : undefined,
-                    borderLeft:
-                      isPinned === 'right' ? '2px solid var(--color-primary-purple)' : undefined,
-                    width: cell.column.getSize(),
-                  }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              );
-            })}
-          </tr>
-        ))
+        table.getRowModel().rows.map((row) => {
+          const isSelected = row.getIsSelected();
+          return (
+            <tr
+              key={row.id}
+              className={`${styles.row} ${isSelected ? styles.selectedRow : ''}`}
+              onClick={() => row.getCanSelect() && row.toggleSelected()}
+            >
+              {row.getVisibleCells().map((cell) => {
+                const isPinned = cell.column.getIsPinned();
+                return (
+                  <td
+                    key={cell.id}
+                    className={`${styles.td} ${isPinned ? styles.pinnedCell : ''}`}
+                    style={{
+                      left: isPinned === 'left' ? `${cell.column.getStart('left')}px` : undefined,
+                      right:
+                        isPinned === 'right' ? `${cell.column.getAfter('right')}px` : undefined,
+                      position: isPinned ? 'sticky' : 'relative',
+                      zIndex: isPinned ? 5 : 1,
+                      borderRight:
+                        isPinned === 'left' ? '2px solid var(--color-primary-purple)' : undefined,
+                      borderLeft:
+                        isPinned === 'right' ? '2px solid var(--color-primary-purple)' : undefined,
+                      width: cell.column.getSize(),
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        })
       ) : (
         <tr>
           <td colSpan={table.getAllColumns().length}>

@@ -3,20 +3,26 @@ import React, { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import styles from './Button.module.scss';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   children: ReactNode;
+  isLoading?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   children,
   className = '',
+  isLoading = false,
   ...props
 }) => {
-  const variantClass = variant === 'secondary' ? styles.secondary : styles.primary;
+  const variantClass = styles[variant];
 
   return (
-    <button className={`${styles.btn} ${variantClass} ${className}`.trim()} {...props}>
+    <button
+      className={`${styles.btn} ${variantClass} ${className} ${props.disabled ? styles.disabled : ''}`.trim()}
+      {...props}
+      disabled={isLoading || props.disabled}
+    >
       {children}
     </button>
   );

@@ -13,4 +13,7 @@ export interface DataTableProps<TData, TValue> {
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
   pageCount?: number;
   manualPagination?: boolean;
+  enableRowSelection?: boolean;
+  rowSelection?: Record<string, boolean>;
+  onRowSelectionChange?: (rowSelection: Record<string, boolean>) => void;
 }

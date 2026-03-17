@@ -22,7 +22,12 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     setOpenMenus((prev) => (prev.includes(label) ? [] : [label]));
   };
 
-  const isActive = (path?: string) => (path ? location.pathname === path : false);
+  const isActive = (path?: string) => {
+    if (!path) return false;
+    const currentPath = location.pathname.split('/').slice(0, 3).join('/');
+    const targetPath = path.split('/').slice(0, 3).join('/');
+    return currentPath === targetPath;
+  };
 
   const isParentActive = (item: MenuItem) => {
     if (item.path && isActive(item.path)) return true;

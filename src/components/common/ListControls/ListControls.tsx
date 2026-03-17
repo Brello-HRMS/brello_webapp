@@ -9,6 +9,8 @@ import {
   ListFilter,
   StretchHorizontal,
   ArrowDownNarrowWide,
+  Trash2,
+  MousePointerSquareDashed,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -55,7 +57,15 @@ interface ListControlsProps {
   selectedSort?: string;
   onSortChange?: (value: string) => void;
 
+  // Selection
+  selectedCount?: number;
+  onDelete?: () => void;
+
   // Visibility toggle
+  showMultiSelect?: boolean;
+  isMultiSelectActive?: boolean;
+  onMultiSelectToggle?: () => void;
+
   className?: string;
 }
 
@@ -79,6 +89,11 @@ export const ListControls: React.FC<ListControlsProps> = memo(
     sortOptions = [],
     selectedSort = '',
     onSortChange,
+    selectedCount = 0,
+    onDelete,
+    showMultiSelect = false,
+    isMultiSelectActive = false,
+    onMultiSelectToggle,
     className = '',
   }) => {
     const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -186,9 +201,34 @@ export const ListControls: React.FC<ListControlsProps> = memo(
               </AnimatePresence>
             </div>
           )}
+
+          {showMultiSelect && (
+            <button
+              className={`${styles.actionButton} ${isMultiSelectActive ? styles.active : ''}`}
+              onClick={onMultiSelectToggle}
+            >
+              <MousePointerSquareDashed size={18} />
+              <span>Multi-select</span>
+            </button>
+          )}
         </div>
 
         <div className={styles.rightSection}>
+          <AnimatePresence>
+            {selectedCount > 0 && (
+              <motion.button
+                initial={{ opacity: 0, x: 20, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                className={styles.deleteButton}
+                onClick={onDelete}
+              >
+                <Trash2 size={18} />
+                <span>Delete</span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+
           {showViewSwitcher && (
             <div className={styles.viewSwitcher}>
               <button

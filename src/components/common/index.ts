@@ -6,3 +6,7 @@ export * from './Button/Button';
 export * from './StatusBadge/StatusBadge';
 export * from './TableActions/TableActions';
 export * from './ExcelExport/ExcelExport';
+export * from './Checkbox/Checkbox';
+export * from './AlertModal/AlertModal';
+export * from './WarningModal/WarningModal';
+export * from './Dialog/Dialog';
