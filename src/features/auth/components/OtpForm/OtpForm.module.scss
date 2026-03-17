@@ -1,0 +1,112 @@
+.backButton {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2, 0.5rem);
+    background: none;
+    border: none;
+    color: var(--color-text-primary, #111827);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: var(--spacing-6, 1.5rem);
+    padding: 0;
+
+    .backIcon {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:hover {
+        color: var(--color-primary-purple, #8300ff);
+    }
+}
+
+.otpSection {
+    margin-bottom: var(--spacing-6, 1.5rem);
+}
+
+.otpInputContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2, 0.5rem);
+    margin-top: var(--spacing-2, 0.5rem);
+}
+
+.otpInput {
+    width: 3rem;
+    height: 3.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-medium, 500);
+    border: 1px solid #D0D5DD;
+    border-radius: var(--radius-md, 8px);
+    background-color: var(--color-white, #ffffff);
+    color: var(--color-text-primary, #111827);
+    transition: all 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-primary-purple, #8300ff);
+        box-shadow: 0 0 0 2px rgba(131, 0, 255, 0.1);
+    }
+
+    &::placeholder {
+        color: #D0D5DD;
+    }
+
+    // Disable native spinners
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    &[type=number] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+}
+
+.separator {
+    color: var(--color-text-tertiary, #d1d5db);
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-medium, 500);
+    margin: 0 var(--spacing-1, 0.25rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-6, 1.5rem);
+
+
+}
+
+.resendAction {
+    margin-top: var(--spacing-4, 1rem);
+}
+
+.timerText {
+    color: var(--color-primary-purple, #8300ff);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.resendButton {
+    background: none;
+    border: none;
+    color: var(--color-primary-purple, #8300ff);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

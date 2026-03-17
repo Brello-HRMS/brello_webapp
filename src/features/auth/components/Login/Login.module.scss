@@ -1,0 +1,22 @@
+.container {
+  width: 100%;
+}
+
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.submitBtn {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.errorMessage {
+  color: var(--color-error-2);
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+}
