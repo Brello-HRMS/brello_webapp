@@ -22,7 +22,10 @@ type RegisterFormData = {
 
 export const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
   const { mutate: registerLead, isPending, error: apiError } = useRegister();
+
+  const planId = queryParams.get('plan_id');
 
   const {
     register,
@@ -32,6 +35,8 @@ export const RegisterForm: React.FC = () => {
   } = useForm<RegisterFormData>();
 
   const onSubmit = (data: RegisterFormData) => {
+    if (!planId) return;
+
     registerLead(
       {
         email: data.email,
@@ -39,7 +44,7 @@ export const RegisterForm: React.FC = () => {
         last_name: data.lastName,
         phone: data.phone,
         password: data.password,
-        plan_id: '225aa6ec-82e3-4563-a99a-3decfd3e7884',
+        plan_id: queryParams.get('plan_id') || '',
         location: 'India',
         device: 'MacOS - Chrome',
         source: 'website',
@@ -137,7 +142,7 @@ export const RegisterForm: React.FC = () => {
         </span>
       )}
 
-      <Button type="submit" variant="primary" disabled={isPending}>
+      <Button type="submit" variant="primary" disabled={isPending || !planId}>
         {isPending ? 'Registering...' : 'Continue'}
       </Button>
 
