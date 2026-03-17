@@ -56,3 +56,7 @@ export interface CreateDepartmentParams {
   description: string;
   status: DepartmentStatus;
 }
+export interface UpdateDepartmentParams {
+  name?: string;
+  status?: DepartmentStatus;
+}

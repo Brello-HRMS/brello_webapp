@@ -13,6 +13,8 @@ import { Select } from '../../../../components/ui/Select/Select';
 
 import styles from './LeadForm.module.scss';
 
+import type { LoginResponse } from '../../api/authType';
+
 type LeadFormData = {
   logo?: FileList;
   industry: string;
@@ -36,7 +38,9 @@ export const LeadForm: React.FC = () => {
     isPending,
     error: apiError,
   } = useSetupCompany({
-    onSuccess: () => {
+    onSuccess: (data: LoginResponse) => {
+      sessionStorage.setItem('auth_response', JSON.stringify(data));
+
       navigate('/auth/welcome');
     },
   });

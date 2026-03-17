@@ -10,6 +10,7 @@ export const ToastProvider = () => {
         paddingInlineStart: '2rem',
         paddingInlineEnd: '2rem',
         paddingBlock: '1rem',
+        width: '400px',
       }}
       position="top-right"
       autoClose={2000}
