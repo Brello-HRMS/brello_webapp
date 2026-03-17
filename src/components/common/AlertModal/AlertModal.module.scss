@@ -1,0 +1,107 @@
+@use '../../../assets/styles/variables';
+
+.alertModal {
+  padding: 0;
+  text-align: left;
+  overflow: hidden;
+  max-width: 500px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.iconBackground {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #fef3f2; /* Light red background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  color: #df2224; /* Danger red */
+  stroke-width: 2.5px;
+}
+
+.title {
+  color: var(--color-text-primary-500);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.5;
+  padding-right: 32px; /* space for the close button */
+}
+
+.alertBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background-color: #fff8e6; /* light yellow */
+  padding: 16px 24px;
+  border-top: 1px solid #ffecb3;
+  border-bottom: 1px solid #ffecb3;
+}
+
+.alertIcon {
+  color: #d97706; /* orange-yellow warning */
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alertText {
+  color: #b45309; /* darker orange for readable text */
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+.body {
+  padding: 24px;
+}
+
+.description {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+
+  /* Additional spacing between multiple paragraphs if needed */
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: #f9fafb;
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.cancelButton,
+.actionButton {
+  flex: 1;
+}
+
+/* Ensure action button is primary purple as per design */
+.actionButton {
+  /* It defaults to primary, which is purple, but we explicitly set it here just in case */
+  background-color: var(--color-primary-purple) !important;
+  border-color: var(--color-primary-purple) !important;
+  color: white !important;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}

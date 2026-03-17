@@ -1,89 +1,128 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Download, Plus } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { Plus } from 'lucide-react';
 
-import { DataTable } from '../components/common/DataTable';
-import { NoDataFound } from '../components/common/NoDataFound';
-import { ListControls, type ViewType, type SortOption } from '../components/common';
 import no_department from '../assets/svg/department/no_department_found.svg';
-import { PageHeader } from '../components/common/PageHeader/PageHeader';
-import { Button } from '../components/common/Button/Button';
-import { departmentList } from '../features/department/data/departmentData';
+import {
+  Button,
+  DataTable,
+  ExcelExport,
+  ListControls,
+  NoDataFound,
+  PageHeader,
+} from '../components/common';
 import { departmentColumns } from '../features/department/columns/departmentColumns';
+import { DepartmentCard } from '../features/department/components/DepartmentCard/DepartmentCard';
+import { useDepartments } from '../features/department/hooks/useDepartments';
 import { useDebounce } from '../hooks/useDebounce';
+import { SortOrder, Status } from '../types/common';
 
-const sortOptions: SortOption[] = [
-  { label: 'Alphabetical (A-Z)', value: 'az' },
-  { label: 'Alphabetical (Z-A)', value: 'za' },
-  { label: 'Newest First', value: 'newest' },
-  { label: 'Oldest First', value: 'oldest' },
+import styles from './DepartmentPage.module.scss';
+
+import type { SortOption, ViewType } from '../components/common';
+
+const SORT_OPTIONS: SortOption[] = [
+  { label: 'Alphabetical (A-Z)', value: `name:${SortOrder.ASC}` },
+  { label: 'Alphabetical (Z-A)', value: `name:${SortOrder.DESC}` },
+  { label: 'Newest First', value: `created_at:${SortOrder.DESC}` },
+  { label: 'Oldest First', value: `created_at:${SortOrder.ASC}` },
+];
+
+const STATUS_OPTIONS = [
+  { label: 'All Status', value: 'ALL' },
+  { label: 'Active', value: Status.ACTIVE },
+  { label: 'Inactive', value: Status.INACTIVE },
 ];
 
 const DepartmentPage = () => {
+  // ... rest of the component
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
-  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewType, setViewType] = useState<ViewType>('grid');
-  const [selectedSort, setSelectedSort] = useState('az');
+  const [selectedSort, setSelectedSort] = useState(`name:${SortOrder.ASC}`);
+  const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const filteredAndSortedData = useMemo(() => {
-    let result = [...departmentList];
+  const queryParams = useMemo(() => {
+    const [sortBy, sortOrder] = selectedSort.split(':');
+    return {
+      status: selectedStatus === 'ALL' ? undefined : (selectedStatus as Status),
+      sort_by: sortBy,
+      sort_order: sortOrder as SortOrder,
+    };
+  }, [selectedSort, selectedStatus]);
 
-    // Search logic
-    if (debouncedSearchQuery) {
-      const query = debouncedSearchQuery.toLowerCase();
-      result = result.filter(
-        (department) =>
-          department.name.toLowerCase().includes(query) ||
-          department.email.toLowerCase().includes(query) ||
-          department.designation.toLowerCase().includes(query) ||
-          department.location.toLowerCase().includes(query) ||
-          department.status.toLowerCase().includes(query) ||
-          department.type.toLowerCase().includes(query),
+  const { data: response, isLoading } = useDepartments(queryParams);
+
+  const departmentList = useMemo(() => response?.data || [], [response]);
+
+  const filteredData = useMemo(() => {
+    if (!debouncedSearchQuery) return departmentList;
+    const query = debouncedSearchQuery.toLowerCase();
+    return departmentList.filter(
+      (dept) =>
+        dept.name.toLowerCase().includes(query) ||
+        dept.code.toLowerCase().includes(query) ||
+        dept.description.toLowerCase().includes(query),
+    );
+  }, [debouncedSearchQuery, departmentList]);
+
+  const handleAddDepartment = useCallback(() => {
+    // Logic to add department
+  }, []);
+
+  const handleEditClick = useCallback(() => {
+    // Logic for action click
+  }, []);
+
+  const excelExportData = useMemo(() => {
+    return filteredData.map((dept) => ({
+      Name: dept.name,
+      Code: dept.code,
+      Description: dept.description,
+      Status: dept.status,
+    }));
+  }, [filteredData]);
+
+  const renderContent = () => {
+    if (viewType === 'grid') {
+      if (filteredData.length === 0) {
+        return (
+          <NoDataFound
+            title="No Departments Found"
+            description="We couldn't find any department matching your current search or filter criteria. Try adjusting your filters."
+            noDataImage={no_department}
+            noDataImageAlt="No Department Found"
+          />
+        );
+      }
+
+      return (
+        <div className={styles.grid}>
+          {filteredData
+            .slice(
+              pagination.pageIndex * pagination.pageSize,
+              (pagination.pageIndex + 1) * pagination.pageSize,
+            )
+            .map((item) => (
+              <DepartmentCard key={item.id} department={item} onEditClick={handleEditClick} />
+            ))}
+        </div>
       );
     }
 
-    // Sort logic
-    result.sort((departmentA, departmentB) => {
-      switch (selectedSort) {
-        case 'az':
-          return departmentA.name.localeCompare(departmentB.name);
-        case 'za':
-          return departmentB.name.localeCompare(departmentA.name);
-        case 'newest':
-          // Assuming higher ID or later entry means newer if no date field exists
-          return departmentB.id.localeCompare(departmentA.id);
-        case 'oldest':
-          return departmentA.id.localeCompare(departmentB.id);
-        default:
-          return 0;
-      }
-    });
-
-    return result;
-  }, [debouncedSearchQuery, selectedSort]);
-
-  useEffect(() => {
-    const loadDepartments = async () => {
-      setIsLoading(true);
-
-      try {
-        // simulate API
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadDepartments();
-  }, [pagination]);
-
-  const handleAddDepartment = () => {
-    // Logic to add department
+    return (
+      <DataTable
+        columns={departmentColumns}
+        data={filteredData}
+        pagination={pagination}
+        onPaginationChange={setPagination}
+      />
+    );
   };
 
-  if (departmentList.length === 0) {
+  // Main empty state
+  if (!isLoading && departmentList.length === 0) {
     return (
       <NoDataFound
         title="No Departments Added Yet"
@@ -91,81 +130,50 @@ const DepartmentPage = () => {
         noDataImage={no_department}
         noDataImageAlt="No Department Found"
         buttonText="Add New Department"
-        showButtonIcon
         onButtonClick={handleAddDepartment}
+        showButtonIcon
       />
     );
   }
 
   return (
-    <div style={{ opacity: isLoading ? 0.4 : 1, transition: 'opacity 0.2s' }}>
+    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
       <PageHeader
         title="Departments"
         subtitle="Define and manage company departments."
         actions={
           <>
-            <Button variant="secondary">
-              <Download size={16} />
-              Export
-            </Button>
-            <Button variant="primary">
+            <ExcelExport
+              data={excelExportData}
+              filename="departments.xlsx"
+              sheetName="Departments"
+              buttonText="Export"
+              variant="secondary"
+            />
+            <Button variant="primary" onClick={handleAddDepartment}>
               <Plus size={16} />
               Add department
             </Button>
           </>
         }
       />
+
       <ListControls
         searchPlaceholder="Search department..."
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         viewType={viewType}
         onViewTypeChange={setViewType}
-        sortOptions={sortOptions}
+        sortOptions={SORT_OPTIONS}
         selectedSort={selectedSort}
         onSortChange={setSelectedSort}
-        onFilterClick={() => {}}
+        filterOptions={STATUS_OPTIONS}
+        selectedFilter={selectedStatus}
+        onFilterChange={setSelectedStatus}
+        filterTitle="Filter"
       />
 
-      {viewType === 'grid' ? (
-        <div
-          style={{
-            padding: '24px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '24px',
-          }}
-        >
-          {filteredAndSortedData.map((department) => (
-            <div
-              key={department.id}
-              style={{
-                padding: '20px',
-                border: '1px solid var(--color-border)',
-                borderRadius: '12px',
-                background: 'var(--color-white)',
-              }}
-            >
-              <h3 style={{ margin: '0 0 8px 0' }}>{department.name}</h3>
-              <p style={{ color: 'var(--color-text-secondary)', fontSize: '14px', margin: '0' }}>
-                {department.designation}
-              </p>
-            </div>
-          ))}
-          {filteredAndSortedData.length === 0 && (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-              No departments found matching your search.
-            </div>
-          )}
-        </div>
-      ) : (
-        <DataTable
-          columns={departmentColumns}
-          data={filteredAndSortedData}
-          pagination={pagination}
-          onPaginationChange={setPagination}
-        />
-      )}
+      {renderContent()}
     </div>
   );
 };

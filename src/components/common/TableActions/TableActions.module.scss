@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  justify-content: flex-end;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  padding: var(--spacing-1);
+  cursor: pointer;
+  color: var(--color-icon-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-gray-50);
+    color: var(--color-text-primary);
+  }
+}
+
+.deleteButton {
+  &:hover:not(:disabled) {
+    background-color: var(--color-error-50);
+    color: var(--color-error-destructive);
+  }
+}
