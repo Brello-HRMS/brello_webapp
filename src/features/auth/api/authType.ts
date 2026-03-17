@@ -27,6 +27,25 @@ export type VerifyOtpResponse = {
   data?: unknown;
 };
 
+export type ResendOtpRequest = {
+  email: string;
+  purpose:
+    | 'LOGIN'
+    | 'RESET_PASSWORD'
+    | 'VERIFY_PHONE'
+    | 'VERIFY_EMAIL'
+    | 'TWO_FACTOR_AUTH'
+    | 'PLATFORM_ADMIN_REGISTER'
+    | 'PLATFORM_ADMIN_LOGIN'
+    | 'LEAD_VERIFICATION';
+};
+
+export type ResendOtpResponse = {
+  success: boolean;
+  message: string;
+  timestamp?: string;
+};
+
 export type LoginRequest = {
   email: string;
   password: string;

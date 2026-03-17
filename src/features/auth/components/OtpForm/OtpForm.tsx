@@ -6,6 +6,8 @@ import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import { Button } from '../../../../components/ui/Button/Button';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { useVerifyLoginOtp } from '../../api/useLogin';
+import { useResendOtp } from '../../api/useResendOtp';
+import { showToast } from '../../../ToastFeature/ShowToast';
 
 import styles from './OtpForm.module.scss';
 
@@ -20,6 +22,8 @@ export const OtpForm: React.FC = () => {
   const { mutate: verifyOtp, isPending, error: apiError } = useVerifyOtp();
 
   const { mutate: verifyLoginOtp } = useVerifyLoginOtp();
+
+  const { mutate: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -40,8 +44,19 @@ export const OtpForm: React.FC = () => {
   }, [timeLeft]);
 
   const handleResend = () => {
-    setTimeLeft(29);
-    // Add resend logic here
+    if (!email) return;
+
+    const purpose = resource === 'login' ? 'LOGIN' : 'LEAD_VERIFICATION';
+
+    resendOtp(
+      { email, purpose },
+      {
+        onSuccess: () => {
+          setTimeLeft(29);
+          showToast('OTP resent successfully', 'success');
+        },
+      },
+    );
   };
 
   const handleChange = (element: HTMLInputElement, index: number) => {
@@ -149,12 +164,14 @@ export const OtpForm: React.FC = () => {
         </div>
 
         <div className={styles.actions}>
-          {apiError && (
+          {(apiError || resendError) && (
             <span
               className={elementsStyles.error}
               style={{ display: 'block', marginBottom: '16px' }}
             >
-              {(apiError as Error)?.message || 'OTP Verification failed.'}
+              {(apiError as Error)?.message ||
+                (resendError as Error)?.message ||
+                'OTP operation failed.'}
             </span>
           )}
           <Button type="submit" variant="primary" disabled={otp.join('').length !== 6 || isPending}>
@@ -168,8 +185,13 @@ export const OtpForm: React.FC = () => {
               Resend code in 10:{timeLeft < 10 ? `0${timeLeft}` : timeLeft}s
             </p>
           ) : (
-            <button type="button" onClick={handleResend} className={styles.resendButton}>
-              Resend code
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={isResending}
+              className={styles.resendButton}
+            >
+              {isResending ? 'Resending...' : 'Resend code'}
             </button>
           )}
         </div>
