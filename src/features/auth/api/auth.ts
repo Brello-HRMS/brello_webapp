@@ -47,3 +47,7 @@ export const setupCompany = async (data: SetupCompanyRequest): Promise<LoginResp
 export const getIndustryTypes = async (): Promise<GetIndustryTypesResponse> => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/industry-types`);
 };
+
+export const logout = async (): Promise<void> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/logout`);
+};

@@ -15,6 +15,7 @@ import { ThemeCustomizer } from '../../../features/theme/ThemeCustomizer';
 import profileAvatar from '../../../assets/image/dummy_profile.png';
 import { Popover } from '../../common/Popover';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
+import { useLogout } from '../../../features/auth/api/useLogout';
 
 import styles from './Header.module.scss';
 
@@ -27,6 +28,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
+  const { mutate: logout } = useLogout();
 
   const breadcrumbs = useMemo(() => {
     const segments = location.pathname.split('/').filter(Boolean);
@@ -69,6 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
       title: 'Logout',
       action: () => {
         setIsProfileOpen(false);
+        logout();
       },
     },
   ];
