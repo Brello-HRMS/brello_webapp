@@ -10,6 +10,8 @@ import type {
   VerifyLoginOtpRequest,
   VerifyOtpRequest,
   VerifyOtpResponse,
+  ResendOtpRequest,
+  ResendOtpResponse,
   SetupCompanyRequest,
   GetIndustryTypesResponse,
 } from './authType';
@@ -50,4 +52,8 @@ export const getIndustryTypes = async (): Promise<GetIndustryTypesResponse> => {
 
 export const logout = async (): Promise<void> => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/logout`);
+};
+
+export const resendOtp = async (data: ResendOtpRequest): Promise<ResendOtpResponse> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/resend-otp`, data);
 };
