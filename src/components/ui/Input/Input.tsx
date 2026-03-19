@@ -19,14 +19,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className={`${styles.container} ${error ? styles.hasError : ''}`}>
         {label && (
           <label className={styles.label} htmlFor={props.id || props.name}>
-            {label.includes('*') ? (
-              <>
-                {label.replace('*', '')}
-                <span className={styles.asterisk}>*</span>
-              </>
-            ) : (
-              label
-            )}
+            {label}
+            {props.required && <span className={styles.asterisk}>*</span>}
           </label>
         )}
         <div className={styles.inputWrapper}>

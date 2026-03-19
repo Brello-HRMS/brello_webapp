@@ -9,6 +9,7 @@ import {
   HandCoins,
   ScrollText,
   Tags,
+  Layers,
 } from 'lucide-react';
 
 export type SubMenuItem = {
@@ -48,6 +49,14 @@ export const MENU_ITEMS: MenuItem[] = [
     children: [
       { label: 'Profile', path: '/employee/profile' },
       { label: 'Directory', path: '/employee/directory' },
+    ],
+  },
+  {
+    label: 'Project',
+    icon: Layers,
+    children: [
+      { label: 'Clients', path: '/project/clients' },
+      { label: 'Projects', path: '/project/projects' },
     ],
   },
   {

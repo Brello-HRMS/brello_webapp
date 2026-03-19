@@ -19,7 +19,7 @@ export interface BrelloApiError {
 }
 
 export interface ApiError {
-  response?: {
-    data?: BrelloApiError;
-  };
+  message: string;
+  status: number;
+  data: BrelloApiError | null;
 }

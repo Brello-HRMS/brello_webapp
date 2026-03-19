@@ -19,8 +19,7 @@ export const useDepartments = (
         showToast('Departments fetched successfully', 'success');
         return data;
       } catch (error) {
-        const message =
-          (error as ApiError)?.response?.data?.message || 'Failed to fetch departments';
+        const message = (error as ApiError)?.data?.message || 'Failed to fetch departments';
         showToast(message, 'error');
         throw error;
       }

@@ -15,7 +15,7 @@ export const useDeleteDepartment = () => {
       showToast('Department deleted successfully', 'success');
     },
     onError: (error: ApiError) => {
-      const message = error?.response?.data?.message || 'Failed to delete department';
+      const message = error?.data?.message || 'Failed to delete department';
       showToast(message, 'error');
     },
   });

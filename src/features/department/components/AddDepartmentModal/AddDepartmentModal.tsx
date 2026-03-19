@@ -147,7 +147,7 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({
       >
         <div className={styles.formGroup}>
           <Input
-            label="Department Name*"
+            label="Department Name"
             required
             placeholder="e.g., Finance"
             name="name"
@@ -159,7 +159,7 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({
         <div className={styles.formGroup}>
           <Input
             type="text"
-            label="Department Code*"
+            label="Department Code"
             required
             placeholder="e.g., FIN-001"
             name="code"
