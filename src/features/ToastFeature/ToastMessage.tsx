@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Check from '../../assets/check.svg';
+import Check from '../../assets/Check.svg';
 import { capitalize } from '../../utils/stringUtils';
 
 import styles from './ToastMessage.module.scss';
