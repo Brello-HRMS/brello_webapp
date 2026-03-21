@@ -221,15 +221,27 @@ const DepartmentPage = () => {
     selectedStatus === 'ALL'
   ) {
     return (
-      <NoDataFound
-        title="No Departments Added Yet"
-        description="Set up your first department to structure your organization and keep your workforce efficiently managed and organized."
-        noDataImage={no_department}
-        noDataImageAlt="No Department Found"
-        buttonText="Add New Department"
-        onButtonClick={handleAddDepartment}
-        showButtonIcon
-      />
+      <>
+        <NoDataFound
+          title="No Departments Added Yet"
+          description="Set up your first department to structure your organization and keep your workforce efficiently managed and organized."
+          noDataImage={no_department}
+          noDataImageAlt="No Department Found"
+          buttonText="Add New Department"
+          onButtonClick={handleAddDepartment}
+          showButtonIcon
+        />
+
+        <AddDepartmentModal
+          key={isAddDepartmentOpen ? editingDepartment?.id || 'new' : 'closed'}
+          open={isAddDepartmentOpen}
+          onClose={() => {
+            setIsAddDepartmentOpen(false);
+            setEditingDepartment(null);
+          }}
+          department={editingDepartment}
+        />
+      </>
     );
   }
 

@@ -15,6 +15,8 @@ import EmployeeProfilePage from '../pages/EmployeeProfilePage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
 import ClientPage from '../pages/client/ClientPage';
+import DesignationPage from '../pages/designation/DesignationPage';
+import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -104,6 +106,14 @@ const router = createBrowserRouter([
       {
         path: 'organisation/departments/:id',
         element: <DepartmentDetailPage />,
+      },
+      {
+        path: 'organisation/designations',
+        element: <DesignationPage />,
+      },
+      {
+        path: 'organisation/designations/:id',
+        element: <DesignationDetailPage />,
       },
       {
         path: 'employee/profile/:id',
