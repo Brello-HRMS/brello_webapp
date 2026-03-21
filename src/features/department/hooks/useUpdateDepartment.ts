@@ -17,7 +17,7 @@ export const useUpdateDepartment = () => {
       showToast('Department updated successfully', 'success');
     },
     onError: (error: ApiError) => {
-      const message = error?.response?.data?.message || 'Failed to update department';
+      const message = error?.data?.message || 'Failed to update department';
       showToast(message, 'error');
     },
   });

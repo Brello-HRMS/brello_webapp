@@ -1,0 +1,54 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statusRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.statusLabel {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-primary-500);
+  display: block;
+}
+
+.statusSubLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.cancelAction {
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+.saveAction {
+  flex: 1;
+}

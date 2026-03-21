@@ -16,7 +16,7 @@ export const useCreateDepartment = () => {
       showToast('Department created successfully', 'success');
     },
     onError: (error: ApiError) => {
-      const message = error?.response?.data?.message || 'Failed to create department';
+      const message = error?.data?.message || 'Failed to create department';
       showToast(message, 'error');
     },
   });

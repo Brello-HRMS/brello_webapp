@@ -14,6 +14,7 @@ import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
 import EmployeeProfilePage from '../pages/EmployeeProfilePage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
+import ClientPage from '../pages/client/ClientPage';
 import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
 
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
       {
         path: 'employee/profile/:id',
         element: <EmployeeProfilePage />,
+      },
+      {
+        path: 'project/clients',
+        element: <ClientPage />,
       },
       {
         path: '*',

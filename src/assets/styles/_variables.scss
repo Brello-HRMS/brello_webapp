@@ -2,12 +2,19 @@
 :root {
   // Brand Colors
   --color-primary: #392a46;
-  --color-primary-hover: #7f56d9;
+  --color-primary-hover: #61219b;
   --color-primary-purple: #8300ff;
   --color-primary-purple-hover: rgba(131, 0, 255, 0.02);
   --color-primary-border: #7f56d9;
   --color-primary-50: rgba(127, 86, 217, 0.1);
   --color-secondary: #475467;
+
+  // Blue Badge Colors
+  --color-blue-50: #eff8ff;
+  --color-blue-100: #e0f2fe;
+  --color-blue-200: #b2ddff;
+  --color-blue-600: #1d4ed8;
+  --color-blue-700: #175cd3;
 
   // Shadows
   --color-shadow-light: rgba(0, 0, 0, 0.05);

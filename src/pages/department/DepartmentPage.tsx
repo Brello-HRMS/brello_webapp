@@ -214,7 +214,12 @@ const DepartmentPage = () => {
   };
 
   // Main empty state
-  if (!isLoading && departmentList.length === 0) {
+  if (
+    !isLoading &&
+    departmentList.length === 0 &&
+    !debouncedSearchQuery &&
+    selectedStatus === 'ALL'
+  ) {
     return (
       <>
         <NoDataFound

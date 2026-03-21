@@ -18,7 +18,7 @@ export const useLogout = () => {
       navigate('/auth/login');
     },
     onError: (error: ApiError) => {
-      showToast(error?.response?.data?.message || 'Failed to logout. Please try again.', 'error');
+      showToast(error?.data?.message || 'Failed to logout. Please try again.', 'error');
       sessionStorage.removeItem('auth_response');
       sessionStorage.removeItem('access_token');
       navigate('/auth/login');
