@@ -28,10 +28,10 @@
 }
 
 .deleteButton {
-  color: var(--color-error-destructive);
+  color: var(--color-error);
 
   &:hover:not(:disabled) {
     background-color: var(--color-error-50);
-    color: var(--color-error-destructive);
+    color: var(--color-error);
   }
 }

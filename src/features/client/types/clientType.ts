@@ -16,6 +16,12 @@ export interface Client {
   updated_at: string;
 }
 
+export interface GetClientByIdResponse {
+  success: boolean;
+  data: Client;
+  timestamp: string;
+}
+
 export interface GetClientsResponse {
   success: boolean;
   data: {

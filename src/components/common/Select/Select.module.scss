@@ -1,6 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-1);
+  color: var(--color-text-primary);
+  transition: color 0.2s ease;
+}
+
+.asterisk {
+  color: var(--color-error);
+  margin-left: 2px;
+}
+
 .selectContainer {
   position: relative;
   width: 100%;
+}
+
+.errorMessage {
+  font-size: 10px;
+  color: var(--color-error);
+  margin-top: 4px;
+}
+
+.container:focus-within .label {
+  color: var(--color-primary-purple);
 }
 
 .selectTrigger {
@@ -18,10 +47,28 @@
   transition: all 0.2s ease;
   outline: none;
 
-  &:hover,
-  &.active {
+  &.active,
+  &.hasError {
     border-color: var(--color-primary-purple);
     box-shadow: 0 0 0 2px rgba(131, 0, 255, 0.05);
+  }
+
+  .hasError {
+    .label {
+      color: var(--color-error);
+    }
+
+    .selectTrigger {
+      border-color: var(--color-error);
+
+      &:hover {
+        border-color: var(--color-error);
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
+      }
+    }
   }
 
   &.active {
@@ -81,6 +128,10 @@
     background: var(--color-gray-lighter);
   }
 
+  &:not(.selected):hover {
+    background: var(--color-gray);
+  }
+
   &.selected {
     background: rgba(131, 1, 255, 0.08);
 
@@ -102,7 +153,7 @@
 
 .optionLabel {
   font-size: 16px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-primary-500);
 }
 
