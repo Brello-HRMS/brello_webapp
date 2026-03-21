@@ -1,0 +1,116 @@
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 20px;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(71, 84, 103, 0.12);
+    border-color: var(--color-primary-purple);
+    z-index: 10;
+  }
+
+  &.selecting {
+    opacity: 0.6;
+    border-color: var(--color-border);
+
+    &:hover {
+      opacity: 0.9;
+      border-color: var(--color-primary-200);
+      background-color: var(--color-primary-50);
+    }
+  }
+
+  &.selected {
+    opacity: 1;
+    border-color: var(--color-primary-purple);
+    background-color: rgba(127, 86, 217, 0.05); // Very light purple
+    box-shadow: 0 0 0 2px rgba(127, 86, 217, 0.1);
+  }
+}
+
+.selectionIndicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  color: var(--color-icon-gray);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.name {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-header);
+  margin: 0;
+}
+
+.code {
+  font-family: 'DM Mono', 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.count {
+  font-size: 14px;
+  color: var(--color-primary-purple);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-surface);
+}
+
+.card.selecting:not(.selected):not(:hover) {
+  opacity: 0.4;
+  filter: grayscale(0.5);
+}

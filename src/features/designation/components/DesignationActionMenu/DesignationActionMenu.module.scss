@@ -1,0 +1,35 @@
+.trigger {
+  background: none;
+  border: none;
+  color: var(--color-icon-gray);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-gray-50);
+  }
+}
+
+.dropdown {
+  width: 160px;
+  padding: var(--spacing-2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.deactivate {
+  color: var(--color-error-destructive) !important;
+
+  &:hover {
+    background-color: var(--color-error-50) !important;
+  }
+
+  span[class*='iconWrapper'] {
+    color: var(--color-error-destructive) !important;
+  }
+}
