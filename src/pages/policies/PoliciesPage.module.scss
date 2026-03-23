@@ -1,0 +1,63 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+  padding-bottom: 40px;
+
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.controls {
+  margin-bottom: 24px;
+}
+
+.controlsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  > :first-child {
+    flex: 1;
+  }
+}
+
+.sortSelect {
+  min-width: 170px;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.accordionContent {
+  display: flex;
+  flex-direction: column;
+  
+  .emptyCategory {
+    padding: 24px;
+    text-align: center;
+    color: var(--color-gray-500, #667085);
+    background-color: var(--color-white, #ffffff);
+    border-top: 1px solid var(--color-gray-200, #eaecf0);
+    font-size: 14px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,177 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-gray-700, #344054);
+}
+
+.required {
+  color: var(--color-error-500, #f04438);
+}
+
+/* ── Description textarea ── */
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--color-gray-300, #d0d5dd);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-gray-900, #101828);
+  background: var(--color-white, #fff);
+  resize: vertical;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &::placeholder {
+    color: var(--color-gray-400, #98a2b3);
+  }
+
+  &:focus {
+    border-color: var(--color-primary-500, #7a5af8);
+    box-shadow: 0 0 0 3px rgba(122, 90, 248, 0.1);
+  }
+}
+
+/* ── Icon picker grid (Figma-style: lucide icon in colored square) ── */
+.iconGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-gray-200, #eaecf0);
+  border-radius: 10px;
+  background: var(--color-gray-50, #f9fafb);
+}
+
+.iconBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+  flex-shrink: 0;
+
+  &:hover {
+    transform: scale(1.08);
+  }
+
+  &.selectedIcon {
+    border-color: currentColor;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    transform: scale(1.08);
+  }
+}
+
+/* ── Step note ── */
+.stepNote {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-primary-600, #6941c6);
+  text-align: right;
+  margin: 0;
+}
+
+/* ── Footer actions ── */
+.actions {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+
+  button:first-child {
+    flex: 0 0 auto;
+    min-width: 90px;
+  }
+
+  button:last-child {
+    flex: 1;
+  }
+}
+
+/* ── Rich text editor (Step 2) ── */
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 190px);
+  min-height: 400px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-gray-200, #eaecf0);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: var(--color-gray-50, #f9fafb);
+  flex-wrap: wrap;
+}
+
+.tbBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-gray-500, #667085);
+  transition: background-color 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    background-color: var(--color-gray-200, #eaecf0);
+    color: var(--color-gray-900, #101828);
+  }
+}
+
+.tbDivider {
+  width: 1px;
+  height: 16px;
+  background-color: var(--color-gray-200, #eaecf0);
+  margin: 0 3px;
+}
+
+.editor {
+  flex: 1;
+  border: 1px solid var(--color-gray-200, #eaecf0);
+  border-radius: 0 0 8px 8px;
+  padding: 14px 16px;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--color-gray-700, #344054);
+  outline: none;
+  overflow-y: auto;
+
+  &:empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-gray-400, #98a2b3);
+    pointer-events: none;
+  }
+}
+
+.editorHint {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--color-gray-400, #98a2b3);
+  text-align: right;
+}
