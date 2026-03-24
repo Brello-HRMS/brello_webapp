@@ -11,7 +11,13 @@ export const useGroupedPolicies = () => {
     queryFn: async () => {
       try {
         const res = await getGroupedPolicies();
-        return res.data;
+        // Map API fields (type_id, type_name) -> UI fields (id, name)
+        const mappedData = res.data.map((group) => ({
+          ...group,
+          id: group.id || group.type_id || '',
+          name: group.name || group.type_name || '',
+        }));
+        return mappedData;
       } catch (error) {
         const message = (error as ApiError)?.data?.message || 'Failed to fetch policies';
         showToast(message, 'error');

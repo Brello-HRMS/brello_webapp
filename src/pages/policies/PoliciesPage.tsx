@@ -13,6 +13,8 @@ import { Select } from '../../components/common/Select/Select';
 import { useGroupedPolicies } from '../../features/policies/hooks/useGroupedPolicies';
 import { useDeletePolicy } from '../../features/policies/hooks/useDeletePolicy';
 import { useCreatePolicy } from '../../features/policies/hooks/useCreatePolicy';
+import { useUpdatePolicy } from '../../features/policies/hooks/useUpdatePolicy';
+import { usePolicyById } from '../../features/policies/hooks/usePolicyById';
 import { PolicyAccordionItem } from '../../features/policies/components/PolicyAccordionItem/PolicyAccordionItem';
 import { CreatePolicyDialog } from '../../features/policies/components/CreatePolicyDialog/CreatePolicyDialog';
 import { PolicyCreatedModal } from '../../features/policies/components/PolicyCreatedModal/PolicyCreatedModal';
@@ -53,32 +55,37 @@ const PoliciesPage = () => {
   const { data: groups = [], isLoading } = useGroupedPolicies();
   const { mutate: deletePolicyMutation, isPending: isDeleting } = useDeletePolicy();
   const { mutate: createPolicyMutation } = useCreatePolicy();
+  const { mutate: updatePolicyMutation, isPending: isUpdating } = useUpdatePolicy();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<string>('newest');
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createdPolicy, setCreatedPolicy] = useState<PolicyFormData | null>(null);
+  const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(null);
   const [viewPolicy, setViewPolicy] = useState<Policy | null>(null);
   const [deletePolicy, setDeletePolicy] = useState<Policy | null>(null);
+
+  const { data: fullPolicy, isLoading: isLoadingDetails } = usePolicyById(selectedPolicyId);
 
   const filteredGroups = useMemo(() => {
     const lowerQuery = searchQuery.toLowerCase();
 
     const result = groups
       .map((group) => {
-        const matchGroupName = group.name.toLowerCase().includes(lowerQuery);
+        const matchGroupName = (group.name || '').toLowerCase().includes(lowerQuery);
         const filteredPolicies = searchQuery
           ? group.policies.filter(
               (p) =>
-                p.title.toLowerCase().includes(lowerQuery) ||
-                p.description.toLowerCase().includes(lowerQuery),
+                (p.title || '').toLowerCase().includes(lowerQuery) ||
+                (p.description || '').toLowerCase().includes(lowerQuery),
             )
           : group.policies;
 
         const policies = [...(matchGroupName || !searchQuery ? group.policies : filteredPolicies)];
-        if (sortBy === 'asc') policies.sort((a, b) => a.title.localeCompare(b.title));
-        if (sortBy === 'desc') policies.sort((a, b) => b.title.localeCompare(a.title));
+        if (sortBy === 'asc') policies.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+        if (sortBy === 'desc')
+          policies.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
 
         return { ...group, policies };
       })
@@ -129,6 +136,13 @@ const PoliciesPage = () => {
     if (!deletePolicy) return;
     deletePolicyMutation(deletePolicy.id, {
       onSuccess: () => setDeletePolicy(null),
+    });
+  };
+
+  const handleDeactivate = (policy: Policy) => {
+    updatePolicyMutation({
+      id: policy.id,
+      params: { status: 'INACTIVE' },
     });
   };
 
@@ -212,7 +226,10 @@ const PoliciesPage = () => {
                 <PolicyAccordionItem
                   key={policy.id}
                   policy={policy}
-                  onEdit={(p) => setViewPolicy(p)}
+                  onEdit={(p) => {
+                    setSelectedPolicyId(p.id);
+                    setViewPolicy(p);
+                  }}
                   onDelete={(p) => setDeletePolicy(p)}
                 />
               ))}
@@ -258,13 +275,25 @@ const PoliciesPage = () => {
 
       {/* Policy View Dialog */}
       <PolicyViewDialog
+        key={(fullPolicy || viewPolicy)?.id}
         open={!!viewPolicy}
-        policy={viewPolicy}
-        onClose={() => setViewPolicy(null)}
-        onEdit={() => {
+        policy={fullPolicy || viewPolicy}
+        onClose={() => {
           setViewPolicy(null);
-          setCreateOpen(true);
+          setSelectedPolicyId(null);
         }}
+        onEdit={(updatedPolicy) => {
+          updatePolicyMutation({
+            id: updatedPolicy.id,
+            params: {
+              title: updatedPolicy.title,
+              content: updatedPolicy.content,
+            },
+          });
+        }}
+        onDeactivate={handleDeactivate}
+        isDeactivating={isUpdating}
+        isLoading={isLoadingDetails}
       />
 
       {/* Delete Confirmation */}

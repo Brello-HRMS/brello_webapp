@@ -12,8 +12,9 @@ export const useUpdatePolicy = () => {
   return useMutation({
     mutationFn: ({ id, params }: { id: string; params: UpdatePolicyParams }) =>
       updatePolicy(id, params),
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['policies-grouped'] });
+      queryClient.invalidateQueries({ queryKey: ['policy', id] });
       showToast('Policy updated successfully', 'success');
     },
     onError: (error: ApiError) => {

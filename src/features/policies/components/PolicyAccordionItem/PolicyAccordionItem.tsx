@@ -42,7 +42,12 @@ export const PolicyAccordionItem: React.FC<PolicyAccordionItemProps> = ({
 
   return (
     <div className={styles.policyItem}>
-      <div className={styles.mainContent}>
+      <div
+        className={styles.mainContent}
+        onClick={() => onEdit?.(policy)}
+        role="button"
+        tabIndex={0}
+      >
         <h4 className={styles.title}>{policy.title}</h4>
         <p className={styles.description}>{policy.description}</p>
       </div>

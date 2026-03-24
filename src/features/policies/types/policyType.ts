@@ -36,9 +36,9 @@ export interface UpdatePolicyTypeParams {
 export interface Policy {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   type_id: string;
-  content: string;
+  content?: string;
   status: PolicyStatus;
   created_at: string;
   updated_at: string;
@@ -48,6 +48,8 @@ export interface Policy {
 export interface PolicyGroup {
   id: string; // policy type id
   name: string; // policy type name
+  type_id?: string; // API field
+  type_name?: string; // API field
   icon: string; // policy type icon
   iconName?: string; // alias used in Accordion display
   policies: Policy[];

@@ -1,5 +1,5 @@
 .accordion {
-  background: var(--color-white, #ffffff);
+  background: var(--color-gray-50, #f9fafb);
   border: 1px solid var(--color-gray-200, #eaecf0);
   border-radius: 8px;
   overflow: hidden;
@@ -13,11 +13,12 @@
     padding: 16px 24px;
     cursor: pointer;
     user-select: none;
+    background-color: var(--color-gray-50, #f9fafb);
     transition: background-color 0.2s ease;
     border-bottom: 1px solid transparent;
 
     &:hover {
-      background-color: var(--color-gray-50, #f9fafb);
+      background-color: var(--color-gray-100, #f2f4f7);
     }
 
     .headerLeft {
@@ -51,7 +52,7 @@
           display: inline-flex;
           align-items: center;
           padding: 2px 8px;
-          background: var(--color-gray-50, #f9fafb);
+          background: var(--color-white, #ffffff);
           border: 1px solid var(--color-gray-200, #eaecf0);
           border-radius: 16px;
           font-size: 12px;
@@ -85,9 +86,5 @@
   .contentWrapper {
     transition: height 0.3s ease-in-out;
     overflow: hidden;
-
-    .content {
-      /* Padding resets handled by inner items naturally or defined here if generic content */
-    }
   }
 }
