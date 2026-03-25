@@ -17,6 +17,7 @@ import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
 import ClientPage from '../pages/client/ClientPage';
 import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
+import HolidayPage from '../pages/holiday/HolidayPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -122,6 +123,10 @@ const router = createBrowserRouter([
       {
         path: 'project/clients',
         element: <ClientPage />,
+      },
+      {
+        path: 'attendance/holidays',
+        element: <HolidayPage />,
       },
       {
         path: '*',

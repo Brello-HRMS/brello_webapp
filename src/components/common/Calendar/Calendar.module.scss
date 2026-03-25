@@ -1,0 +1,256 @@
+@use '../../../assets/styles/variables';
+
+.calendarWrapper {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  font-family: var(--font-family-base);
+
+  :global {
+    .rbc-calendar {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    // Grid Styling
+    .rbc-month-view {
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--radius-lg);
+      background: var(--color-white);
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .rbc-month-row {
+      border-top: 1px solid var(--color-gray-200);
+    }
+
+    .rbc-header {
+      padding: 16px 0;
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      border-bottom: 1px solid var(--color-gray-200);
+      font-size: 0.875rem;
+      background: var(--color-white);
+
+      & + .rbc-header {
+        border-left: 1px solid var(--color-gray-200);
+      }
+    }
+
+    .rbc-day-bg {
+      & + .rbc-day-bg {
+        border-left: 1px solid var(--color-gray-200);
+      }
+
+      &.rbc-today {
+        background-color: transparent;
+      }
+
+      &.rbc-off-range-bg {
+        background-color: var(--color-gray-50);
+        opacity: 0.6;
+      }
+    }
+
+    .rbc-date-cell {
+      padding: 12px;
+      text-align: left;
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+
+      &.rbc-now {
+        button {
+          background-color: var(--color-primary-purple);
+          color: var(--color-white);
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-top: -4px;
+          margin-left: -4px;
+        }
+      }
+
+      button {
+        color: inherit;
+        font-weight: inherit;
+        cursor: pointer;
+
+        &:hover {
+          color: var(--color-primary-purple);
+        }
+      }
+    }
+
+    .rbc-event {
+      margin: 2px 8px;
+      padding: 6px 10px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: var(--font-weight-medium);
+      border: none;
+      box-shadow: none;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .rbc-row-segment {
+      padding: 0;
+    }
+
+    .rbc-show-more {
+      font-weight: var(--font-weight-medium);
+      color: var(--color-primary-purple);
+      font-size: 0.75rem;
+      margin-left: 12px;
+    }
+  }
+}
+
+// Custom Toolbar Styles
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+  padding: 0 var(--spacing-2);
+
+  .leftSection {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-8);
+
+    .dateBlock {
+      border: 1px solid var(--color-border-light);
+      border-radius: 8px;
+      width: 77px;
+      height: 77px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      .monthLabel {
+        background: var(--color-gray-200);
+        color: var(--color-text-primary-500);
+        font-size: 1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        height: 27px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        letter-spacing: 0.05em;
+      }
+
+      .dayLabel {
+        color: var(--color-secondary);
+        font-size: 1.5rem;
+        font-weight: 900;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .titleSection {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .monthYear {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-text-primary-500);
+        margin: 0;
+        line-height: 1.2;
+      }
+      .dateRange {
+        font-size: 0.875rem;
+        color: var(--color-icon-gray);
+        margin: 2px 0 0 0;
+        line-height: 1.2;
+      }
+    }
+  }
+
+  .rightSection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .controlsGroup {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--color-border-2);
+      border-radius: 8px;
+      overflow: hidden;
+
+      .navButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        background: none;
+        border: none;
+        color: var(--color-icon-gray);
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: #f9fafb;
+          color: #111827;
+        }
+
+        &:first-child {
+          border-right: 1px solid var(--color-border-2);
+        }
+
+        &:last-child {
+          border-left: 1px solid var(--color-border-2);
+        }
+      }
+
+      .monthSelector {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: none;
+        border: none;
+        color: var(--color-text-slate-500);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #f9fafb;
+        }
+      }
+    }
+  }
+}
+
+// Event Variant Styling (applied via individual event color props or classNames)
+.event_holiday {
+  background-color: #f3e8ff !important;
+  color: #7e22ce !important;
+}
+
+.event_republic {
+  background-color: #ccfbf1 !important;
+  color: #0f766e !important;
+}
+
+.event_default {
+  background-color: var(--color-primary-purple-hover) !important;
+  color: var(--color-primary-purple) !important;
+}

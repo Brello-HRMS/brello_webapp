@@ -63,6 +63,7 @@ export const MENU_ITEMS: MenuItem[] = [
     label: 'Attendance',
     icon: CalendarCheck,
     children: [
+      { label: 'Holidays', path: '/attendance/holidays' },
       { label: 'Daily Preview', path: '/attendance/daily' },
       { label: 'Reports', path: '/attendance/reports' },
     ],
