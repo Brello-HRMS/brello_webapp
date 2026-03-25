@@ -9,7 +9,6 @@ import {
   NoDataFound,
   AlertModal,
 } from '../../components/common';
-import { Select } from '../../components/common/Select/Select';
 import { useGroupedPolicies } from '../../features/policies/hooks/useGroupedPolicies';
 import { useDeletePolicy } from '../../features/policies/hooks/useDeletePolicy';
 import { useCreatePolicy } from '../../features/policies/hooks/useCreatePolicy';
@@ -191,25 +190,17 @@ const PoliciesPage = () => {
         }
       />
 
-      <div className={styles.controls}>
-        <div className={styles.controlsRow}>
-          <ListControls
-            searchPlaceholder="Search policies..."
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            viewType="grid"
-            onViewTypeChange={() => {}}
-            showViewSwitcher={false}
-          />
-          <Select
-            options={SORT_OPTIONS}
-            value={sortBy}
-            onChange={(val) => setSortBy(String(val))}
-            labelPrefix="Sort by: "
-            className={styles.sortSelect}
-          />
-        </div>
-      </div>
+      <ListControls
+        searchPlaceholder="Search policies..."
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        viewType="grid"
+        onViewTypeChange={() => {}}
+        showViewSwitcher={false}
+        sortOptions={SORT_OPTIONS}
+        selectedSort={sortBy}
+        onSortChange={(val) => setSortBy(val)}
+      />
 
       <div className={styles.content}>
         {filteredGroups.map((group) => (
