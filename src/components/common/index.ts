@@ -8,6 +8,7 @@ export * from './TableActions/TableActions';
 export * from './ExcelExport/ExcelExport';
 export * from './Checkbox/Checkbox';
 export * from './AlertModal/AlertModal';
+export * from './MarkdownEditor/MarkdownEditor';
 export * from './WarningModal/WarningModal';
 export * from './Dialog/Dialog';
 export * from './ToggleButton/ToggleButton';

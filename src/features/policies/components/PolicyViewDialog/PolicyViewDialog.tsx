@@ -1,19 +1,7 @@
-import React, { useState, useRef } from 'react';
-import {
-  FilePen,
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  Code,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  List,
-  ListOrdered,
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { FilePen } from 'lucide-react';
 
-import { Dialog, Button } from '../../../../components/common';
+import { Dialog, Button, MarkdownEditor } from '../../../../components/common';
 import { Input } from '../../../../components/ui/Input/Input';
 
 import styles from './PolicyViewDialog.module.scss';
@@ -41,19 +29,13 @@ export const PolicyViewDialog: React.FC<PolicyViewDialogProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(policy?.title || '');
-  const editorRef = useRef<HTMLDivElement>(null);
+  const [editContent, setEditContent] = useState(policy?.content || '');
 
   if (!policy && !isLoading) return null;
 
-  const execCommand = (command: string, value?: string) => {
-    document.execCommand(command, false, value);
-    editorRef.current?.focus();
-  };
-
   const handleSave = () => {
     if (!policy) return;
-    const content = editorRef.current?.innerHTML || '';
-    onEdit({ ...policy, title: editTitle, content });
+    onEdit({ ...policy, title: editTitle, content: editContent });
     setIsEditing(false);
   };
 
@@ -123,91 +105,13 @@ export const PolicyViewDialog: React.FC<PolicyViewDialogProps> = ({
             </div>
 
             <div className={styles.editorContainer}>
-              <div className={styles.toolbar}>
-                <button type="button" className={styles.tbBtn} onClick={() => execCommand('bold')}>
-                  <Bold size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('italic')}
-                >
-                  <Italic size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('underline')}
-                >
-                  <Underline size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('strikeThrough')}
-                >
-                  <Strikethrough size={13} />
-                </button>
-                <div className={styles.tbDivider} />
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('formatBlock', 'pre')}
-                >
-                  <Code size={13} />
-                </button>
-                <div className={styles.tbDivider} />
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('justifyLeft')}
-                >
-                  <AlignLeft size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('justifyCenter')}
-                >
-                  <AlignCenter size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('justifyRight')}
-                >
-                  <AlignRight size={13} />
-                </button>
-                <div className={styles.tbDivider} />
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('insertUnorderedList')}
-                >
-                  <List size={13} />
-                </button>
-                <button
-                  type="button"
-                  className={styles.tbBtn}
-                  onClick={() => execCommand('insertOrderedList')}
-                >
-                  <ListOrdered size={13} />
-                </button>
-              </div>
-              <div
-                ref={editorRef}
-                className={styles.editor}
-                contentEditable
-                suppressContentEditableWarning
-                dangerouslySetInnerHTML={{ __html: policy?.content || '' }}
-              />
+              <MarkdownEditor value={editContent} onChange={setEditContent} />
             </div>
           </div>
         ) : policy?.content ? (
-          <div
-            className={styles.richContent}
-            dangerouslySetInnerHTML={{ __html: policy.content }}
-          />
+          <div className={styles.richContent}>
+            <MarkdownEditor value={policy.content} previewOnly />
+          </div>
         ) : (
           <p className={styles.placeholder}>No content available for this policy.</p>
         )}

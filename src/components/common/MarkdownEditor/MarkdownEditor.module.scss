@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: -1px;
+  padding: 0 4px;
+}
+
+.tab {
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-gray-500, #667085);
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  transition: all 0.12s ease;
+
+  &:hover {
+    color: var(--color-gray-900, #101828);
+    background: var(--color-gray-50, #f9fafb);
+  }
+
+  &.active {
+    color: var(--color-primary-700, #6941c6);
+    background: var(--color-white, #fff);
+    border-color: var(--color-gray-200, #eaecf0);
+    position: relative;
+    z-index: 1;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--color-white, #fff);
+    }
+  }
+}
+
+.editorWrapper {
+  width: 100%;
+  border: 1px solid var(--color-gray-200, #eaecf0);
+  border-radius: 0 8px 8px 8px;
+  overflow: hidden;
+  background: var(--color-white, #fff);
+  display: flex;
+  flex-direction: column;
+  flex: 1; // Fill remaining space in .container
+
+  :global(.md-editor) {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  :global(.md-editor-toolbar) {
+    background: var(--color-gray-50, #f9fafb);
+    border-bottom: 1px solid var(--color-gray-200, #eaecf0);
+    padding: 4px 8px;
+  }
+
+  :global(.md-editor-content) {
+    padding: 0;
+  }
+}
+
+.previewContent {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1; // Fill remaining space
+  background: var(--color-white, #fff);
+
+  :global(.md-editor-preview) {
+    padding: 0 !important;
+    
+    > div {
+      padding-top: 0 !important;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+  }
+
+  // Ensure headings don't have too much top margin if they are first
+  :global(.md-editor-preview) h1:first-child,
+  :global(.md-editor-preview) h2:first-child,
+  :global(.md-editor-preview) h3:first-child {
+    margin-top: 0 !important;
+  }
+}
+
+.previewWrapper {
+  width: 100%;
+  background: transparent;
+
+  :global(.md-editor-preview) {
+    padding: 0 !important;
+
+    > div {
+      padding-top: 0 !important;
+    }
+  }
+
+  :global(.md-editor-preview) h1:first-child,
+  :global(.md-editor-preview) h2:first-child,
+  :global(.md-editor-preview) h3:first-child {
+    margin-top: 0 !important;
+  }
+}

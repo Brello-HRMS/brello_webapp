@@ -113,62 +113,6 @@
   min-height: 400px;
 }
 
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  padding: 6px 8px;
-  border: 1px solid var(--color-gray-200, #eaecf0);
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  background: var(--color-gray-50, #f9fafb);
-  flex-wrap: wrap;
-}
-
-.tbBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border: none;
-  background: transparent;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--color-gray-500, #667085);
-  transition: background-color 0.12s ease, color 0.12s ease;
-
-  &:hover {
-    background-color: var(--color-gray-200, #eaecf0);
-    color: var(--color-gray-900, #101828);
-  }
-}
-
-.tbDivider {
-  width: 1px;
-  height: 16px;
-  background-color: var(--color-gray-200, #eaecf0);
-  margin: 0 3px;
-}
-
-.editor {
-  flex: 1;
-  border: 1px solid var(--color-gray-200, #eaecf0);
-  border-radius: 0 0 8px 8px;
-  padding: 14px 16px;
-  font-size: 0.875rem;
-  line-height: 1.65;
-  color: var(--color-gray-700, #344054);
-  outline: none;
-  overflow-y: auto;
-
-  &:empty::before {
-    content: attr(data-placeholder);
-    color: var(--color-gray-400, #98a2b3);
-    pointer-events: none;
-  }
-}
-
 .editorHint {
   margin-top: 8px;
   font-size: 0.75rem;
