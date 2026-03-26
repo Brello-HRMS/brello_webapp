@@ -64,7 +64,11 @@ export const PolicyViewDialog: React.FC<PolicyViewDialogProps> = ({
           <Button
             variant="primary"
             type="button"
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              setEditTitle(policy?.title || '');
+              setEditContent(policy?.content || '');
+              setIsEditing(true);
+            }}
             disabled={isLoading || !policy}
           >
             <FilePen size={16} />
