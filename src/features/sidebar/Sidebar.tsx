@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Command, Layers } from 'lucide-react';
+import { Search, Command, Layers, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
-import { MENU_ITEMS, type MenuItem } from './sidebarConfig';
 import styles from './Sidebar.module.scss';
 import { NavItem } from './components/NavItem';
+import { useSidebarMenu } from './hooks/useSidebarMenu';
+import { getIconComponent } from './utils/iconMapper';
+
+import type { MenuItem } from './sidebarConfig';
 
 export interface SidebarProps {
   isCollapsed: boolean;
@@ -16,6 +19,22 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const location = useLocation();
+  const { data: menuResponse, isLoading, error } = useSidebarMenu();
+
+  const MENU_ITEMS: MenuItem[] = useMemo(() => {
+    if (!menuResponse?.data?.length) return [];
+    return menuResponse.data.map((item) => ({
+      label: item.label,
+      icon: getIconComponent(item.icon),
+      path: item.path || undefined,
+      actions: item.actions,
+      children: item.children?.map((child) => ({
+        label: child.label,
+        path: child.path || '',
+        actions: child.actions,
+      })),
+    }));
+  }, [menuResponse]);
 
   const toggleMenu = (label: string) => {
     if (isCollapsed) return;
@@ -68,19 +87,33 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       )}
 
       <nav className={styles.nav}>
-        {MENU_ITEMS.map((item) => (
-          <NavItem
-            key={item.label}
-            item={item}
-            isCollapsed={isCollapsed}
-            isOpen={openMenus.includes(item.label)}
-            isActive={isActive}
-            isParentActive={isParentActive}
-            onToggle={toggleMenu}
-            hoveredMenu={hoveredMenu}
-            setHoveredMenu={setHoveredMenu}
-          />
-        ))}
+        {isLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+            <Loader2
+              className="animate-spin"
+              size={24}
+              style={{ animation: 'spin 1s linear infinite' }}
+            />
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '1rem', color: 'red', fontSize: '14px' }}>
+            Failed to load menu
+          </div>
+        ) : (
+          MENU_ITEMS.map((item) => (
+            <NavItem
+              key={item.label}
+              item={item}
+              isCollapsed={isCollapsed}
+              isOpen={openMenus.includes(item.label)}
+              isActive={isActive}
+              isParentActive={isParentActive}
+              onToggle={toggleMenu}
+              hoveredMenu={hoveredMenu}
+              setHoveredMenu={setHoveredMenu}
+            />
+          ))
+        )}
       </nav>
     </aside>
   );
