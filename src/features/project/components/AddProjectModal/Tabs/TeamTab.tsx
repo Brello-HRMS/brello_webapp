@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Trash2, Users, X } from 'lucide-react';
 
 import { Button, Select } from '../../../../../components/common';
 import { Input } from '../../../../../components/ui/Input/Input';
-import { EMPLOYEE_OPTIONS } from '../../../constants/projectOptions';
-import { DUMMY_EMPLOYEES, type Employee } from '../../../../department/data/dummyEmployees';
+import { useEmployeesDropdown } from '../../../../../hooks/useEmployees';
+import { getInitials } from '../../../../../utils/stringUtils';
+import { useProjectTeam } from '../../../hooks/useProjectTeam';
 import styles from '../../AddProjectModal.module.scss';
 
 import type { FieldArrayWithId, UseFormSetValue, UseFormWatch } from 'react-hook-form';
@@ -17,6 +18,7 @@ interface TeamMember {
 }
 
 interface TeamTabProps {
+  projectId?: string;
   setValue: UseFormSetValue<ProjectFormData>;
   watch: UseFormWatch<ProjectFormData>;
   fields: FieldArrayWithId<ProjectFormData, 'team'>[];
@@ -24,10 +26,54 @@ interface TeamTabProps {
   remove: (index: number) => void;
 }
 
-export const TeamTab: React.FC<TeamTabProps> = ({ setValue, watch, fields, append, remove }) => {
+export const TeamTab: React.FC<TeamTabProps> = ({
+  projectId,
+  setValue,
+  watch,
+  fields,
+  append,
+  remove,
+}) => {
   const [showAddMember, setShowAddMember] = useState(false);
   const [newMember, setNewMember] = useState({ employee_id: '', role: '' });
   const selectedLeadId = watch('lead_id');
+
+  const { data: employeesResponse } = useEmployeesDropdown();
+  const { data: teamResponse, isLoading: isLoadingTeam } = useProjectTeam(projectId);
+
+  const employees = useMemo(() => employeesResponse?.data || [], [employeesResponse]);
+
+  useEffect(() => {
+    if (teamResponse?.data && fields.length === 0) {
+      teamResponse.data.forEach((member) => {
+        append({
+          employee_id: member.user_id,
+          role: member.role,
+        });
+      });
+    }
+  }, [teamResponse, append, fields.length]);
+
+  const projectLeadOptions = useMemo(
+    () =>
+      employees.map((emp) => ({
+        label: emp.name,
+        value: emp.id,
+      })),
+    [employees],
+  );
+
+  const addMemberOptions = useMemo(() => {
+    const assignedIds = new Set(fields.map((f) => f.employee_id));
+    if (selectedLeadId) assignedIds.add(selectedLeadId);
+
+    return employees
+      .filter((emp) => !assignedIds.has(emp.id))
+      .map((emp) => ({
+        label: emp.name,
+        value: emp.id,
+      }));
+  }, [employees, fields, selectedLeadId]);
 
   const handleAddMember = () => {
     if (newMember.employee_id && newMember.role) {
@@ -49,7 +95,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({ setValue, watch, fields, appen
       <Select
         label="Project Lead"
         required
-        options={EMPLOYEE_OPTIONS}
+        options={projectLeadOptions}
         value={selectedLeadId}
         onChange={(val: string | number) => setValue('lead_id', val as string)}
         placeholder="Select project lead"
@@ -63,7 +109,11 @@ export const TeamTab: React.FC<TeamTabProps> = ({ setValue, watch, fields, appen
       </div>
 
       <div className={styles.memberList}>
-        {fields.length === 0 ? (
+        {isLoadingTeam ? (
+          <div className={styles.loadingState}>
+            <p>Loading team members...</p>
+          </div>
+        ) : fields.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.iconContainer}>
               <Users size={32} />
@@ -72,13 +122,17 @@ export const TeamTab: React.FC<TeamTabProps> = ({ setValue, watch, fields, appen
           </div>
         ) : (
           fields.map((field, index) => {
-            const employee = DUMMY_EMPLOYEES.find((emp: Employee) => emp.id === field.employee_id);
+            const employee = employees.find((emp) => emp.id === field.employee_id);
             return (
               <div key={field.id} className={styles.memberRow}>
                 <div className={styles.memberInfo}>
-                  <img src={employee?.avatar} alt={employee?.name} className={styles.avatar} />
+                  {employee?.profile ? (
+                    <img src={employee.profile} alt={employee.name} className={styles.avatar} />
+                  ) : (
+                    <div className={styles.initialsAvatar}>{getInitials(employee?.name || '')}</div>
+                  )}
                   <div className={styles.details}>
-                    <span className={styles.name}>{employee?.name}</span>
+                    <span className={styles.name}>{employee?.name || 'Unknown Employee'}</span>
                     <span className={styles.separator}>•</span>
                     <span className={styles.role}>{field.role}</span>
                   </div>
@@ -100,7 +154,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({ setValue, watch, fields, appen
           <Select
             label="Employee"
             required
-            options={EMPLOYEE_OPTIONS}
+            options={addMemberOptions}
             value={newMember.employee_id}
             onChange={(val: string | number) =>
               setNewMember((prev) => ({ ...prev, employee_id: val as string }))

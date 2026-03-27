@@ -26,7 +26,7 @@ export const projectColumns = ({
     ),
   },
   {
-    accessorKey: 'type',
+    accessorKey: 'project_type',
     header: 'Project Type',
     size: 150,
     cell: (info) => (

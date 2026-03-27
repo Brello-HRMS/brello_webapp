@@ -1,27 +1,24 @@
-import { DUMMY_EMPLOYEES } from '../../department/data/dummyEmployees';
+import { ProjectStatus, ProjectPriority, ProjectType } from '../types/projectType';
 
 export const TYPE_OPTIONS = [
-  { label: 'Internal', value: 'Internal' },
-  { label: 'Client', value: 'Client' },
-  { label: 'Fixed Price', value: 'Fixed Price' },
-  { label: 'T&M', value: 'T&M' },
+  { label: 'Internal', value: ProjectType.INTERNAL },
+  { label: 'Client', value: ProjectType.CLIENT },
+  { label: 'Fixed Price', value: ProjectType.FIXED_PRICE },
+  { label: 'T&M', value: ProjectType.TM },
+  { label: 'Agile', value: ProjectType.AGILE },
 ];
 
 export const STATUS_OPTIONS = [
-  { label: 'Draft', value: 'DRAFT' },
-  { label: 'Active', value: 'ACTIVE' },
-  { label: 'On Hold', value: 'ON_HOLD' },
-  { label: 'Completed', value: 'COMPLETED' },
+  { label: 'Draft', value: ProjectStatus.DRAFT },
+  { label: 'Active', value: ProjectStatus.ACTIVE },
+  { label: 'On Hold', value: ProjectStatus.ON_HOLD },
+  { label: 'Completed', value: ProjectStatus.COMPLETED },
+  { label: 'In Progress', value: ProjectStatus.IN_PROGRESS },
 ];
 
 export const PRIORITY_OPTIONS = [
-  { label: 'High', value: 'High' },
-  { label: 'Medium', value: 'Medium' },
-  { label: 'Low', value: 'Low' },
+  { label: 'High', value: ProjectPriority.HIGH },
+  { label: 'Medium', value: ProjectPriority.MEDIUM },
+  { label: 'Low', value: ProjectPriority.LOW },
+  { label: 'Urgent', value: ProjectPriority.URGENT },
 ];
-
-export const EMPLOYEE_OPTIONS = DUMMY_EMPLOYEES.map((emp) => ({
-  label: emp.name,
-  value: emp.id,
-  description: emp.designation,
-}));

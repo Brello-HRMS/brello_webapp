@@ -28,6 +28,7 @@ const ClientDetailPage = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -48,7 +49,15 @@ const ClientDetailPage = () => {
 
   const handleViewProject = useCallback((_project: Project) => {}, []);
 
-  const handleEditProject = useCallback((_project: Project) => {}, []);
+  const handleEditProject = useCallback((project: Project) => {
+    setEditingProject(project);
+    setIsAddModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsAddModalOpen(false);
+    setEditingProject(undefined);
+  }, []);
 
   const handleDeleteProject = useCallback((_project: Project) => {}, []);
 
@@ -131,7 +140,13 @@ const ClientDetailPage = () => {
             <h3>Projects</h3>
             <span className={styles.countBadge}>{projectCount} total</span>
           </div>
-          <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setEditingProject(undefined);
+              setIsAddModalOpen(true);
+            }}
+          >
             <Plus size={16} />
             Add project
           </Button>
@@ -165,8 +180,9 @@ const ClientDetailPage = () => {
 
       <AddProjectModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={handleCloseModal}
         clientId={id || ''}
+        project={editingProject}
       />
     </div>
   );

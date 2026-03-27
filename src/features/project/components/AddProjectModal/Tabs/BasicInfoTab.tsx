@@ -8,12 +8,9 @@ import { TextArea } from '../../../../../components/ui/TextArea/TextArea';
 import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { TYPE_OPTIONS, STATUS_OPTIONS, PRIORITY_OPTIONS } from '../../../constants/projectOptions';
 import styles from '../../AddProjectModal.module.scss';
+import { ProjectStatus, ProjectPriority, ProjectType } from '../../../types/projectType';
 
-import type {
-  ProjectFormData,
-  ProjectStatus,
-  ProjectPriority,
-} from '../../../schemas/projectSchema';
+import type { ProjectFormData } from '../../../schemas/projectSchema';
 import type {
   UseFormRegister,
   Control,
@@ -37,8 +34,8 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
   setValue,
   watch,
 }) => {
-  const selectedType = watch('type');
-  const selectedStatus = watch('status');
+  const selectedType = watch('project_type');
+  const selectedStatus = watch('project_status');
   const selectedPriority = watch('priority');
 
   return (
@@ -63,8 +60,8 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         required
         options={TYPE_OPTIONS}
         value={selectedType}
-        onChange={(val: string | number) => setValue('type', val as string)}
-        error={errors.type?.message}
+        onChange={(val: string | number) => setValue('project_type', val as ProjectType)}
+        error={errors.project_type?.message}
         placeholder="Select type"
       />
 
@@ -73,8 +70,8 @@ export const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         required
         options={STATUS_OPTIONS}
         value={selectedStatus}
-        onChange={(val: string | number) => setValue('status', val as ProjectStatus)}
-        error={errors.status?.message}
+        onChange={(val: string | number) => setValue('project_status', val as ProjectStatus)}
+        error={errors.project_status?.message}
         placeholder="Select status"
       />
 

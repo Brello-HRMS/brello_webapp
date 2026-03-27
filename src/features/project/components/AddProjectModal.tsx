@@ -5,7 +5,9 @@ import { AnimatePresence } from 'framer-motion';
 
 import { Dialog, Button } from '../../../components/common';
 import { useCreateProject } from '../hooks/useCreateProject';
+import { useUpdateProject } from '../hooks/useUpdateProject';
 import { projectSchema, type ProjectFormData } from '../schemas/projectSchema';
+import { ProjectStatus, ProjectPriority, ProjectType, type Project } from '../types/projectType';
 
 import styles from './AddProjectModal.module.scss';
 import { BasicInfoTab } from './AddProjectModal/Tabs/BasicInfoTab';
@@ -16,13 +18,22 @@ interface AddProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   clientId: string;
+  project?: Project;
 }
 
 type TabType = 'basic' | 'team' | 'contract';
 
-export const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClose, clientId }) => {
+export const AddProjectModal: React.FC<AddProjectModalProps> = ({
+  isOpen,
+  onClose,
+  clientId,
+  project,
+}) => {
   const [activeTab, setActiveTab] = useState<TabType>('basic');
   const createProject = useCreateProject(clientId);
+  const updateProject = useUpdateProject();
+
+  const isEditMode = !!project;
 
   const {
     register,
@@ -34,12 +45,27 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClos
     formState: { errors },
   } = useForm<ProjectFormData>({
     resolver: zodResolver(projectSchema),
-    defaultValues: {
-      status: 'DRAFT',
-      priority: 'Medium',
-      team: [],
-      contracts: [],
-    },
+    values: project
+      ? {
+          name: project.name,
+          project_type: project.project_type || ProjectType.INTERNAL,
+          project_status: project.project_status || ProjectStatus.IN_PROGRESS,
+          priority: project.priority || ProjectPriority.HIGH,
+          start_date: project.start_date || '',
+          end_date: project.end_date || '',
+          description: project.description || '',
+          team: project.team || [],
+          contracts: [],
+        }
+      : undefined,
+    defaultValues: !project
+      ? {
+          project_status: ProjectStatus.IN_PROGRESS,
+          priority: ProjectPriority.HIGH,
+          team: [],
+          contracts: [],
+        }
+      : undefined,
   });
 
   const {
@@ -61,18 +87,23 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClos
   });
 
   const onSubmit = (data: ProjectFormData) => {
-    createProject.mutate(
-      {
-        ...data,
-        client_id: clientId,
-      },
-      {
+    if (isEditMode && project) {
+      updateProject.mutate(
+        { projectId: project.id, data },
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        },
+      );
+    } else {
+      createProject.mutate(data, {
         onSuccess: () => {
           reset();
           onClose();
         },
-      },
-    );
+      });
+    }
   };
 
   const actions = (
@@ -83,10 +114,10 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClos
       <Button
         variant="primary"
         onClick={handleSubmit(onSubmit)}
-        isLoading={createProject.isPending}
+        isLoading={isEditMode ? updateProject.isPending : createProject.isPending}
         className={styles.saveAction}
       >
-        Create project
+        {isEditMode ? 'Save changes' : 'Create project'}
       </Button>
     </div>
   );
@@ -95,7 +126,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClos
     <Dialog
       open={isOpen}
       onClose={onClose}
-      title="Add New Project"
+      title={isEditMode ? 'Edit Project' : 'Add New Project'}
       maxWidth="500px"
       actions={actions}
       position="right"
@@ -137,6 +168,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({ isOpen, onClos
           )}
           {activeTab === 'team' && (
             <TeamTab
+              projectId={project?.id}
               setValue={setValue}
               watch={watch}
               fields={teamFields}

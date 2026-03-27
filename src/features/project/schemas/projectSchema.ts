@@ -1,15 +1,17 @@
 import * as z from 'zod';
 
-export const projectStatusSchema = z.enum(['DRAFT', 'ACTIVE', 'ON_HOLD', 'COMPLETED']);
-export type ProjectStatus = z.infer<typeof projectStatusSchema>;
+import { ProjectStatus, ProjectPriority, ProjectType } from '../types/projectType';
 
-export const projectPrioritySchema = z.enum(['High', 'Medium', 'Low']);
-export type ProjectPriority = z.infer<typeof projectPrioritySchema>;
+export const projectStatusSchema = z.nativeEnum(ProjectStatus);
+
+export const projectPrioritySchema = z.nativeEnum(ProjectPriority);
+
+export const projectTypeSchema = z.nativeEnum(ProjectType);
 
 export const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
-  type: z.string().min(1, 'Project type is required'),
-  status: projectStatusSchema,
+  project_type: projectTypeSchema,
+  project_status: projectStatusSchema,
   priority: projectPrioritySchema,
   start_date: z.string().optional(),
   end_date: z.string().optional(),
