@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 
 import no_client from '../../assets/svg/department/no_department_found.svg';
@@ -23,6 +23,7 @@ const STATUS_OPTIONS = [
 ];
 
 const ClientDetailPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
@@ -47,7 +48,12 @@ const ClientDetailPage = () => {
   const projects = useMemo(() => projectsResponse?.data?.data || [], [projectsResponse]);
   const projectCount = projectsResponse?.data?.meta?.total || 0;
 
-  const handleViewProject = useCallback((_project: Project) => {}, []);
+  const handleViewProject = useCallback(
+    (project: Project) => {
+      navigate(`/project/clients/${id}/projects/${project.id}`);
+    },
+    [navigate, id],
+  );
 
   const handleEditProject = useCallback((project: Project) => {
     setEditingProject(project);
