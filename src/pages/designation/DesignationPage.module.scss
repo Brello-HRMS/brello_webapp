@@ -1,0 +1,17 @@
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  transition: opacity 0.2s;
+
+  &.loading {
+    opacity: 0.6;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
