@@ -13,7 +13,7 @@ import type { FieldArrayWithId, UseFormSetValue, UseFormWatch } from 'react-hook
 import type { ProjectFormData } from '../../../schemas/projectSchema';
 
 interface TeamMember {
-  employee_id: string;
+  user_id: string;
   role: string;
 }
 
@@ -35,7 +35,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
   remove,
 }) => {
   const [showAddMember, setShowAddMember] = useState(false);
-  const [newMember, setNewMember] = useState({ employee_id: '', role: '' });
+  const [newMember, setNewMember] = useState({ user_id: '', role: '' });
   const selectedLeadId = watch('lead_id');
 
   const { data: employeesResponse } = useEmployeesDropdown();
@@ -47,7 +47,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
     if (teamResponse?.data && fields.length === 0) {
       teamResponse.data.forEach((member) => {
         append({
-          employee_id: member.user_id,
+          user_id: member.user_id,
           role: member.role,
         });
       });
@@ -64,7 +64,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
   );
 
   const addMemberOptions = useMemo(() => {
-    const assignedIds = new Set(fields.map((f) => f.employee_id));
+    const assignedIds = new Set(fields.map((f) => f.user_id));
     if (selectedLeadId) assignedIds.add(selectedLeadId);
 
     return employees
@@ -76,9 +76,9 @@ export const TeamTab: React.FC<TeamTabProps> = ({
   }, [employees, fields, selectedLeadId]);
 
   const handleAddMember = () => {
-    if (newMember.employee_id && newMember.role) {
+    if (newMember.user_id && newMember.role) {
       append(newMember);
-      setNewMember({ employee_id: '', role: '' });
+      setNewMember({ user_id: '', role: '' });
       setShowAddMember(false);
     }
   };
@@ -122,7 +122,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
           </div>
         ) : (
           fields.map((field, index) => {
-            const employee = employees.find((emp) => emp.id === field.employee_id);
+            const employee = employees.find((emp) => emp.id === field.user_id);
             return (
               <div key={field.id} className={styles.memberRow}>
                 <div className={styles.memberInfo}>
@@ -155,9 +155,9 @@ export const TeamTab: React.FC<TeamTabProps> = ({
             label="Employee"
             required
             options={addMemberOptions}
-            value={newMember.employee_id}
+            value={newMember.user_id}
             onChange={(val: string | number) =>
-              setNewMember((prev) => ({ ...prev, employee_id: val as string }))
+              setNewMember((prev) => ({ ...prev, user_id: val as string }))
             }
             placeholder="Select employee"
           />
@@ -173,7 +173,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
           <Button
             variant="primary"
             onClick={handleAddMember}
-            disabled={!newMember.employee_id || !newMember.role}
+            disabled={!newMember.user_id || !newMember.role}
             type="button"
           >
             Confirm

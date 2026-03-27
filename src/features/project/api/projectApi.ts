@@ -29,7 +29,7 @@ export const getProject = async (projectId: string): Promise<GetProjectResponse>
 export const createProject = async (
   clientId: string,
   data: CreateProjectParams,
-): Promise<Project> => {
+): Promise<GetProjectResponse> => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/clients/${clientId}/projects`, data);
 };
 

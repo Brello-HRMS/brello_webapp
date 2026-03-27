@@ -20,7 +20,7 @@ export const projectSchema = z.object({
   team: z
     .array(
       z.object({
-        employee_id: z.string(),
+        user_id: z.string(),
         role: z.string().min(1, 'Role is required'),
       }),
     )
