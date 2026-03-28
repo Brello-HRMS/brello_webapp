@@ -18,6 +18,7 @@ import ClientPage from '../pages/client/ClientPage';
 import ClientDetailPage from '../pages/client/ClientDetailPage';
 import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
+import PoliciesPage from '../pages/policies/PoliciesPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
       {
         path: 'organisation/departments',
         element: <DepartmentPage />,
+      },
+      {
+        path: 'organisation/policies',
+        element: <PoliciesPage />,
       },
       {
         path: 'organisation/departments/:id',
