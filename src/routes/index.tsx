@@ -19,6 +19,8 @@ import ClientDetailPage from '../pages/client/ClientDetailPage';
 import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
 import PoliciesPage from '../pages/policies/PoliciesPage';
+import HolidaysPage from '../pages/holidays/HolidaysPage';
+import HolidayCalendarView from '../pages/holidays/HolidayCalendarView';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -132,6 +134,14 @@ const router = createBrowserRouter([
       {
         path: 'project/clients/:id',
         element: <ClientDetailPage />,
+      },
+      {
+        path: 'attendance/holidays',
+        element: <HolidaysPage />,
+      },
+      {
+        path: 'attendance/holidays/:id',
+        element: <HolidayCalendarView />,
       },
       {
         path: '*',
