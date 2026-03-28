@@ -75,7 +75,7 @@ export const clientColumns = ({
       ),
     },
     {
-      accessorKey: 'project_count',
+      accessorKey: 'projects_count',
       header: 'Projects',
       size: 150,
       cell: (info) => {
@@ -111,7 +111,7 @@ export const clientColumns = ({
     {
       id: 'actions',
       header: 'Actions',
-      size: 100,
+      size: 140,
       cell: (info) =>
         isMultiSelectActive ? null : (
           <TableActions

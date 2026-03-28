@@ -128,15 +128,25 @@ const ClientPage = () => {
   // Main empty state
   if (!isLoading && clientList.length === 0 && !debouncedSearchQuery && selectedStatus === 'ALL') {
     return (
-      <NoDataFound
-        title="No Clients Added Yet"
-        description="Create your first client to start organizing projects, contacts, and business relationships."
-        noDataImage={no_client}
-        noDataImageAlt="No Client Found"
-        buttonText="Add new client"
-        onButtonClick={handleAddClient}
-        showButtonIcon
-      />
+      <>
+        <NoDataFound
+          title="No Clients Added Yet"
+          description="Create your first client to start organizing projects, contacts, and business relationships."
+          noDataImage={no_client}
+          noDataImageAlt="No Client Found"
+          buttonText="Add new client"
+          onButtonClick={handleAddClient}
+          showButtonIcon
+        />
+        <AddClientModal
+          open={isAddClientOpen}
+          onClose={() => {
+            setIsAddClientOpen(false);
+            setEditingClient(null);
+          }}
+          client={editingClient}
+        />
+      </>
     );
   }
 
