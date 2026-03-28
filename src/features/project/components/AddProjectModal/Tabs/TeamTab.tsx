@@ -9,34 +9,35 @@ import { getInitials } from '../../../../../utils/stringUtils';
 import { useProjectTeam } from '../../../hooks/useProjectTeam';
 import styles from '../../AddProjectModal.module.scss';
 
-import type { FieldArrayWithId, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import type { FieldArrayWithId, UseFormWatch } from 'react-hook-form';
 import type { ProjectFormData } from '../../../schemas/projectSchema';
 
 interface TeamMember {
   user_id: string;
   role: string;
+  is_lead?: boolean;
 }
 
 interface TeamTabProps {
   projectId?: string;
-  setValue: UseFormSetValue<ProjectFormData>;
   watch: UseFormWatch<ProjectFormData>;
-  fields: FieldArrayWithId<ProjectFormData, 'team'>[];
-  append: (data: TeamMember) => void;
-  remove: (index: number) => void;
+  teamMembers: FieldArrayWithId<ProjectFormData, 'team'>[];
+  appendMember: (data: TeamMember) => void;
+  removeMember: (index: number) => void;
 }
 
 export const TeamTab: React.FC<TeamTabProps> = ({
   projectId,
-  setValue,
   watch,
-  fields,
-  append,
-  remove,
+  teamMembers,
+  appendMember,
+  removeMember,
 }) => {
   const [showAddMember, setShowAddMember] = useState(false);
-  const [newMember, setNewMember] = useState({ user_id: '', role: '' });
-  const selectedLeadId = watch('lead_id');
+  const [addingMember, setAddingMember] = useState({ user_id: '', role: '', is_lead: false });
+  const watchedTeam = watch('team');
+  const selectedLead = useMemo(() => (watchedTeam || []).find((m) => m.is_lead), [watchedTeam]);
+  const selectedLeadId = selectedLead?.user_id || '';
 
   const { data: employeesResponse } = useEmployeesDropdown();
   const { data: teamResponse, isLoading: isLoadingTeam } = useProjectTeam(projectId);
@@ -44,15 +45,16 @@ export const TeamTab: React.FC<TeamTabProps> = ({
   const employees = useMemo(() => employeesResponse?.data || [], [employeesResponse]);
 
   useEffect(() => {
-    if (teamResponse?.data && fields.length === 0) {
+    if (teamResponse?.data && teamMembers.length === 0) {
       teamResponse.data.forEach((member) => {
-        append({
+        appendMember({
           user_id: member.user_id,
           role: member.role,
+          is_lead: member.is_lead ?? false,
         });
       });
     }
-  }, [teamResponse, append, fields.length]);
+  }, [teamResponse, appendMember, teamMembers.length]);
 
   const projectLeadOptions = useMemo(
     () =>
@@ -64,8 +66,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
   );
 
   const addMemberOptions = useMemo(() => {
-    const assignedIds = new Set(fields.map((f) => f.user_id));
-    if (selectedLeadId) assignedIds.add(selectedLeadId);
+    const assignedIds = new Set(teamMembers.map((f) => f.user_id));
 
     return employees
       .filter((emp) => !assignedIds.has(emp.id))
@@ -73,12 +74,12 @@ export const TeamTab: React.FC<TeamTabProps> = ({
         label: emp.name,
         value: emp.id,
       }));
-  }, [employees, fields, selectedLeadId]);
+  }, [employees, teamMembers]);
 
   const handleAddMember = () => {
-    if (newMember.user_id && newMember.role) {
-      append(newMember);
-      setNewMember({ user_id: '', role: '' });
+    if (addingMember.user_id && addingMember.role) {
+      appendMember(addingMember);
+      setAddingMember({ user_id: '', role: '', is_lead: false });
       setShowAddMember(false);
     }
   };
@@ -97,7 +98,22 @@ export const TeamTab: React.FC<TeamTabProps> = ({
         required
         options={projectLeadOptions}
         value={selectedLeadId}
-        onChange={(val: string | number) => setValue('lead_id', val as string)}
+        onChange={(val: string | number) => {
+          const newLeadId = val as string;
+
+          // Find if there's already a lead and remove them
+          const existingLeadIndex = teamMembers.findIndex((f) => f.is_lead);
+          if (existingLeadIndex !== -1) {
+            removeMember(existingLeadIndex);
+          }
+
+          // Add new lead to the team list
+          appendMember({
+            user_id: newLeadId,
+            role: 'Project Lead',
+            is_lead: true,
+          });
+        }}
         placeholder="Select project lead"
       />
 
@@ -113,7 +129,7 @@ export const TeamTab: React.FC<TeamTabProps> = ({
           <div className={styles.loadingState}>
             <p>Loading team members...</p>
           </div>
-        ) : fields.length === 0 ? (
+        ) : teamMembers.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.iconContainer}>
               <Users size={32} />
@@ -121,28 +137,36 @@ export const TeamTab: React.FC<TeamTabProps> = ({
             <p>No team members assigned yet</p>
           </div>
         ) : (
-          fields.map((field, index) => {
-            const employee = employees.find((emp) => emp.id === field.user_id);
-            return (
-              <div key={field.id} className={styles.memberRow}>
-                <div className={styles.memberInfo}>
-                  {employee?.profile ? (
-                    <img src={employee.profile} alt={employee.name} className={styles.avatar} />
-                  ) : (
-                    <div className={styles.initialsAvatar}>{getInitials(employee?.name || '')}</div>
-                  )}
-                  <div className={styles.details}>
-                    <span className={styles.name}>{employee?.name || 'Unknown Employee'}</span>
-                    <span className={styles.separator}>•</span>
-                    <span className={styles.role}>{field.role}</span>
+          teamMembers
+            .filter((member) => !member.is_lead)
+            .map((member, index) => {
+              const employee = employees.find((emp) => emp.id === member.user_id);
+              return (
+                <div key={member.id} className={styles.memberRow}>
+                  <div className={styles.memberInfo}>
+                    {employee?.profile ? (
+                      <img src={employee.profile} alt={employee.name} className={styles.avatar} />
+                    ) : (
+                      <div className={styles.initialsAvatar}>
+                        {getInitials(employee?.name || '')}
+                      </div>
+                    )}
+                    <div className={styles.details}>
+                      <span className={styles.name}>{employee?.name || 'Unknown Employee'}</span>
+                      <span className={styles.separator}>•</span>
+                      <span className={styles.role}>{member.role}</span>
+                    </div>
                   </div>
+                  <button
+                    className={styles.removeBtn}
+                    onClick={() => removeMember(index)}
+                    type="button"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
-                <button className={styles.removeBtn} onClick={() => remove(index)} type="button">
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            );
-          })
+              );
+            })
         )}
       </div>
 
@@ -155,9 +179,9 @@ export const TeamTab: React.FC<TeamTabProps> = ({
             label="Employee"
             required
             options={addMemberOptions}
-            value={newMember.user_id}
+            value={addingMember.user_id}
             onChange={(val: string | number) =>
-              setNewMember((prev) => ({ ...prev, user_id: val as string }))
+              setAddingMember((prev) => ({ ...prev, user_id: val as string }))
             }
             placeholder="Select employee"
           />
@@ -165,15 +189,15 @@ export const TeamTab: React.FC<TeamTabProps> = ({
             label="Role"
             required
             placeholder="e.g., Developer"
-            value={newMember.role}
+            value={addingMember.role}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewMember((prev) => ({ ...prev, role: e.target.value }))
+              setAddingMember((prev) => ({ ...prev, role: e.target.value }))
             }
           />
           <Button
             variant="primary"
             onClick={handleAddMember}
-            disabled={!newMember.user_id || !newMember.role}
+            disabled={!addingMember.user_id || !addingMember.role}
             type="button"
           >
             Confirm

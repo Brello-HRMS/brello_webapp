@@ -66,6 +66,7 @@ export interface ProjectUser {
 export interface ProjectTeamMember {
   user_id: string;
   role: string;
+  is_lead?: boolean;
 }
 
 export interface ProjectTeamMemberDetail {
@@ -74,6 +75,7 @@ export interface ProjectTeamMemberDetail {
   user_id: string;
   user: ProjectUser;
   role: string;
+  is_lead?: boolean;
   assigned_at: string;
   assigned_by: string;
 }
@@ -128,7 +130,6 @@ export interface CreateProjectParams {
   start_date?: string | null;
   end_date?: string | null;
   description?: string;
-  lead_id?: string;
   team?: ProjectTeamMember[];
   contracts?: unknown[];
 }
@@ -167,6 +168,7 @@ export interface AddTeamMembersParams {
   members: {
     user_id: string;
     role: string;
+    is_lead?: boolean;
   }[];
 }
 

@@ -16,12 +16,12 @@ export const projectSchema = z.object({
   start_date: z.string().optional(),
   end_date: z.string().optional(),
   description: z.string().optional(),
-  lead_id: z.string().optional(),
   team: z
     .array(
       z.object({
         user_id: z.string(),
         role: z.string().min(1, 'Role is required'),
+        is_lead: z.boolean().optional(),
       }),
     )
     .optional(),

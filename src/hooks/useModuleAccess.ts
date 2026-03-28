@@ -36,5 +36,5 @@ export const useModuleAccess = (moduleCode: ModuleCode): AccessMap => {
     }
 
     return accessMap;
-  }, [data?.data, moduleCode, data]);
+  }, [moduleCode, data]);
 };
