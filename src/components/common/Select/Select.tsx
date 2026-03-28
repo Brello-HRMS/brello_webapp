@@ -16,7 +16,10 @@ interface SelectProps {
   placeholder?: string;
   className?: string;
   labelPrefix?: string;
-  menuPosition?: 'top' | 'bottom'; // Still allowed as an override
+  menuPosition?: 'top' | 'bottom';
+  label?: string;
+  error?: string;
+  required?: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -27,6 +30,9 @@ export const Select: React.FC<SelectProps> = ({
   className,
   labelPrefix = '',
   menuPosition: manualPosition,
+  label,
+  error,
+  required,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [autoPosition, setAutoPosition] = useState<'top' | 'bottom'>('bottom');
@@ -64,40 +70,54 @@ export const Select: React.FC<SelectProps> = ({
   }, [isOpen]);
 
   return (
-    <div className={`${styles.selectContainer} ${className || ''}`} ref={containerRef}>
-      <button
-        className={`${styles.selectTrigger} ${isOpen ? styles.active : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        type="button"
-      >
-        <span className={styles.selectedLabel}>
-          {selectedOption ? `${labelPrefix}${selectedOption.label}` : placeholder}
-        </span>
-        <ChevronDown size={18} className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
-      </button>
-
-      {isOpen && (
-        <div className={`${styles.selectMenu} ${styles[position]}`}>
-          {options.map((option) => (
-            <div
-              key={option.value}
-              className={`${styles.selectOption} ${value === option.value ? styles.selected : ''}`}
-              onClick={() => {
-                onChange(option.value);
-                setIsOpen(false);
-              }}
-            >
-              <div className={styles.optionContent}>
-                <div className={styles.optionLabel}>{option.label}</div>
-                {option.description && (
-                  <div className={styles.optionDescription}>({option.description})</div>
-                )}
-              </div>
-              {value === option.value && <Check size={18} className={styles.checkIcon} />}
-            </div>
-          ))}
-        </div>
+    <div
+      className={`${styles.container} ${error ? styles.hasError : ''} ${className || ''}`}
+      ref={containerRef}
+    >
+      {label && (
+        <label className={styles.label}>
+          {label}
+          {required && <span className={styles.asterisk}>*</span>}
+        </label>
       )}
+      <div className={styles.selectContainer}>
+        <button
+          className={`${styles.selectTrigger} ${isOpen ? styles.active : ''}`}
+          onClick={() => setIsOpen(!isOpen)}
+          type="button"
+        >
+          <span className={styles.selectedLabel}>
+            {selectedOption ? `${labelPrefix}${selectedOption.label}` : placeholder}
+          </span>
+          <ChevronDown size={18} className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
+        </button>
+
+        {isOpen && (
+          <div className={`${styles.selectMenu} ${styles[position]}`}>
+            {options.map((option) => (
+              <div
+                key={option.value}
+                className={`${styles.selectOption} ${
+                  value === option.value ? styles.selected : ''
+                }`}
+                onClick={() => {
+                  onChange(option.value);
+                  setIsOpen(false);
+                }}
+              >
+                <div className={styles.optionContent}>
+                  <div className={styles.optionLabel}>{option.label}</div>
+                  {option.description && (
+                    <div className={styles.optionDescription}>({option.description})</div>
+                  )}
+                </div>
+                {value === option.value && <Check size={18} className={styles.checkIcon} />}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {error && <span className={styles.errorMessage}>{error}</span>}
     </div>
   );
 };

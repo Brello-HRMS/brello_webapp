@@ -15,6 +15,7 @@ import EmployeeProfilePage from '../pages/EmployeeProfilePage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
 import ClientPage from '../pages/client/ClientPage';
+import ClientDetailPage from '../pages/client/ClientDetailPage';
 import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
 
@@ -122,6 +123,10 @@ const router = createBrowserRouter([
       {
         path: 'project/clients',
         element: <ClientPage />,
+      },
+      {
+        path: 'project/clients/:id',
+        element: <ClientDetailPage />,
       },
       {
         path: '*',

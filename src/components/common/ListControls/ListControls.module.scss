@@ -182,8 +182,8 @@
 
 .deleteButton {
   @extend .actionButton;
-  color: var(--color-error-destructive);
-  border-color: var(--color-error-destructive);
+  color: var(--color-error);
+  border-color: var(--color-error);
   background-color: var(--color-error-50);
   padding: 10px 12px;
   font-size: 0.875rem; // 14px

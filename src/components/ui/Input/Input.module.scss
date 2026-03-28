@@ -13,7 +13,7 @@
 }
 
 .asterisk {
-  color: #ef4444;
+  color: var(--color-error);
   margin-left: 2px;
 }
 
@@ -92,26 +92,26 @@
 // Error state styling
 .hasError {
   .label {
-    color: #ef4444;
+    color: var(--color-error);
     font-size: 12px;
   }
 
   .input {
-    border-color: #ef4444;
+    border-color: var(--color-error);
 
     &:focus {
-      border-color: #ef4444;
+      border-color: var(--color-error);
       box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
     }
   }
 
   .icon {
-    color: #ef4444;
+    color: var(--color-error);
   }
 }
 
 .errorMessage {
   font-size: 10px;
-  color: #ef4444;
+  color: var(--color-error);
   // margin-top: var(--spacing-1);
 }

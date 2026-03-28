@@ -23,13 +23,13 @@
 }
 
 .deactivate {
-  color: var(--color-error-destructive) !important;
+  color: var(--color-error) !important;
 
   &:hover {
     background-color: var(--color-error-50) !important;
   }
 
   span[class*='iconWrapper'] {
-    color: var(--color-error-destructive) !important;
+    color: var(--color-error) !important;
   }
 }

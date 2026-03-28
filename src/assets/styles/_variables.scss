@@ -33,8 +33,7 @@
   --color-gray-200: #eaecf0;
   --color-gray-500: #d0d5dd;
   --color-gray-700: #344054;
-  --color-error: #ef4444; // red/500
-  --color-error-destructive: #ef4444; // red/500
+  --color-error: var(--color-error); // red/500
   --color-error-50: #fef2f2; // red/50
   --color-error-100: #fee4e2;
   --color-error-700: #b42318;

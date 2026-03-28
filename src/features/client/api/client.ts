@@ -7,6 +7,7 @@ import type {
   GetClientsResponse,
   UpdateClientParams,
   CreateClientParams,
+  GetClientByIdResponse,
 } from '../types/clientType';
 
 export const getClients = async (params?: GetClientsParams): Promise<GetClientsResponse> => {
@@ -21,7 +22,7 @@ export const updateClient = async (id: string, params: UpdateClientParams): Prom
   return apiClient.patch(`${envVars.BRELLO_BASE_API}/clients/${id}`, params);
 };
 
-export const getClientById = async (id: string): Promise<Client> => {
+export const getClientById = async (id: string): Promise<GetClientByIdResponse> => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/clients/${id}`);
 };
 
