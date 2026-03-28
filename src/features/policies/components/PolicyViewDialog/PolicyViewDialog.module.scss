@@ -1,0 +1,92 @@
+.content {
+  height: calc(100vh - 200px);
+  min-height: 300px;
+  overflow-y: auto;
+}
+
+.richContent {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--color-gray-700, #344054);
+
+  p {
+    margin: 0 0 0.75rem;
+  }
+
+  ul,
+  ol {
+    padding-left: 1.25rem;
+    margin: 0 0 0.75rem;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.placeholder {
+  font-size: 0.9rem;
+  color: var(--color-gray-400, #98a2b3);
+  font-style: italic;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+  }
+
+  button:first-child {
+    flex: 0 0 auto;
+    min-width: 110px;
+  }
+
+  button:last-child {
+    flex: 1;
+  }
+}
+
+/* ── Edit Mode Styles ── */
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-gray-700, #344054);
+  }
+}
+
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 350px;
+}
+
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-gray-500, #667085);
+  font-size: 0.9rem;
+}

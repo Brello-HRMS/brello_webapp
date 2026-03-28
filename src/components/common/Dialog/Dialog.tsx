@@ -7,6 +7,7 @@ import styles from './Dialog.module.scss';
 
 export interface DialogProps {
   title: string;
+  description?: string;
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -17,6 +18,7 @@ export interface DialogProps {
 
 export const Dialog: React.FC<DialogProps> = ({
   title,
+  description,
   open,
   onClose,
   children,
@@ -70,7 +72,10 @@ export const Dialog: React.FC<DialogProps> = ({
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
             <div className={styles.header}>
-              <h2>{title}</h2>
+              <div className={styles.titleGroup}>
+                <h2>{title}</h2>
+                {description && <p className={styles.description}>{description}</p>}
+              </div>
               <button className={styles.closeButton} onClick={onClose} aria-label="Close">
                 <X size={20} />
               </button>
