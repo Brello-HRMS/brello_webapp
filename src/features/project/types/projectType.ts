@@ -1,55 +1,124 @@
 import { SortOrder } from '../../../types/common';
 
-export const ProjectStatus = {
-  DRAFT: 'DRAFT',
-  ACTIVE: 'ACTIVE',
-  ON_HOLD: 'ON_HOLD',
-  COMPLETED: 'COMPLETED',
-  IN_PROGRESS: 'IN_PROGRESS',
-} as const;
-export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
+// Re-export enums so existing consumers don't need to change their imports
+export { ProjectStatus, ProjectPriority, ProjectType } from './projectEnums';
 
-export const ProjectPriority = {
-  HIGH: 'HIGH',
-  MEDIUM: 'MEDIUM',
-  LOW: 'LOW',
-  URGENT: 'URGENT',
-} as const;
-export type ProjectPriority = (typeof ProjectPriority)[keyof typeof ProjectPriority];
+import type { ProjectStatus, ProjectPriority, ProjectType } from './projectEnums';
 
+// ---------------------------------------------------------------------------
+// Shared / reusable entity interfaces
+// ---------------------------------------------------------------------------
+
+export interface ProjectClient {
+  id: string;
+  enterprise_id: string | null;
+  organization_id: string;
+  status: string;
+  code: string | null;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+  modified_by: string | null;
+  modified_at: string | null;
+  deleted_by: string | null;
+  deleted_at: string | null;
+  name: string;
+  poc_name: string;
+  poc_email: string;
+  poc_phone: string;
+  address: string;
+  logo: string | null;
+}
+
+export interface ProjectUser {
+  id: string;
+  enterprise_id: string | null;
+  organization_id: string;
+  status: string;
+  code: string | null;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+  modified_by: string | null;
+  modified_at: string | null;
+  deleted_by: string | null;
+  deleted_at: string | null;
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  email: string;
+  phone: string;
+  is_platform_admin: boolean;
+  reports_to_id: string | null;
+  department_id: string | null;
+  designation_id: string | null;
+  user_profile_id: string | null;
+  plan_id: string | null;
+  last_access_app_id: string | null;
+  avatar?: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Project team
+// ---------------------------------------------------------------------------
+
+/** Payload shape when assigning a member during project creation */
 export interface ProjectTeamMember {
-  employee_id: string;
+  user_id: string;
   role: string;
 }
+
+export interface ProjectTeamMemberDetail {
+  id: string;
+  project_id: string;
+  user_id: string;
+  user: ProjectUser;
+  role: string;
+  assigned_at: string;
+  assigned_by: string;
+}
+
+// ---------------------------------------------------------------------------
+// Project contract
+// ---------------------------------------------------------------------------
 
 export interface ProjectContract {
   name: string;
   file: File;
 }
 
-export const ProjectType = {
-  INTERNAL: 'INTERNAL',
-  CLIENT: 'CLIENT',
-  FIXED_PRICE: 'FIXED_PRICE',
-  TM: 'TM',
-  AGILE: 'AGILE',
-} as const;
-export type ProjectType = (typeof ProjectType)[keyof typeof ProjectType];
+// ---------------------------------------------------------------------------
+// Project
+// ---------------------------------------------------------------------------
 
 export interface Project {
   id: string;
+  enterprise_id: string | null;
+  organization_id: string;
+  status: string;
+  code: string | null;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+  modified_by: string | null;
+  modified_at: string | null;
+  deleted_by: string | null;
+  deleted_at: string | null;
+  client_id: string;
+  client?: ProjectClient;
   name: string;
   project_type: ProjectType;
   project_status: ProjectStatus;
   priority: ProjectPriority;
-  start_date?: string;
-  end_date?: string;
-  description?: string;
-  last_updated: string;
-  client_id: string;
-  lead_id?: string;
-  team?: ProjectTeamMember[];
+  start_date: string | null;
+  end_date: string | null;
+  contracts?: { id: string; name: string; url: string }[];
+  team?: ProjectTeamMemberDetail[];
 }
+
+// ---------------------------------------------------------------------------
+// API params & responses
+// ---------------------------------------------------------------------------
 
 export interface CreateProjectParams {
   name: string;
@@ -62,6 +131,12 @@ export interface CreateProjectParams {
   lead_id?: string;
   team?: ProjectTeamMember[];
   contracts?: unknown[];
+}
+
+export interface GetProjectResponse {
+  success: boolean;
+  data: Project;
+  timestamp: string;
 }
 
 export interface GetProjectsResponse {
@@ -93,23 +168,6 @@ export interface AddTeamMembersParams {
     user_id: string;
     role: string;
   }[];
-}
-
-export interface ProjectTeamMemberDetail {
-  id: string;
-  project_id: string;
-  user_id: string;
-  user: {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    status: string;
-  };
-  role: string;
-  assigned_at: string;
-  assigned_by: string;
 }
 
 export interface GetProjectTeamResponse {

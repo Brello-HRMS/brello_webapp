@@ -1,0 +1,66 @@
+@use '../../../../assets/styles/mixins' as *;
+
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-6);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-gray-100);
+
+    h3 {
+      margin: 0;
+      @include text-clamp(15px, 18px);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary-500);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .icon {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-6) var(--spacing-8);
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-1);
+
+    .infoLabel {
+      @include text-clamp(10px, 12px);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .infoValue {
+      @include text-clamp(13px, 15px);
+      color: var(--color-text-primary);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+
+  .fullWidth {
+    grid-column: 1 / -1;
+  }
+}

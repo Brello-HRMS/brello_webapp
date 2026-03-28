@@ -7,6 +7,9 @@
   --color-primary-purple-hover: rgba(131, 0, 255, 0.02);
   --color-primary-border: #7f56d9;
   --color-primary-50: rgba(127, 86, 217, 0.1);
+  --color-primary-100: #ede9f8;
+  --color-primary-200: #d0c4f0;
+  --color-primary-700: #4a2d6f;
   --color-secondary: #475467;
 
   // Blue Badge Colors
@@ -30,13 +33,30 @@
   --color-success-200: #abefc6;
   --color-success-700: #067647;
   --color-gray-50: #f9fafb;
+  --color-gray-100: #f2f4f7;
   --color-gray-200: #eaecf0;
+  --color-gray-300: #d0d5dd;
   --color-gray-500: #d0d5dd;
   --color-gray-700: #344054;
   --color-error: var(--color-error); // red/500
   --color-error-50: #fef2f2; // red/50
   --color-error-100: #fee4e2;
+  --color-error-200: #fecdca;
   --color-error-700: #b42318;
+
+  // Priority Badge Colors
+  // High / Urgent
+  --color-priority-high-bg: #fff1f0;
+  --color-priority-high-text: #cf1322;
+  --color-priority-high-border: #ffa39e;
+  // Medium
+  --color-priority-medium-bg: #fffbe6;
+  --color-priority-medium-text: #d48806;
+  --color-priority-medium-border: #ffe58f;
+  // Low
+  --color-priority-low-bg: #f0f5ff;
+  --color-priority-low-text: #1d39c4;
+  --color-priority-low-border: #adc6ff;
 
   // Shadow for buttons
   --shadow-button: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
