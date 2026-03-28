@@ -19,6 +19,8 @@ import { CreatePolicyDialog } from '../../features/policies/components/CreatePol
 import { PolicyCreatedModal } from '../../features/policies/components/PolicyCreatedModal/PolicyCreatedModal';
 import { PolicyViewDialog } from '../../features/policies/components/PolicyViewDialog/PolicyViewDialog';
 import no_department from '../../assets/svg/department/no_department_found.svg';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode } from '../../enum/modules';
 
 import styles from './PoliciesPage.module.scss';
 
@@ -145,6 +147,8 @@ const PoliciesPage = () => {
     });
   };
 
+  const { hasCreateAccess } = useModuleAccess(ModuleCode.ORG_POLICIES);
+
   if (!isLoading && groups.length === 0) {
     return (
       <>
@@ -184,9 +188,11 @@ const PoliciesPage = () => {
         title="Policies"
         subtitle="Manage and view company policies."
         actions={
-          <Button variant="primary" onClick={() => setCreateOpen(true)}>
-            Add policy
-          </Button>
+          hasCreateAccess && (
+            <Button variant="primary" onClick={() => setCreateOpen(true)}>
+              Add policy
+            </Button>
+          )
         }
       />
 
