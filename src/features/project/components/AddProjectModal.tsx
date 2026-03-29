@@ -169,11 +169,10 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           {activeTab === 'team' && (
             <TeamTab
               projectId={project?.id}
-              setValue={setValue}
               watch={watch}
-              fields={teamFields}
-              append={appendMember}
-              remove={removeMember}
+              teamMembers={teamFields}
+              appendMember={appendMember}
+              removeMember={removeMember}
             />
           )}
           {activeTab === 'contract' && (

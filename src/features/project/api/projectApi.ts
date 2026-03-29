@@ -8,6 +8,7 @@ import type {
   Project,
   AddTeamMembersParams,
   GetProjectTeamResponse,
+  GetProjectResponse,
 } from '../types/projectType';
 
 export const getProjects = async (
@@ -21,10 +22,14 @@ export const getAllProjects = async (params?: GetProjectsParams): Promise<GetPro
   return apiClient.get(`${envVars.BRELLO_BASE_API}/projects`, { params });
 };
 
+export const getProject = async (projectId: string): Promise<GetProjectResponse> => {
+  return apiClient.get(`${envVars.BRELLO_BASE_API}/projects/${projectId}`);
+};
+
 export const createProject = async (
   clientId: string,
   data: CreateProjectParams,
-): Promise<Project> => {
+): Promise<GetProjectResponse> => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/clients/${clientId}/projects`, data);
 };
 
