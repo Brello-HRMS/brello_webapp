@@ -144,6 +144,8 @@ const router = createBrowserRouter([
       {
         path: 'attendance/holidays/:id',
         element: <HolidayCalendarView />,
+      },
+      {
         path: 'project/projects',
         element: <ProjectPage />,
       },
