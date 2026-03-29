@@ -18,6 +18,8 @@ import ClientPage from '../pages/client/ClientPage';
 import ClientDetailPage from '../pages/client/ClientDetailPage';
 import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
+import ProjectPage from '../pages/project/ProjectPage';
+import ProjectDetailPage from '../pages/project/ProjectDetailPage';
 import PoliciesPage from '../pages/policies/PoliciesPage';
 
 const isAuthenticated = () => {
@@ -132,6 +134,14 @@ const router = createBrowserRouter([
       {
         path: 'project/clients/:id',
         element: <ClientDetailPage />,
+      },
+      {
+        path: 'project/projects',
+        element: <ProjectPage />,
+      },
+      {
+        path: 'project/clients/:clientId/projects/:projectId',
+        element: <ProjectDetailPage />,
       },
       {
         path: '*',

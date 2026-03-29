@@ -12,12 +12,13 @@ export const useCreateProject = (clientId: string) => {
   return useMutation({
     mutationFn: async (data: CreateProjectParams) => {
       const { team, contracts: _contracts, ...rest } = data;
-      const project = await createProject(clientId, rest);
+      const response = await createProject(clientId, rest);
+      const project = response.data;
 
       if (team && team.length > 0) {
         await addTeamMembers(project.id, {
           members: team.map((member) => ({
-            user_id: member.employee_id,
+            user_id: member.user_id,
             role: member.role,
           })),
         });

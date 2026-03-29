@@ -28,17 +28,35 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
+  // const navigate = useNavigate();
   const { mutate: logout } = useLogout();
 
   const breadcrumbs = useMemo(() => {
     const segments = location.pathname.split('/').filter(Boolean);
 
-    return segments.map((segment: string) => {
-      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+    // Function to truncate long IDs (UUIDs)
+    const truncateId = (id: string, startChars = 8, endChars = 8) => {
+      // Check if it looks like a UUID (long string with dashes)
+      if (id.length > 20 && id.includes('-')) {
+        return `${id.substring(0, startChars)}...${id.substring(id.length - endChars)}`;
+      }
+      return id.charAt(0).toUpperCase() + id.slice(1);
+    };
 
-      return { label, path: segment };
-    });
+    const allCrumbs = segments.reduce<{ label: string; path: string }[]>((crumbs, segment) => {
+      const cumulativePath = `${crumbs.length > 0 ? crumbs[crumbs.length - 1].path : ''}/${segment}`;
+      return [...crumbs, { label: truncateId(segment), path: cumulativePath }];
+    }, []);
+
+    if (allCrumbs.length <= 4) return allCrumbs;
+
+    // Smart truncation for long paths
+    return [allCrumbs[0], { label: '...', path: '' }, ...allCrumbs.slice(-2)];
   }, [location.pathname]);
+
+  // const handleCrumbClick = (path: string) => {
+  //   if (path) navigate(path);
+  // };
 
   const showNotification = useMediaQuery('(min-width: 801px)');
   const showSettings = useMediaQuery('(min-width: 701px)');
@@ -88,12 +106,20 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
         <div className={styles.breadcrumbsContainer}>
           {isDesktop && <Globe size={18} className={styles.breadcrumbIcon} />}
 
-          {breadcrumbs.map((crumb: { path: string; label: string }, index: number) => (
-            <div key={crumb.path} className={styles.breadcrumbSegment}>
-              {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
-              <div className={styles.breadcrumbPill}>{crumb.label}</div>
-            </div>
-          ))}
+          {breadcrumbs.map((crumb, index) => {
+            const isActive = index === breadcrumbs.length - 1 && crumb.path !== '';
+            return (
+              <div key={`${crumb.path}-${index}`} className={styles.breadcrumbSegment}>
+                {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
+                <div
+                  className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''}`}
+                  // onClick={() => handleCrumbClick(crumb.path)}
+                >
+                  {crumb.label}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 

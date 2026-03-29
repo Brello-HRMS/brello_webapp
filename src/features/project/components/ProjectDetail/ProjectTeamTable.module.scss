@@ -1,0 +1,73 @@
+@use '../../../../assets/styles/mixins' as *;
+
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-gray-100);
+
+    h3 {
+      margin: 0;
+      @include text-clamp(15px, 18px);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary-500);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+    }
+
+    .icon {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.memberCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-primary-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary-700);
+    font-weight: var(--font-weight-bold);
+    @include text-clamp(12px, 14px);
+  }
+
+  .avatarImg {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .memberInfo {
+    display: flex;
+    flex-direction: column;
+
+    .memberName {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .memberEmail {
+      @include text-clamp(11px, 12px);
+      color: var(--color-text-secondary);
+    }
+  }
+}

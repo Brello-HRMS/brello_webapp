@@ -34,8 +34,9 @@ export const useUpdateProject = () => {
 
       if (team && team.length > 0) {
         const teamPayload = team.map((member) => ({
-          user_id: member.employee_id,
+          user_id: member.user_id,
           role: member.role,
+          is_lead: member.is_lead,
         }));
         await addTeamMembers(projectId, { members: teamPayload });
       }

@@ -1,14 +1,21 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 
 import no_client from '../../assets/svg/department/no_department_found.svg';
-import { Button, DataTable, NoDataFound, ListControls } from '../../components/common';
+import {
+  Button,
+  DataTable,
+  NoDataFound,
+  ListControls,
+  WarningModal,
+} from '../../components/common';
 import { useClient } from '../../features/client/hooks/useClient';
 import { useProjects } from '../../features/project/hooks/useProjects';
 import { projectColumns } from '../../features/project/columns/projectColumns';
 import { useDebounce } from '../../hooks/useDebounce';
 import { AddProjectModal } from '../../features/project/components/AddProjectModal';
+import { useDeleteProject } from '../../features/project/hooks/useDeleteProject';
 
 import styles from './ClientDetailPage.module.scss';
 
@@ -23,12 +30,17 @@ const STATUS_OPTIONS = [
 ];
 
 const ClientDetailPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>(undefined);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  const { mutate: deleteProject, isPending: isDeleting } = useDeleteProject();
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -47,7 +59,12 @@ const ClientDetailPage = () => {
   const projects = useMemo(() => projectsResponse?.data?.data || [], [projectsResponse]);
   const projectCount = projectsResponse?.data?.meta?.total || 0;
 
-  const handleViewProject = useCallback((_project: Project) => {}, []);
+  const handleViewProject = useCallback(
+    (project: Project) => {
+      navigate(`/project/clients/${id}/projects/${project.id}`);
+    },
+    [navigate, id],
+  );
 
   const handleEditProject = useCallback((project: Project) => {
     setEditingProject(project);
@@ -59,16 +76,30 @@ const ClientDetailPage = () => {
     setEditingProject(undefined);
   }, []);
 
-  const handleDeleteProject = useCallback((_project: Project) => {}, []);
+  const handleDeleteClick = useCallback((project: Project) => {
+    setSelectedProject(project);
+    setShowDeleteModal(true);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (selectedProject) {
+      deleteProject(selectedProject.id, {
+        onSuccess: () => {
+          setShowDeleteModal(false);
+          setSelectedProject(null);
+        },
+      });
+    }
+  }, [selectedProject, deleteProject]);
 
   const columns = useMemo(
     () =>
       projectColumns({
         onView: handleViewProject,
         onEdit: handleEditProject,
-        onDelete: handleDeleteProject,
+        onDelete: handleDeleteClick,
       }),
-    [handleViewProject, handleEditProject, handleDeleteProject],
+    [handleViewProject, handleEditProject, handleDeleteClick],
   );
 
   if (isClientLoading) {
@@ -146,6 +177,7 @@ const ClientDetailPage = () => {
               setEditingProject(undefined);
               setIsAddModalOpen(true);
             }}
+            disabled={isDeleting}
           >
             <Plus size={16} />
             Add project
@@ -177,6 +209,15 @@ const ClientDetailPage = () => {
           rowIdField="id"
         />
       </div>
+
+      <WarningModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Project?"
+        description={`Are you sure you want to delete the "${selectedProject?.name}" project? This action cannot be undone.`}
+        actionLabel="Delete"
+        onAction={handleConfirmDelete}
+      />
 
       <AddProjectModal
         isOpen={isAddModalOpen}
