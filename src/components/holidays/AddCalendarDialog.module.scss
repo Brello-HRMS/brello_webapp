@@ -1,0 +1,62 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  width: 100%;
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #f1f5f9;
+}
+
+.toggleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.toggleLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.toggleDescription {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activeText {
+  font-size: 12px;
+  font-weight: 600;
+  color: #10b981;
+  background-color: #ecfdf5;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.inactiveText {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ef4444;
+  background-color: #fef2f2;
+  padding: 2px 8px;
+  border-radius: 4px;
+}

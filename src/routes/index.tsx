@@ -21,6 +21,8 @@ import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
 import ProjectPage from '../pages/project/ProjectPage';
 import ProjectDetailPage from '../pages/project/ProjectDetailPage';
 import PoliciesPage from '../pages/policies/PoliciesPage';
+import HolidaysPage from '../pages/holidays/HolidaysPage';
+import HolidayCalendarView from '../pages/holidays/HolidayCalendarView';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -136,6 +138,12 @@ const router = createBrowserRouter([
         element: <ClientDetailPage />,
       },
       {
+        path: 'attendance/holidays',
+        element: <HolidaysPage />,
+      },
+      {
+        path: 'attendance/holidays/:id',
+        element: <HolidayCalendarView />,
         path: 'project/projects',
         element: <ProjectPage />,
       },
