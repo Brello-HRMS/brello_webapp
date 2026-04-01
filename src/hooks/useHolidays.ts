@@ -14,14 +14,16 @@ import type {
   MonthViewResponse,
   EmployeeHolidaysResponse,
   CreateCalendarRequest,
-  CloneCalendarRequest,
   AddHolidayRequest,
 } from '../types/holiday';
 
 // --- API Functions ---
 
-export const getCalendars = async (year: number): Promise<CalendarResponse> => {
-  return apiClient.get(`${envVars.BRELLO_BASE_API}/holidays/calendars?year=${year}`);
+export const getCalendars = async (year?: number): Promise<CalendarResponse> => {
+  const url = year
+    ? `${envVars.BRELLO_BASE_API}/holidays/calendars?year=${year}`
+    : `${envVars.BRELLO_BASE_API}/holidays/calendars`;
+  return apiClient.get(url);
 };
 
 export const createCalendar = async (
@@ -32,13 +34,6 @@ export const createCalendar = async (
 
 export const activateCalendar = async (id: string): Promise<SingleCalendarResponse> => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/activate`);
-};
-
-export const cloneCalendar = async (
-  id: string,
-  data: CloneCalendarRequest,
-): Promise<SingleCalendarResponse> => {
-  return apiClient.post(`${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/clone`, data);
 };
 
 export const deleteCalendar = async (id: string): Promise<{ success: boolean }> => {
@@ -63,6 +58,10 @@ export const addHoliday = async (
   return apiClient.post(`${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/holidays`, data);
 };
 
+export const deleteHoliday = async (holidayId: string): Promise<{ success: boolean }> => {
+  return apiClient.delete(`${envVars.BRELLO_BASE_API}/holidays/${holidayId}`);
+};
+
 export const getUpcomingHolidays = async (): Promise<EmployeeHolidaysResponse> => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/employee/holidays`);
 };
@@ -70,11 +69,11 @@ export const getUpcomingHolidays = async (): Promise<EmployeeHolidaysResponse> =
 // --- Hooks ---
 
 export const useCalendars = (
-  year: number,
+  year?: number,
   options?: Omit<UseQueryOptions<CalendarResponse, Error>, 'queryKey' | 'queryFn'>,
 ) => {
   return useQuery({
-    queryKey: ['holidays', 'calendars', year],
+    queryKey: ['holidays', 'calendars', year ?? 'all'],
     queryFn: async () => {
       try {
         return await getCalendars(year);
@@ -116,28 +115,6 @@ export const useActivateCalendar = () => {
     },
     onError: (error) => {
       const message = (error as ApiError)?.message || 'Failed to activate calendar';
-      showToast(message, 'error');
-    },
-  });
-};
-
-export const useCloneCalendar = (
-  options?: UseMutationOptions<
-    SingleCalendarResponse,
-    Error,
-    { id: string; data: CloneCalendarRequest }
-  >,
-) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }) => cloneCalendar(id, data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['holidays', 'calendars'] });
-      showToast('Calendar cloned successfully', 'success');
-      options?.onSuccess?.(data, {} as { id: string; data: CloneCalendarRequest }, undefined);
-    },
-    onError: (error) => {
-      const message = (error as ApiError)?.message || 'Failed to clone calendar';
       showToast(message, 'error');
     },
   });
@@ -195,11 +172,28 @@ export const useAddHoliday = (
     mutationFn: (data: AddHolidayRequest) => addHoliday(id, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['holidays', 'calendar', id] });
+      queryClient.invalidateQueries({ queryKey: ['holidays', 'calendars'] });
       showToast('Holiday added successfully', 'success');
       options?.onSuccess?.(data, {} as AddHolidayRequest, undefined);
     },
     onError: (error) => {
       const message = (error as ApiError)?.message || 'Failed to add holiday';
+      showToast(message, 'error');
+    },
+  });
+};
+
+export const useDeleteHoliday = (calendarId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteHoliday,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['holidays', 'calendar', calendarId] });
+      queryClient.invalidateQueries({ queryKey: ['holidays', 'calendars'] });
+      showToast('Holiday deleted successfully', 'success');
+    },
+    onError: (error) => {
+      const message = (error as ApiError)?.message || 'Failed to delete holiday';
       showToast(message, 'error');
     },
   });

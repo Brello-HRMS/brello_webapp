@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Copy, Calendar as CalendarIcon, RefreshCw, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, RefreshCw, Trash2 } from 'lucide-react';
 import moment from 'moment';
 
 import { ToggleButton } from '../common/ToggleButton/ToggleButton';
@@ -28,11 +28,6 @@ export const HolidayCard: React.FC<HolidayCardProps> = ({ calendar, onDelete, on
     onDelete(calendar.id);
   };
 
-  const handleClone = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // TODO: Implement clone
-  };
-
   const isActive = calendar.status === 'ACTIVE' || calendar.is_active;
 
   return (
@@ -52,7 +47,10 @@ export const HolidayCard: React.FC<HolidayCardProps> = ({ calendar, onDelete, on
       <div className={styles.middleContent}>
         <div className={styles.statItem}>
           <CalendarIcon size={18} />
-          <span>{calendar.holiday_count || 0} Holidays scheduled</span>
+          <span>
+            {calendar.holiday_count || 0} {calendar.holiday_count === 1 ? 'Holiday' : 'Holidays'}{' '}
+            scheduled
+          </span>
         </div>
         <div className={styles.statItem}>
           <RefreshCw size={18} />
@@ -64,9 +62,6 @@ export const HolidayCard: React.FC<HolidayCardProps> = ({ calendar, onDelete, on
 
       <div className={styles.bottomRow}>
         <div className={styles.actions}>
-          <button className={styles.actionBtn} onClick={handleClone} title="Clone Calendar">
-            <Copy size={20} />
-          </button>
           <button
             className={`${styles.actionBtn} ${styles.delete}`}
             onClick={handleDelete}

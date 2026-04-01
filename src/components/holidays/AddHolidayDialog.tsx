@@ -30,7 +30,7 @@ export const AddHolidayDialog: React.FC<AddHolidayDialogProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
-  const [type, setType] = useState<'PUBLIC' | 'REGIONAL'>('PUBLIC');
+  const [type, setType] = useState<'PUBLIC' | 'OPTIONAL' | 'COMPANY'>('PUBLIC');
   const [color, setColor] = useState(CATEGORY_COLORS[0]);
   const [description, setDescription] = useState('');
 
@@ -88,15 +88,16 @@ export const AddHolidayDialog: React.FC<AddHolidayDialogProps> = ({
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <DatePicker label="Select Date" value={date} onChange={setDate} required />
+        <DatePicker label="Select Date" value={date} onChange={setDate} required inline />
         <Select
           label="Holiday Type"
           options={[
             { value: 'PUBLIC', label: 'Public Holiday' },
-            { value: 'REGIONAL', label: 'Regional Holiday' },
+            { value: 'OPTIONAL', label: 'Optional Holiday' },
+            { value: 'COMPANY', label: 'Company Holiday' },
           ]}
           value={type}
-          onChange={(e) => setType(e.target.value as 'PUBLIC' | 'REGIONAL')}
+          onChange={(e) => setType(e.target.value as 'PUBLIC' | 'OPTIONAL' | 'COMPANY')}
           required
         />
         <div className={styles.categorySection}>

@@ -15,8 +15,7 @@ import type { Calendar } from '../../types/holiday';
 
 const HolidaysPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const currentYear = new Date().getFullYear();
-  const { data: calendarsResponse, isLoading } = useCalendars(currentYear);
+  const { data: calendarsResponse, isLoading } = useCalendars();
   const activateCalendarMutation = useActivateCalendar();
   const deleteCalendarMutation = useDeleteCalendar();
 

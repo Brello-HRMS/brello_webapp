@@ -328,3 +328,22 @@
   align-items: center;
   gap: var(--spacing-2);
 }
+
+.deleteHolidayBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #fef2f2;
+    color: #ef4444;
+  }
+}
