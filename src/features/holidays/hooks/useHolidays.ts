@@ -1,10 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { apiClient } from '../lib/axios';
-import { envVars } from '../utils/envVars';
-import { showToast } from '../features/ToastFeature/ShowToast';
+import { showToast } from '../../ToastFeature/ShowToast';
+import {
+  getCalendars,
+  createCalendar,
+  activateCalendar,
+  deleteCalendar,
+  getCalendarHolidays,
+  addHoliday,
+  deleteHoliday,
+  getUpcomingHolidays,
+} from '../api/holidayApi';
 
-import type { ApiError } from '../types/common';
+import type { ApiError } from '../../../types/common';
 import type { UseQueryOptions, UseMutationOptions } from '@tanstack/react-query';
 import type {
   CalendarResponse,
@@ -15,56 +23,7 @@ import type {
   EmployeeHolidaysResponse,
   CreateCalendarRequest,
   AddHolidayRequest,
-} from '../types/holiday';
-
-// --- API Functions ---
-
-export const getCalendars = async (year?: number): Promise<CalendarResponse> => {
-  const url = year
-    ? `${envVars.BRELLO_BASE_API}/holidays/calendars?year=${year}`
-    : `${envVars.BRELLO_BASE_API}/holidays/calendars`;
-  return apiClient.get(url);
-};
-
-export const createCalendar = async (
-  data: CreateCalendarRequest,
-): Promise<SingleCalendarResponse> => {
-  return apiClient.post(`${envVars.BRELLO_BASE_API}/holidays/calendars`, data);
-};
-
-export const activateCalendar = async (id: string): Promise<SingleCalendarResponse> => {
-  return apiClient.post(`${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/activate`);
-};
-
-export const deleteCalendar = async (id: string): Promise<{ success: boolean }> => {
-  return apiClient.delete(`${envVars.BRELLO_BASE_API}/holidays/calendars/${id}`);
-};
-
-export const getCalendarHolidays = async (
-  id: string,
-  month?: number,
-): Promise<MonthViewResponse | HolidayResponse> => {
-  const url =
-    month !== undefined
-      ? `${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/month-view?month=${month}`
-      : `${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/holidays`;
-  return apiClient.get(url);
-};
-
-export const addHoliday = async (
-  id: string,
-  data: AddHolidayRequest,
-): Promise<{ success: boolean; data: Holiday }> => {
-  return apiClient.post(`${envVars.BRELLO_BASE_API}/holidays/calendars/${id}/holidays`, data);
-};
-
-export const deleteHoliday = async (holidayId: string): Promise<{ success: boolean }> => {
-  return apiClient.delete(`${envVars.BRELLO_BASE_API}/holidays/${holidayId}`);
-};
-
-export const getUpcomingHolidays = async (): Promise<EmployeeHolidaysResponse> => {
-  return apiClient.get(`${envVars.BRELLO_BASE_API}/employee/holidays`);
-};
+} from '../types';
 
 // --- Hooks ---
 
@@ -78,7 +37,8 @@ export const useCalendars = (
       try {
         return await getCalendars(year);
       } catch (error) {
-        const message = (error as ApiError)?.message || 'Failed to fetch holiday calendars';
+        const message =
+          (error as unknown as ApiError)?.message || 'Failed to fetch holiday calendars';
         showToast(message, 'error');
         throw error;
       }
@@ -93,13 +53,13 @@ export const useCreateCalendar = (
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCalendar,
-    onSuccess: (data) => {
+    onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: ['holidays', 'calendars'] });
       showToast('Calendar created successfully', 'success');
-      options?.onSuccess?.(data, {} as CreateCalendarRequest, undefined);
+      options?.onSuccess?.(...args);
     },
     onError: (error) => {
-      const message = (error as ApiError)?.message || 'Failed to create calendar';
+      const message = (error as unknown as ApiError)?.message || 'Failed to create calendar';
       showToast(message, 'error');
     },
   });
@@ -114,7 +74,7 @@ export const useActivateCalendar = () => {
       showToast('Calendar activated successfully', 'success');
     },
     onError: (error) => {
-      const message = (error as ApiError)?.message || 'Failed to activate calendar';
+      const message = (error as unknown as ApiError)?.message || 'Failed to activate calendar';
       showToast(message, 'error');
     },
   });
@@ -129,7 +89,7 @@ export const useDeleteCalendar = () => {
       showToast('Calendar deleted successfully', 'success');
     },
     onError: (error) => {
-      const message = (error as ApiError)?.message || 'Failed to delete calendar';
+      const message = (error as unknown as ApiError)?.message || 'Failed to delete calendar';
       showToast(message, 'error');
     },
   });
@@ -153,7 +113,7 @@ export const useCalendarHolidays = (
         }
         return (response as HolidayResponse).data || [];
       } catch (error) {
-        const message = (error as ApiError)?.message || 'Failed to fetch holidays';
+        const message = (error as unknown as ApiError)?.message || 'Failed to fetch holidays';
         showToast(message, 'error');
         throw error;
       }
@@ -170,14 +130,14 @@ export const useAddHoliday = (
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: AddHolidayRequest) => addHoliday(id, data),
-    onSuccess: (data) => {
+    onSuccess: (...args) => {
       queryClient.invalidateQueries({ queryKey: ['holidays', 'calendar', id] });
       queryClient.invalidateQueries({ queryKey: ['holidays', 'calendars'] });
       showToast('Holiday added successfully', 'success');
-      options?.onSuccess?.(data, {} as AddHolidayRequest, undefined);
+      options?.onSuccess?.(...args);
     },
     onError: (error) => {
-      const message = (error as ApiError)?.message || 'Failed to add holiday';
+      const message = (error as unknown as ApiError)?.message || 'Failed to add holiday';
       showToast(message, 'error');
     },
   });
@@ -193,7 +153,7 @@ export const useDeleteHoliday = (calendarId: string) => {
       showToast('Holiday deleted successfully', 'success');
     },
     onError: (error) => {
-      const message = (error as ApiError)?.message || 'Failed to delete holiday';
+      const message = (error as unknown as ApiError)?.message || 'Failed to delete holiday';
       showToast(message, 'error');
     },
   });
@@ -208,7 +168,8 @@ export const useUpcomingHolidays = (
       try {
         return await getUpcomingHolidays();
       } catch (error) {
-        const message = (error as ApiError)?.message || 'Failed to fetch upcoming holidays';
+        const message =
+          (error as unknown as ApiError)?.message || 'Failed to fetch upcoming holidays';
         showToast(message, 'error');
         throw error;
       }

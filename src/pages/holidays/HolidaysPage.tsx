@@ -4,14 +4,18 @@ import { Plus } from 'lucide-react';
 import { PageHeader } from '../../components/common/PageHeader/PageHeader';
 import { Button } from '../../components/common/Button/Button';
 import { NoDataFound } from '../../components/common/NoDataFound/NoDataFound';
-import { useCalendars, useActivateCalendar, useDeleteCalendar } from '../../hooks/useHolidays';
-import { HolidayCard } from '../../components/holidays/HolidayCard';
-import { AddCalendarDialog } from '../../components/holidays/AddCalendarDialog';
+import {
+  useCalendars,
+  useActivateCalendar,
+  useDeleteCalendar,
+} from '../../features/holidays/hooks/useHolidays';
+import { HolidayCard } from '../../features/holidays/components/HolidayCard';
+import { AddCalendarDialog } from '../../features/holidays/components/AddCalendarDialog';
 import noCalendarFoundImage from '../../assets/svg/holiday/no_calendar_found.svg';
 
 import styles from './HolidaysPage.module.scss';
 
-import type { Calendar } from '../../types/holiday';
+import type { Calendar } from '../../features/holidays/types';
 
 const HolidaysPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -70,7 +74,7 @@ const HolidaysPage: React.FC = () => {
           />
         ) : (
           <div className={styles.calendarList}>
-            {calendars.map((calendar) => (
+            {calendars.map((calendar: Calendar) => (
               <HolidayCard
                 key={calendar.id}
                 calendar={calendar}

@@ -19,13 +19,13 @@ import {
   useCalendars,
   useDeleteCalendar,
   useDeleteHoliday,
-} from '../../hooks/useHolidays';
-import { AddHolidayDialog } from '../../components/holidays/AddHolidayDialog';
+} from '../../features/holidays/hooks/useHolidays';
+import { AddHolidayDialog } from '../../features/holidays/components/AddHolidayDialog';
 import { DataTable } from '../../components/common/DataTable/DataTable';
 
 import styles from './HolidayCalendarView.module.scss';
 
-import type { Holiday } from '../../types/holiday';
+import type { Holiday, Calendar as CalendarType } from '../../features/holidays/types';
 
 const localizer = momentLocalizer(moment);
 
@@ -37,7 +37,7 @@ const HolidayCalendarView: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const { data: calendarsResponse } = useCalendars();
-  const calendar = calendarsResponse?.data.find((c) => c.id === id);
+  const calendar = calendarsResponse?.data.find((c: CalendarType) => c.id === id);
   const deleteCalendarMutation = useDeleteCalendar();
   const deleteHolidayMutation = useDeleteHoliday(id || '');
 

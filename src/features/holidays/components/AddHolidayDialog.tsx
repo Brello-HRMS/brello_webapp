@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { Dialog } from '../common/Dialog/Dialog';
-import { Button } from '../common/Button/Button';
-import { Input } from '../ui/Input/Input';
-import { Select } from '../ui/Select/Select';
-import { DatePicker } from '../ui/DatePicker/DatePicker';
-import { useAddHoliday } from '../../hooks/useHolidays';
+import { Dialog } from '../../../components/common/Dialog/Dialog';
+import { Button } from '../../../components/common/Button/Button';
+import { Input } from '../../../components/ui/Input/Input';
+import { Select } from '../../../components/ui/Select/Select';
+import { DatePicker } from '../../../components/ui/DatePicker/DatePicker';
+import { useAddHoliday } from '../hooks/useHolidays';
 
 import styles from './AddHolidayDialog.module.scss';
 

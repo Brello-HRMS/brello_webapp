@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar as CalendarIcon, RefreshCw, Trash2 } from 'lucide-react';
 import moment from 'moment';
 
-import { ToggleButton } from '../common/ToggleButton/ToggleButton';
+import { ToggleButton } from '../../../components/common/ToggleButton/ToggleButton';
 
 import styles from './HolidayCard.module.scss';
 
-import type { Calendar } from '../../types/holiday';
+import type { Calendar } from '../types';
 
 interface HolidayCardProps {
   calendar: Calendar;

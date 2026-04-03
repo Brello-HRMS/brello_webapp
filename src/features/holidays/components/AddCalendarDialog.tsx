@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import { Dialog } from '../common/Dialog/Dialog';
-import { Button } from '../common/Button/Button';
-import { Input } from '../ui/Input/Input';
-import { Select } from '../ui/Select/Select';
-import { ToggleButton } from '../common/ToggleButton/ToggleButton';
-import { useCreateCalendar } from '../../hooks/useHolidays';
+import { Dialog } from '../../../components/common/Dialog/Dialog';
+import { Button } from '../../../components/common/Button/Button';
+import { Input } from '../../../components/ui/Input/Input';
+import { Select } from '../../../components/ui/Select/Select';
+import { ToggleButton } from '../../../components/common/ToggleButton/ToggleButton';
+import { useCreateCalendar } from '../hooks/useHolidays';
 
 import styles from './AddCalendarDialog.module.scss';
 
