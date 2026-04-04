@@ -121,45 +121,97 @@ const ClientDetailPage = () => {
     <div className={styles.container}>
       {/* Client Info Card */}
       <div className={styles.clientInfoCard}>
-        <div className={styles.header}>
-          <div className={styles.logoContainer}>
+        <div className={styles.pocSidebar}>
+          <span className={styles.pocLabel}>POC</span>
+          <div className={styles.pocImageContainer}>
             {client.logo_url ? (
-              <img src={client.logo_url} alt={client?.name} />
+              <img src={client.logo_url} alt={client.poc_name} className={styles.pocImage} />
             ) : (
-              <div className={styles.placeholderLogo}>{client?.name?.charAt(0)}</div>
+              <div className={styles.pocPlaceholder}>{client.poc_name?.charAt(0) || 'P'}</div>
             )}
           </div>
-          <div className={styles.titleInfo}>
-            <div className={styles.nameRow}>
-              <h2>{client.name}</h2>
-              <span className={`${styles.statusBadge} ${styles.active}`}>{client.status}</span>
+          <h4 className={styles.pocName}>{client.poc_name}</h4>
+          <div className={styles.pocContact}>
+            <div className={styles.contactItem} title="Phone">
+              <span className={styles.contactIcon}>📞</span>
+              <span>{client.poc_phone}</span>
             </div>
-            <div className={styles.addedOn}>
-              Added on{' '}
-              {new Date(client.created_at).toLocaleDateString('en-US', {
-                month: 'short',
-                year: 'numeric',
-              })}
+            <div className={styles.contactItem} title="Email">
+              <span className={styles.contactIcon}>✉️</span>
+              <span>{client.poc_email}</span>
             </div>
           </div>
         </div>
 
-        <div className={styles.detailsGrid}>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>POC</span>
-            <span className={styles.value}>{client.poc_name}</span>
+        <div className={styles.mainContent}>
+          <div className={styles.clientHeader}>
+            <div className={styles.headerLeft}>
+              <div className={styles.clientLogo}>
+                {client.logo_url ? (
+                  <img src={client.logo_url} alt={client.name} />
+                ) : (
+                  <div className={styles.placeholderLogo}>{client.name.charAt(0)}</div>
+                )}
+              </div>
+              <div className={styles.titleInfo}>
+                <div className={styles.nameRow}>
+                  <h2>{client.name}</h2>
+                  <span className={`${styles.statusBadge} ${styles.active}`}>{client.status}</span>
+                </div>
+                <div className={styles.addedOn}>
+                  Added on{' '}
+                  {new Date(client.created_at).toLocaleDateString('en-US', {
+                    month: 'short',
+                    year: 'numeric',
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Email</span>
-            <span className={styles.value}>{client.poc_email}</span>
+
+          <div className={styles.addressSection}>
+            <div className={styles.addressIcon}>📍</div>
+            <div className={styles.addressInfo}>
+              <span className={styles.addressLabel}>Registered Address</span>
+              <p className={styles.addressValue}>{client.address}</p>
+            </div>
           </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Phone</span>
-            <span className={styles.value}>{client.poc_phone}</span>
-          </div>
-          <div className={styles.detailItem}>
-            <span className={styles.label}>Address</span>
-            <span className={styles.value}>{client.address}</span>
+
+          <div className={styles.statisticsSection}>
+            <span className={styles.statsTitle}>Project Statistics</span>
+            <div className={styles.statsGrid}>
+              <div className={`${styles.statCard} ${styles.total}`}>
+                <span className={styles.statLabel}>Total</span>
+                <span className={styles.statValue}>{String(projectCount).padStart(2, '0')}</span>
+              </div>
+              <div className={`${styles.statCard} ${styles.activeStats}`}>
+                <span className={styles.statLabel}>Active</span>
+                <span className={styles.statValue}>
+                  {String(projects.filter((p) => p.project_status === 'ACTIVE').length).padStart(
+                    2,
+                    '0',
+                  )}
+                </span>
+              </div>
+              <div className={`${styles.statCard} ${styles.completedStats}`}>
+                <span className={styles.statLabel}>Completed</span>
+                <span className={styles.statValue}>
+                  {String(projects.filter((p) => p.project_status === 'COMPLETED').length).padStart(
+                    2,
+                    '0',
+                  )}
+                </span>
+              </div>
+              <div className={`${styles.statCard} ${styles.onHoldStats}`}>
+                <span className={styles.statLabel}>On Hold</span>
+                <span className={styles.statValue}>
+                  {String(projects.filter((p) => p.project_status === 'ON_HOLD').length).padStart(
+                    2,
+                    '0',
+                  )}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

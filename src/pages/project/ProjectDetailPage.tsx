@@ -2,8 +2,6 @@ import { useParams } from 'react-router-dom';
 
 import { useProject } from '../../features/project/hooks/useProject';
 import { ProjectDetailHeader } from '../../features/project/components/ProjectDetail/ProjectDetailHeader';
-import { ProjectLeadBar } from '../../features/project/components/ProjectDetail/ProjectLeadBar';
-import { ProjectOverviewCard } from '../../features/project/components/ProjectDetail/ProjectOverviewCard';
 import { ProjectTeamTable } from '../../features/project/components/ProjectDetail/ProjectTeamTable';
 import { ProjectContractSummary } from '../../features/project/components/ProjectDetail/ProjectContractSummary';
 
@@ -26,8 +24,6 @@ const ProjectDetailPage = () => {
   return (
     <div className={styles.container}>
       <ProjectDetailHeader project={project} />
-      <ProjectLeadBar project={project} />
-      <ProjectOverviewCard project={project} />
       <ProjectTeamTable project={project} />
       <ProjectContractSummary project={project} />
     </div>

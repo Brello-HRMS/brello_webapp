@@ -1,4 +1,6 @@
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, Loader2 } from 'lucide-react';
+
+import { useProjectContracts } from '../../hooks/useProjectContracts';
 
 import styles from './ProjectContractSummary.module.scss';
 
@@ -9,6 +11,27 @@ interface ProjectContractSummaryProps {
 }
 
 export const ProjectContractSummary = ({ project }: ProjectContractSummaryProps) => {
+  const { data: contractsRes, isLoading } = useProjectContracts(project.id);
+
+  if (isLoading) {
+    return (
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <h3>
+            <FileText size={18} className={styles.icon} />
+            Contract Summary
+          </h3>
+        </div>
+        <div className={styles.loading}>
+          <Loader2 size={24} className={styles.spinner} />
+          <span>Loading contracts...</span>
+        </div>
+      </div>
+    );
+  }
+
+  const contracts = contractsRes?.data || [];
+
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
@@ -18,14 +41,19 @@ export const ProjectContractSummary = ({ project }: ProjectContractSummaryProps)
         </h3>
       </div>
       <div className={styles.filesList}>
-        {project.contracts && project.contracts.length > 0 ? (
-          project.contracts.map((file, index) => (
-            <div key={index} className={styles.fileItem}>
+        {contracts.length > 0 ? (
+          contracts.map((file) => (
+            <div key={file.id} className={styles.fileItem}>
               <div className={styles.fileInfo}>
                 <FileText size={16} color="var(--color-primary)" />
-                <span>{file.name}</span>
+                <span>{file.file_name}</span>
               </div>
-              <div className={styles.fileAction}>
+              <div
+                className={styles.fileAction}
+                onClick={() => window.open(file.file_url, '_blank')}
+                style={{ cursor: 'pointer' }}
+                title="Download"
+              >
                 <Download size={16} />
               </div>
             </div>

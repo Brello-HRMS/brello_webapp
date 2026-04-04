@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { addTeamMembers, updateProject } from '../api/projectApi';
+import { addTeamMembers, updateProject, uploadProjectContract } from '../api/projectApi';
 import { showToast } from '../../ToastFeature/ShowToast';
 
 import type { CreateProjectParams } from '../types/projectType';
@@ -17,20 +17,23 @@ export const useUpdateProject = () => {
       projectId: string;
       data: Partial<CreateProjectParams>;
     }) => {
-      const { team, contracts: _contracts, ...rest } = data;
+      const { team, contracts, ...rest } = data;
       const payload = {
         ...rest,
         start_date: rest.start_date || null,
         end_date: rest.end_date || null,
       };
       const project = await updateProject(projectId, payload);
-      // if (contracts && contracts.length > 0) {
-      //   const contractPayload = contracts.map((contract) => ({
-      //     name: contract.name,
-      //     file: contract.file,
-      //   }));
-      //   await updateProjectContracts(projectId, contractPayload);
-      // }
+
+      if (contracts && contracts.length > 0) {
+        for (const contract of contracts) {
+          if (contract.documentId) {
+            await uploadProjectContract(projectId, {
+              documentId: contract.documentId,
+            });
+          }
+        }
+      }
 
       if (team && team.length > 0) {
         const teamPayload = team.map((member) => ({

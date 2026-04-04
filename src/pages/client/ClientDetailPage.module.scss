@@ -4,114 +4,258 @@
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-6);
   box-shadow: var(--shadow-card);
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-6);
   margin-block: var(--spacing-6);
+  overflow: hidden;
 
-  .header {
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+
+  .pocSidebar {
+    width: 280px;
+    background-color: var(--color-gray-50);
+    padding: var(--spacing-8);
     display: flex;
-    align-items: center;
-    gap: var(--spacing-4);
+    flex-direction: column;
+    border-right: 1px solid var(--color-gray-100);
 
-    @media (max-width: 640px) {
-      flex-direction: column;
-      align-items: stretch;
+    @media (max-width: 1024px) {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--color-gray-100);
     }
 
-    .logoContainer {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background-color: var(--color-success-50);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid var(--color-success-200);
-      flex-shrink: 0;
+    .pocLabel {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      margin-bottom: var(--spacing-4);
+    }
 
-      img {
-        width: 24px;
-        height: 24px;
-        object-fit: contain;
+    .pocImageContainer {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: var(--spacing-4);
+      background-color: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+
+      .pocImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
-    }
 
-    .titleInfo {
-      .nameRow {
+      .pocPlaceholder {
+        width: 100%;
+        height: 100%;
         display: flex;
         align-items: center;
-        gap: var(--spacing-2);
-        flex-wrap: wrap;
-
-        h2 {
-          margin: 0;
-          @include text-clamp(24px, 32px);
-          font-weight: var(--font-weight-bold);
-          color: var(--color-text-primary-500);
-        }
-
-        .statusBadge {
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-size: 12px;
-          font-weight: var(--font-weight-medium);
-          display: flex;
-          align-items: center;
-          gap: 4px;
-
-          &.active {
-            background-color: var(--color-success-50);
-            color: var(--color-success-700);
-            &::before {
-              content: '';
-              width: 6px;
-              height: 6px;
-              border-radius: 50%;
-              background-color: var(--color-success-700);
-            }
-          }
-        }
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 700;
+        background-color: var(--color-primary-100);
+        color: var(--color-primary-700);
       }
+    }
 
-      .addedOn {
+    .pocName {
+      margin: 0 0 var(--spacing-4);
+      font-size: 18px;
+      font-weight: 600;
+      color: #101828;
+    }
+
+    .pocContact {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-3);
+
+      .contactItem {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
         font-size: 14px;
         color: var(--color-text-secondary);
-        margin-top: 4px;
+
+        .contactIcon {
+          font-size: 16px;
+        }
       }
     }
   }
 
-  .detailsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--spacing-6) var(--spacing-8);
+  .mainContent {
+    flex: 1;
+    padding: var(--spacing-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-8);
 
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-      gap: var(--spacing-4);
+    .clientHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .headerLeft {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-4);
+
+        .clientLogo {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          border: 1px solid var(--color-gray-200);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--color-success-50);
+          flex-shrink: 0;
+
+          img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+          }
+
+          .placeholderLogo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-success-700);
+          }
+        }
+
+        .titleInfo {
+          .nameRow {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-3);
+
+            h2 {
+              margin: 0;
+              font-size: 24px;
+              font-weight: 700;
+              color: #101828;
+            }
+
+            .statusBadge {
+              padding: 2px 10px;
+              border-radius: 100px;
+              font-size: 12px;
+              font-weight: 500;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+
+              &.active {
+                background-color: #ecfdf3;
+                color: #027a48;
+                &::before {
+                  content: '';
+                  width: 6px;
+                  height: 6px;
+                  border-radius: 50%;
+                  background-color: #027a48;
+                }
+              }
+            }
+          }
+
+          .addedOn {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-top: 4px;
+          }
+        }
+      }
     }
 
-    .detailItem {
+    .addressSection {
       display: flex;
-      flex-direction: column;
-      gap: var(--spacing-1);
+      gap: var(--spacing-4);
+      align-items: flex-start;
 
-      .label {
-        font-size: 12px;
-        font-weight: var(--font-weight-medium);
-        color: var(--color-text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+      .addressIcon {
+        font-size: 24px;
+        color: #101828;
+        padding-top: 2px;
       }
 
-      .value {
+      .addressInfo {
+        .addressLabel {
+          font-size: 14px;
+          color: #667085;
+          margin-bottom: 4px;
+          display: block;
+        }
+
+        .addressValue {
+          margin: 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: #101828;
+          line-height: 1.5;
+        }
+      }
+    }
+
+    .statisticsSection {
+      margin-top: auto;
+      .statsTitle {
         font-size: 14px;
-        color: var(--color-text-primary);
-        font-weight: var(--font-weight-medium);
-        word-break: break-all;
+        color: #667085;
+        margin-bottom: var(--spacing-4);
+        display: block;
+      }
+
+      .statsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: var(--spacing-4);
+
+        .statCard {
+          height: 121px;
+          border-radius: 16px;
+          border: 1px solid #eaecf0;
+          padding: var(--spacing-4) var(--spacing-6);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: var(--spacing-1);
+
+          .statLabel {
+            font-size: 14px;
+            color: #667085;
+            font-weight: 500;
+          }
+
+          .statValue {
+            font-size: 28px;
+            font-weight: 700;
+            color: #101828;
+          }
+
+          &.total {
+            background-color: var(--color-white);
+          }
+
+          &.activeStats {
+            background-color: #eff8ff;
+          }
+
+          &.completedStats {
+            background-color: #ecfdf3;
+          }
+
+          &.onHoldStats {
+            background-color: #f9fafb;
+          }
+        }
       }
     }
   }

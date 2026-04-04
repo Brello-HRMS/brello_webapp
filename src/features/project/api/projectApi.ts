@@ -9,6 +9,7 @@ import type {
   AddTeamMembersParams,
   GetProjectTeamResponse,
   GetProjectResponse,
+  GetProjectContractsResponse,
 } from '../types/projectType';
 
 export const getProjects = async (
@@ -53,4 +54,26 @@ export const addTeamMembers = async (
 
 export const getProjectTeam = async (projectId: string): Promise<GetProjectTeamResponse> => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/projects/${projectId}/team`);
+};
+
+export const uploadProjectContract = async (
+  projectId: string,
+  data: { documentId: string },
+): Promise<void> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/projects/${projectId}/contract`, data);
+};
+
+export const getProjectContracts = async (
+  projectId: string,
+): Promise<GetProjectContractsResponse> => {
+  return apiClient.get(`${envVars.BRELLO_BASE_API}/projects/${projectId}/contracts`);
+};
+
+export const deleteProjectContract = async (
+  projectId: string,
+  contractId: string,
+): Promise<void> => {
+  return apiClient.delete(
+    `${envVars.BRELLO_BASE_API}/projects/${projectId}/contracts/${contractId}`,
+  );
 };

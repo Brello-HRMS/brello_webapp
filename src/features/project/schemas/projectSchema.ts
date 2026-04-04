@@ -30,6 +30,7 @@ export const projectSchema = z.object({
       z.object({
         name: z.string(),
         file: z.any(),
+        documentId: z.string().optional(),
       }),
     )
     .optional(),
