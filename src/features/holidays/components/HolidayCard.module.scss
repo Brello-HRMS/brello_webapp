@@ -134,6 +134,7 @@
   &.active {
     background-color: #ecfdf5;
     color: #059669;
+
     &::before {
       background-color: #10b981;
     }
@@ -142,6 +143,7 @@
   &.inactive {
     background-color: #f1f5f9;
     color: #475569;
+
     &::before {
       background-color: #64748b;
     }

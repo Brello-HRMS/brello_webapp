@@ -4,7 +4,6 @@ import {
   Plus,
   Calendar as CalendarIcon,
   List,
-  Copy,
   Trash2,
   ChevronLeft,
   ChevronRight,
@@ -15,13 +14,18 @@ import moment from 'moment';
 import { Button } from '../../components/common/Button/Button';
 import { PageHeader } from '../../components/common/PageHeader/PageHeader';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { useCalendarHolidays, useCalendars, useDeleteCalendar } from '../../hooks/useHolidays';
-import { AddHolidayDialog } from '../../components/holidays/AddHolidayDialog';
+import {
+  useCalendarHolidays,
+  useCalendars,
+  useDeleteCalendar,
+  useDeleteHoliday,
+} from '../../features/holidays/hooks/useHolidays';
+import { AddHolidayDialog } from '../../features/holidays/components/AddHolidayDialog';
 import { DataTable } from '../../components/common/DataTable/DataTable';
 
 import styles from './HolidayCalendarView.module.scss';
 
-import type { Holiday } from '../../types/holiday';
+import type { Holiday, Calendar as CalendarType } from '../../features/holidays/types';
 
 const localizer = momentLocalizer(moment);
 
@@ -32,10 +36,10 @@ const HolidayCalendarView: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const currentYear = currentDate.getFullYear();
-  const { data: calendarsResponse } = useCalendars(currentYear);
-  const calendar = calendarsResponse?.data.find((c) => c.id === id);
+  const { data: calendarsResponse } = useCalendars();
+  const calendar = calendarsResponse?.data.find((c: CalendarType) => c.id === id);
   const deleteCalendarMutation = useDeleteCalendar();
+  const deleteHolidayMutation = useDeleteHoliday(id || '');
 
   const { data: holidays, isLoading } = useCalendarHolidays(
     id || '',
@@ -44,10 +48,6 @@ const HolidayCalendarView: React.FC = () => {
 
   const handleAddHoliday = () => {
     setIsAddModalOpen(true);
-  };
-
-  const handleCloneCalendar = () => {
-    // TODO: Open modal
   };
 
   const handleDeleteCalendar = () => {
@@ -78,6 +78,26 @@ const HolidayCalendarView: React.FC = () => {
     { header: 'Holiday Name', accessorKey: 'name' },
     { header: 'Type', accessorKey: 'type' },
     { header: 'Description', accessorKey: 'description' },
+    {
+      header: 'Actions',
+      id: 'actions',
+      cell: (info: { row: { original: Holiday } }) => {
+        const holiday = info.row.original;
+        return (
+          <button
+            className={styles.deleteHolidayBtn}
+            onClick={() => {
+              if (window.confirm(`Are you sure you want to delete "${holiday.name}"?`)) {
+                deleteHolidayMutation.mutate(holiday.id);
+              }
+            }}
+            title="Delete Holiday"
+          >
+            <Trash2 size={16} />
+          </button>
+        );
+      },
+    },
   ];
 
   const CustomToolbar = (toolbar: { date: Date; onNavigate: (action: NavigateAction) => void }) => {
@@ -176,12 +196,6 @@ const HolidayCalendarView: React.FC = () => {
                 <CalendarIcon size={18} />
               </button>
             </div>
-            <Button onClick={handleCloneCalendar} variant="secondary">
-              <div className={styles.btnContent}>
-                <Copy size={18} />
-                <span>Clone Calendar</span>
-              </div>
-            </Button>
             <Button onClick={handleDeleteCalendar} variant="danger">
               <div className={styles.btnContent}>
                 <Trash2 size={18} />

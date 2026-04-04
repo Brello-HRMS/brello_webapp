@@ -12,6 +12,7 @@ interface DatePickerProps {
   onChange: (date: string) => void;
   placeholder?: string;
   className?: string;
+  inline?: boolean;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -22,11 +23,18 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   onChange,
   placeholder = 'Select date',
   className,
+  inline = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [placement, setPlacement] = useState<'left' | 'right'>('left');
   const [vPlacement, setVPlacement] = useState<'top' | 'bottom'>('bottom');
-  const [currentDate, setCurrentDate] = useState(value ? new Date(value) : new Date());
+  const [currentDate, setCurrentDate] = useState(() => {
+    if (value) {
+      const [y, m, d] = value.split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+    return new Date();
+  });
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -78,14 +86,21 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   const handleDateSelect = (day: number) => {
-    const selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    onChange(selectedDate.toISOString().split('T')[0]);
-    setIsOpen(false);
+    const y = currentDate.getFullYear();
+    const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const d = String(day).padStart(2, '0');
+    onChange(`${y}-${m}-${d}`);
+    if (!inline) setIsOpen(false);
+  };
+
+  const parseLocalDate = (dateStr: string) => {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
   };
 
   const formatDisplayDate = (dateStr: string | undefined) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
+    const date = parseLocalDate(dateStr);
     return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
@@ -120,6 +135,71 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const monthName = currentDate.toLocaleString('default', { month: 'long' });
   const year = currentDate.getFullYear();
 
+  const calendarGrid = (
+    <div
+      className={`${styles.calendarContainer} ${inline ? styles.inline : `${styles[placement]} ${styles[vPlacement]}`}`}
+    >
+      <div className={styles.calendarHeader}>
+        <button type="button" onClick={handlePrevMonth} className={styles.navBtn}>
+          <ChevronLeft size={20} />
+        </button>
+        <span className={styles.currentMonth}>
+          {monthName} {year}
+        </span>
+        <button type="button" onClick={handleNextMonth} className={styles.navBtn}>
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      <div className={styles.weekDays}>
+        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+          <span key={day}>{day}</span>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentDate.toISOString()}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.2 }}
+          className={styles.daysGrid}
+        >
+          {generateDays().map((date, index) => {
+            const isToday =
+              date.type === 'current' &&
+              date.day === new Date().getDate() &&
+              currentDate.getMonth() === new Date().getMonth() &&
+              currentDate.getFullYear() === new Date().getFullYear();
+
+            const isSelected =
+              value &&
+              date.type === 'current' &&
+              (() => {
+                const parsed = parseLocalDate(value);
+                return (
+                  parsed.getDate() === date.day &&
+                  parsed.getMonth() === currentDate.getMonth() &&
+                  parsed.getFullYear() === currentDate.getFullYear()
+                );
+              })();
+
+            return (
+              <div
+                key={index}
+                className={`${styles.dayCell} ${date.type === 'otherMonth' ? styles.otherMonth : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''}`}
+                onClick={() => date.type === 'current' && handleDateSelect(date.day)}
+              >
+                {date.day}
+              </div>
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+
   return (
     <div
       className={`${styles.container} ${error ? styles.hasError : ''} ${className || ''}`}
@@ -131,84 +211,25 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           {required && <span className={styles.asterisk}>*</span>}
         </label>
       )}
-      <div className={styles.datePickerWrapper}>
-        <button
-          ref={triggerRef}
-          type="button"
-          className={`${styles.dateTrigger} ${isOpen ? styles.active : ''}`}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <span className={!value ? styles.placeholder : ''}>
-            {value ? formatDisplayDate(value) : placeholder}
-          </span>
-          <CalendarIcon size={18} className={styles.icon} />
-        </button>
+      {inline ? (
+        calendarGrid
+      ) : (
+        <div className={styles.datePickerWrapper}>
+          <button
+            ref={triggerRef}
+            type="button"
+            className={`${styles.dateTrigger} ${isOpen ? styles.active : ''}`}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <span className={!value ? styles.placeholder : ''}>
+              {value ? formatDisplayDate(value) : placeholder}
+            </span>
+            <CalendarIcon size={18} className={styles.icon} />
+          </button>
 
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: vPlacement === 'bottom' ? 10 : -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: vPlacement === 'bottom' ? 10 : -10 }}
-              className={`${styles.calendarContainer} ${styles[placement]} ${styles[vPlacement]}`}
-            >
-              <div className={styles.calendarHeader}>
-                <button type="button" onClick={handlePrevMonth} className={styles.navBtn}>
-                  <ChevronLeft size={20} />
-                </button>
-                <span className={styles.currentMonth}>
-                  {monthName} {year}
-                </span>
-                <button type="button" onClick={handleNextMonth} className={styles.navBtn}>
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-
-              <div className={styles.weekDays}>
-                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-                  <span key={day}>{day}</span>
-                ))}
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentDate.toISOString()}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
-                  className={styles.daysGrid}
-                >
-                  {generateDays().map((date, index) => {
-                    const isToday =
-                      date.type === 'current' &&
-                      date.day === new Date().getDate() &&
-                      currentDate.getMonth() === new Date().getMonth() &&
-                      currentDate.getFullYear() === new Date().getFullYear();
-
-                    const isSelected =
-                      value &&
-                      date.type === 'current' &&
-                      new Date(value).getDate() === date.day &&
-                      new Date(value).getMonth() === currentDate.getMonth() &&
-                      new Date(value).getFullYear() === currentDate.getFullYear();
-
-                    return (
-                      <div
-                        key={index}
-                        className={`${styles.dayCell} ${date.type === 'otherMonth' ? styles.otherMonth : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''}`}
-                        onClick={() => date.type === 'current' && handleDateSelect(date.day)}
-                      >
-                        {date.day}
-                      </div>
-                    );
-                  })}
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          <AnimatePresence>{isOpen && calendarGrid}</AnimatePresence>
+        </div>
+      )}
       {error && <span className={styles.errorMessage}>{error}</span>}
     </div>
   );

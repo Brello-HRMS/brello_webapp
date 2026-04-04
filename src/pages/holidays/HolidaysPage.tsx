@@ -4,18 +4,22 @@ import { Plus } from 'lucide-react';
 import { PageHeader } from '../../components/common/PageHeader/PageHeader';
 import { Button } from '../../components/common/Button/Button';
 import { NoDataFound } from '../../components/common/NoDataFound/NoDataFound';
-import { useCalendars, useActivateCalendar, useDeleteCalendar } from '../../hooks/useHolidays';
-import { HolidayCard } from '../../components/holidays/HolidayCard';
-import { AddCalendarDialog } from '../../components/holidays/AddCalendarDialog';
+import {
+  useCalendars,
+  useActivateCalendar,
+  useDeleteCalendar,
+} from '../../features/holidays/hooks/useHolidays';
+import { HolidayCard } from '../../features/holidays/components/HolidayCard';
+import { AddCalendarDialog } from '../../features/holidays/components/AddCalendarDialog';
+import noCalendarFoundImage from '../../assets/svg/holiday/no_calendar_found.svg';
 
 import styles from './HolidaysPage.module.scss';
 
-import type { Calendar } from '../../types/holiday';
+import type { Calendar } from '../../features/holidays/types';
 
 const HolidaysPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const currentYear = new Date().getFullYear();
-  const { data: calendarsResponse, isLoading } = useCalendars(currentYear);
+  const { data: calendarsResponse, isLoading } = useCalendars();
   const activateCalendarMutation = useActivateCalendar();
   const deleteCalendarMutation = useDeleteCalendar();
 
@@ -41,18 +45,20 @@ const HolidaysPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <PageHeader
-        title="Holidays"
-        subtitle="Manage company holiday calendar"
-        actions={
-          <Button onClick={handleAddCalendar} variant="primary">
-            <div className={styles.btnContent}>
-              <Plus size={18} />
-              <span>Add Holiday Calendar</span>
-            </div>
-          </Button>
-        }
-      />
+      {calendars.length !== 0 && (
+        <PageHeader
+          title="Holidays"
+          subtitle="Manage company holiday calendar"
+          actions={
+            <Button onClick={handleAddCalendar} variant="primary">
+              <div className={styles.btnContent}>
+                <Plus size={18} />
+                <span>Add Holiday Calendar</span>
+              </div>
+            </Button>
+          }
+        />
+      )}
 
       <div className={styles.content}>
         {isLoading ? (
@@ -63,12 +69,12 @@ const HolidaysPage: React.FC = () => {
             description="Create your first calendar to manage holidays, events, and working days for your organization."
             buttonText="Add Holiday Calendar"
             onButtonClick={handleAddCalendar}
-            noDataImage="/src/assets/Onboarding illustration 2.svg"
+            noDataImage={noCalendarFoundImage}
             noDataImageAlt="No calendars"
           />
         ) : (
           <div className={styles.calendarList}>
-            {calendars.map((calendar) => (
+            {calendars.map((calendar: Calendar) => (
               <HolidayCard
                 key={calendar.id}
                 calendar={calendar}
