@@ -89,6 +89,14 @@
     top: calc(100% + 8px);
     bottom: auto;
   }
+
+  &.inline {
+    position: relative;
+    width: 100%;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+    z-index: auto;
+  }
 }
 
 .calendarHeader {

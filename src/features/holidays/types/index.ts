@@ -1,4 +1,4 @@
-export type HolidayType = 'PUBLIC' | 'REGIONAL';
+export type HolidayType = 'PUBLIC' | 'OPTIONAL' | 'COMPANY';
 
 export interface Holiday {
   id: string;
@@ -24,12 +24,6 @@ export interface Calendar {
 export interface CreateCalendarRequest {
   name: string;
   year: number;
-}
-
-export interface CloneCalendarRequest {
-  name: string;
-  year: number;
-  set_active: boolean;
 }
 
 export interface AddHolidayRequest {
