@@ -18,6 +18,7 @@ import {
 import { getEnterpriseId, getOrganizationId } from '../../../../../utils/authUtils';
 import styles from '../../AddProjectModal.module.scss';
 import { showToast } from '../../../../ToastFeature/ShowToast';
+import { useProjectContracts, useDeleteProjectContract } from '../../../hooks/useProjectContracts';
 
 import type { ProjectFormData } from '../../../schemas/projectSchema';
 import type { FieldArrayWithId } from 'react-hook-form';
@@ -29,14 +30,17 @@ interface ContractItem {
 }
 
 interface ContractTabProps {
+  projectId?: string;
   fields: FieldArrayWithId<ProjectFormData, 'contracts'>[];
   append: (data: ContractItem) => void;
   remove: (index: number) => void;
 }
 
-export const ContractTab: React.FC<ContractTabProps> = ({ fields, append, remove }) => {
+export const ContractTab: React.FC<ContractTabProps> = ({ projectId, fields, append, remove }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = React.useState(false);
+  const { data: existingContractsRes } = useProjectContracts(projectId);
+  const deleteProjectContractMutation = useDeleteProjectContract(projectId);
   const { mutateAsync: getUploadUrl } = useUploadDocumentUrl();
   const { mutateAsync: uploadFile } = useUploadDocumentData();
   const { mutateAsync: deleteFile } = useDeleteDocument();
@@ -134,35 +138,80 @@ export const ContractTab: React.FC<ContractTabProps> = ({ fields, append, remove
         />
       </div>
 
-      {fields.length > 0 && (
+      {(fields.length > 0 ||
+        (existingContractsRes?.data && existingContractsRes.data.length > 0)) && (
         <div className={styles.fileList}>
-          <h5 className={styles.sectionTitle}>Uploaded Files ({fields.length})</h5>
-          {fields.map((field, index) => (
-            <div key={field.id} className={styles.fileItem}>
-              <div className={styles.fileInfo}>
-                {getFileIcon(field.name)}
-                <span className={styles.fileName}>{field.name}</span>
-              </div>
-              <div className={styles.fileActions}>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.viewBtn}`}
-                  onClick={() => handleViewFile(field.file)}
-                  title="View"
-                >
-                  <Eye size={16} />
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.removeBtn}`}
-                  onClick={() => handleRemoveFile(index, field.documentId)}
-                  title="Remove"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-          ))}
+          {existingContractsRes?.data && existingContractsRes.data.length > 0 && (
+            <>
+              <h5 className={styles.sectionTitle}>Existing Contracts</h5>
+              {existingContractsRes.data.map((contract) => (
+                <div key={contract.id} className={styles.fileItem}>
+                  <div className={styles.fileInfo}>
+                    {getFileIcon(contract.file_name)}
+                    <span className={styles.fileName}>{contract.file_name}</span>
+                  </div>
+                  <div className={styles.fileActions}>
+                    <button
+                      type="button"
+                      className={`${styles.actionBtn} ${styles.viewBtn}`}
+                      onClick={() => window.open(contract.file_url, '_blank')}
+                      title="View"
+                    >
+                      <Eye size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.actionBtn} ${styles.removeBtn}`}
+                      onClick={() => deleteProjectContractMutation.mutate(contract.id)}
+                      title="Remove"
+                      disabled={deleteProjectContractMutation.isPending}
+                    >
+                      {deleteProjectContractMutation.isPending &&
+                      deleteProjectContractMutation.variables === contract.id ? (
+                        <Loader2 size={16} className={styles.spinner} />
+                      ) : (
+                        <Trash2 size={16} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
+
+          {fields.length > 0 && (
+            <>
+              <h5 className={styles.sectionTitle} style={{ marginTop: '1.5rem' }}>
+                New Uploads ({fields.length})
+              </h5>
+              {fields.map((field, index) => (
+                <div key={field.id} className={styles.fileItem}>
+                  <div className={styles.fileInfo}>
+                    {getFileIcon(field.name)}
+                    <span className={styles.fileName}>{field.name}</span>
+                  </div>
+                  <div className={styles.fileActions}>
+                    <button
+                      type="button"
+                      className={`${styles.actionBtn} ${styles.viewBtn}`}
+                      onClick={() => handleViewFile(field.file)}
+                      title="View"
+                    >
+                      <Eye size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.actionBtn} ${styles.removeBtn}`}
+                      onClick={() => handleRemoveFile(index, field.documentId)}
+                      title="Remove"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </motion.div>

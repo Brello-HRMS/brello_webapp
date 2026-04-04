@@ -89,6 +89,23 @@ export interface ProjectContract {
   file: File;
 }
 
+export interface ProjectContractDetail {
+  id: string;
+  project_id: string;
+  file_name: string;
+  file_url: string;
+  file_type: string;
+  uploaded_at: string;
+  uploaded_by: string;
+  document_id: string | null;
+}
+
+export interface GetProjectContractsResponse {
+  success: boolean;
+  data: ProjectContractDetail[];
+  timestamp: string;
+}
+
 // ---------------------------------------------------------------------------
 // Project
 // ---------------------------------------------------------------------------
@@ -131,7 +148,11 @@ export interface CreateProjectParams {
   end_date?: string | null;
   description?: string;
   team?: ProjectTeamMember[];
-  contracts?: unknown[];
+  contracts?: {
+    name: string;
+    file: unknown;
+    documentId?: string;
+  }[];
 }
 
 export interface GetProjectResponse {

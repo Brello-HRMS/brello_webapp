@@ -176,7 +176,12 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             />
           )}
           {activeTab === 'contract' && (
-            <ContractTab fields={contractFields} append={appendContract} remove={removeContract} />
+            <ContractTab
+              projectId={project?.id}
+              fields={contractFields}
+              append={appendContract}
+              remove={removeContract}
+            />
           )}
         </AnimatePresence>
       </div>

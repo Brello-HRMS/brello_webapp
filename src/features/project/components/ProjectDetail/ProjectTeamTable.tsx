@@ -1,12 +1,8 @@
-import { useMemo } from 'react';
 import { Users } from 'lucide-react';
-
-import { DataTable } from '../../../../components/common';
 
 import styles from './ProjectTeamTable.module.scss';
 
-import type { ColumnDef } from '@tanstack/react-table';
-import type { Project, ProjectTeamMemberDetail, ProjectUser } from '../../types/projectType';
+import type { Project, ProjectUser } from '../../types/projectType';
 
 interface ProjectTeamTableProps {
   project: Project;
@@ -34,49 +30,32 @@ const UserAvatar = ({ user }: UserAvatarProps) => {
 };
 
 export const ProjectTeamTable = ({ project }: ProjectTeamTableProps) => {
-  const columns = useMemo<ColumnDef<ProjectTeamMemberDetail>[]>(
-    () => [
-      {
-        accessorKey: 'user',
-        header: 'Member',
-        cell: ({ row }) => {
-          const user = row.original.user;
-          return (
-            <div className={styles.memberCell}>
-              <UserAvatar user={user} />
-              <div className={styles.memberInfo}>
-                <span className={styles.memberName}>
-                  {user?.first_name} {user?.last_name}
-                </span>
-                <span className={styles.memberEmail}>{user?.email}</span>
-              </div>
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: 'role',
-        header: 'Role',
-      },
-    ],
-    [],
-  );
-
   return (
-    <div className={styles.card}>
-      <div className={styles.cardHeader}>
+    <div className={styles.container}>
+      <div className={styles.header}>
         <h3>
           <Users size={18} className={styles.icon} />
           Team Members
         </h3>
       </div>
-      <div className={styles.tableWrapper}>
-        <DataTable
-          columns={columns}
-          data={project.team || []}
-          rowIdField="id"
-          manualPagination={false}
-        />
+      <div className={styles.membersGrid}>
+        {project.team?.map((member) => (
+          <div key={member.id} className={styles.memberCard}>
+            <div className={styles.cardMain}>
+              <UserAvatar user={member.user} />
+              <span className={styles.employeeId}>
+                EMP-{member.user.id.split('-')[0].toUpperCase().substring(0, 3)}
+              </span>
+              <span className={styles.memberName}>
+                {member.user.first_name} {member.user.last_name}
+              </span>
+            </div>
+            <div className={styles.roleSection}>
+              <span className={styles.roleLabel}>Role</span>
+              <span className={styles.roleValue}>{member.role || 'Member'}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

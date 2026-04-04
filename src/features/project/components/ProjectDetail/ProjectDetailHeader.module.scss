@@ -2,50 +2,79 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--spacing-4);
+  flex-direction: column;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+  background-color: var(--color-white);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 
   @media (max-width: 768px) {
     flex-direction: column;
   }
 
   .titleSection {
-    .titleRow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+
+    .badges {
       display: flex;
-      align-items: center;
       gap: var(--spacing-3);
-      margin-bottom: var(--spacing-1);
+      margin-bottom: 4px;
+    }
 
-      h1 {
-        margin: 0;
-        @include text-clamp(20px, 28px);
-        font-weight: var(--font-weight-bold);
-        color: var(--color-text-primary-500);
-      }
-
-      .badges {
-        display: flex;
-        gap: var(--spacing-2);
-      }
+    .title {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 700;
+      color: #101828;
+      line-height: 1.2;
     }
 
     .metaInfo {
       display: flex;
       align-items: center;
       gap: var(--spacing-3);
-      @include text-clamp(12px, 14px);
-      color: var(--color-text-secondary);
+      font-size: 14px;
+      color: var(--color-secondary);
 
       .projectId {
-        font-weight: var(--font-weight-medium);
+        font-weight: 400;
       }
 
       .dot {
-        width: 4px;
-        height: 4px;
+        width: 5px;
+        height: 5px;
         border-radius: 50%;
-        background-color: var(--color-gray-300);
+        background-color: var(--color-secondary);
+      }
+    }
+  }
+
+  .dateSection {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-6);
+    border-top: 1px solid var(--color-gray-100);
+
+    .dateItem {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .dateLabel {
+        font-size: 14px;
+        color: var(--color-icon-gray);
+        font-weight: 400;
+      }
+
+      .dateValue {
+        font-size: 16px;
+        color: var(--color-text-primary-500);
+        font-weight: 500;
       }
     }
   }
@@ -53,12 +82,13 @@
 
 .statusTag {
   padding: 4px 12px;
-  border-radius: 12px;
+  border-radius: 100px;
   @include text-clamp(11px, 12px);
   font-weight: var(--font-weight-semibold);
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  border: 1px solid transparent;
 
   &::before {
     content: '';
@@ -70,6 +100,7 @@
   &.inProgress {
     background-color: var(--color-blue-50);
     color: var(--color-blue-700);
+    border-color: var(--color-blue-100);
     &::before {
       background-color: var(--color-blue-700);
     }
@@ -78,6 +109,7 @@
   &.active {
     background-color: var(--color-success-50);
     color: var(--color-success-700);
+    border-color: var(--color-success-200);
     &::before {
       background-color: var(--color-success-700);
     }
@@ -86,6 +118,7 @@
   &.completed {
     background-color: var(--color-success-50);
     color: var(--color-success-700);
+    border-color: var(--color-success-200);
     &::before {
       background-color: var(--color-success-700);
     }
@@ -94,6 +127,7 @@
   &.onHold {
     background-color: var(--color-gray-100);
     color: var(--color-text-secondary);
+    border-color: var(--color-gray-200);
     &::before {
       background-color: var(--color-text-secondary);
     }

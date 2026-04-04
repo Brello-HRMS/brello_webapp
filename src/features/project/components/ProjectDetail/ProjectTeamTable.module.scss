@@ -1,18 +1,18 @@
 @use '../../../../assets/styles/mixins' as *;
 
-.card {
+.container {
   background: var(--color-white);
   border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-lg);
   padding: var(--spacing-6);
   box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-6);
 
-  .cardHeader {
+  .header {
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
-    margin-bottom: var(--spacing-4);
-    border-bottom: 1px solid var(--color-gray-100);
+    margin-bottom: var(--spacing-6);
 
     h3 {
       margin: 0;
@@ -25,49 +25,98 @@
     }
 
     .icon {
-      color: var(--color-primary);
+      color: var(--color-text-primary);
     }
   }
 }
 
-.memberCell {
+.membersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--spacing-6);
+}
+
+.memberCard {
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
+  flex-direction: column;
+  background-color: var(--color-white);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: var(--color-primary-200);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-primary-700);
-    font-weight: var(--font-weight-bold);
-    @include text-clamp(12px, 14px);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px var(--color-shadow-light);
   }
 
-  .avatarImg {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .memberInfo {
+  .cardMain {
+    padding: var(--spacing-8) var(--spacing-6) var(--spacing-6);
     display: flex;
     flex-direction: column;
+    align-items: center;
+    text-align: center;
 
-    .memberName {
-      font-weight: var(--font-weight-semibold);
-      color: var(--color-text-primary);
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: var(--color-primary-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary-700);
+      font-weight: var(--font-weight-bold);
+      font-size: 24px;
+      margin-bottom: var(--spacing-4);
     }
 
-    .memberEmail {
-      @include text-clamp(11px, 12px);
-      color: var(--color-text-secondary);
+    .avatarImg {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: var(--spacing-4);
+    }
+
+    .employeeId {
+      font-size: 12px;
+      color: #98a2b3; // Brello text secondary/400
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .memberName {
+      font-size: 16px;
+      font-weight: 600;
+      color: #101828; // Brello text Primary/500
+    }
+  }
+
+  .roleSection {
+    background-color: #f9fafb; // Brello text secondary/50
+    height: 42px;
+    margin: 0 var(--spacing-4) var(--spacing-4);
+    padding: 0 var(--spacing-4);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .roleLabel {
+      font-size: 12px;
+      color: #98a2b3; // Brello text secondary/400
+      font-weight: 500;
+    }
+
+    .roleValue {
+      font-size: 12px;
+      color: #475467; // Brello text secondary/600
+      font-weight: 500;
+      text-align: right;
     }
   }
 }

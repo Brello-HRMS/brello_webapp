@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { createProject, addTeamMembers } from '../api/projectApi';
+import { createProject, addTeamMembers, uploadProjectContract } from '../api/projectApi';
 import { showToast } from '../../ToastFeature/ShowToast';
 
 import type { CreateProjectParams } from '../types/projectType';
@@ -11,7 +11,7 @@ export const useCreateProject = (clientId: string) => {
 
   return useMutation({
     mutationFn: async (data: CreateProjectParams) => {
-      const { team, contracts: _contracts, ...rest } = data;
+      const { team, contracts, ...rest } = data;
       const response = await createProject(clientId, rest);
       const project = response.data;
 
@@ -22,6 +22,16 @@ export const useCreateProject = (clientId: string) => {
             role: member.role,
           })),
         });
+      }
+
+      if (contracts && contracts.length > 0) {
+        for (const contract of contracts) {
+          if (contract.documentId) {
+            await uploadProjectContract(project.id, {
+              documentId: contract.documentId,
+            });
+          }
+        }
       }
 
       return project;
