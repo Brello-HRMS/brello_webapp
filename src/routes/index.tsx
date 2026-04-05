@@ -11,7 +11,7 @@ import { LeadForm } from '../features/auth/components/Lead/LeadForm';
 import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen';
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
 // import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
-import EmployeeProfilePage from '../pages/EmployeeProfilePage';
+import EmployeeProfilePage from '../pages/Employee/Profile/EmployeeProfilePage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
 import ClientPage from '../pages/client/ClientPage';
@@ -23,6 +23,7 @@ import ProjectDetailPage from '../pages/project/ProjectDetailPage';
 import PoliciesPage from '../pages/policies/PoliciesPage';
 import HolidaysPage from '../pages/holidays/HolidaysPage';
 import HolidayCalendarView from '../pages/holidays/HolidayCalendarView';
+import EmployeeDirectoryPage from '../pages/Employee/Directory/EmployeeDirectoryPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -152,6 +153,10 @@ const router = createBrowserRouter([
       {
         path: 'project/clients/:clientId/projects/:projectId',
         element: <ProjectDetailPage />,
+      },
+      {
+        path: 'employee/directory',
+        element: <EmployeeDirectoryPage />,
       },
       {
         path: '*',

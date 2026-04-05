@@ -1,0 +1,28 @@
+.trigger {
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--color-gray-50);
+    color: var(--color-text-primary);
+  }
+}
+
+.dropdown {
+  min-width: 140px;
+}
+
+.delete {
+  color: var(--color-error);
+  
+  &:hover {
+    background-color: var(--color-error-50) !important;
+  }
+}

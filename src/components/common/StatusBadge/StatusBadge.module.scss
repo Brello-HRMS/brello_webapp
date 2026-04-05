@@ -29,6 +29,16 @@
       background: var(--color-gray-700);
     }
   }
+
+  &.pending {
+    background: var(--color-priority-medium-bg, #fffbe6);
+    color: var(--color-priority-medium-text, #d48806);
+    border: 1px solid var(--color-priority-medium-border, #ffe58f);
+
+    .dot {
+      background: var(--color-priority-medium-text, #d48806);
+    }
+  }
 }
 
 .dot {

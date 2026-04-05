@@ -1,8 +1,7 @@
 import { useParams } from 'react-router-dom';
 
-import { PageHeader } from '../components/common';
-
-import styles from './department/DepartmentDetailPage.module.scss'; // Reusing styles for now
+import { PageHeader } from '../../../components/common';
+import styles from '../../department/DepartmentDetailPage.module.scss'; // Reusing styles for now
 
 const EmployeeProfilePage = () => {
   const { id } = useParams<{ id: string }>();
