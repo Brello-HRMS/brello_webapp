@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import no_department from '../../../assets/svg/department/no_department_found.svg';
@@ -13,6 +13,8 @@ import {
 } from '../../../components/common';
 import { employeeColumns } from '../../../features/employee/columns/employeeColumns';
 import { EmployeeCard } from '../../../features/employee/components/EmployeeCard/EmployeeCard';
+import { AddEmployeeWizard } from '../../../features/employee/components/AddEmployeeWizard/AddEmployeeWizard';
+import { WizardProvider } from '../../../features/employee/components/AddEmployeeWizard/WizardContext';
 import { useEmployees } from '../../../features/employee/hooks/useEmployees';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
@@ -49,6 +51,7 @@ const EmployeeDirectoryPage = () => {
   // Multi-select state
   const [isMultiSelectActive, setIsMultiSelectActive] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
+  const [isAddWizardOpen, setIsAddWizardOpen] = useState(false);
 
   const { hasCreateAccess, hasEditAccess, hasDeleteAccess, hasExportAccess } = useModuleAccess(
     ModuleCode.EMP_DIRECTORY,
@@ -78,8 +81,8 @@ const EmployeeDirectoryPage = () => {
   }, [employeeList]);
 
   const handleAddEmployee = useCallback(() => {
-    navigate('/employee/new');
-  }, [navigate]);
+    setIsAddWizardOpen(true);
+  }, []);
 
   const handleEditEmployee = useCallback(
     (emp: Employee) => {
@@ -138,19 +141,67 @@ const EmployeeDirectoryPage = () => {
       }
 
       return (
-        <div className={styles.grid}>
-          {filteredData.map((item) => (
-            <EmployeeCard
-              key={item.id}
-              employee={item}
-              onView={() => handleView(item)}
-              onEditClick={hasEditAccess ? () => handleEditEmployee(item) : undefined}
-              onDelete={hasDeleteAccess ? () => handleDeleteEmployee(item) : undefined}
-              isSelecting={isMultiSelectActive}
-              isSelected={!!selectedIds[item.id]}
-              onSelect={() => handleToggleSelection(item.id)}
-            />
-          ))}
+        <div className={styles.gridContainer}>
+          <div className={styles.grid}>
+            {filteredData.map((item) => (
+              <EmployeeCard
+                key={item.id}
+                employee={item}
+                onView={() => handleView(item)}
+                onEditClick={hasEditAccess ? () => handleEditEmployee(item) : undefined}
+                onDelete={hasDeleteAccess ? () => handleDeleteEmployee(item) : undefined}
+                isSelecting={isMultiSelectActive}
+                isSelected={!!selectedIds[item.id]}
+                onSelect={() => handleToggleSelection(item.id)}
+              />
+            ))}
+          </div>
+
+          {(response?.data?.meta?.totalPages || 0) > 1 && (
+            <div className={styles.pagination}>
+              <div className={styles.paginationInfo}>
+                Page <strong>{pagination.pageIndex + 1}</strong> of{' '}
+                <strong>{response?.data?.meta?.totalPages}</strong>
+              </div>
+              <div className={styles.paginationControls}>
+                <div className={styles.pageNavigation}>
+                  <button
+                    className={styles.pagiButton}
+                    onClick={() => setPagination((p) => ({ ...p, pageIndex: 0 }))}
+                    disabled={pagination.pageIndex === 0}
+                  >
+                    <ChevronsLeft size={18} />
+                  </button>
+                  <button
+                    className={styles.pagiButton}
+                    onClick={() => setPagination((p) => ({ ...p, pageIndex: p.pageIndex - 1 }))}
+                    disabled={pagination.pageIndex === 0}
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    className={styles.pagiButton}
+                    onClick={() => setPagination((p) => ({ ...p, pageIndex: p.pageIndex + 1 }))}
+                    disabled={pagination.pageIndex >= (response?.data?.meta?.totalPages || 1) - 1}
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                  <button
+                    className={styles.pagiButton}
+                    onClick={() =>
+                      setPagination((p) => ({
+                        ...p,
+                        pageIndex: (response?.data?.meta?.totalPages || 1) - 1,
+                      }))
+                    }
+                    disabled={pagination.pageIndex >= (response?.data?.meta?.totalPages || 1) - 1}
+                  >
+                    <ChevronsRight size={18} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -199,68 +250,72 @@ const EmployeeDirectoryPage = () => {
   }
 
   return (
-    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
-      <PageHeader
-        title="Employee"
-        subtitle="View and manage all employee profiles."
-        actions={
-          <>
-            {hasExportAccess && (
-              <ExcelExport
-                data={excelExportData}
-                filename="employees.xlsx"
-                sheetName="Employees"
-                buttonText={
-                  isMultiSelectActive
-                    ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
-                    : 'Export All'
-                }
-                variant="secondary"
-                disabled={
-                  isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
-                }
-              />
-            )}
-            {hasCreateAccess && (
-              <Button
-                variant="primary"
-                onClick={handleAddEmployee}
-                disabled={isMultiSelectActive}
-                title={isMultiSelectActive ? 'Disable multi-select to add employee' : undefined}
-              >
-                <Plus size={16} />
-                Add new employee
-              </Button>
-            )}
-          </>
-        }
-      />
-
-      <ListControls
-        searchPlaceholder="Search employee name or ID..."
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        viewType={viewType}
-        onViewTypeChange={setViewType}
-        sortOptions={SORT_OPTIONS}
-        selectedSort={selectedSort}
-        onSortChange={setSelectedSort}
-        filterOptions={STATUS_OPTIONS}
-        selectedFilter={selectedStatus}
-        onFilterChange={setSelectedStatus}
-        filterTitle="Filters"
-        showMultiSelect={true}
-        isMultiSelectActive={isMultiSelectActive}
-        onMultiSelectToggle={() => {
-          setIsMultiSelectActive(!isMultiSelectActive);
-          if (isMultiSelectActive) {
-            setSelectedIds({});
+    <WizardProvider>
+      <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
+        <PageHeader
+          title="Employee"
+          subtitle="View and manage all employee profiles."
+          actions={
+            <>
+              {hasExportAccess && (
+                <ExcelExport
+                  data={excelExportData}
+                  filename="employees.xlsx"
+                  sheetName="Employees"
+                  buttonText={
+                    isMultiSelectActive
+                      ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
+                      : 'Export All'
+                  }
+                  variant="secondary"
+                  disabled={
+                    isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
+                  }
+                />
+              )}
+              {hasCreateAccess && (
+                <Button
+                  variant="primary"
+                  onClick={handleAddEmployee}
+                  disabled={isMultiSelectActive}
+                  title={isMultiSelectActive ? 'Disable multi-select to add employee' : undefined}
+                >
+                  <Plus size={16} />
+                  Add new employee
+                </Button>
+              )}
+            </>
           }
-        }}
-      />
+        />
 
-      {renderContent()}
-    </div>
+        <ListControls
+          searchPlaceholder="Search employee name or ID..."
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          viewType={viewType}
+          onViewTypeChange={setViewType}
+          sortOptions={SORT_OPTIONS}
+          selectedSort={selectedSort}
+          onSortChange={setSelectedSort}
+          filterOptions={STATUS_OPTIONS}
+          selectedFilter={selectedStatus}
+          onFilterChange={setSelectedStatus}
+          filterTitle="Filters"
+          showMultiSelect={true}
+          isMultiSelectActive={isMultiSelectActive}
+          onMultiSelectToggle={() => {
+            setIsMultiSelectActive(!isMultiSelectActive);
+            if (isMultiSelectActive) {
+              setSelectedIds({});
+            }
+          }}
+        />
+
+        {renderContent()}
+
+        <AddEmployeeWizard open={isAddWizardOpen} onClose={() => setIsAddWizardOpen(false)} />
+      </div>
+    </WizardProvider>
   );
 };
 
