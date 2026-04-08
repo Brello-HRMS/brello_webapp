@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { useForm, Controller, useWatch, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 
+import { getSalaryTemplateSchema } from '../../validation/payrollSchema';
 import { Input } from '../../../../components/ui/Input/Input';
 import { TextArea } from '../../../../components/ui/TextArea/TextArea';
 import { Select } from '../../../../components/common/Select/Select';
@@ -15,13 +18,6 @@ import type {
   SalaryComponent,
   SalaryTemplate,
 } from '../../types/payrollConfigTypes';
-
-const DEFAULT_FORM: CreateTemplateFormData = {
-  name: '',
-  description: '',
-  componentIds: [],
-  status: true,
-};
 
 interface CreateSalaryTemplateModalProps {
   isOpen: boolean;
@@ -38,41 +34,67 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
   availableComponents,
   initialData,
 }) => {
-  const [formData, setFormData] = useState<CreateTemplateFormData>(DEFAULT_FORM);
-  const [error, setError] = useState<string | null>(null);
+  const salaryTemplateSchema = useMemo(
+    () => getSalaryTemplateSchema(availableComponents),
+    [availableComponents],
+  );
 
-  const validateTemplate = (): string | null => {
-    if (!formData.name.trim()) return 'Template name is required.';
-    if (formData.componentIds.length === 0) return 'At least one component must be selected.';
-
-    const selectedComponents = availableComponents.filter((component) =>
-      formData.componentIds.includes(component.id),
-    );
-
-    // 1. Basic Salary Check
-    const hasBasicSalary = selectedComponents.some(
-      (component) => component.name === 'Basic Salary' || component.name === 'Basic',
-    );
-    if (!hasBasicSalary) return 'Template must include "Basic Salary".';
-
-    // 2. Dependency Check
-    for (const component of selectedComponents) {
-      const calculationBase = component.calculation_value?.base;
-      if (calculationBase && calculationBase !== 'CTC') {
-        const hasDependencyBase = selectedComponents.some((comp) => comp.name === calculationBase);
-        if (!hasDependencyBase) {
-          return `Component "${component.name}" depends on "${calculationBase}", which is not included in this template.`;
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    reset,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<CreateTemplateFormData>({
+    resolver: zodResolver(salaryTemplateSchema),
+    defaultValues: initialData
+      ? {
+          name: initialData.name,
+          description: initialData.description || '',
+          componentIds: initialData.components.map((c) => c.component_id),
+          status: initialData.is_active,
         }
+      : {
+          name: '',
+          description: '',
+          componentIds: [],
+          status: true,
+        },
+  });
+
+  const componentIds =
+    useWatch({
+      control,
+      name: 'componentIds',
+    }) || [];
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        reset({
+          name: initialData.name,
+          description: initialData.description || '',
+          componentIds: initialData.components.map((c) => c.component_id),
+          status: initialData.is_active,
+        });
+      } else {
+        reset({
+          name: '',
+          description: '',
+          componentIds: [],
+          status: true,
+        });
       }
     }
-
-    return null;
-  };
+  }, [isOpen, initialData, reset]);
 
   const handleAddComponent = (id: string | number) => {
     const componentId = String(id);
-    if (!formData.componentIds.includes(componentId)) {
-      const newComponentIds = [...formData.componentIds, componentId];
+    if (!componentIds.includes(componentId)) {
+      const newComponentIds = [...componentIds, componentId];
       // Automatically add dependencies
       const componentToAdd = availableComponents.find((component) => component.id === componentId);
       const dependencyBaseName = componentToAdd?.calculation_value?.base;
@@ -86,66 +108,56 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
         }
       }
 
-      setFormData((previousFormData) => ({ ...previousFormData, componentIds: newComponentIds }));
-      setError(null);
+      setValue('componentIds', newComponentIds, { shouldValidate: true });
+      clearErrors('componentIds');
     }
   };
 
   const handleRemoveComponent = (id: string) => {
     const componentToRemove = availableComponents.find((component) => component.id === id);
     if (componentToRemove?.name === 'Basic Salary' || componentToRemove?.name === 'Basic') {
-      setError('Basic Salary is mandatory and cannot be removed.');
+      setError('componentIds', { message: 'Basic Salary is mandatory and cannot be removed.' });
       return;
     }
 
     // Check if any other selected component depends on this one
     const dependents = availableComponents.filter(
       (component) =>
-        formData.componentIds.includes(component.id) &&
+        componentIds.includes(component.id) &&
         component.calculation_value?.base === componentToRemove?.name,
     );
 
     if (dependents.length > 0) {
-      setError(
-        `Cannot remove "${componentToRemove?.name}" because "${dependents[0].name}" depends on it.`,
-      );
+      setError('componentIds', {
+        message: `Cannot remove "${componentToRemove?.name}" because "${dependents[0].name}" depends on it.`,
+      });
       return;
     }
 
-    setFormData((previousFormData) => ({
-      ...previousFormData,
-      componentIds: previousFormData.componentIds.filter((componentId) => componentId !== id),
-    }));
-    setError(null);
+    const newComponentIds = componentIds.filter((componentId) => componentId !== id);
+    setValue('componentIds', newComponentIds, { shouldValidate: true });
+    clearErrors('componentIds');
   };
 
-  const handleSave = () => {
-    const validationError = validateTemplate();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    onSave(formData);
-    setFormData(DEFAULT_FORM);
+  const onSubmit: SubmitHandler<CreateTemplateFormData> = (data) => {
+    onSave(data);
     onClose();
   };
 
   const handleClose = () => {
-    setFormData(DEFAULT_FORM);
-    setError(null);
     onClose();
   };
 
   const availableOptions = availableComponents
-    .filter((component: SalaryComponent) => !formData.componentIds.includes(component.id))
-    .map((component: SalaryComponent) => ({
+    .filter((component) => !componentIds.includes(component.id))
+    .map((component) => ({
       value: component.id,
       label: component.name,
       description: `${component.type} (${component.calculation_type})`,
     }));
 
-  const selectedComponents = availableComponents.filter((component: SalaryComponent) =>
-    formData.componentIds.includes(component.id),
+  const selectedComponents = availableComponents.filter((component) =>
+    componentIds.includes(component.id),
   );
 
   return (
@@ -160,7 +172,7 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
             <Button variant="secondary" onClick={handleClose}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={handleSave}>
+            <Button variant="primary" onClick={handleSubmit(onSubmit)}>
               {initialData ? 'Update Template' : 'Create Template'}
             </Button>
           </div>
@@ -169,40 +181,33 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
       position="right"
     >
       <div className={styles.formBody}>
-        {error && <div className={styles.errorBanner}>{error}</div>}
         <Input
           label="Template Name"
           required
           placeholder="e.g. Standard CTC"
-          value={formData.name}
-          onChange={(event) =>
-            setFormData((previousFormData) => ({ ...previousFormData, name: event.target.value }))
-          }
+          error={errors.name?.message}
+          {...register('name')}
         />
 
         <div className={styles.field}>
           <TextArea
             label="Description"
             placeholder="Brief description of this salary structure..."
-            value={formData.description}
-            onChange={(event) =>
-              setFormData((previousFormData) => ({
-                ...previousFormData,
-                description: event.target.value,
-              }))
-            }
             rows={3}
+            error={errors.description?.message}
+            {...register('description')}
           />
         </div>
 
         <div className={styles.field}>
           <Select
             label="Components"
-            required={formData.componentIds.length === 0}
+            required={componentIds.length === 0}
             placeholder="Select component to add..."
             options={availableOptions}
             value=""
             onChange={handleAddComponent}
+            error={errors.componentIds?.message}
           />
 
           <div className={styles.selectedSection}>
@@ -237,11 +242,10 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
 
         <div className={styles.toggleRow}>
           <span className={styles.toggleLabel}>Status</span>
-          <ToggleButton
-            checked={formData.status}
-            onChange={(checked) =>
-              setFormData((previousFormData) => ({ ...previousFormData, status: checked }))
-            }
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => <ToggleButton checked={field.value} onChange={field.onChange} />}
           />
         </div>
       </div>

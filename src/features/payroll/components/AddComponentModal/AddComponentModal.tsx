@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { useForm, Controller, useWatch, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
+import { addComponentSchema } from '../../validation/payrollSchema';
 import { Input } from '../../../../components/ui/Input/Input';
-import { Select } from '../../../../components/common/Select/Select';
+import { Select, type SelectOption } from '../../../../components/common/Select/Select';
 import { ToggleButton } from '../../../../components/common/ToggleButton/ToggleButton';
 import { Button } from '../../../../components/common/Button/Button';
 import { Dialog } from '../../../../components/common/Dialog/Dialog';
@@ -10,25 +13,16 @@ import styles from './AddComponentModal.module.scss';
 
 import type { AddComponentFormData, SalaryComponent } from '../../types/payrollConfigTypes';
 
-const TYPE_OPTIONS = [
+const TYPE_OPTIONS: SelectOption[] = [
   { value: 'earning', label: 'Earning' },
   { value: 'deduction', label: 'Deduction' },
 ];
 
-const CALCULATION_TYPE_OPTIONS = [
+const CALCULATION_TYPE_OPTIONS: SelectOption[] = [
   { value: 'fixed', label: 'Fixed' },
   { value: 'percentage', label: 'Percentage' },
   { value: 'residual', label: 'Residual' },
 ];
-
-const DEFAULT_FORM: AddComponentFormData = {
-  name: '',
-  type: 'earning',
-  calculationType: 'fixed',
-  amount: '',
-  taxable: false,
-  status: true,
-};
 
 interface AddComponentModalProps {
   isOpen: boolean;
@@ -45,27 +39,67 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
   initialData,
   availableComponents,
 }) => {
-  const [form, setForm] = useState<AddComponentFormData>(DEFAULT_FORM);
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<AddComponentFormData>({
+    resolver: zodResolver(addComponentSchema),
+    defaultValues: {
+      name: '',
+      type: 'earning',
+      calculationType: 'fixed',
+      amount: '',
+      taxable: false,
+      status: true,
+    },
+  });
 
-  const handleChange = <K extends keyof AddComponentFormData>(
-    key: K,
-    value: AddComponentFormData[K],
-  ) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
+  const calculationType = useWatch({
+    control,
+    name: 'calculationType',
+  });
+  const isPercentage = calculationType === 'percentage';
 
-  const handleSave = () => {
-    onSave(form);
-    setForm(DEFAULT_FORM);
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        reset({
+          name: initialData.name,
+          type: initialData.type,
+          calculationType: initialData.calculation_type,
+          amount:
+            initialData.calculation_value?.value !== undefined
+              ? String(initialData.calculation_value.value)
+              : '',
+          parentComponentId: initialData.calculation_value?.base || '',
+          taxable: initialData.is_taxable,
+          status: initialData.is_active,
+        });
+      } else {
+        reset({
+          name: '',
+          type: 'earning',
+          calculationType: 'fixed',
+          amount: '',
+          parentComponentId: '',
+          taxable: false,
+          status: true,
+        });
+      }
+    }
+  }, [isOpen, initialData, reset]);
+
+  const onSubmit: SubmitHandler<AddComponentFormData> = (data) => {
+    onSave(data);
     onClose();
   };
 
   const handleClose = () => {
-    setForm(DEFAULT_FORM);
     onClose();
   };
-
-  const isPercentage = form.calculationType === 'percentage';
 
   const componentOptions = [
     { value: 'CTC', label: 'CTC' },
@@ -88,7 +122,7 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSave}>
+          <Button variant="primary" onClick={handleSubmit(onSubmit)}>
             Save
           </Button>
         </div>
@@ -99,35 +133,54 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
         <Input
           label="Component Name*"
           placeholder="e.g. Medical Allowance"
-          value={form.name}
-          onChange={(e) => handleChange('name', e.target.value)}
+          error={errors.name?.message}
+          {...register('name')}
         />
 
-        <Select
-          label="Type"
-          required
-          options={TYPE_OPTIONS}
-          value={form.type}
-          onChange={(val) => handleChange('type', val as AddComponentFormData['type'])}
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <Select
+              label="Type"
+              required
+              options={TYPE_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.type?.message}
+            />
+          )}
         />
 
-        <Select
-          label="Calculation Type"
-          required
-          options={CALCULATION_TYPE_OPTIONS}
-          value={form.calculationType}
-          onChange={(val) =>
-            handleChange('calculationType', val as AddComponentFormData['calculationType'])
-          }
+        <Controller
+          name="calculationType"
+          control={control}
+          render={({ field }) => (
+            <Select
+              label="Calculation Type"
+              required
+              options={CALCULATION_TYPE_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.calculationType?.message}
+            />
+          )}
         />
 
         {isPercentage && (
-          <Select
-            label="Percentage of*"
-            required
-            options={componentOptions}
-            value={form.parentComponentId || 'CTC'}
-            onChange={(val) => handleChange('parentComponentId', val as string)}
+          <Controller
+            name="parentComponentId"
+            control={control}
+            render={({ field }) => (
+              <Select
+                label="Percentage of*"
+                required
+                options={componentOptions}
+                value={field.value || 'CTC'}
+                onChange={field.onChange}
+                error={errors.parentComponentId?.message}
+              />
+            )}
           />
         )}
 
@@ -135,23 +188,25 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
           label={isPercentage ? 'Percentage (%)*' : 'Amount (₹)*'}
           type="number"
           placeholder="0"
-          value={form.amount}
-          onChange={(e) => handleChange('amount', e.target.value)}
+          error={errors.amount?.message}
+          {...register('amount')}
         />
 
         <div className={styles.toggleRow}>
           <span className={styles.toggleLabel}>Taxable</span>
-          <ToggleButton
-            checked={form.taxable}
-            onChange={(checked) => handleChange('taxable', checked)}
+          <Controller
+            name="taxable"
+            control={control}
+            render={({ field }) => <ToggleButton checked={field.value} onChange={field.onChange} />}
           />
         </div>
 
         <div className={styles.toggleRow}>
           <span className={styles.toggleLabel}>Status</span>
-          <ToggleButton
-            checked={form.status}
-            onChange={(checked) => handleChange('status', checked)}
+          <Controller
+            name="status"
+            control={control}
+            render={({ field }) => <ToggleButton checked={field.value} onChange={field.onChange} />}
           />
         </div>
       </div>
