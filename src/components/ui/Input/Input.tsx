@@ -16,7 +16,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
     return (
-      <div className={`${styles.container} ${error ? styles.hasError : ''}`}>
+      <div
+        className={`${styles.container} ${error ? styles.hasError : ''} ${
+          props.disabled ? styles.disabled : ''
+        }`}
+      >
         {label && (
           <label className={styles.label} htmlFor={props.id || props.name}>
             {label}
