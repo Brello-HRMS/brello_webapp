@@ -5,6 +5,7 @@ import { envVars } from '../../../utils/envVars';
 import type {
   GetEmployeesParams,
   GetEmployeesResponse,
+  GetEmployeeDetailResponse,
   CreateEmployeeDto,
   EmploymentDetailsDto,
   PayrollDetailsDto,
@@ -15,6 +16,10 @@ import type {
 
 export const getEmployees = async (params?: GetEmployeesParams): Promise<GetEmployeesResponse> => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/employees`, { params });
+};
+
+export const getEmployeeById = async (id: string): Promise<GetEmployeeDetailResponse> => {
+  return apiClient.get(`${envVars.BRELLO_BASE_API}/employees/${id}`);
 };
 
 export const createEmployee = async (data: CreateEmployeeDto) => {

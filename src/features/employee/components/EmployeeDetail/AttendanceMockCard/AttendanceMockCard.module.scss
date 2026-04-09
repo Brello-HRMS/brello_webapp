@@ -1,0 +1,280 @@
+/* Default variables for colors so they can be easily overridden */
+.hoursCard, .calCard {
+  --color-present-text: #4c1d95;
+  --color-present-bg: #c4b5fd;
+  --color-late-text: #78350f;
+  --color-late-bg: #fcd34d;
+  --color-leave-text: #fff;
+  --color-leave-bg: #3b1f6e;
+  --color-absent-text: #6b7280;
+  --color-absent-bg: #e5e7eb;
+
+  --color-hours-track: #ede9fe;
+  --color-hours-fill: #7c3aed;
+}
+
+/* ── Hours Logged Card ─────────────────────────────────── */
+
+.hoursCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  flex: 1; /* Match end of attendance card */
+  box-sizing: border-box;
+}
+
+.hoursTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hoursTitle {
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.weekSelector {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-gray-50, #f9fafb);
+  }
+}
+
+.hoursTotal {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.hoursBig {
+  font-size: 38px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.hoursUnit {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary);
+  margin-right: 6px;
+}
+
+/* Bar chart */
+.barChart {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.barCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  height: 100%;
+}
+
+.timeLabel {
+  font-size: 10px;
+  color: var(--color-secondary);
+  white-space: nowrap;
+  font-weight: var(--font-weight-medium);
+}
+
+.timeLabelDim {
+  opacity: 0.45;
+}
+
+.barTrack {
+  width: 100%;
+  flex: 1;
+  min-height: 80px;
+  background: var(--color-hours-track);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* Filled portion from bottom */
+.barFilled {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--color-hours-fill);
+  border-radius: 6px;
+  transition: height 0.3s ease;
+}
+
+/* Weekend: full-height lighter color (same as track) */
+.barWeekend {
+  position: absolute;
+  inset: 0;
+  background: var(--color-hours-track);
+  border-radius: 6px;
+}
+
+.barDay {
+  font-size: 11px;
+  color: var(--color-secondary);
+  white-space: nowrap;
+}
+
+/* ── Attendance Calendar Card ──────────────────────────── */
+
+.calCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.calHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calTitle {
+  font-size: 15px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.monthSelector {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-gray-50, #f9fafb);
+  }
+}
+
+/* Calendar grid */
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.calWeekDay {
+  text-align: center;
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary);
+  padding: 4px 0 8px;
+}
+
+.calCell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  cursor: default;
+  color: var(--color-text-primary);
+}
+
+/* Status colours */
+.s_present {
+  background: var(--color-present-bg);
+  color: var(--color-present-text);
+}
+
+.s_late {
+  background: var(--color-late-bg);
+  color: var(--color-late-text);
+}
+
+.s_leave {
+  background: var(--color-leave-bg);
+  color: var(--color-leave-text);
+}
+
+.s_absent {
+  background: var(--color-absent-bg);
+  color: var(--color-absent-text);
+}
+
+.s_weekend {
+  background: transparent;
+  color: var(--color-secondary);
+  font-weight: var(--font-weight-regular);
+}
+
+.s_out {
+  background: transparent;
+  color: var(--color-gray-300, #d1d5db);
+  font-weight: var(--font-weight-regular);
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  color: var(--color-secondary);
+}
+
+.legendCount {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary);
+}

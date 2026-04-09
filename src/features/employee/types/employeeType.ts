@@ -127,3 +127,126 @@ export enum BloodGroup {
   O_POSITIVE = 'O+',
   O_NEGATIVE = 'O-',
 }
+
+// ─── Employee Detail types (GET /employees/:id) ────────────────────────────
+
+export interface EmployeeProfile {
+  employeeId: string | null;
+  type: string;
+  dob: string | null;
+  gender: string | null;
+  joiningDate: string | null;
+  noticePeriod: number | null;
+  currentSalary: string | null;
+  /** Employment type (FULL_TIME | PART_TIME | CONTRACT | INTERNSHIP) */
+  employmentType?: string | null;
+  /** Work model (ONSITE | REMOTE | HYBRID) */
+  workModel?: string | null;
+  /** Department name (resolved separately if available) */
+  department?: string | null;
+  /** Address string */
+  address?: string | null;
+  /** Annual CTC */
+  annualCtc?: string | null;
+  /** Monthly gross */
+  monthlyGross?: string | null;
+  /** Allowances */
+  allowances?: string | null;
+  /** Total CTC */
+  totalCtc?: string | null;
+  /** Tax regime */
+  taxRegime?: string | null;
+  /** Designation / job title */
+  designation?: string | null;
+}
+
+export interface EducationItem {
+  id: string;
+  school_name: string;
+  degree: string;
+  field_of_study: string;
+  completion_date: string | null;
+  completion_year: string | null;
+  additional_detail: string | null;
+  user_profile_id: string;
+  status: string;
+  created_at: string;
+}
+
+export interface ExperienceItem {
+  id: string;
+  company: string;
+  designation: string;
+  from_date: string;
+  to_date: string | null;
+  is_current: boolean;
+  description: string | null;
+  user_profile_id: string;
+  status: string;
+  created_at: string;
+}
+
+export interface AssetItem {
+  id: string;
+  name: string;
+  user_profile_id: string;
+  status: string;
+}
+
+export interface DocumentItem {
+  id: string;
+  name: string;
+  category: string;
+  doc_id: string;
+  user_profile_id: string;
+  status: string;
+}
+
+export interface BankInfo {
+  id: string;
+  account_number: string;
+  ifsc_code: string;
+  bank_name: string;
+  user_profile_id: string;
+}
+
+export interface GovInfo {
+  id: string;
+  uan: string | null;
+  aadhaar: string | null;
+  pan: string | null;
+  esi: string | null;
+  passport: string | null;
+  driving_licence: string | null;
+  user_profile_id: string;
+}
+
+export interface EmergencyContact {
+  id: string;
+  name: string;
+  relationship: string;
+  phone: string;
+}
+
+export interface EmployeeDetail {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string | null;
+  reportsTo: string | null;
+  profile: EmployeeProfile;
+  education: EducationItem[];
+  experience: ExperienceItem[];
+  assets: AssetItem[];
+  documents: DocumentItem[];
+  bankInfo: BankInfo | null;
+  govInfo: GovInfo | null;
+  emergencyContact: EmergencyContact[];
+}
+
+export interface GetEmployeeDetailResponse {
+  success: boolean;
+  data: EmployeeDetail;
+  timestamp: string;
+}
