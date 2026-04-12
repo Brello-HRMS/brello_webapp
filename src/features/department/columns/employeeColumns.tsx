@@ -1,58 +1,51 @@
 import { ActionCell } from '../components/ActionCell';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Employee } from '../data/dummyEmployees';
+import type { User } from '../../users/types/userType';
 
-export const employeeColumns: ColumnDef<Employee>[] = [
+export const employeeColumns: ColumnDef<User>[] = [
   {
-    accessorKey: 'employeeId',
+    accessorKey: 'id',
     header: 'Employee ID',
     size: 150,
+    cell: (info) => {
+      // API doesn't return a specific "employeeId", fallback to first 8 chars of id or UUID mapping if applicable
+      const id = info.getValue() as string;
+      return <span style={{ fontSize: '13px' }}>{id.split('-')[0]}</span>;
+    },
   },
   {
-    accessorKey: 'name',
+    id: 'name',
     header: 'Employee Name',
     size: 250,
     cell: (info) => {
-      const employee = info.row.original;
+      const user = info.row.original;
+      const firstName = user.firstName || '';
+      const lastName = user.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim() || 'Unknown User';
+      const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`;
+
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
           <img
-            src={employee.avatar}
-            alt={employee.name}
+            src={avatarUrl}
+            alt={fullName}
             style={{ width: '32px', height: '32px', borderRadius: '50%' }}
           />
-          <span>{employee.name}</span>
+          <span>{fullName}</span>
         </div>
       );
     },
   },
   {
-    accessorKey: 'designation',
-    header: 'Designation',
+    accessorKey: 'email',
+    header: 'Email',
     size: 200,
   },
   {
-    accessorKey: 'type',
-    header: 'Type',
+    accessorKey: 'phone',
+    header: 'Phone',
     size: 150,
-    cell: (info) => {
-      const type = info.getValue() as string;
-      return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
-          <div
-            style={{
-              width: '6px',
-              height: '6px',
-              borderRadius: '50%',
-              backgroundColor:
-                type === 'Office' ? 'var(--color-success-500)' : 'var(--color-warning-500)',
-            }}
-          />
-          <span>{type}</span>
-        </div>
-      );
-    },
   },
   {
     accessorKey: 'status',
@@ -60,14 +53,15 @@ export const employeeColumns: ColumnDef<Employee>[] = [
     size: 150,
     cell: (info) => {
       const status = info.getValue() as string;
+      const isActive = status === 'ACTIVE';
       return (
         <span
           style={{
-            color: status === 'Permanent' ? 'var(--color-primary-500)' : 'var(--color-warning-500)',
+            color: isActive ? 'var(--color-primary-500)' : 'var(--color-warning-500)',
             fontWeight: 500,
           }}
         >
-          {status}
+          {status || 'N/A'}
         </span>
       );
     },
@@ -76,6 +70,6 @@ export const employeeColumns: ColumnDef<Employee>[] = [
     id: 'actions',
     header: 'Actions',
     size: 100,
-    cell: (info) => <ActionCell employeeId={info.row.original.employeeId} />,
+    cell: (info) => <ActionCell employeeId={info.row.original.id} />,
   },
 ];
