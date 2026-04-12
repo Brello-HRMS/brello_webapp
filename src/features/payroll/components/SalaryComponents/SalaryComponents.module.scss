@@ -1,0 +1,121 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  th {
+    padding: 0.625rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border-light);
+    background-color: var(--color-gray-50);
+  }
+
+  td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-border-light);
+    color: var(--color-text-primary);
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background-color: var(--color-gray-50);
+  }
+}
+
+.componentName {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500) !important;
+}
+
+.typeCell,
+.taxableCell {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Priority Badges */
+.priorityBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.earning {
+  background-color: var(--color-success-50);
+  color: var(--color-success-700);
+}
+
+.deduction {
+  background-color: var(--color-error-50);
+  color: var(--color-error-700);
+}
+
+/* Status Badges */
+.statusBadge {
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-medium);
+}
+
+.active {
+  color: var(--color-success-700);
+}
+
+.inactive {
+  color: var(--color-text-muted);
+}
+
+/* Action Buttons */
+.actionsContainer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editButton,
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-icon-gray);
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.2s,
+    background-color 0.2s;
+}
+
+.editButton {
+  &:hover {
+    color: var(--color-primary-purple);
+    background-color: var(--color-primary-50);
+  }
+}
+
+.deleteButton {
+  &:hover {
+    color: var(--color-error-700);
+    background-color: var(--color-error-50);
+  }
+}

@@ -20,6 +20,7 @@ interface SelectProps {
   label?: string;
   error?: string;
   required?: boolean;
+  disabled?: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -33,6 +34,7 @@ export const Select: React.FC<SelectProps> = ({
   label,
   error,
   required,
+  disabled,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [autoPosition, setAutoPosition] = useState<'top' | 'bottom'>('bottom');
@@ -71,7 +73,9 @@ export const Select: React.FC<SelectProps> = ({
 
   return (
     <div
-      className={`${styles.container} ${error ? styles.hasError : ''} ${className || ''}`}
+      className={`${styles.container} ${error ? styles.hasError : ''} ${
+        disabled ? styles.disabled : ''
+      } ${className || ''}`}
       ref={containerRef}
     >
       {label && (
@@ -83,8 +87,9 @@ export const Select: React.FC<SelectProps> = ({
       <div className={styles.selectContainer}>
         <button
           className={`${styles.selectTrigger} ${isOpen ? styles.active : ''}`}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => !disabled && setIsOpen(!isOpen)}
           type="button"
+          disabled={disabled}
         >
           <span className={styles.selectedLabel}>
             {selectedOption ? `${labelPrefix}${selectedOption.label}` : placeholder}

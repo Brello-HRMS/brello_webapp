@@ -167,6 +167,27 @@
   flex-shrink: 0;
 }
 
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed;
+
+  .label {
+    color: var(--color-text-secondary);
+  }
+
+  .selectTrigger {
+    background: var(--color-gray-lighter);
+    border-color: var(--color-border);
+    cursor: not-allowed;
+
+    .selectedLabel,
+    .chevron {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
 @keyframes slideUp {
   from {
     opacity: 0;

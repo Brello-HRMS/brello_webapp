@@ -23,6 +23,7 @@ import ProjectDetailPage from '../pages/project/ProjectDetailPage';
 import PoliciesPage from '../pages/policies/PoliciesPage';
 import HolidaysPage from '../pages/holidays/HolidaysPage';
 import HolidayCalendarView from '../pages/holidays/HolidayCalendarView';
+import PayrollConfigPage from '../pages/payroll/PayrollConfigPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -152,6 +153,10 @@ const router = createBrowserRouter([
       {
         path: 'project/clients/:clientId/projects/:projectId',
         element: <ProjectDetailPage />,
+      },
+      {
+        path: 'organisation/payroll',
+        element: <PayrollConfigPage />,
       },
       {
         path: '*',
