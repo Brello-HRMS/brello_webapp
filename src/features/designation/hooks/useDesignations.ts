@@ -16,7 +16,6 @@ export const useDesignations = (
     queryFn: async () => {
       try {
         const data = await getDesignations(params);
-        showToast('Designations fetched successfully', 'success');
         return data;
       } catch (error) {
         const message =

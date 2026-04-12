@@ -16,7 +16,6 @@ export const useDepartments = (
     queryFn: async () => {
       try {
         const data = await getDepartments(params);
-        showToast('Departments fetched successfully', 'success');
         return data;
       } catch (error) {
         const message = (error as ApiError)?.data?.message || 'Failed to fetch departments';

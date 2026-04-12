@@ -1,4 +1,4 @@
-import React, { useState, useRef, ReactNode, useEffect } from 'react';
+import React, { useState, useRef, type ReactNode, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 import styles from './Accordion.module.scss';
@@ -79,7 +79,7 @@ export const Accordion: React.FC<AccordionProps> = ({
         </div>
       </div>
       <div
-        className={styles.contentWrapper}
+        className={`${styles.contentWrapper} ${isExpanded && contentHeight === undefined ? styles.overflowVisible : ''}`}
         style={{ height: contentHeight !== undefined ? `${contentHeight}px` : 'auto' }}
       >
         <div className={styles.content} ref={contentRef}>

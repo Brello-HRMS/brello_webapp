@@ -115,3 +115,30 @@
   color: var(--color-error);
   // margin-top: var(--spacing-1);
 }
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  cursor: not-allowed !important;
+
+  .label {
+    color: var(--color-text-secondary);
+  }
+
+  .input {
+    background-color: var(--color-gray-lighter);
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+    cursor: not-allowed !important;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:hover,
+    &:focus {
+      border-color: var(--color-border);
+      box-shadow: none;
+    }
+  }
+}
