@@ -108,7 +108,10 @@ export const EmployeeDetailHeader: React.FC<EmployeeDetailHeaderProps> = ({ empl
   );
 };
 
-export const EmployeeDetailPageHeader: React.FC<{ employee: EmployeeDetail }> = ({ employee }) => {
+export const EmployeeDetailPageHeader: React.FC<{
+  employee: EmployeeDetail;
+  onOffboardClick?: () => void;
+}> = ({ employee, onOffboardClick }) => {
   const empId = employee.profile?.employeeId
     ? `EMP-${employee.profile.employeeId}`
     : `EMP-${employee.id.substring(0, 3).toUpperCase()}`;
@@ -121,7 +124,7 @@ export const EmployeeDetailPageHeader: React.FC<{ employee: EmployeeDetail }> = 
         </h1>
         <p className={styles.pageSubtitle}>{empId}</p>
       </div>
-      <Button variant="primary" disabled className={styles.offboardBtn}>
+      <Button variant="primary" onClick={onOffboardClick} className={styles.offboardBtn}>
         Offboard Employee
       </Button>
     </div>

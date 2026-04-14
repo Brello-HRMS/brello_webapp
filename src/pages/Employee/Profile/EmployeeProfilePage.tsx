@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
 import { Button } from '../../../components/common';
 import { useEmployeeDetail } from '../../../features/employee/hooks/useEmployeeDetail';
+import { useOffboardingStatus } from '../../../features/employee/hooks/useOffboarding';
 import {
   EmployeeDetailHeader,
   EmployeeDetailPageHeader,
@@ -18,15 +20,31 @@ import {
   HoursLoggedMockCard,
   AttendanceCalendarMockCard,
 } from '../../../features/employee/components/EmployeeDetail/AttendanceMockCard/AttendanceMockCard';
+import { OffboardedEmployeeProfile } from '../../../features/employee/components/OffboardedEmployeeDetail/OffboardedEmployeeProfile';
+import {
+  InitiateOffboardingModal,
+  OffboardingCaptureFlow,
+} from '../../../features/employee/components/EmployeeDetail/OffboardingModals';
 
 import styles from './EmployeeProfilePage.module.scss';
 
 const EmployeeProfilePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: response, isLoading, isError } = useEmployeeDetail(id);
+
+  const { data: response, isLoading: isEmpLoading, isError } = useEmployeeDetail(id);
+  const { data: offboardingStatus, isLoading: isOffStatusLoading } = useOffboardingStatus(id);
+
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [isCaptureModalOpen, setCaptureModalOpen] = useState(false);
+  const [effectiveImmediately, setEffectiveImmediately] = useState(false);
 
   const employee = response?.data;
+  const isLoading = isEmpLoading || isOffStatusLoading;
+
+  const isExited = offboardingStatus
+    ? new Date(offboardingStatus.last_working_day).getTime() <= new Date().getTime()
+    : false;
 
   return (
     <div className={styles.container}>
@@ -76,33 +94,64 @@ const EmployeeProfilePage = () => {
       {/* Main content */}
       {employee && !isLoading && (
         <>
-          <EmployeeDetailPageHeader employee={employee} />
+          <EmployeeDetailPageHeader
+            employee={employee}
+            onOffboardClick={() => setConfirmModalOpen(true)}
+          />
 
-          {/* ── Zone 1: Profile & Attendance (50/50) ── */}
-          <div className={styles.profileZone}>
-            <div className={styles.profileLeft}>
-              <EmployeeDetailHeader employee={employee} />
-              <HoursLoggedMockCard />
-            </div>
-            <div className={styles.profileRight}>
-              <LeaveMockCard />
-              <AttendanceCalendarMockCard />
-            </div>
-          </div>
+          {offboardingStatus ? (
+            <OffboardedEmployeeProfile
+              employee={employee}
+              offboardingStatus={offboardingStatus}
+              employeeExited={isExited}
+            />
+          ) : (
+            <>
+              {/* ── Zone 1: Profile & Attendance (50/50) ── */}
+              <div className={styles.profileZone}>
+                <div className={styles.profileLeft}>
+                  <EmployeeDetailHeader employee={employee} />
+                  <HoursLoggedMockCard />
+                </div>
+                <div className={styles.profileRight}>
+                  <LeaveMockCard />
+                  <AttendanceCalendarMockCard />
+                </div>
+              </div>
 
-          {/* ── Zone 2: Details (60/40) ── */}
-          <div className={styles.detailsZone}>
-            <div className={styles.detailsLeft}>
-              <EducationCard education={employee.education} />
-              <ExperienceCard experience={employee.experience} />
-              <DocumentsCard documents={employee.documents} />
-              <AssetsCard assets={employee.assets} />
-            </div>
-            <div className={styles.detailsRight}>
-              <PersonalInfoCard employee={employee} />
-              <PayrollSummaryCard employee={employee} />
-            </div>
-          </div>
+              {/* ── Zone 2: Details (60/40) ── */}
+              <div className={styles.detailsZone}>
+                <div className={styles.detailsLeft}>
+                  <EducationCard education={employee.education} />
+                  <ExperienceCard experience={employee.experience} />
+                  <DocumentsCard documents={employee.documents} />
+                  <AssetsCard assets={employee.assets} />
+                </div>
+                <div className={styles.detailsRight}>
+                  <PersonalInfoCard employee={employee} />
+                  <PayrollSummaryCard employee={employee} />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Modals */}
+          <InitiateOffboardingModal
+            isOpen={isConfirmModalOpen}
+            onClose={() => setConfirmModalOpen(false)}
+            onProceed={(isImmediate) => {
+              setEffectiveImmediately(isImmediate);
+              setConfirmModalOpen(false);
+              setCaptureModalOpen(true);
+            }}
+          />
+
+          <OffboardingCaptureFlow
+            employee={employee}
+            isOpen={isCaptureModalOpen}
+            onClose={() => setCaptureModalOpen(false)}
+            effectiveImmediately={effectiveImmediately}
+          />
         </>
       )}
     </div>
