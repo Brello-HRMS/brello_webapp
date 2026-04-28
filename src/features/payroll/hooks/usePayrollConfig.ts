@@ -115,11 +115,30 @@ export const useSalaryTemplates = () => {
     },
   });
 
+  const updateTemplateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<SalaryTemplate> }) =>
+      payrollApi.updateSalaryTemplate(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payroll', 'templates'] });
+    },
+  });
+
+  const deleteTemplateMutation = useMutation({
+    mutationFn: (id: string) => payrollApi.deleteSalaryTemplate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payroll', 'templates'] });
+    },
+  });
+
   return {
     templates: templatesQuery.data || [],
     isLoading: templatesQuery.isLoading,
     error: templatesQuery.error,
     createTemplate: createTemplateMutation.mutateAsync,
     isCreating: createTemplateMutation.isPending,
+    updateTemplate: updateTemplateMutation.mutateAsync,
+    isUpdating: updateTemplateMutation.isPending,
+    deleteTemplate: deleteTemplateMutation.mutateAsync,
+    isDeleting: deleteTemplateMutation.isPending,
   };
 };

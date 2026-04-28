@@ -60,7 +60,7 @@ const DesignationPage = () => {
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
 
   // Local state for deleted items to hide them immediately
-  // const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
 
   const { mutate: deleteDesig } = useDeleteDesignation();
   const { mutate: updateDesig } = useUpdateDesignation();
@@ -82,7 +82,7 @@ const DesignationPage = () => {
     let data = response?.data || [];
 
     // Filter out soft-deleted designations that backend might still return
-    // data = data.filter((item: any) => !item.deleted_at && !deletedIds.has(item.id));
+    data = data.filter((item) => !item.deleted_at && !deletedIds.has(item.id));
 
     // Client-side sorting
     const [sortBy, sortOrder] = selectedSort.split(':');
@@ -99,7 +99,7 @@ const DesignationPage = () => {
     });
 
     return data;
-  }, [response, selectedSort]);
+  }, [response, selectedSort, deletedIds]);
 
   const totalPages = useMemo(() => {
     const total = designationList.length;

@@ -37,12 +37,13 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: var(--spacing-2) var(--spacing-3);
+  height: 40px;
+  padding: 0 var(--spacing-3);
   background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-text-secondary);
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   outline: none;
@@ -133,7 +134,7 @@
   }
 
   &.selected {
-    background: rgba(131, 1, 255, 0.08);
+    background: var(--color-primary-50);
 
     .optionLabel {
       color: var(--color-primary-purple);
@@ -152,7 +153,7 @@
 }
 
 .optionLabel {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary-500);
 }
@@ -168,9 +169,11 @@
 }
 
 .disabled {
-  pointer-events: none;
-  opacity: 0.6;
-  cursor: not-allowed;
+  background-color: var(--color-gray-50) !important;
+  color: var(--color-text-muted) !important;
+  cursor: not-allowed !important;
+  border-color: var(--color-border) !important;
+  opacity: 0.7;
 
   .label {
     color: var(--color-text-secondary);

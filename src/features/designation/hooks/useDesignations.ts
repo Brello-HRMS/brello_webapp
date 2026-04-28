@@ -16,11 +16,9 @@ export const useDesignations = (
     queryFn: async () => {
       try {
         const data = await getDesignations(params);
-        showToast('Designations fetched successfully', 'success');
         return data;
       } catch (error) {
-        const message =
-          (error as ApiError)?.response?.data?.message || 'Failed to fetch designations';
+        const message = (error as ApiError)?.data?.message || 'Failed to fetch designations';
         showToast(message, 'error');
         throw error;
       }

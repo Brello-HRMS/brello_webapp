@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 
 import { Button } from '../../../../components/common/Button/Button';
 
@@ -11,12 +11,14 @@ interface SalaryTemplatesProps {
   templates: SalaryTemplate[];
   onCreateTemplate: () => void;
   onEditTemplate: (template: SalaryTemplate) => void;
+  onDeleteTemplate: (template: SalaryTemplate) => void;
 }
 
 export const SalaryTemplates: React.FC<SalaryTemplatesProps> = ({
   templates,
   onCreateTemplate,
   onEditTemplate,
+  onDeleteTemplate,
 }) => {
   return (
     <div className={styles.container}>
@@ -32,6 +34,7 @@ export const SalaryTemplates: React.FC<SalaryTemplatesProps> = ({
             key={template.id}
             template={template}
             onEdit={() => onEditTemplate(template)}
+            onDelete={() => onDeleteTemplate(template)}
           />
         ))}
       </div>
@@ -42,15 +45,16 @@ export const SalaryTemplates: React.FC<SalaryTemplatesProps> = ({
 interface TemplateCardProps {
   template: SalaryTemplate;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
-const TemplateCard: React.FC<TemplateCardProps> = ({ template, onEdit }) => {
+const TemplateCard: React.FC<TemplateCardProps> = ({ template, onEdit, onDelete }) => {
   const isActive = template.is_active;
 
   const earningCount =
-    template.components?.filter((c) => c.component?.type === 'earning').length || 0;
+    template.components?.filter((c) => c.component?.component_type === 'earning').length || 0;
   const deductionCount =
-    template.components?.filter((c) => c.component?.type === 'deduction').length || 0;
+    template.components?.filter((c) => c.component?.component_type === 'deduction').length || 0;
   const totalComponents = template.components?.length || 0;
 
   return (
@@ -73,6 +77,13 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template, onEdit }) => {
         <div className={styles.cardActions}>
           <button className={styles.iconButton} aria-label="Edit template" onClick={onEdit}>
             <Pencil size={18} />
+          </button>
+          <button
+            className={`${styles.iconButton} ${styles.iconButtonDanger}`}
+            aria-label="Delete template"
+            onClick={onDelete}
+          >
+            <Trash2 size={18} />
           </button>
         </div>
       </div>

@@ -123,3 +123,10 @@
     background-color: var(--color-primary-50);
   }
 }
+
+.iconButtonDanger {
+  &:hover {
+    color: var(--color-error-700);
+    background-color: var(--color-error-50);
+  }
+}

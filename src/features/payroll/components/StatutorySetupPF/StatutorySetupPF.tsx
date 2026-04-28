@@ -2,6 +2,7 @@ import React from 'react';
 import { Info } from 'lucide-react';
 
 import { Input } from '../../../../components/ui/Input/Input';
+import { DatePicker } from '../../../../components/ui/DatePicker/DatePicker';
 import { ToggleButton } from '../../../../components/common/ToggleButton/ToggleButton';
 
 import styles from './StatutorySetupPF.module.scss';
@@ -16,9 +17,9 @@ interface StatutorySetupPFProps {
 const DEFAULT_PF: StatutoryPFConfig = {
   employee_contribution: 12,
   employer_contribution: 12,
-  min_salary_threshold: 15000,
-  wage_ceiling: 15000,
-  salary_ceiling_enabled: true,
+  minimum_salary_threshold: 15000,
+  is_enabled: true,
+  effective_from: new Date().toISOString().split('T')[0],
 };
 
 export const StatutorySetupPF: React.FC<StatutorySetupPFProps> = ({ config, onChange }) => {
@@ -46,33 +47,34 @@ export const StatutorySetupPF: React.FC<StatutorySetupPFProps> = ({ config, onCh
         <Input
           label="Minimum Salary Threshold (₹)*"
           type="number"
-          value={currentConfig.min_salary_threshold || 0}
-          onChange={(e) => handleChange('min_salary_threshold', Number(e.target.value))}
+          value={currentConfig.minimum_salary_threshold || 0}
+          onChange={(e) => handleChange('minimum_salary_threshold', Number(e.target.value))}
         />
       </div>
 
-      <div className={styles.row1half}>
-        <Input
-          label="Wage Ceiling (₹)*"
-          type="number"
-          value={currentConfig.wage_ceiling || 0}
-          onChange={(e) => handleChange('wage_ceiling', Number(e.target.value))}
+      <div className={styles.row2}>
+        <DatePicker
+          label="Effective From*"
+          required
+          value={currentConfig.effective_from || ''}
+          onChange={(val) => handleChange('effective_from', val)}
         />
       </div>
 
       <div className={styles.toggleRow}>
-        <span className={styles.toggleLabel}>Apply wage ceiling for PF calculation</span>
+        <span className={styles.toggleLabel}>Enable Provident Fund (PF)</span>
         <ToggleButton
-          checked={currentConfig.salary_ceiling_enabled || false}
-          onChange={(checked) => handleChange('salary_ceiling_enabled', checked)}
+          checked={currentConfig.is_enabled}
+          onChange={(checked) => handleChange('is_enabled', checked)}
         />
       </div>
 
       <div className={styles.infoBanner}>
         <Info size={16} className={styles.infoIcon} />
         <span>
-          PF is calculated on Basic Salary. Employer contribution includes EPF (3.67) and EPS
-          (8.33%) components per EPFO rules.
+          PF is calculated on Basic Salary. Employer contribution includes EPF (3.67%) and EPS
+          (8.33%) per EPFO rules. Saving creates a new versioned config — existing assignments are
+          unaffected.
         </span>
       </div>
     </div>

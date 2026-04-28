@@ -7,6 +7,12 @@ import type {
   SalaryComponent,
   SalaryTemplate,
   ApiResponse,
+  EmployeeListResponse,
+  EmployeeSalaryInfo,
+  EmployeeSalaryStructure,
+  AssignSalaryPayload,
+  DryRunPayload,
+  DryRunResult,
 } from '../types/payrollConfigTypes';
 
 const BASE_URL = `${envVars.BRELLO_BASE_API}/payroll`;
@@ -96,9 +102,67 @@ export const createSalaryTemplate = async (
   return response.data;
 };
 
+export const updateSalaryTemplate = async (
+  id: string,
+  data: Partial<SalaryTemplate>,
+): Promise<SalaryTemplate> => {
+  const response = await apiClient.put<unknown, ApiResponse<SalaryTemplate>>(
+    `${BASE_URL}/salary-templates/${id}`,
+    data,
+  );
+  return response.data;
+};
+
 export const getSalaryTemplate = async (id: string): Promise<SalaryTemplate> => {
   const response = await apiClient.get<unknown, ApiResponse<SalaryTemplate>>(
     `${BASE_URL}/salary-templates/${id}`,
+  );
+  return response.data;
+};
+
+export const deleteSalaryTemplate = async (id: string): Promise<void> => {
+  await apiClient.delete(`${BASE_URL}/salary-templates/${id}`);
+};
+
+// --- Employee Payroll ---
+export const getEmployeesList = async (params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  department_id?: string;
+}): Promise<EmployeeListResponse> => {
+  const response = await apiClient.get<unknown, ApiResponse<EmployeeListResponse>>(
+    `${BASE_URL}/employees`,
+    { params },
+  );
+  return response.data;
+};
+
+export const assignEmployeeSalary = async (data: AssignSalaryPayload): Promise<void> => {
+  await apiClient.post(`${BASE_URL}/employee-salary-assignments`, data);
+};
+
+export const getEmployeeSalaryStructure = async (
+  userId: string,
+): Promise<EmployeeSalaryStructure> => {
+  const response = await apiClient.get<unknown, ApiResponse<EmployeeSalaryStructure>>(
+    `${BASE_URL}/employees/${userId}/salary`,
+  );
+  return response.data;
+};
+
+export const getEmployeeSalaryHistory = async (userId: string): Promise<EmployeeSalaryInfo[]> => {
+  const response = await apiClient.get<unknown, ApiResponse<EmployeeSalaryInfo[]>>(
+    `${BASE_URL}/employees/${userId}/salary/history`,
+  );
+  return response.data;
+};
+
+// --- Dry Run ---
+export const runDryRun = async (data: DryRunPayload): Promise<DryRunResult> => {
+  const response = await apiClient.post<unknown, ApiResponse<DryRunResult>>(
+    `${BASE_URL}/simulations/dry-run`,
+    data,
   );
   return response.data;
 };

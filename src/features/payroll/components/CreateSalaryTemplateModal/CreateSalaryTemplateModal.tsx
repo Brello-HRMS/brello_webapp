@@ -95,46 +95,36 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
     const componentId = String(id);
     if (!componentIds.includes(componentId)) {
       const newComponentIds = [...componentIds, componentId];
-      // Automatically add dependencies
-      const componentToAdd = availableComponents.find((component) => component.id === componentId);
-      const dependencyBaseName = componentToAdd?.calculation_value?.base;
-
-      if (dependencyBaseName && dependencyBaseName !== 'CTC') {
-        const dependencyBaseComponent = availableComponents.find(
-          (component) => component.name === dependencyBaseName,
-        );
-        if (dependencyBaseComponent && !newComponentIds.includes(dependencyBaseComponent.id)) {
-          newComponentIds.push(dependencyBaseComponent.id);
-        }
+      // UUID-based: auto-add the base component if this one depends on one
+      const componentToAdd = availableComponents.find((c) => c.id === componentId);
+      const baseId = componentToAdd?.calculate_from;
+      if (baseId && !newComponentIds.includes(baseId)) {
+        newComponentIds.push(baseId);
       }
-
       setValue('componentIds', newComponentIds, { shouldValidate: true });
       clearErrors('componentIds');
     }
   };
 
   const handleRemoveComponent = (id: string) => {
-    const componentToRemove = availableComponents.find((component) => component.id === id);
+    const componentToRemove = availableComponents.find((c) => c.id === id);
     if (componentToRemove?.name === 'Basic Salary' || componentToRemove?.name === 'Basic') {
       setError('componentIds', { message: 'Basic Salary is mandatory and cannot be removed.' });
       return;
     }
 
-    // Check if any other selected component depends on this one
+    // UUID-based: block removal if another selected component depends on this one
     const dependents = availableComponents.filter(
-      (component) =>
-        componentIds.includes(component.id) &&
-        component.calculation_value?.base === componentToRemove?.name,
+      (c) => componentIds.includes(c.id) && c.calculate_from === id,
     );
-
     if (dependents.length > 0) {
       setError('componentIds', {
-        message: `Cannot remove "${componentToRemove?.name}" because "${dependents[0].name}" depends on it.`,
+        message: `Cannot remove "${componentToRemove?.name}" — "${dependents[0].name}" depends on it.`,
       });
       return;
     }
 
-    const newComponentIds = componentIds.filter((componentId) => componentId !== id);
+    const newComponentIds = componentIds.filter((cid) => cid !== id);
     setValue('componentIds', newComponentIds, { shouldValidate: true });
     clearErrors('componentIds');
   };
@@ -153,7 +143,7 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
     .map((component) => ({
       value: component.id,
       label: component.name,
-      description: `${component.type} (${component.calculation_type})`,
+      description: `${component.component_type} (${component.calculation_type})`,
     }));
 
   const selectedComponents = availableComponents.filter((component) =>
@@ -218,8 +208,10 @@ export const CreateSalaryTemplateModal: React.FC<CreateSalaryTemplateModalProps>
                   <div key={component.id} className={styles.componentItem}>
                     <div className={styles.componentInfo}>
                       <span className={styles.compName}>{component.name}</span>
-                      <span className={`${styles.compTag} ${styles[component.type.toLowerCase()]}`}>
-                        {component.type}
+                      <span
+                        className={`${styles.compTag} ${styles[component.component_type.toLowerCase()]}`}
+                      >
+                        {component.component_type}
                       </span>
                     </div>
                     {component.name !== 'Basic Salary' && component.name !== 'Basic' && (
