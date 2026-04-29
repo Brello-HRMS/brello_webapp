@@ -13,15 +13,22 @@ import styles from './AddComponentModal.module.scss';
 
 import type { AddComponentFormData, SalaryComponent } from '../../types/payrollConfigTypes';
 
-const TYPE_OPTIONS: SelectOption[] = [
+const COMPONENT_TYPE_OPTIONS: SelectOption[] = [
   { value: 'earning', label: 'Earning' },
   { value: 'deduction', label: 'Deduction' },
+  { value: 'bonus', label: 'Bonus' },
+];
+
+const CATEGORY_OPTIONS: SelectOption[] = [
+  { value: 'fixed', label: 'Fixed' },
+  { value: 'variable', label: 'Variable' },
+  { value: 'statutory', label: 'Statutory' },
 ];
 
 const CALCULATION_TYPE_OPTIONS: SelectOption[] = [
-  { value: 'fixed', label: 'Fixed' },
+  { value: 'fixed', label: 'Fixed Amount' },
   { value: 'percentage', label: 'Percentage' },
-  { value: 'residual', label: 'Residual' },
+  { value: 'residual', label: 'Residual (CTC remainder)' },
 ];
 
 interface AddComponentModalProps {
@@ -39,6 +46,9 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
   initialData,
   availableComponents,
 }) => {
+  const isEditMode = !!initialData;
+  const isDefault = initialData?.is_default ?? false;
+
   const {
     register,
     handleSubmit,
@@ -49,18 +59,16 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
     resolver: zodResolver(addComponentSchema),
     defaultValues: {
       name: '',
-      type: 'earning',
+      componentType: 'earning',
+      category: 'fixed',
       calculationType: 'fixed',
-      amount: '',
+      value: '',
       taxable: false,
       status: true,
     },
   });
 
-  const calculationType = useWatch({
-    control,
-    name: 'calculationType',
-  });
+  const calculationType = useWatch({ control, name: 'calculationType' });
   const isPercentage = calculationType === 'percentage';
 
   useEffect(() => {
@@ -68,23 +76,25 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
       if (initialData) {
         reset({
           name: initialData.name,
-          type: initialData.type,
+          componentType: initialData.component_type,
+          category: initialData.category,
           calculationType: initialData.calculation_type,
-          amount:
-            initialData.calculation_value?.value !== undefined
-              ? String(initialData.calculation_value.value)
+          value:
+            initialData.value !== undefined && initialData.value !== null
+              ? String(initialData.value)
               : '',
-          parentComponentId: initialData.calculation_value?.base || '',
+          calculateFrom: initialData.calculate_from ?? '',
           taxable: initialData.is_taxable,
           status: initialData.is_active,
         });
       } else {
         reset({
           name: '',
-          type: 'earning',
+          componentType: 'earning',
+          category: 'fixed',
           calculationType: 'fixed',
-          amount: '',
-          parentComponentId: '',
+          value: '',
+          calculateFrom: '',
           taxable: false,
           status: true,
         });
@@ -97,29 +107,23 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
     onClose();
   };
 
-  const handleClose = () => {
-    onClose();
-  };
-
-  const componentOptions = [
-    { value: 'CTC', label: 'CTC' },
+  // UUID-based: show CTC as a virtual option + all other components except self
+  const baseComponentOptions: SelectOption[] = [
+    { value: '', label: 'CTC (Cost to Company)' },
     ...availableComponents
       .filter((c) => c.id !== initialData?.id)
-      .map((c) => ({
-        value: c.name,
-        label: c.name,
-      })),
+      .map((c) => ({ value: c.id, label: c.name })),
   ];
 
   return (
     <Dialog
-      title={initialData ? 'Edit Component' : 'Add Component'}
+      title={isEditMode ? 'Edit Component' : 'Add Component'}
       open={isOpen}
-      onClose={handleClose}
+      onClose={onClose}
       maxWidth="480px"
       actions={
         <div className={styles.footer}>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button variant="primary" onClick={handleSubmit(onSubmit)}>
@@ -130,24 +134,48 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
       position="right"
     >
       <div className={styles.formBody}>
+        {isDefault && (
+          <div className={styles.defaultBadge}>
+            Default component — only value and status are editable
+          </div>
+        )}
+
         <Input
           label="Component Name*"
           placeholder="e.g. Medical Allowance"
           error={errors.name?.message}
+          disabled={isDefault}
           {...register('name')}
         />
 
         <Controller
-          name="type"
+          name="componentType"
           control={control}
           render={({ field }) => (
             <Select
-              label="Type"
+              label="Component Type"
               required
-              options={TYPE_OPTIONS}
+              options={COMPONENT_TYPE_OPTIONS}
               value={field.value}
               onChange={field.onChange}
-              error={errors.type?.message}
+              error={errors.componentType?.message}
+              disabled={isDefault}
+            />
+          )}
+        />
+
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => (
+            <Select
+              label="Category"
+              required
+              options={CATEGORY_OPTIONS}
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.category?.message}
+              disabled={isDefault}
             />
           )}
         />
@@ -163,22 +191,24 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
               value={field.value}
               onChange={field.onChange}
               error={errors.calculationType?.message}
+              disabled={isDefault}
             />
           )}
         />
 
         {isPercentage && (
           <Controller
-            name="parentComponentId"
+            name="calculateFrom"
             control={control}
             render={({ field }) => (
               <Select
                 label="Percentage of*"
                 required
-                options={componentOptions}
-                value={field.value || 'CTC'}
+                options={baseComponentOptions}
+                value={field.value ?? ''}
                 onChange={field.onChange}
-                error={errors.parentComponentId?.message}
+                error={errors.calculateFrom?.message}
+                disabled={isDefault}
               />
             )}
           />
@@ -188,8 +218,8 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
           label={isPercentage ? 'Percentage (%)*' : 'Amount (₹)*'}
           type="number"
           placeholder="0"
-          error={errors.amount?.message}
-          {...register('amount')}
+          error={errors.value?.message}
+          {...register('value')}
         />
 
         <div className={styles.toggleRow}>
@@ -202,7 +232,7 @@ export const AddComponentModal: React.FC<AddComponentModalProps> = ({
         </div>
 
         <div className={styles.toggleRow}>
-          <span className={styles.toggleLabel}>Status</span>
+          <span className={styles.toggleLabel}>Active</span>
           <Controller
             name="status"
             control={control}

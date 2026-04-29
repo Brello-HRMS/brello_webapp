@@ -22,23 +22,23 @@ export const getSalaryTemplateSchema = (availableComponents: SalaryComponent[]) 
         );
         if (!hasBasicSalary) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             message: 'Template must include "Basic Salary".',
             path: ['componentIds'],
           });
         }
 
-        // 2. Dependency Check
+        // 2. UUID-based dependency check: if a selected component's calculate_from points to
+        //    another component (not CTC), that base component must also be selected.
         for (const component of selectedComponents) {
-          const calculationBase = component.calculation_value?.base;
-          if (calculationBase && calculationBase !== 'CTC') {
-            const hasDependencyBase = selectedComponents.some(
-              (comp) => comp.name === calculationBase,
-            );
-            if (!hasDependencyBase) {
+          const baseId = component.calculate_from;
+          if (baseId) {
+            const isBaseCTC = !availableComponents.find((c) => c.id === baseId);
+            if (!isBaseCTC && !data.componentIds.includes(baseId)) {
+              const baseName = availableComponents.find((c) => c.id === baseId)?.name ?? baseId;
               ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: `Component "${component.name}" depends on "${calculationBase}", which is not included in this template.`,
+                code: 'custom',
+                message: `"${component.name}" depends on "${baseName}", which is not in this template.`,
                 path: ['componentIds'],
               });
               break;
@@ -51,22 +51,44 @@ export const getSalaryTemplateSchema = (availableComponents: SalaryComponent[]) 
 export const addComponentSchema = z
   .object({
     name: z.string().trim().min(1, 'Component name is required.'),
-    type: z.enum(['earning', 'deduction']),
+    componentType: z.enum(['earning', 'deduction', 'bonus']),
+    category: z.enum(['fixed', 'variable', 'statutory']),
     calculationType: z.enum(['fixed', 'percentage', 'residual']),
-    amount: z.union([z.string().min(1, 'Amount/Percentage is required.'), z.number()]),
-    parentComponentId: z.string().optional(),
+    value: z.union([z.string().min(1, 'Amount/Percentage is required.'), z.number()]),
+    calculateFrom: z.string().optional(),
     taxable: z.boolean(),
     status: z.boolean(),
   })
   .refine(
     (data) => {
-      if (data.calculationType === 'percentage' && !data.parentComponentId) {
+      if (data.calculationType === 'percentage' && !data.calculateFrom) {
         return false;
       }
       return true;
     },
     {
-      message: 'Selection is required for percentage calculation.',
-      path: ['parentComponentId'],
+      message: 'Base component is required for percentage calculation.',
+      path: ['calculateFrom'],
     },
   );
+
+export const assignSalarySchema = z.object({
+  templateId: z.string().min(1, 'Template is required.'),
+  ctc: z.union([
+    z.string().min(1, 'CTC is required.'),
+    z.number().positive('CTC must be positive'),
+  ]),
+  effectiveFrom: z.string().min(1, 'Effective from date is required.'),
+});
+
+export const dryRunSchema = z.object({
+  templateId: z.string().min(1, 'Template is required.'),
+  ctc: z.union([
+    z.string().min(1, 'CTC is required.'),
+    z.number().positive('CTC must be positive'),
+  ]),
+  bonus: z.union([z.string(), z.number()]).optional(),
+  loanEmi: z.union([z.string(), z.number()]).optional(),
+  lwpDays: z.union([z.string(), z.number()]).optional(),
+  otherDeductions: z.union([z.string(), z.number()]).optional(),
+});

@@ -1,0 +1,176 @@
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.optionalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.optionalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.optionalTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.optionalToggle {
+  font-size: 12px;
+  color: var(--color-primary-purple);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.optionalFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-gray-200);
+  margin: 4px 0;
+}
+
+.resultPanel {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resultTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.lineItemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-icon-gray);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.lineItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--color-gray-700);
+  padding: 2px 0;
+}
+
+.lineItemName {
+  color: var(--color-icon-gray);
+}
+
+.lineItemAmount {
+  font-weight: 500;
+}
+
+.earning {
+  color: var(--color-success-700);
+}
+
+.deduction {
+  color: var(--color-error-700);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: 10px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summaryLabel {
+  font-size: 11px;
+  color: var(--color-icon-gray);
+}
+
+.summaryValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.netSalaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-success-50);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.netSalaryLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary-500);
+}
+
+.netSalaryAmount {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-success-700);
+}
+
+.metaBanner {
+  font-size: 11px;
+  color: var(--color-icon-gray);
+  text-align: center;
+}
+
+.warningItem {
+  font-size: 12px;
+  color: var(--color-priority-medium-text);
+  background: var(--color-priority-medium-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-1) var(--spacing-2);
+}
+
+.emptyResult {
+  text-align: center;
+  color: var(--color-icon-gray);
+  font-size: 13px;
+  padding: 24px 0;
+}

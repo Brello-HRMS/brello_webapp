@@ -33,8 +33,13 @@ export const SalaryComponents: React.FC<SalaryComponentsProps> = ({
   }, [components]);
 
   const columns = useMemo(
-    () => salaryComponentColumns({ onEdit: onEditComponent, onDelete: onDeleteComponent }),
-    [onEditComponent, onDeleteComponent],
+    () =>
+      salaryComponentColumns({
+        components,
+        onEdit: onEditComponent,
+        onDelete: onDeleteComponent,
+      }),
+    [components, onEditComponent, onDeleteComponent],
   );
 
   return (

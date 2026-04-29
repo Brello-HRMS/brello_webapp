@@ -1,0 +1,122 @@
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.previewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.previewDivider {
+  border: none;
+  border-top: 1px solid var(--color-gray-200);
+  margin: 4px 0;
+}
+
+.resultPanel {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resultTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  margin-bottom: 4px;
+}
+
+.lineItemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--color-icon-gray);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.lineItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--color-gray-700);
+  padding: 2px 0;
+}
+
+.lineItemName {
+  color: var(--color-icon-gray);
+}
+
+.lineItemAmount {
+  font-weight: 500;
+}
+
+.earning {
+  color: var(--color-success-700);
+}
+
+.deduction {
+  color: var(--color-error-700);
+}
+
+.netSalaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-gray-200);
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.netSalaryLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary-500);
+}
+
+.netSalaryAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-success-700);
+}
+
+.metadataBanner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-icon-gray);
+  background: var(--color-gray-100);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.warningItem {
+  font-size: 12px;
+  color: var(--color-priority-medium-text);
+  background: var(--color-priority-medium-bg);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-1) var(--spacing-2);
+}

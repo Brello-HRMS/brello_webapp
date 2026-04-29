@@ -46,7 +46,14 @@ const PayrollConfigPage: React.FC = () => {
 
   const { components, isLoading: isComponentsLoading, createComponent } = useSalaryComponents();
 
-  const { templates, isLoading: isTemplatesLoading, createTemplate } = useSalaryTemplates();
+  const {
+    templates,
+    isLoading: isTemplatesLoading,
+    createTemplate,
+    updateTemplate,
+    deleteTemplate,
+    isDeleting: isDeletingTemplate,
+  } = useSalaryTemplates();
 
   const [localCycleConfig, setLocalCycleConfig] = useState<PayrollCycleConfig | null>(null);
   const [localPfConfig, setLocalPfConfig] = useState<StatutoryPFConfig | null>(null);
@@ -59,6 +66,8 @@ const PayrollConfigPage: React.FC = () => {
   const [dependentNames, setDependentNames] = useState<string[]>([]);
   const [isCreateTemplateOpen, setIsCreateTemplateOpen] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<SalaryTemplate | null>(null);
+  const [isDeleteTemplateModalOpen, setIsDeleteTemplateModalOpen] = useState(false);
+  const [templateToDelete, setTemplateToDelete] = useState<SalaryTemplate | null>(null);
 
   const [prevSettings, setPrevSettings] = useState<PayrollCycleConfig | null>(null);
   const [prevPfConfig, setPrevPfConfig] = useState<StatutoryPFConfig | null>(null);
@@ -75,24 +84,24 @@ const PayrollConfigPage: React.FC = () => {
 
   const handleSaveAll = async () => {
     if (localCycleConfig) {
-      // Sanitize payload: cherry-pick only DTO allowed fields
       const settingsPayload: PayrollCycleConfig = {
-        frequency: localCycleConfig.frequency,
-        start_date: localCycleConfig.start_date,
-        cutoff_day: localCycleConfig.cutoff_day,
-        payout_day: localCycleConfig.payout_day,
-        payslip_release_day: localCycleConfig.payslip_release_day,
+        financial_start_month: localCycleConfig.financial_start_month,
+        payout_type: localCycleConfig.payout_type,
+        payout_date: localCycleConfig.payout_date,
+        payout_day_shift: localCycleConfig.payout_day_shift,
+        consider_holidays: localCycleConfig.consider_holidays,
+        attendance_cutoff_type: localCycleConfig.attendance_cutoff_type,
+        attendance_cutoff_value: localCycleConfig.attendance_cutoff_value,
       };
       await updateSettings(settingsPayload);
     }
     if (localPfConfig) {
-      // Sanitize payload: cherry-pick only DTO allowed fields
       const pfPayload: StatutoryPFConfig = {
         employee_contribution: localPfConfig.employee_contribution,
         employer_contribution: localPfConfig.employer_contribution,
-        min_salary_threshold: localPfConfig.min_salary_threshold,
-        wage_ceiling: localPfConfig.wage_ceiling,
-        salary_ceiling_enabled: localPfConfig.salary_ceiling_enabled,
+        minimum_salary_threshold: localPfConfig.minimum_salary_threshold,
+        is_enabled: localPfConfig.is_enabled,
+        effective_from: localPfConfig.effective_from,
       };
       await updatePfConfig(pfPayload);
     }
@@ -105,8 +114,8 @@ const PayrollConfigPage: React.FC = () => {
   } = useSalaryComponents();
 
   const handleDeleteComponent = (component: SalaryComponent) => {
-    // Check if any other component is dependent on this one
-    const dependents = components.filter((c) => c.calculation_value?.base === component.name);
+    // UUID-based dependency check
+    const dependents = components.filter((c) => c.calculate_from === component.id);
 
     if (dependents.length > 0) {
       setDependentNames(dependents.map((d) => d.name));
@@ -130,23 +139,27 @@ const PayrollConfigPage: React.FC = () => {
   };
 
   const handleAddComponent = async (data: AddComponentFormData) => {
-    const payload = {
-      name: data.name,
-      type: data.type,
-      calculation_type: data.calculationType,
-      calculation_value:
-        data.calculationType === 'fixed'
-          ? { value: Number(data.amount) }
-          : { value: Number(data.amount), base: data.parentComponentId || 'CTC' },
-      is_taxable: data.taxable,
-      is_active: data.status,
-    };
-
     if (editingComponent) {
-      await updateComponent({ id: editingComponent.id, data: payload });
+      // UpdatePayrollComponentDto only allows: value, calculation_priority, is_active, is_taxable
+      await updateComponent({
+        id: editingComponent.id,
+        data: {
+          value: Number(data.value),
+          is_taxable: data.taxable,
+          is_active: data.status,
+        },
+      });
       setEditingComponent(null);
     } else {
-      await createComponent(payload);
+      await createComponent({
+        name: data.name,
+        component_type: data.componentType,
+        category: data.category,
+        calculation_type: data.calculationType,
+        calculate_from: data.calculateFrom || undefined,
+        value: Number(data.value),
+        is_taxable: data.taxable,
+      });
     }
   };
 
@@ -167,8 +180,7 @@ const PayrollConfigPage: React.FC = () => {
     };
 
     if (editingTemplate) {
-      // TODO: Implement updateTemplate API if needed
-      // await updateTemplate({ id: editingTemplate.id, data: payload });
+      await updateTemplate({ id: editingTemplate.id, data: payload });
       setEditingTemplate(null);
     } else {
       await createTemplate(payload);
@@ -178,6 +190,23 @@ const PayrollConfigPage: React.FC = () => {
   const handleEditTemplate = (template: SalaryTemplate) => {
     setEditingTemplate(template);
     setIsCreateTemplateOpen(true);
+  };
+
+  const handleDeleteTemplate = (template: SalaryTemplate) => {
+    setTemplateToDelete(template);
+    setIsDeleteTemplateModalOpen(true);
+  };
+
+  const confirmDeleteTemplate = async () => {
+    if (templateToDelete) {
+      try {
+        await deleteTemplate(templateToDelete.id);
+        setIsDeleteTemplateModalOpen(false);
+        setTemplateToDelete(null);
+      } catch {
+        toast.error('Failed to delete template');
+      }
+    }
   };
 
   const isLoading = isSettingsLoading || isPfLoading || isComponentsLoading || isTemplatesLoading;
@@ -256,6 +285,7 @@ const PayrollConfigPage: React.FC = () => {
             setIsCreateTemplateOpen(true);
           }}
           onEditTemplate={handleEditTemplate}
+          onDeleteTemplate={handleDeleteTemplate}
         />
       </Accordion>
 
@@ -325,6 +355,24 @@ const PayrollConfigPage: React.FC = () => {
           setIsAlertModalOpen(false);
           setDependentNames([]);
         }}
+      />
+
+      <WarningModal
+        isOpen={isDeleteTemplateModalOpen}
+        onClose={() => {
+          setIsDeleteTemplateModalOpen(false);
+          setTemplateToDelete(null);
+        }}
+        title="Delete Salary Template"
+        description={
+          <>
+            Are you sure you want to delete <strong>{templateToDelete?.name}</strong>? This action
+            cannot be undone.
+          </>
+        }
+        actionLabel="Delete"
+        onAction={confirmDeleteTemplate}
+        isActionLoading={isDeletingTemplate}
       />
     </>
   );

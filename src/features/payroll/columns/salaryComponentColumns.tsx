@@ -6,11 +6,19 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { SalaryComponent } from '../types/payrollConfigTypes';
 
 interface SalaryComponentColumnsProps {
+  components: SalaryComponent[];
   onEdit: (component: SalaryComponent) => void;
   onDelete: (component: SalaryComponent) => void;
 }
 
+const TYPE_STYLE: Record<string, string> = {
+  earning: styles.earning,
+  deduction: styles.deduction,
+  bonus: styles.bonus,
+};
+
 export const salaryComponentColumns = ({
+  components,
   onEdit,
   onDelete,
 }: SalaryComponentColumnsProps): ColumnDef<SalaryComponent>[] => [
@@ -21,16 +29,13 @@ export const salaryComponentColumns = ({
     cell: (info) => <span className={styles.componentName}>{info.getValue() as string}</span>,
   },
   {
-    accessorKey: 'type',
+    accessorKey: 'component_type',
     header: 'Type',
     size: 130,
     cell: (info) => {
       const type = info.getValue() as string;
-      const isEarning = type === 'earning';
       return (
-        <span
-          className={`${styles.priorityBadge} ${isEarning ? styles.earning : styles.deduction}`}
-        >
+        <span className={`${styles.priorityBadge} ${TYPE_STYLE[type] ?? ''}`}>
           {type.charAt(0).toUpperCase() + type.slice(1)}
         </span>
       );
@@ -52,15 +57,22 @@ export const salaryComponentColumns = ({
     cell: (info) => {
       const component = info.row.original;
       const isFixed = component.calculation_type === 'fixed';
-      const value = component.calculation_value?.value || 0;
-      const base = component.calculation_value?.base || 'CTC';
+      const isResidual = component.calculation_type === 'residual';
+      const val = component.value ?? 0;
 
       if (isFixed) {
-        return <span className={styles.amountCell}>₹{value.toLocaleString()}</span>;
+        return <span className={styles.amountCell}>₹{Number(val).toLocaleString()}</span>;
       }
+      if (isResidual) {
+        return <span className={styles.typeCell}>Residual</span>;
+      }
+      const baseName =
+        component.base_component?.name ??
+        components.find((c) => c.id === component.calculate_from)?.name ??
+        'CTC';
       return (
         <span className={styles.percentageCell}>
-          {value}% of {base}
+          {val}% of {baseName}
         </span>
       );
     },
@@ -99,7 +111,7 @@ export const salaryComponentColumns = ({
         >
           <Pencil size={16} />
         </button>
-        {!info.row.original.is_system_defined && (
+        {!info.row.original.is_default && (
           <button
             className={styles.deleteButton}
             onClick={() => onDelete(info.row.original)}

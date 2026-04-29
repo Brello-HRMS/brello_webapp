@@ -2,14 +2,49 @@ import React from 'react';
 import { Info } from 'lucide-react';
 
 import { Input } from '../../../../components/ui/Input/Input';
-import { DatePicker } from '../../../../components/ui/DatePicker/DatePicker';
 import { Select } from '../../../../components/common/Select/Select';
+import { ToggleButton } from '../../../../components/common/ToggleButton/ToggleButton';
 
 import styles from './PayrollCycleSetup.module.scss';
 
-import type { PayrollCycleConfig } from '../../types/payrollConfigTypes';
+import type {
+  PayrollCycleConfig,
+  FinancialMonth,
+  PayoutType,
+  PayoutDayShift,
+  AttendanceCutoffType,
+} from '../../types/payrollConfigTypes';
 
-const FREQUENCY_OPTIONS = [{ value: 'monthly', label: 'Monthly' }];
+const FINANCIAL_MONTH_OPTIONS = [
+  { value: 'jan', label: 'January' },
+  { value: 'feb', label: 'February' },
+  { value: 'mar', label: 'March' },
+  { value: 'apr', label: 'April' },
+  { value: 'may', label: 'May' },
+  { value: 'jun', label: 'June' },
+  { value: 'jul', label: 'July' },
+  { value: 'aug', label: 'August' },
+  { value: 'sep', label: 'September' },
+  { value: 'oct', label: 'October' },
+  { value: 'nov', label: 'November' },
+  { value: 'dec', label: 'December' },
+];
+
+const PAYOUT_TYPE_OPTIONS = [
+  { value: 'last_working_day', label: 'Last Working Day' },
+  { value: 'first_working_day', label: 'First Working Day' },
+  { value: 'custom', label: 'Custom Date' },
+];
+
+const PAYOUT_DAY_SHIFT_OPTIONS = [
+  { value: 'previous', label: 'Previous Working Day' },
+  { value: 'next', label: 'Next Working Day' },
+];
+
+const ATTENDANCE_CUTOFF_TYPE_OPTIONS = [
+  { value: 'days_before_month_end', label: 'Days Before Month End' },
+  { value: 'fixed_date', label: 'Fixed Date' },
+];
 
 interface PayrollCycleSetupProps {
   config: PayrollCycleConfig | null;
@@ -17,11 +52,13 @@ interface PayrollCycleSetupProps {
 }
 
 const DEFAULT_CYCLE: PayrollCycleConfig = {
-  frequency: 'monthly',
-  start_date: new Date().toISOString().split('T')[0],
-  cutoff_day: 25,
-  payout_day: 31,
-  payslip_release_day: 31,
+  financial_start_month: 'apr',
+  payout_type: 'last_working_day',
+  payout_date: null,
+  payout_day_shift: null,
+  consider_holidays: true,
+  attendance_cutoff_type: 'days_before_month_end',
+  attendance_cutoff_value: 4,
 };
 
 export const PayrollCycleSetup: React.FC<PayrollCycleSetupProps> = ({ config, onChange }) => {
@@ -34,67 +71,75 @@ export const PayrollCycleSetup: React.FC<PayrollCycleSetupProps> = ({ config, on
     onChange({ ...currentConfig, [key]: value });
   };
 
-  const calculateYearEnd = (startDate: string) => {
-    if (!startDate) return '';
-    const date = new Date(startDate);
-    date.setFullYear(date.getFullYear() + 1);
-    // Subtract one day to get the end of the financial year
-    date.setDate(date.getDate() - 1);
-    return date.toISOString().split('T')[0];
-  };
-
-  const financialYearEnd = calculateYearEnd(currentConfig.start_date);
+  const isCustomPayout = currentConfig.payout_type === 'custom';
+  const cutoffLabel =
+    currentConfig.attendance_cutoff_type === 'days_before_month_end'
+      ? 'Days Before Month End*'
+      : 'Fixed Cut-off Date (day of month)*';
 
   return (
     <div className={styles.container}>
       <div className={styles.row3}>
         <Select
-          label="Payroll Frequency"
+          label="Financial Year Start Month"
           required
-          options={FREQUENCY_OPTIONS}
-          value={currentConfig.frequency}
-          onChange={(val) => handleChange('frequency', val as PayrollCycleConfig['frequency'])}
-          disabled
+          options={FINANCIAL_MONTH_OPTIONS}
+          value={currentConfig.financial_start_month}
+          onChange={(val) => handleChange('financial_start_month', val as FinancialMonth)}
         />
-        <DatePicker
-          label="Financial Year Start"
+        <Select
+          label="Payout Type"
           required
-          value={currentConfig.start_date || ''}
-          onChange={(val) => handleChange('start_date', val)}
+          options={PAYOUT_TYPE_OPTIONS}
+          value={currentConfig.payout_type}
+          onChange={(val) => {
+            const next = val as PayoutType;
+            onChange({
+              ...currentConfig,
+              payout_type: next,
+              payout_date: next !== 'custom' ? null : currentConfig.payout_date,
+              payout_day_shift: next !== 'custom' ? null : currentConfig.payout_day_shift,
+            });
+          }}
         />
-        <DatePicker
-          label="Financial Year End"
-          value={financialYearEnd}
-          disabled
-          onChange={() => {}}
+        <Select
+          label="Attendance Cutoff Type"
+          required
+          options={ATTENDANCE_CUTOFF_TYPE_OPTIONS}
+          value={currentConfig.attendance_cutoff_type}
+          onChange={(val) => handleChange('attendance_cutoff_type', val as AttendanceCutoffType)}
         />
         <Input
-          label="Attendance Cut Off day*"
+          label={cutoffLabel}
           type="number"
-          value={currentConfig.cutoff_day || 0}
-          onChange={(e) => handleChange('cutoff_day', Number(e.target.value))}
+          value={currentConfig.attendance_cutoff_value || 0}
+          onChange={(e) => handleChange('attendance_cutoff_value', Number(e.target.value))}
         />
       </div>
 
-      <div className={styles.row2}>
-        <div>
+      {isCustomPayout && (
+        <div className={styles.row2}>
           <Input
-            label="Payout Day*"
+            label="Payout Date (1–31)*"
             type="number"
-            value={currentConfig.payout_day || 0}
-            onChange={(e) => handleChange('payout_day', Number(e.target.value))}
+            value={currentConfig.payout_date ?? ''}
+            onChange={(e) => handleChange('payout_date', Number(e.target.value))}
           />
-          <span className={styles.helperText}>Salary released on this day</span>
-        </div>
-        <div>
-          <Input
-            label="Payslip Release Day*"
-            type="number"
-            value={currentConfig.payout_day || 0}
-            disabled
+          <Select
+            label="If Holiday Falls On Payout Date"
+            options={PAYOUT_DAY_SHIFT_OPTIONS}
+            value={currentConfig.payout_day_shift ?? ''}
+            onChange={(val) => handleChange('payout_day_shift', val as PayoutDayShift)}
           />
-          <span className={styles.helperText}>Auto-synced with payout</span>
         </div>
+      )}
+
+      <div className={styles.toggleRow}>
+        <span className={styles.toggleLabel}>Consider public holidays in payout scheduling</span>
+        <ToggleButton
+          checked={currentConfig.consider_holidays}
+          onChange={(checked) => handleChange('consider_holidays', checked)}
+        />
       </div>
 
       <div className={styles.infoBanner}>

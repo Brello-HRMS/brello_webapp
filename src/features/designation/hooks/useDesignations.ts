@@ -18,8 +18,7 @@ export const useDesignations = (
         const data = await getDesignations(params);
         return data;
       } catch (error) {
-        const message =
-          (error as ApiError)?.response?.data?.message || 'Failed to fetch designations';
+        const message = (error as ApiError)?.data?.message || 'Failed to fetch designations';
         showToast(message, 'error');
         throw error;
       }
