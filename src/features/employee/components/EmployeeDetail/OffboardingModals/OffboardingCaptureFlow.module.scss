@@ -1,0 +1,170 @@
+.formGroup {
+  margin-bottom: 24px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+
+    .asterisk {
+      color: #ef4444;
+      margin-left: 4px;
+    }
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #fff;
+  color: #111827;
+
+  &:focus {
+    border-color: #6d28d9;
+    box-shadow: 0 0 0 2px rgba(109, 40, 217, 0.1);
+  }
+
+  &.hasError {
+    border-color: #ef4444;
+  }
+  
+  &[disabled] {
+    background-color: #f3f4f6;
+    cursor: not-allowed;
+    color: #6b7280;
+  }
+}
+
+.textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 6px;
+  display: block;
+}
+
+.sectionHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 32px 0 16px;
+}
+
+.salaryStructure {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.salaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+
+  .label {
+    color: #6b7280;
+  }
+
+  .value {
+    font-weight: 500;
+    color: #111827;
+  }
+}
+
+.lockdownCard {
+  margin-top: 24px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  .lockIcon {
+    color: #6b7280;
+    margin-top: 2px;
+  }
+
+  .lockContent {
+    h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 4px 0;
+    }
+    p {
+      font-size: 14px;
+      color: #4b5563;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.assetGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.assetCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  .btn {
+    flex: 1;
+    justify-content: center;
+    padding: 12px;
+  }
+}
+
+.lockedItemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  .lockedItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+    
+    .lockedItemLabel {
+      color: #4b5563;
+    }
+    .lockedItemValue {
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-style: italic;
+    }
+  }
+}

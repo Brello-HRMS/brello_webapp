@@ -15,12 +15,14 @@ export const useLogout = () => {
     onSuccess: () => {
       sessionStorage.removeItem('auth_response');
       sessionStorage.removeItem('access_token');
+      localStorage.clear();
       navigate('/auth/login');
     },
     onError: (error: ApiError) => {
       showToast(error?.data?.message || 'Failed to logout. Please try again.', 'error');
       sessionStorage.removeItem('auth_response');
       sessionStorage.removeItem('access_token');
+      localStorage.clear();
       navigate('/auth/login');
     },
   });

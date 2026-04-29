@@ -1,0 +1,162 @@
+.pageHeaderRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 0 24px 0;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: 32px;
+  margin: 0;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: var(--color-secondary);
+  margin: 4px 0 0 0;
+  font-family: var(--font-family-mono, monospace);
+}
+
+.offboardBtn {
+  background: var(--color-primary) !important;
+  white-space: nowrap;
+}
+
+/* ─── Profile card combined ─── */
+
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.topSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px;
+}
+
+/* Avatar */
+
+.avatarWrapper {
+  position: relative;
+  flex: 1;
+  max-width: 50%;
+}
+
+.avatarBox {
+  width: 100%;
+  aspect-ratio: 1; /* Make it a square */
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarInitials {
+  font-size: 48px;
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1;
+  user-select: none;
+}
+
+.activeBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  color: #067647;
+  white-space: nowrap;
+}
+
+.activeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #17b26a;
+  display: inline-block;
+}
+
+/* Info */
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary);
+  margin: 0 0 4px 0;
+  line-height: 28px;
+}
+
+.designation {
+  font-size: 14px;
+  color: var(--color-secondary);
+  margin: 0 0 14px 0;
+}
+
+.empIdChip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-gray-100, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  width: fit-content;
+}
+
+/* Metrics */
+
+.metricsSection {
+  background: var(--color-gray-50, #f9fafb);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  margin: 0 16px 16px 16px;
+}
+
+.metricRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-white);
+}
+
+.metricRow:last-child {
+  border-bottom: none;
+}
+
+.metricLabel {
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-secondary);
+}
+
+.metricValue {
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}

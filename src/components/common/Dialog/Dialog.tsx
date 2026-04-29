@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import styles from './Dialog.module.scss';
 
 export interface DialogProps {
-  title: string;
+  title: React.ReactNode;
   description?: string;
   open: boolean;
   onClose: () => void;
@@ -14,6 +14,8 @@ export interface DialogProps {
   actions?: React.ReactNode;
   maxWidth?: string;
   position?: 'center' | 'right';
+  showCloseButton?: boolean;
+  headerAddon?: React.ReactNode;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -25,6 +27,8 @@ export const Dialog: React.FC<DialogProps> = ({
   actions,
   maxWidth = '500px',
   position = 'center',
+  showCloseButton = true,
+  headerAddon,
 }) => {
   useEffect(() => {
     if (open) {
@@ -72,13 +76,18 @@ export const Dialog: React.FC<DialogProps> = ({
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
             <div className={styles.header}>
-              <div className={styles.titleGroup}>
-                <h2>{title}</h2>
-                {description && <p className={styles.description}>{description}</p>}
+              <div className={styles.headerMain}>
+                <div className={styles.titleGroup}>
+                  {typeof title === 'string' ? <h2>{title}</h2> : title}
+                  {description && <p className={styles.description}>{description}</p>}
+                </div>
+                {showCloseButton && (
+                  <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+                    <X size={20} />
+                  </button>
+                )}
               </div>
-              <button className={styles.closeButton} onClick={onClose} aria-label="Close">
-                <X size={20} />
-              </button>
+              {headerAddon && <div className={styles.headerAddon}>{headerAddon}</div>}
             </div>
             <div className={styles.content}>{children}</div>
             {actions && <div className={styles.footer}>{actions}</div>}
