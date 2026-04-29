@@ -27,6 +27,7 @@ import EmployeeDirectoryPage from '../pages/Employee/Directory/EmployeeDirectory
 import PayrollConfigPage from '../pages/payroll/PayrollConfigPage';
 import PayrollEmployeesPage from '../pages/payroll/PayrollEmployeesPage';
 import PayrollEmployeeDetailPage from '../pages/payroll/PayrollEmployeeDetailPage';
+import RolesPage from '../pages/access/RolesPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -174,7 +175,13 @@ const router = createBrowserRouter([
         element: <PayrollEmployeeDetailPage />,
       },
       {
+        path: 'access/roles',
+        element: <RolesPage />,
+      },
+
+      {
         path: '*',
+
         element: <div>404 Not Found</div>,
       },
     ],
