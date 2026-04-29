@@ -16,6 +16,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ''
         return styles.active;
       case Status.INACTIVE:
         return styles.inactive;
+      case Status.PENDING:
+        return styles.pending;
       default:
         return '';
     }

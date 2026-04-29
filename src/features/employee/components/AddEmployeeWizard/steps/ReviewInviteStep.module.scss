@@ -1,0 +1,89 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-8);
+}
+
+.successAnimation {
+  text-align: center;
+  padding: var(--spacing-8) 0;
+}
+
+.successIcon {
+  color: var(--color-success);
+  margin-bottom: var(--spacing-4);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-2);
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+}
+
+.summaryCard {
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-gray-50);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--spacing-4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.mainInfo {
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.subInfo {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.saveDraftButton {
+  flex: 1;
+}
+
+.nextButton {
+  flex: 1;
+}

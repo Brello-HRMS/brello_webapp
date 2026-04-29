@@ -157,7 +157,6 @@ const DesignationPage = () => {
       deleteDesig(selectedDesignation.id, {
         onSuccess: () => {
           setShowDeleteDesigModal(false);
-          setDeletedIds((prev) => new Set(prev).add(selectedDesignation.id));
         },
       });
     }

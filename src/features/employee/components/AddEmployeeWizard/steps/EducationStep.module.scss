@@ -1,0 +1,191 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.listSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.educationList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.educationCard {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.eduHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eduTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: var(--color-text-primary);
+  }
+}
+
+.eduGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3);
+}
+
+.eduGridItem {
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-3) var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.eduGridLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.eduGridValue {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.ctaCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-white);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  gap: var(--spacing-3);
+
+  &:hover {
+    background-color: var(--color-gray-50);
+    border-color: var(--color-primary-purple);
+  }
+}
+
+.ctaIconWrapper {
+  width: 48px;
+  height: 48px;
+  background-color: var(--color-primary-50); // or #FAF5FF
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ctaIcon {
+  color: #9333EA;
+}
+
+.ctaTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.ctaSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  max-width: 250px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+
+/* Existing Form styles untouched */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  padding: var(--spacing-6);
+  border: 1px solid var(--color-primary-100);
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+}
+
+.formHeader {
+  border-bottom: 1px solid var(--color-gray-100);
+  padding-bottom: var(--spacing-2);
+}
+
+.formTitle {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.row {
+  display: flex;
+  gap: var(--spacing-4);
+  
+  & > div {
+    flex: 1;
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-8);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-100);
+}
+
+.saveDraftButton {
+  flex: 1;
+}
+
+.nextButton {
+  flex: 1;
+}
+

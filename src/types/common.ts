@@ -1,6 +1,7 @@
 export const Status = {
   ACTIVE: 'ACTIVE',
   INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING',
 } as const;
 export type Status = (typeof Status)[keyof typeof Status];
 
@@ -22,4 +23,7 @@ export interface ApiError {
   message: string;
   status: number;
   data: BrelloApiError | null;
+  response: {
+    data: BrelloApiError | null;
+  };
 }

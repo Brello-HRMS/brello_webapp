@@ -1,0 +1,265 @@
+/* eslint-disable react-hooks/incompatible-library */
+import React, { useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Info } from 'lucide-react';
+
+import { Input } from '../../../../../components/ui/Input/Input';
+import { Button, Select } from '../../../../../components/common';
+import { useWizard } from '../WizardContext';
+import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
+
+import styles from './PayrollStep.module.scss';
+
+const schema = z.object({
+  annualCtc: z.string().min(1, 'Annual CTC is required'),
+  monthlyGross: z.string().min(1, 'Monthly gross is required'),
+  allowances: z.string().optional(),
+  bonus: z.string().optional(),
+  totalCtc: z.string().optional(),
+  taxRegime: z.string().min(1, 'Tax regime is required'),
+  pan: z.string().min(1, 'PAN is required'),
+  uan: z.string().optional(),
+  accountNumber: z.string().min(1, 'Account number is required'),
+  bankName: z.string().min(1, 'Bank name is required'),
+  ifscCode: z.string().min(1, 'IFSC code is required'),
+});
+
+type FormData = z.infer<typeof schema>;
+
+interface PayrollStepProps {
+  onClose: () => void;
+}
+
+export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
+  const { employeeId, formData, updateFormData, nextStep } = useWizard();
+  const { payrollMutation } = useEmployeeWizard();
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      annualCtc: formData.annualCtc || '',
+      monthlyGross: formData.monthlyGross || '',
+      allowances: formData.allowances || '0',
+      bonus: formData.bonus || '0',
+      totalCtc: formData.totalCtc || '',
+      taxRegime: formData.taxRegime || 'NEW',
+      pan: formData.pan || '',
+      uan: formData.uan || '',
+      accountNumber: formData.accountNumber || '',
+      bankName: formData.bankName || '',
+      ifscCode: formData.ifscCode || '',
+    },
+  });
+
+  // Auto-save to context on change via subscription
+  React.useEffect(() => {
+    const subscription = watch((value) => {
+      updateFormData(value);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, updateFormData]);
+
+  // Handle calculated fields
+  const annualCtc = watch('annualCtc');
+  const allowances = watch('allowances');
+  const bonus = watch('bonus');
+
+  const totalCtc = watch('totalCtc');
+
+  useEffect(() => {
+    const ctc = parseFloat(annualCtc || '0');
+    const allow = parseFloat(allowances || '0');
+    const bns = parseFloat(bonus || '0');
+
+    if (!isNaN(ctc)) {
+      setValue('monthlyGross', (ctc / 12).toFixed(2));
+      setValue('totalCtc', (ctc + allow + bns).toString());
+    }
+  }, [annualCtc, allowances, bonus, setValue]);
+
+  const onSubmit = (data: FormData) => {
+    updateFormData(data);
+
+    if (!employeeId) return;
+
+    payrollMutation.mutate(
+      {
+        id: employeeId,
+        data: {
+          annualCtc: data.annualCtc,
+          monthlyGross: data.monthlyGross,
+          allowances: data.allowances,
+          bonus: data.bonus,
+          totalCtc: data.totalCtc,
+          taxRegime: data.taxRegime,
+          gov_info: {
+            pan: data.pan,
+            uan: data.uan,
+          },
+          bank_info: {
+            accountNumber: data.accountNumber,
+            bankName: data.bankName,
+            ifscCode: data.ifscCode,
+          },
+        },
+      },
+      {
+        onSuccess: () => {
+          nextStep();
+        },
+      },
+    );
+  };
+
+  const handleSaveDraft = () => {
+    // Already saved via auto-sync, just close
+    onClose();
+  };
+
+  const isPending = payrollMutation.isPending;
+
+  const taxRegimeOptions = [
+    { label: 'Old Regime', value: 'OLD' },
+    { label: 'New Regime', value: 'NEW' },
+  ];
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+      <div className={styles.sectionTitle}>SALARY STRUCTURE</div>
+
+      <div className={styles.row}>
+        <Input
+          label="Annual CTC"
+          required
+          placeholder="₹ 12,00,000"
+          {...register('annualCtc')}
+          error={errors.annualCtc?.message}
+        />
+        <Input
+          label="Monthly Gross"
+          required
+          readOnly
+          placeholder="₹ 4,80,000"
+          {...register('monthlyGross')}
+          error={errors.monthlyGross?.message}
+        />
+      </div>
+
+      <div className={styles.row}>
+        <Input
+          label="Allowances"
+          placeholder="₹ 20,000"
+          {...register('allowances')}
+          error={errors.allowances?.message}
+        />
+        <Input
+          label="Bonus"
+          placeholder="₹ 0"
+          {...register('bonus')}
+          error={errors.bonus?.message}
+        />
+      </div>
+
+      <div className={styles.totalCtcBox}>
+        <div className={styles.totalCtcContent}>
+          <span className={styles.totalCtcLabel}>Total CTC</span>
+          <span className={styles.totalCtcValue}>
+            ₹{' '}
+            {totalCtc && !isNaN(parseFloat(totalCtc))
+              ? parseFloat(totalCtc).toLocaleString('en-IN')
+              : '0'}
+          </span>
+        </div>
+        <Info size={16} className={styles.totalCtcIcon} />
+      </div>
+
+      <div className={styles.sectionDivider} />
+
+      <div className={styles.sectionTitle}>BANK DETAILS</div>
+
+      <Input
+        label="A/c Number"
+        required
+        placeholder="Enter full account number"
+        {...register('accountNumber')}
+        error={errors.accountNumber?.message}
+      />
+
+      <div className={styles.row}>
+        <Input
+          label="Bank Name"
+          required
+          placeholder="Enter bank name"
+          {...register('bankName')}
+          error={errors.bankName?.message}
+        />
+        <Input
+          label="IFSC Code"
+          required
+          placeholder="Enter code"
+          {...register('ifscCode')}
+          error={errors.ifscCode?.message}
+        />
+      </div>
+
+      <div className={styles.sectionDivider} />
+
+      <div className={styles.sectionTitle}>TAX & PF INFO</div>
+
+      <div className={styles.row}>
+        <Input
+          label="Pan Number"
+          required
+          placeholder="Enter Pan"
+          {...register('pan')}
+          error={errors.pan?.message}
+        />
+        <Controller
+          name="taxRegime"
+          control={control}
+          render={({ field }) => (
+            <Select
+              label="Tax Regime"
+              required
+              options={taxRegimeOptions}
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.taxRegime?.message}
+            />
+          )}
+        />
+      </div>
+
+      <Input
+        label="UAN Number (Only if Yes)"
+        placeholder="Enter UAN"
+        {...register('uan')}
+        error={errors.uan?.message}
+      />
+
+      <div className={styles.actions}>
+        <Button
+          variant="secondary"
+          type="button"
+          onClick={handleSaveDraft}
+          className={styles.saveDraftButton}
+          isLoading={isPending}
+        >
+          Save draft
+        </Button>
+        <Button variant="primary" type="submit" className={styles.nextButton} isLoading={isPending}>
+          Next
+        </Button>
+      </div>
+    </form>
+  );
+};

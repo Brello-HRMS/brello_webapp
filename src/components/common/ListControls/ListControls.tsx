@@ -224,7 +224,7 @@ export const ListControls: React.FC<ListControlsProps> = memo(
                 onClick={onDelete}
               >
                 <Trash2 size={18} />
-                <span>Delete</span>
+                <span>Remove</span>
               </motion.button>
             )}
           </AnimatePresence>

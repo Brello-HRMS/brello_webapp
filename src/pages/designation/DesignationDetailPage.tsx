@@ -4,14 +4,17 @@ import { Plus, Download } from 'lucide-react';
 
 import { Button, DataTable, ListControls, PageHeader, WarningModal } from '../../components/common';
 import { employeeColumns } from '../../features/department/columns/employeeColumns';
-import { DUMMY_EMPLOYEES } from '../../features/department/data/dummyEmployees';
 import { useDesignations } from '../../features/designation/hooks/useDesignations';
+import { useUsersList } from '../../features/users/hooks/useUsersList';
+import { useUnmapUsers } from '../../features/users/hooks/useUnmapUsers';
+import { AddEmployeeModal } from '../../features/users/components/AddEmployeeModal/AddEmployeeModal';
 import { useDebounce } from '../../hooks/useDebounce';
 import { SortOrder, Status } from '../../types/common';
 
 import styles from './DesignationDetailPage.module.scss';
 
 import type { SortOption } from '../../components/common';
+import type { User } from '../../features/users/types/userType';
 
 const SORT_OPTIONS: SortOption[] = [
   { label: 'Alphabetical (A-Z)', value: `title:${SortOrder.ASC}` },
@@ -24,31 +27,42 @@ const DesignationDetailPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch the specific designation details
-  const { data: response, isLoading } = useDesignations();
+  const { data: response, isLoading: isDesignationLoading } = useDesignations();
   const designation = response?.data?.find((desig) => desig.id === id);
 
+  const { data: usersResponse } = useUsersList();
+  const { mutate: unmapUsers } = useUnmapUsers();
+
   useEffect(() => {
-    if (!isLoading && designation && designation.status === Status.INACTIVE) {
+    if (!isDesignationLoading && designation && designation.status === Status.INACTIVE) {
       navigate('/organisation/designations');
     }
-  }, [designation, isLoading, navigate]);
+  }, [designation, isDesignationLoading, navigate]);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const filteredEmployees = useMemo(() => {
-    // Note: In a real app, we'd filter by designation ID
-    if (!debouncedSearchQuery) return DUMMY_EMPLOYEES;
+    let allUsers: User[] = usersResponse?.data || [];
+
+    // Strict Filtering for this Designation Drill
+    if (id) {
+      allUsers = allUsers.filter((u) => u.designationId === id);
+    }
+
+    if (!debouncedSearchQuery) return allUsers;
     const query = debouncedSearchQuery.toLowerCase();
-    return DUMMY_EMPLOYEES.filter(
-      (emp) =>
-        emp.name.toLowerCase().includes(query) ||
-        emp.employeeId.toLowerCase().includes(query) ||
-        emp.designation.toLowerCase().includes(query),
-    );
-  }, [debouncedSearchQuery]);
+    return allUsers.filter((emp) => {
+      const fullName = `${emp.firstName || ''} ${emp.lastName || ''}`.toLowerCase();
+      return (
+        fullName.includes(query) ||
+        (emp.email || '').toLowerCase().includes(query) ||
+        (emp.phone || '').includes(query)
+      );
+    });
+  }, [usersResponse, debouncedSearchQuery, id]);
 
   return (
     <div className={styles.container}>
@@ -62,7 +76,7 @@ const DesignationDetailPage = () => {
               <Download size={16} />
               Export
             </Button>
-            <Button variant="primary">
+            <Button variant="primary" onClick={() => setIsAddEmployeeModalOpen(true)}>
               <Plus size={16} />
               Add employee
             </Button>
@@ -96,20 +110,35 @@ const DesignationDetailPage = () => {
         enableRowSelection
         rowSelection={rowSelection}
         onRowSelectionChange={setRowSelection}
-        rowIdField="employeeId"
+        rowIdField="id"
       />
 
       <WarningModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
-        title="Delete Selected Employees?"
-        description={`Are you sure want to delete the ${Object.keys(rowSelection).length} selected employees? This action cannot be undone.`}
-        actionLabel="Delete"
+        title="Remove Selected Employees?"
+        description={`Are you sure want to unmap the ${Object.keys(rowSelection).length} selected employees from this designation?`}
+        actionLabel="Remove"
         onAction={() => {
-          // API Logic
-          setRowSelection({});
-          setShowDeleteModal(false);
+          const selectedIds = Object.keys(rowSelection).filter((k) => rowSelection[k]);
+          if (selectedIds.length === 0) return;
+
+          unmapUsers(
+            { userIds: selectedIds, unmapDesignation: true },
+            {
+              onSuccess: () => {
+                setRowSelection({});
+                setShowDeleteModal(false);
+              },
+            },
+          );
         }}
+      />
+
+      <AddEmployeeModal
+        open={isAddEmployeeModalOpen}
+        onClose={() => setIsAddEmployeeModalOpen(false)}
+        designationId={id}
       />
     </div>
   );
