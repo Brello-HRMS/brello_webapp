@@ -13,6 +13,7 @@ interface DatePickerProps {
   placeholder?: string;
   className?: string;
   inline?: boolean;
+  disabled?: boolean;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -24,6 +25,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   placeholder = 'Select date',
   className,
   inline = false,
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [placement, setPlacement] = useState<'left' | 'right'>('left');
@@ -36,7 +38,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     return new Date();
   });
   const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -50,28 +51,26 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   useEffect(() => {
     const trackPosition = () => {
-      if (isOpen && triggerRef.current) {
-        const rect = triggerRef.current.getBoundingClientRect();
+      if (isOpen && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
         const spaceRight = window.innerWidth - rect.left;
         const spaceBottom = window.innerHeight - rect.bottom;
 
-        if (spaceRight < 300) {
-          setPlacement('right');
-        } else {
-          setPlacement('left');
-        }
-
-        if (spaceBottom < 350) {
-          setVPlacement('top');
-        } else {
-          setVPlacement('bottom');
-        }
+        setPlacement(spaceRight < 300 ? 'right' : 'left');
+        setVPlacement(spaceBottom < 320 ? 'top' : 'bottom');
       }
     };
 
-    trackPosition();
-    window.addEventListener('resize', trackPosition);
-    return () => window.removeEventListener('resize', trackPosition);
+    if (isOpen) {
+      trackPosition();
+      window.addEventListener('resize', trackPosition);
+      window.addEventListener('scroll', trackPosition, true);
+
+      return () => {
+        window.removeEventListener('resize', trackPosition);
+        window.removeEventListener('scroll', trackPosition, true);
+      };
+    }
   }, [isOpen]);
 
   const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -202,7 +201,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <div
-      className={`${styles.container} ${error ? styles.hasError : ''} ${className || ''}`}
+      className={`${styles.container} ${error ? styles.hasError : ''} ${disabled ? styles.disabled : ''} ${className || ''}`}
       ref={containerRef}
     >
       {label && (
@@ -216,10 +215,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       ) : (
         <div className={styles.datePickerWrapper}>
           <button
-            ref={triggerRef}
             type="button"
-            className={`${styles.dateTrigger} ${isOpen ? styles.active : ''}`}
-            onClick={() => setIsOpen(!isOpen)}
+            className={`${styles.dateTrigger} ${isOpen ? styles.active : ''} ${disabled ? styles.disabled : ''}`}
+            onClick={() => !disabled && setIsOpen(!isOpen)}
+            disabled={disabled}
           >
             <span className={!value ? styles.placeholder : ''}>
               {value ? formatDisplayDate(value) : placeholder}
@@ -227,7 +226,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             <CalendarIcon size={18} className={styles.icon} />
           </button>
 
-          <AnimatePresence>{isOpen && calendarGrid}</AnimatePresence>
+          <AnimatePresence>{isOpen && !disabled && calendarGrid}</AnimatePresence>
         </div>
       )}
       {error && <span className={styles.errorMessage}>{error}</span>}

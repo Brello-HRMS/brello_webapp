@@ -1,0 +1,142 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+
+  .footerActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+  }
+}
+
+.formBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.errorBanner {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  padding: 0.75rem 1rem;
+  color: #991b1b;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+}
+
+.selectedSection {
+  margin-top: 1.5rem;
+
+  .subLabel {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-gray-500);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.025em;
+  }
+}
+
+.selectedChips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.componentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border: 1px solid var(--color-gray-200);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-primary-purple);
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .componentInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    .compName {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-gray-900);
+    }
+
+    .compTag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+
+      &.earning {
+        background: #ecfdf3;
+        color: #027a48;
+      }
+
+      &.deduction {
+        background: #fef2f2;
+        color: #b91c1c;
+      }
+    }
+  }
+
+  .itemRemove {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: var(--color-gray-400);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #fee2e2;
+      color: #ef4444;
+    }
+  }
+}
+
+.emptyState {
+  padding: 2rem;
+  text-align: center;
+  background: #f9fafb;
+  border: 2px dashed var(--color-gray-200);
+  border-radius: 8px;
+  color: var(--color-gray-500);
+  font-size: 0.875rem;
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.toggleLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-700, #344054);
+}

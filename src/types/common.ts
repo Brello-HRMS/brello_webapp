@@ -23,4 +23,7 @@ export interface ApiError {
   message: string;
   status: number;
   data: BrelloApiError | null;
+  response: {
+    data: BrelloApiError | null;
+  };
 }
