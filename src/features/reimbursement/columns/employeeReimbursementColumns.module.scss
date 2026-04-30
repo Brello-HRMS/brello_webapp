@@ -1,0 +1,82 @@
+.titleCell {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary-500);
+  font-size: 14px;
+}
+
+.amountCell {
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+}
+
+.attachmentCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-icon-gray);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.statusPending {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.statusApproved {
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+}
+
+.statusRejected {
+  background: var(--color-error-50);
+  color: var(--color-error-700);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  color: var(--color-icon-gray);
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background-color 0.2s;
+
+  &:hover {
+    color: var(--color-primary-purple);
+    border-color: var(--color-primary-purple);
+    background-color: var(--color-primary-50);
+  }
+}
+
+.deleteBtn {
+  &:hover {
+    color: var(--color-error-700);
+    border-color: var(--color-error-200);
+    background-color: var(--color-error-50);
+  }
+}
