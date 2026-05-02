@@ -29,6 +29,7 @@ import PayrollEmployeesPage from '../pages/payroll/PayrollEmployeesPage';
 import PayrollEmployeeDetailPage from '../pages/payroll/PayrollEmployeeDetailPage';
 import RolesPage from '../pages/access/RolesPage';
 import UsersPage from '../pages/access/UsersPage';
+import PermissionsPage from '../pages/access/PermissionsPage';
 import ReimbursementPage from '../pages/reimbursement/ReimbursementPage';
 import EmployeeReimbursementPage from '../pages/reimbursement/EmployeeReimbursementPage';
 
@@ -184,6 +185,10 @@ const router = createBrowserRouter([
       {
         path: 'access/users',
         element: <UsersPage />,
+      },
+      {
+        path: 'access/permissions',
+        element: <PermissionsPage />,
       },
       {
         path: 'payroll/reimbursements',
