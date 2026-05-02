@@ -1,65 +1,62 @@
 import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { getUserRoleMaps, createUserRoleMap, deleteUserRoleMap } from '../../../../api/accessUsers';
-import { getUsers } from '../../../users/api/user';
-import { getDepartments } from '../../../department/api/department';
+import {
+  getUserRoleMaps,
+  createUserRoleMap,
+  deleteUserRoleMap,
+  type UserRoleMapItem,
+} from '../../../../api/accessUsers';
 import { getOrganizationId } from '../../../../utils/authUtils';
 import { showToast } from '../../../ToastFeature/ShowToast';
 
 import type { AccessUser, AssignRolesInput } from '../types';
 import type { ApiError } from '../../../../types/common';
 
-export const useAccessUsers = () => {
+export const useAccessUsers = (params?: Record<string, string | number | undefined>) => {
   const queryClient = useQueryClient();
   const organizationId = getOrganizationId();
 
-  const { data: roleMapsResponse, isLoading: isLoadingMaps } = useQuery({
-    queryKey: ['user-role-maps'],
-    queryFn: getUserRoleMaps,
+  const { data: roleMapsResponse, isLoading } = useQuery({
+    queryKey: ['user-role-maps', params],
+    queryFn: () => getUserRoleMaps(params),
   });
-
-  const { data: usersResponse, isLoading: isLoadingUsers } = useQuery({
-    queryKey: ['usersList'],
-    queryFn: getUsers,
-  });
-
-  const { data: deptResponse } = useQuery({
-    queryKey: ['departments', { limit: 100 }],
-    queryFn: () => getDepartments({ limit: 100 }),
-  });
-
-  const deptNameMap = useMemo(() => {
-    const departments = deptResponse?.data?.data || [];
-    return new Map(departments.map((d) => [d.id, d.name]));
-  }, [deptResponse?.data?.data]);
 
   const users: AccessUser[] = useMemo(() => {
-    const roleMaps = roleMapsResponse?.data || [];
-    const usersList = usersResponse?.data || [];
+    let list: UserRoleMapItem[] = [];
+
+    if (Array.isArray(roleMapsResponse?.data?.data)) {
+      list = roleMapsResponse.data.data;
+    } else if (Array.isArray(roleMapsResponse?.data)) {
+      list = roleMapsResponse.data as unknown as UserRoleMapItem[];
+    }
+
     const grouped = new Map<string, AccessUser>();
 
-    for (const map of roleMaps) {
+    for (const map of list) {
       if (!grouped.has(map.user_id)) {
-        const userInfo = usersList.find((u) => u.id === map.user_id);
+        const u = map.user;
         grouped.set(map.user_id, {
           id: map.user_id,
-          firstName: userInfo?.firstName || 'Unknown',
-          lastName: userInfo?.lastName || '',
-          department: deptNameMap.get(userInfo?.departmentId || '') || '—',
+          firstName: u?.first_name || 'Unknown',
+          lastName: u?.last_name || '',
+          department: u?.department?.name || '—',
           assignedRoles: [],
         });
       }
 
-      grouped.get(map.user_id)!.assignedRoles.push({
-        id: map.role_id,
-        name: map.role?.name || '',
-        mappingId: map.id,
-      });
+      const user = grouped.get(map.user_id);
+      if (user) {
+        user.assignedRoles.push({
+          id: map.role_id,
+          name: map.role?.name || '',
+          mappingId: map.id,
+        });
+      }
     }
 
     return Array.from(grouped.values());
-  }, [roleMapsResponse?.data, usersResponse?.data, deptNameMap]);
+  }, [roleMapsResponse]);
 
   const assignRoles = useMutation({
     mutationFn: async ({ userId, roleIds }: AssignRolesInput) => {
@@ -118,7 +115,9 @@ export const useAccessUsers = () => {
 
   return {
     users,
-    isLoading: isLoadingMaps || isLoadingUsers,
+    isLoading,
+    meta: roleMapsResponse?.data?.meta,
+
     assignRoles: assignRoles.mutateAsync,
     isAssigning: assignRoles.isPending,
     updateRoles: updateRoles.mutateAsync,

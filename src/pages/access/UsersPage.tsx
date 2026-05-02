@@ -6,29 +6,64 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { useAccessUsers } from '../../features/access/users/hooks/useAccessUsers';
 import { accessUsersColumns } from '../../features/access/users/components/accessUsersColumns';
 import { AddUserDialog } from '../../features/access/users/components/AddUserDialog';
+import { useRoles } from '../../hooks/useRoles';
 
 import styles from './UsersPage.module.scss';
 
+import type { Role } from '../../features/access/roles/types';
+import type { PaginationState } from '@tanstack/react-table';
 import type { AccessUser } from '../../features/access/users/types';
 
 const UsersPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AccessUser | null>(null);
 
-  const { users, isLoading, assignRoles, updateRoles, removeUser, isAssigning, isUpdating } =
-    useAccessUsers();
+  const [sortValue, setSortValue] = useState('urm.created_at:DESC');
+  const [selectedRole, setSelectedRole] = useState('');
 
-  const filteredUsers = useMemo(() => {
-    if (!debouncedSearchQuery) return users;
-    const query = debouncedSearchQuery.toLowerCase();
-    return users.filter((u) => {
-      const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
-      return fullName.includes(query);
-    });
-  }, [users, debouncedSearchQuery]);
+  const { data: roles } = useRoles();
+
+  const roleOptions = useMemo(() => {
+    let list: Role[] = [];
+
+    if (Array.isArray(roles?.data?.data)) {
+      list = roles.data.data;
+    } else if (Array.isArray(roles?.data)) {
+      list = roles.data as unknown as Role[];
+    }
+
+    return list.map((r) => ({ label: r.name, value: r.id }));
+  }, [roles]);
+
+  const sortOptions = [
+    { label: 'Recently Added', value: 'urm.created_at:DESC' },
+    { label: 'Oldest First', value: 'urm.created_at:ASC' },
+    { label: 'Name (A-Z)', value: 'user.first_name:ASC' },
+    { label: 'Name (Z-A)', value: 'user.first_name:DESC' },
+  ];
+
+  const params = useMemo(() => {
+    const [sort_by, sort_order] = sortValue.split(':');
+    return {
+      page: pagination.pageIndex + 1,
+      limit: pagination.pageSize,
+      search: debouncedSearchQuery,
+      role_id: selectedRole || undefined,
+      sort_by,
+      sort_order: sort_order as 'ASC' | 'DESC',
+    };
+  }, [pagination, debouncedSearchQuery, sortValue, selectedRole]);
+
+  const { users, meta, isLoading, assignRoles, updateRoles, removeUser, isAssigning, isUpdating } =
+    useAccessUsers(params);
 
   const handleEdit = useCallback((user: AccessUser) => {
     setSelectedUser(user);
@@ -79,8 +114,15 @@ const UsersPage: React.FC = () => {
         searchPlaceholder="Search employee name or ID..."
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        showFilters={false}
-        showSort={false}
+        showFilters={true}
+        filterOptions={roleOptions}
+        selectedFilter={selectedRole}
+        onFilterChange={setSelectedRole}
+        filterTitle="Filter by Role"
+        showSort={true}
+        sortOptions={sortOptions}
+        selectedSort={sortValue}
+        onSortChange={setSortValue}
         showViewSwitcher={false}
       />
 
@@ -90,7 +132,15 @@ const UsersPage: React.FC = () => {
             <Loader2 className={styles.spin} size={28} />
           </div>
         ) : (
-          <DataTable columns={columns} data={filteredUsers} rowIdField="id" />
+          <DataTable
+            columns={columns}
+            data={users}
+            rowIdField="id"
+            manualPagination
+            pagination={pagination}
+            onPaginationChange={setPagination}
+            pageCount={meta?.totalPages || 0}
+          />
         )}
       </div>
 
