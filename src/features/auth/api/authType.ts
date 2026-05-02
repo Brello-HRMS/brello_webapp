@@ -131,3 +131,13 @@ export type GetIndustryTypesResponse = {
   data: IndustryType[];
   timestamp: string;
 };
+
+export type SwitchAppResponse = {
+  success: boolean;
+  data: {
+    access_token: string;
+    appId: string;
+    expires_in: number;
+  };
+  timestamp: string;
+};

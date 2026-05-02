@@ -14,6 +14,7 @@ import type {
   ResendOtpResponse,
   SetupCompanyRequest,
   GetIndustryTypesResponse,
+  SwitchAppResponse,
 } from './authType';
 
 /**
@@ -56,4 +57,8 @@ export const logout = async (): Promise<void> => {
 
 export const resendOtp = async (data: ResendOtpRequest): Promise<ResendOtpResponse> => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/resend-otp`, data);
+};
+
+export const switchApp = async (data: { appId: string }): Promise<SwitchAppResponse> => {
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/switch-app`, data);
 };

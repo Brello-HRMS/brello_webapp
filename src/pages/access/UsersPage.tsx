@@ -64,7 +64,7 @@ const UsersPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div>
       <PageHeader
         title="User"
         subtitle="Manage users and assign roles."

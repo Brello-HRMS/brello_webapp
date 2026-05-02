@@ -224,3 +224,15 @@
     display: none !important;
   }
 }
+
+.appSwitcherDropdown {
+  min-width: 200px;
+  padding: var(--spacing-2);
+}
+
+.activeApp {
+  background-color: var(--color-gray-50);
+  color: var(--color-primary-purple) !important;
+  font-weight: 600;
+}
+
