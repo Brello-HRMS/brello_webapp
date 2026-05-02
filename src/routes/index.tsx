@@ -28,6 +28,8 @@ import PayrollConfigPage from '../pages/payroll/PayrollConfigPage';
 import PayrollEmployeesPage from '../pages/payroll/PayrollEmployeesPage';
 import PayrollEmployeeDetailPage from '../pages/payroll/PayrollEmployeeDetailPage';
 import RolesPage from '../pages/access/RolesPage';
+import ReimbursementPage from '../pages/reimbursement/ReimbursementPage';
+import EmployeeReimbursementPage from '../pages/reimbursement/EmployeeReimbursementPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -178,7 +180,14 @@ const router = createBrowserRouter([
         path: 'access/roles',
         element: <RolesPage />,
       },
-
+      {
+        path: 'payroll/reimbursements',
+        element: <ReimbursementPage />,
+      },
+      {
+        path: 'payroll/reimbursements/me',
+        element: <EmployeeReimbursementPage />,
+      },
       {
         path: '*',
 
