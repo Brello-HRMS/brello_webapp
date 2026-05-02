@@ -27,3 +27,21 @@ export interface ApiError {
     data: BrelloApiError | null;
   };
 }
+export interface PaginatedResponseMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginatedResponseMeta;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  timestamp: string;
+}

@@ -60,7 +60,7 @@ const DesignationPage = () => {
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
 
   // Local state for deleted items to hide them immediately
-  const [deletedIds] = useState<Set<string>>(new Set());
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
 
   const { mutate: deleteDesig } = useDeleteDesignation();
   const { mutate: updateDesig } = useUpdateDesignation();
@@ -156,6 +156,7 @@ const DesignationPage = () => {
     if (selectedDesignation) {
       deleteDesig(selectedDesignation.id, {
         onSuccess: () => {
+          setDeletedIds((prev) => new Set(prev).add(selectedDesignation.id));
           setShowDeleteDesigModal(false);
         },
       });

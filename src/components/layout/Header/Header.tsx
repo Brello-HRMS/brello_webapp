@@ -17,6 +17,7 @@ import { Popover } from '../../common/Popover';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { useLogout } from '../../../features/auth/api/useLogout';
 
+import { AppSwitcher } from './AppSwitcher';
 import styles from './Header.module.scss';
 
 export interface HeaderProps {
@@ -125,6 +126,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
 
       <div className={styles.rightSection}>
         <div className={styles.actions}>
+          <AppSwitcher />
           <ThemeCustomizer />
 
           {isDesktop && (
