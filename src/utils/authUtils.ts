@@ -34,3 +34,8 @@ export const getEnterpriseId = (): string | undefined => {
 export const getOrganizationId = (): string | undefined => {
   return getAuthUser()?.organization_id;
 };
+
+export const getAvailableApps = (): { id: string; name: string; priority: number }[] => {
+  const response = getAuthResponse();
+  return response?.data?.availableApps || [];
+};

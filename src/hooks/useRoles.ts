@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 
 import { getRoles } from '../api/roles';
 
-export const useRoles = () => {
+export const useRoles = (params?: { search?: string; app_id?: string; sort?: string }) => {
   return useQuery({
-    queryKey: ['roles'],
-    queryFn: () => getRoles(),
+    queryKey: ['roles', params?.search, params?.app_id, params?.sort],
+    queryFn: () => getRoles(params),
   });
 };
