@@ -6,6 +6,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { useRoles } from '../../features/access/roles/hooks/useRoles';
 import { rolesColumns } from '../../features/access/roles/components/rolesColumns';
 import { RoleDrawer } from '../../features/access/roles/components/RoleDrawer';
+import { getAvailableApps } from '../../utils/authUtils';
 
 import styles from './RolesPage.module.scss';
 
@@ -15,12 +16,33 @@ const RolesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
+  const [selectedAppId, setSelectedAppId] = useState<string>('');
+  const [selectedSort, setSelectedSort] = useState<string>('createdAt_DESC');
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+
+  const availableApps = getAvailableApps();
+  const filterOptions = [
+    { label: 'All Apps', value: '' },
+    ...availableApps.map((app) => ({
+      label: app.name,
+      value: app.id,
+    })),
+  ];
+
+  const sortOptions = [
+    { label: 'Name (A-Z)', value: 'name_ASC' },
+    { label: 'Name (Z-A)', value: 'name_DESC' },
+    { label: 'Newest First', value: 'createdAt_DESC' },
+    { label: 'Oldest First', value: 'createdAt_ASC' },
+  ];
 
   const { roles, isLoading, createRole, updateRole, deleteRole, isCreating, isUpdating } = useRoles(
     {
       search: debouncedSearchQuery || undefined,
+      app_id: selectedAppId || undefined,
+      sort: selectedSort || undefined,
     },
   );
 
@@ -57,7 +79,7 @@ const RolesPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div>
       <PageHeader
         title="Roles"
         subtitle="Define system roles and access levels."
@@ -69,11 +91,18 @@ const RolesPage: React.FC = () => {
       />
 
       <ListControls
-        searchPlaceholder="Search employee name or ID..."
+        searchPlaceholder="Search roles..."
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        showFilters={false}
-        showSort={false}
+        showFilters={true}
+        filterOptions={filterOptions}
+        selectedFilter={selectedAppId}
+        onFilterChange={setSelectedAppId}
+        filterTitle="Filter by App"
+        showSort={true}
+        sortOptions={sortOptions}
+        selectedSort={selectedSort}
+        onSortChange={setSelectedSort}
         showViewSwitcher={false}
       />
 

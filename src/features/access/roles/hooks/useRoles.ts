@@ -6,7 +6,7 @@ import { showToast } from '../../../ToastFeature/ShowToast';
 import type { CreateRoleInput } from '../types';
 import type { ApiError } from '../../../../types/common';
 
-export const useRoles = (params?: { search?: string }) => {
+export const useRoles = (params?: { search?: string; app_id?: string; sort?: string }) => {
   const queryClient = useQueryClient();
 
   const {
@@ -14,7 +14,7 @@ export const useRoles = (params?: { search?: string }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['roles', params?.search],
+    queryKey: ['roles', params?.search, params?.app_id, params?.sort],
     queryFn: () => getRoles(params),
   });
 
@@ -52,7 +52,7 @@ export const useRoles = (params?: { search?: string }) => {
   });
 
   return {
-    roles: rolesResponse?.data || [],
+    roles: rolesResponse?.data.data || [],
     isLoading,
     error,
     createRole: createMutation.mutateAsync,

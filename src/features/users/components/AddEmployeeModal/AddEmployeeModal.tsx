@@ -104,7 +104,7 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
       const fullName = `${emp.firstName || ''} ${emp.lastName || ''}`.toLowerCase();
       return fullName.includes(query) || (emp.email || '').toLowerCase().includes(query);
     });
-  }, [usersResponse, debouncedSearchQuery, departmentId, designationId]);
+  }, [usersResponse, debouncedSearchQuery]);
 
   const selectedCount = Object.values(rowSelection).filter(Boolean).length;
 

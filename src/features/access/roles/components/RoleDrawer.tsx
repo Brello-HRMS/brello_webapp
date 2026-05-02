@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
-import { Button, Dialog } from '../../../../components/common';
+import { Button, Dialog, Select } from '../../../../components/common';
 import { Input } from '../../../../components/ui/Input/Input';
 import { TextArea } from '../../../../components/ui/TextArea/TextArea';
+import { getAvailableApps } from '../../../../utils/authUtils';
 
 import type { Role, CreateRoleInput } from '../types';
 
@@ -21,25 +22,32 @@ export const RoleDrawer: React.FC<RoleDrawerProps> = ({
   initialData,
   isLoading,
 }) => {
+  const availableApps = getAvailableApps();
+  const appOptions = useMemo(
+    () =>
+      availableApps.map((app) => ({
+        value: app.id,
+        label: app.name,
+      })),
+    [availableApps],
+  );
+
   const [formData, setFormData] = useState<CreateRoleInput>({
     name: '',
     description: '',
+    app_id: '',
   });
 
-  useEffect(() => {
-    if (initialData) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFormData({
-        name: initialData.name,
-        description: initialData.description,
-      });
-    } else {
-      setFormData({
-        name: '',
-        description: '',
-      });
-    }
-  }, [initialData, open]);
+  const [prevInitialData, setPrevInitialData] = useState<Role | null | undefined>(undefined);
+
+  if (initialData !== prevInitialData) {
+    setFormData({
+      name: initialData?.name || '',
+      description: initialData?.description || '',
+      app_id: initialData?.app_id || appOptions[0]?.value || '',
+    });
+    setPrevInitialData(initialData);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +79,13 @@ export const RoleDrawer: React.FC<RoleDrawerProps> = ({
         onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
       >
+        <Select
+          label="Select App"
+          value={formData.app_id}
+          onChange={(value) => setFormData({ ...formData, app_id: value as string })}
+          options={appOptions}
+          required
+        />
         <Input
           label="Role Name"
           placeholder="e.g., Finance Manager"
