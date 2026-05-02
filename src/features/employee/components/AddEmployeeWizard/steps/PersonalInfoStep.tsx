@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/incompatible-library */
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Camera, Info } from 'lucide-react';
 
 import { Input } from '../../../../../components/ui/Input/Input';
+import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { Button } from '../../../../../components/common';
 import { useWizard } from '../WizardContext';
 import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
@@ -37,6 +38,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
   const {
     register,
     handleSubmit,
+    control,
     watch,
     formState: { errors },
   } = useForm<FormData>({
@@ -172,12 +174,17 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
       </div>
 
       <div className={styles.row}>
-        <Input
-          label="DOB (Optional)"
-          type="date"
-          required={false}
-          {...register('dob')}
-          error={errors.dob?.message}
+        <Controller
+          name="dob"
+          control={control}
+          render={({ field }) => (
+            <DatePicker
+              label="DOB (Optional)"
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.dob?.message}
+            />
+          )}
         />
         <Input
           label="Phone (Optional)"
