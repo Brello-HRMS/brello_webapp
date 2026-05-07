@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useFormContext, useFieldArray, Controller } from 'react-hook-form';
 import { Plus, X } from 'lucide-react';
 
 import { Button } from '../../../components/common/Button/Button';
@@ -7,12 +8,7 @@ import { Input } from '../../../components/ui/Input/Input';
 
 import styles from './LeaveTypesCard.module.scss';
 
-interface LeaveType {
-  id: string;
-  name: string;
-  days: string;
-  accrual: string;
-}
+import type { LeaveConfigFormValues } from '../schemas/leaveConfig.schema';
 
 const ACCRUAL_OPTIONS = [
   { value: 'none', label: 'None' },
@@ -21,39 +17,47 @@ const ACCRUAL_OPTIONS = [
 ];
 
 export const LeaveTypesCard: React.FC = () => {
-  const [leaveTypes, setLeaveTypes] = useState<LeaveType[]>([
-    { id: '1', name: 'Casual Leave', days: '8', accrual: 'none' },
-    { id: '2', name: 'Sick Leave', days: '6', accrual: 'none' },
-    { id: '3', name: 'Earned Leave', days: '10', accrual: 'monthly' },
-  ]);
+  const {
+    control,
+    watch,
+    formState: { errors },
+  } = useFormContext<LeaveConfigFormValues>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'leaveTypes',
+  });
+
+  const totalLeaveDays = watch('totalLeave') || 0;
+  const leaveTypes = watch('leaveTypes') || [];
+  const allocatedDays = leaveTypes.reduce((sum, type) => sum + (Number(type.days) || 0), 0);
+  const isOverAllocated = allocatedDays !== totalLeaveDays;
 
   const handleAddLeaveType = () => {
-    setLeaveTypes([
-      ...leaveTypes,
-      {
-        id: Date.now().toString(),
-        name: '',
-        days: '',
-        accrual: 'none',
-      },
-    ]);
-  };
-
-  const handleRemoveLeaveType = (id: string) => {
-    setLeaveTypes(leaveTypes.filter((lt) => lt.id !== id));
-  };
-
-  const updateLeaveType = (id: string, field: keyof LeaveType, value: string) => {
-    setLeaveTypes(leaveTypes.map((lt) => (lt.id === id ? { ...lt, [field]: value } : lt)));
+    append({
+      name: '',
+      days: 0,
+      accrual: 'none',
+      allowHalfDay: false,
+    });
   };
 
   return (
-    <div className={styles.card}>
+    <div id="leave-types-card" className={styles.card}>
       <div className={styles.header}>
         <h3>Leave Types</h3>
       </div>
       <div className={styles.content}>
-        <div className={styles.badge}>24/24 Allocated</div>
+        <div className={`${styles.badge} ${isOverAllocated ? styles.error : ''}`}>
+          {allocatedDays}/{totalLeaveDays} Allocated
+        </div>
+        {errors.leaveTypes?.root?.message && (
+          <p
+            className={styles.errorMessage}
+            style={{ color: 'red', fontSize: '0.875rem', marginTop: '0.5rem' }}
+          >
+            {errors.leaveTypes.root.message}
+          </p>
+        )}
 
         <div className={styles.section}>
           <div className={styles.sectionTitle}>Distribute total leave across types</div>
@@ -66,33 +70,55 @@ export const LeaveTypesCard: React.FC = () => {
           </div>
 
           <div className={styles.leaveTypesList}>
-            {leaveTypes.map((leaveType) => (
-              <div key={leaveType.id} className={styles.leaveTypeRow}>
+            {fields.map((field, index) => (
+              <div key={field.id} className={styles.leaveTypeRow}>
                 <div className={styles.colName}>
-                  <Input
-                    value={leaveType.name}
-                    onChange={(e) => updateLeaveType(leaveType.id, 'name', e.target.value)}
-                    placeholder="Leave Name"
+                  <Controller
+                    name={`leaveTypes.${index}.name`}
+                    control={control}
+                    render={({ field: inputField, fieldState }) => (
+                      <Input
+                        value={inputField.value}
+                        onChange={inputField.onChange}
+                        placeholder="Leave Name"
+                        error={fieldState.error?.message}
+                      />
+                    )}
                   />
                 </div>
                 <div className={styles.colDays}>
-                  <Input
-                    type="number"
-                    value={leaveType.days}
-                    onChange={(e) => updateLeaveType(leaveType.id, 'days', e.target.value)}
+                  <Controller
+                    name={`leaveTypes.${index}.days`}
+                    control={control}
+                    render={({ field: inputField, fieldState }) => (
+                      <Input
+                        type="number"
+                        value={inputField.value}
+                        onChange={(e) =>
+                          inputField.onChange(e.target.value ? Number(e.target.value) : 0)
+                        }
+                        error={fieldState.error?.message}
+                      />
+                    )}
                   />
                 </div>
                 <div className={styles.colAccrual}>
-                  <Select
-                    value={leaveType.accrual}
-                    onChange={(e) => updateLeaveType(leaveType.id, 'accrual', e.target.value)}
-                    options={ACCRUAL_OPTIONS}
+                  <Controller
+                    name={`leaveTypes.${index}.accrual`}
+                    control={control}
+                    render={({ field: inputField }) => (
+                      <Select
+                        value={inputField.value}
+                        onChange={(e) => inputField.onChange(e.target.value)}
+                        options={ACCRUAL_OPTIONS}
+                      />
+                    )}
                   />
                 </div>
                 <div className={styles.colAction}>
                   <button
                     className={styles.removeBtn}
-                    onClick={() => handleRemoveLeaveType(leaveType.id)}
+                    onClick={() => remove(index)}
                     type="button"
                     title="Remove leave type"
                   >
