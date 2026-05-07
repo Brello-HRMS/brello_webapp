@@ -37,6 +37,12 @@
   font-size: 12px;
   font-weight: var(--font-weight-medium);
   width: fit-content;
+  transition: all 0.2s ease;
+
+  &.error {
+    background-color: var(--color-error-50);
+    color: var(--color-error-700);
+  }
 }
 
 .section {
@@ -110,6 +116,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media (max-width: 640px) {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: var(--spacing-1);
+  }
 }
 
 .removeBtn {
