@@ -1,0 +1,33 @@
+.tabsContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-4);
+  flex-wrap: wrap;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text-slate-500);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &.active {
+    border-color: var(--color-primary-purple);
+    color: var(--color-text-primary-500);
+    box-shadow: 0 0 0 4px var(--color-primary-50);
+  }
+
+  &:hover:not(.active) {
+    background-color: var(--color-surface);
+    border-color: var(--color-border-hover);
+  }
+}

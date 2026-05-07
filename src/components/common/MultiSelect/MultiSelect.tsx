@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { ChevronDown, Check, X } from 'lucide-react';
+import { ChevronDown, Check, X, Search } from 'lucide-react';
 
 import styles from './MultiSelect.module.scss';
 
@@ -30,9 +30,11 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   error,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const [maxVisibleTags, setMaxVisibleTags] = useState(2);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useLayoutEffect(() => {
     const calculateMaxTags = () => {
@@ -52,6 +54,15 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   }, [value.length]);
 
   useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        setSearch('');
+        searchRef.current?.focus();
+      }, 0);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -62,6 +73,10 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
+
+  const filteredOptions = options.filter((opt) =>
+    opt.label.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const toggleOption = (val: string | number) => {
     if (value.includes(val)) {
@@ -120,24 +135,38 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
         {isOpen && (
           <div className={styles.menu}>
-            {options.map((option) => {
-              const isSelected = value.includes(option.value);
-              return (
-                <div
-                  key={option.value}
-                  className={`${styles.option} ${isSelected ? styles.selected : ''}`}
-                  onClick={() => toggleOption(option.value)}
-                >
-                  <div className={styles.checkbox}>
-                    {isSelected && <Check size={14} color="#fff" />}
-                  </div>
-                  <span className={styles.optionLabel}>{option.label}</span>
-                </div>
-              );
-            })}
-            {options.length === 0 && (
-              <div className={styles.noOptions}>No components available</div>
-            )}
+            <div className={styles.searchWrapper}>
+              <Search size={14} className={styles.searchIcon} />
+              <input
+                ref={searchRef}
+                className={styles.searchInput}
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onMouseDown={(e) => e.stopPropagation()}
+              />
+            </div>
+            <div className={styles.optionsList}>
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => {
+                  const isSelected = value.includes(option.value);
+                  return (
+                    <div
+                      key={option.value}
+                      className={`${styles.option} ${isSelected ? styles.selected : ''}`}
+                      onClick={() => toggleOption(option.value)}
+                    >
+                      <div className={styles.checkbox}>
+                        {isSelected && <Check size={14} color="#fff" />}
+                      </div>
+                      <span className={styles.optionLabel}>{option.label}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className={styles.noOptions}>No results found</div>
+              )}
+            </div>
           </div>
         )}
       </div>
