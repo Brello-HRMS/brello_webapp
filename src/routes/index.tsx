@@ -29,6 +29,8 @@ import UsersPage from '../pages/access/UsersPage';
 import ReimbursementPage from '../pages/reimbursement/ReimbursementPage';
 import EmployeeReimbursementPage from '../pages/reimbursement/EmployeeReimbursementPage';
 import LeaveConfigPage from '../pages/leave/LeaveConfigPage';
+import AnnouncementPage from '../pages/announcement/AnnouncementPage';
+import EmployeeAnnouncementPage from '../pages/announcement/EmployeeAnnouncementPage';
 import { AppId } from '../enum/app';
 
 const isAuthenticated = () => {
@@ -216,6 +218,33 @@ const router = createBrowserRouter([
       {
         path: 'organisation/leave-config',
         element: <LeaveConfigPage />,
+      },
+      {
+        path: 'announcements',
+        loader: () => {
+          const authResponseStr = sessionStorage.getItem('auth_response');
+          if (authResponseStr) {
+            try {
+              const authResponse = JSON.parse(authResponseStr);
+              const appId = authResponse?.data?.defaultAppId;
+              if (appId === AppId.ADMIN) {
+                return redirect('/announcements/list');
+              }
+              return redirect('/announcements/me');
+            } catch {
+              return redirect('/auth/login');
+            }
+          }
+          return redirect('/auth/login');
+        },
+      },
+      {
+        path: 'announcements/list',
+        element: <AnnouncementPage />,
+      },
+      {
+        path: 'announcements/me',
+        element: <EmployeeAnnouncementPage />,
       },
       {
         path: '*',

@@ -1,0 +1,94 @@
+.titleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.titleText {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary-purple);
+  flex-shrink: 0;
+}
+
+.priorityBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.priorityNormal {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+}
+
+.priorityImportant {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.priorityUrgent {
+  background: var(--color-error-50);
+  color: var(--color-error-700);
+}
+
+.dateCell {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.readStatus {
+  font-size: 12px;
+}
+
+.read {
+  color: var(--color-icon-gray);
+}
+
+.unread {
+  color: var(--color-primary-purple);
+  font-weight: var(--font-weight-semibold);
+}
+
+.viewBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  color: var(--color-icon-gray);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+
+  &:hover {
+    color: var(--color-primary-purple);
+    border-color: var(--color-primary-purple);
+    background-color: var(--color-primary-50);
+  }
+}
