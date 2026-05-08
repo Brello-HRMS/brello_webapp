@@ -31,6 +31,7 @@ import EmployeeReimbursementPage from '../pages/reimbursement/EmployeeReimbursem
 import LeaveConfigPage from '../pages/leave/LeaveConfigPage';
 import AnnouncementPage from '../pages/announcement/AnnouncementPage';
 import EmployeeAnnouncementPage from '../pages/announcement/EmployeeAnnouncementPage';
+import AttendanceSetupPage from '../pages/attendance/setup/AttendanceSetupPage';
 import { AppId } from '../enum/app';
 
 const isAuthenticated = () => {
@@ -245,6 +246,10 @@ const router = createBrowserRouter([
       {
         path: 'announcements/me',
         element: <EmployeeAnnouncementPage />,
+      },
+      {
+        path: 'attendance/setup',
+        element: <AttendanceSetupPage />,
       },
       {
         path: '*',
