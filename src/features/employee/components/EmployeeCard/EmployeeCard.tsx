@@ -27,7 +27,8 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const { id, firstName, lastName, status, avatar, role, department, type } = employee;
+  const { id, firstName, lastName, status, employeeStatus, avatar, role, department, type } =
+    employee;
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -91,7 +92,7 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({
 
       <div className={styles.footer}>
         <div className={styles.typeBadge}>{type || 'Full-time'}</div>
-        <StatusBadge status={status as Status} />
+        <StatusBadge status={employeeStatus || (status as Status)} />
       </div>
     </div>
   );

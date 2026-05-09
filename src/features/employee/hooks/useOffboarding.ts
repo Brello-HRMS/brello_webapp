@@ -21,7 +21,7 @@ export const useOffboardingStatus = (employeeId: string | undefined) => {
         const response = await getOffboardingStatus(employeeId);
         return response.data;
       } catch (error: any) {
-        if (error.response?.status === 404) {
+        if (error.status === 404 || error.response?.status === 404) {
           // A 404 means the employee is not currently offboarded. We return null gracefully.
           return null;
         }

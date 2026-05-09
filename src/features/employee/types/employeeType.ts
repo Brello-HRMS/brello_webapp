@@ -8,6 +8,7 @@ export interface Employee {
   lastName: string;
   email: string;
   status: EmployeeStatus | string;
+  employeeStatus?: string | null;
   avatar: string | null;
   memberAvatars: string[];
 

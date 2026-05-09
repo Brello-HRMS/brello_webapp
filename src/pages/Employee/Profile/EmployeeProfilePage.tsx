@@ -15,7 +15,7 @@ import { DocumentsCard } from '../../../features/employee/components/EmployeeDet
 import { AssetsCard } from '../../../features/employee/components/EmployeeDetail/AssetsCard/AssetsCard';
 import { PersonalInfoCard } from '../../../features/employee/components/EmployeeDetail/PersonalInfoCard/PersonalInfoCard';
 import { PayrollSummaryCard } from '../../../features/employee/components/EmployeeDetail/PayrollSummaryCard/PayrollSummaryCard';
-import { LeaveMockCard } from '../../../features/employee/components/EmployeeDetail/LeaveMockCard/LeaveMockCard';
+import { LeaveBalanceCard } from '../../../features/employee/components/EmployeeDetail/LeaveBalanceCard/LeaveBalanceCard';
 import {
   HoursLoggedMockCard,
   AttendanceCalendarMockCard,
@@ -114,7 +114,7 @@ const EmployeeProfilePage = () => {
                   <HoursLoggedMockCard />
                 </div>
                 <div className={styles.profileRight}>
-                  <LeaveMockCard />
+                  <LeaveBalanceCard employeeId={employee.id} />
                   <AttendanceCalendarMockCard />
                 </div>
               </div>

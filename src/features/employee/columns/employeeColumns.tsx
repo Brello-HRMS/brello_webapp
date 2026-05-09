@@ -1,5 +1,4 @@
 import { TableActions, StatusBadge } from '../../../components/common';
-import { Status } from '../../../types/common';
 
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Employee } from '../types/employeeType';
@@ -105,11 +104,12 @@ export const employeeColumns = ({
       },
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'employeeStatus',
       header: 'Status',
       size: 120,
       cell: (info) => {
-        const status = info.getValue() as Status;
+        const empStatus = info.getValue() as string;
+        const status = empStatus || info.row.original.status;
         return <StatusBadge status={status} />;
       },
     },

@@ -39,6 +39,16 @@
       background: var(--color-priority-medium-text, #d48806);
     }
   }
+
+  &.invited {
+    background: var(--color-blue-50, #eff6ff);
+    color: var(--color-blue-700, #1d4ed8);
+    border: 1px solid var(--color-blue-200, #bfdbfe);
+
+    .dot {
+      background: var(--color-blue-700, #1d4ed8);
+    }
+  }
 }
 
 .dot {
