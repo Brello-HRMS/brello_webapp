@@ -23,17 +23,38 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
   const MENU_ITEMS: MenuItem[] = useMemo(() => {
     if (!menuResponse?.data?.length) return [];
-    return menuResponse.data.map((item) => ({
-      label: item.label,
-      icon: getIconComponent(item.icon),
-      path: item.path || undefined,
-      actions: item.actions,
-      children: item.children?.map((child) => ({
+    return menuResponse.data.map((item) => {
+      const children = item.children?.map((child) => ({
         label: child.label,
         path: child.path || '',
         actions: child.actions,
-      })),
-    }));
+      }));
+
+      // Inject Balance under Leave menu
+      if (item.label === 'Leave' && children) {
+        // Only add if not already present
+        if (!children.some((child) => child.label === 'Balance')) {
+          children.push(
+            {
+              label: 'Balance',
+              path: '/attendance/balance',
+            },
+            {
+              label: 'Requests',
+              path: '/attendance/requests',
+            },
+          );
+        }
+      }
+
+      return {
+        label: item.label,
+        icon: getIconComponent(item.icon),
+        path: item.path || undefined,
+        actions: item.actions,
+        children,
+      };
+    });
   }, [menuResponse]);
 
   const toggleMenu = (label: string) => {

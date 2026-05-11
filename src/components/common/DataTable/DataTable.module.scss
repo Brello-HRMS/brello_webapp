@@ -178,69 +178,71 @@
   border-top: 1px solid var(--color-border);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   font-size: 14px;
-  color: var(--color-text-secondary);
-  gap: var(--spacing-4);
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-    padding: var(--spacing-4);
-  }
 }
 
-.paginationInfo {
-  font-weight: var(--font-weight-medium);
+.pageNumbers {
+  display: flex;
+  gap: var(--spacing-2);
+}
+
+.pageNumberBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--color-gray-50);
+  }
+
+  &.active {
+    background: var(--color-primary-50);
+    color: var(--color-primary-purple);
+    border-color: var(--color-primary-purple);
+    font-weight: var(--font-weight-semibold);
+  }
 }
 
 .paginationControls {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-6);
-
-  @media (max-width: 576px) {
-    flex-direction: column;
-    gap: var(--spacing-4);
-  }
+  gap: var(--spacing-3);
 }
 
-.pageNavigation {
+.navButton {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-}
-
-.pageInfo {
-  margin: 0 var(--spacing-2);
-  color: var(--color-text-primary);
-
-  strong {
-    color: var(--color-primary);
-  }
-}
-
-.pagiButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-1);
+  padding: 8px 16px;
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary-500);
+  font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 
   &:hover:not(:disabled) {
-    background: var(--color-gray-lighter);
-    border-color: var(--color-primary-purple);
-    color: var(--color-primary-purple);
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-300);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  svg {
+    color: var(--color-gray-500);
+  }
 }
+
 
 @keyframes slideUp {
   from {
@@ -357,6 +359,16 @@
   &.selectedRow {
     .td {
       background: rgba(127, 86, 217, 0.04);
+    }
+  }
+
+  &.clickableRow {
+    cursor: pointer;
+
+    &:hover {
+      .td {
+        background: var(--color-gray-50);
+      }
     }
   }
 }

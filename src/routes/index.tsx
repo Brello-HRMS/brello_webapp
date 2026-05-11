@@ -33,6 +33,8 @@ import AnnouncementPage from '../pages/announcement/AnnouncementPage';
 import EmployeeAnnouncementPage from '../pages/announcement/EmployeeAnnouncementPage';
 import AttendanceSetupPage from '../pages/attendance/setup/AttendanceSetupPage';
 import { AppId } from '../enum/app';
+import LeaveManagementPage from '../pages/attendance/LeaveManagementPage';
+import LeaveRequestsPage from '../pages/attendance/LeaveRequestsPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -154,6 +156,14 @@ const router = createBrowserRouter([
       {
         path: 'attendance/holidays/:id',
         element: <HolidayCalendarView />,
+      },
+      {
+        path: 'attendance/balance',
+        element: <LeaveManagementPage />,
+      },
+      {
+        path: 'attendance/requests',
+        element: <LeaveRequestsPage />,
       },
       {
         path: 'project/projects',
