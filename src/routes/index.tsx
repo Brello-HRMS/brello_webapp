@@ -112,7 +112,7 @@ const router = createBrowserRouter([
     loader: protectedLoader,
     children: [
       {
-        path: '/',
+        path: '/dashboard',
         element: <HomePage />,
       },
       {
