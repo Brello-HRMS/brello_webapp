@@ -11,7 +11,7 @@
 
 .tableWrapper {
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   position: relative;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   scrollbar-width: thin;
@@ -34,6 +34,7 @@
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  position: relative;
 }
 
 .visibilityToggle {
@@ -178,71 +179,70 @@
   border-top: 1px solid var(--color-border);
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   font-size: 14px;
-}
-
-.pageNumbers {
-  display: flex;
-  gap: var(--spacing-2);
-}
-
-.pageNumberBtn {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-  background: var(--color-white);
-  border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all 0.2s;
+  gap: var(--spacing-4);
+  position: relative;
 
-  &:hover {
-    background: var(--color-gray-50);
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--spacing-4);
   }
+}
 
-  &.active {
-    background: var(--color-primary-50);
-    color: var(--color-primary-purple);
-    border-color: var(--color-primary-purple);
-    font-weight: var(--font-weight-semibold);
-  }
+.paginationInfo {
+  font-weight: var(--font-weight-medium);
 }
 
 .paginationControls {
   display: flex;
-  gap: var(--spacing-3);
+  align-items: center;
+  gap: var(--spacing-6);
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
 }
 
-.navButton {
+.pageNavigation {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-  padding: 8px 16px;
+}
+
+.pageInfo {
+  margin: 0 var(--spacing-2);
+  color: var(--color-text-primary);
+
+  strong {
+    color: var(--color-primary);
+  }
+}
+
+.pagiButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-1);
   background: var(--color-white);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  color: var(--color-text-primary-500);
-  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 
   &:hover:not(:disabled) {
-    background: var(--color-gray-50);
-    border-color: var(--color-gray-300);
+    background: var(--color-gray-lighter);
+    border-color: var(--color-primary-purple);
+    color: var(--color-primary-purple);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-
-  svg {
-    color: var(--color-gray-500);
-  }
 }
-
 
 @keyframes slideUp {
   from {
@@ -359,16 +359,6 @@
   &.selectedRow {
     .td {
       background: rgba(127, 86, 217, 0.04);
-    }
-  }
-
-  &.clickableRow {
-    cursor: pointer;
-
-    &:hover {
-      .td {
-        background: var(--color-gray-50);
-      }
     }
   }
 }

@@ -1,126 +1,147 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Eye, Command } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Eye, Command, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 import { DataTable } from '../../../components/common/DataTable/DataTable';
 import { Select } from '../../../components/common/Select/Select';
-import styles from '../styles/LeaveManagement.module.scss';
-import {
-  MOCK_EMPLOYEES,
-  MOCK_LEAVE_REQUESTS,
-  type EmployeeLeaveBalance,
-  type LeaveRequest,
-} from '../constants/mockData';
-import { showToast } from '../../ToastFeature/ShowToast';
+import styles from '../styles/LeaveBalanceView.module.scss';
+import { useLeaveBalances } from '../../../hooks/useLeaveBalances';
+import { useDepartments } from '../../department/hooks/useDepartments';
+import { getYearOptions } from '../../../utils/dateUtils';
 
-import { RequestDetailsModal } from './RequestDetailsModal';
+import { EmployeeBalanceModal } from './EmployeeBalanceModal';
 
 import type { ColumnDef } from '@tanstack/react-table';
+import type { ListBalanceItem } from '../../../api/leaveBalances';
 
 export const LeaveBalanceView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [policyFilter, setPolicyFilter] = useState<string | number>('all');
-  const [deptFilter, setDeptFilter] = useState<string | number>('all');
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 7 });
+  const [yearFilter, setYearFilter] = useState<number>(new Date().getFullYear());
+  const [deptFilter, setDeptFilter] = useState<string>('all');
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [sort, setSort] = useState<{ sortBy: string; sortOrder: 'ASC' | 'DESC' }>({
+    sortBy: 'employee_name',
+    sortOrder: 'ASC',
+  });
+
+  const [selectedEmployee, setSelectedEmployee] = useState<ListBalanceItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
 
-  const departments = useMemo(() => {
-    const depts = Array.from(new Set(MOCK_EMPLOYEES.map((e) => e.department)));
-    return [
-      { label: 'All Departments', value: 'all' },
-      ...depts.map((d) => ({ label: d, value: d })),
-    ];
-  }, []);
+  const { data: balanceResponse, isLoading } = useLeaveBalances({
+    leave_year: yearFilter,
+    department_id: deptFilter === 'all' ? undefined : deptFilter,
+    sort_by: sort.sortBy,
+    sort_order: sort.sortOrder,
+    page: pagination.pageIndex + 1,
+    limit: pagination.pageSize,
+    search: searchTerm || undefined,
+  });
 
-  const policies = [
-    { label: 'All Policies', value: 'all' },
-    { label: 'Casual', value: 'Casual' },
-    { label: 'Sick', value: 'Sick' },
-    { label: 'Earned', value: 'Earned' },
+  const { data: departmentsRes } = useDepartments();
+
+  const deptOptions = [
+    { label: 'All Departments', value: 'all' },
+    ...(departmentsRes?.data?.data?.map((d) => ({ label: d.name, value: d.id })) || []),
   ];
 
-  const filteredData = useMemo(() => {
-    return MOCK_EMPLOYEES.filter((emp) => {
-      const matchesSearch =
-        emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        emp.id.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesPolicy = policyFilter === 'all' || emp.policyType === policyFilter;
-      const matchesDept = deptFilter === 'all' || emp.department === deptFilter;
-      return matchesSearch && matchesPolicy && matchesDept;
-    });
-  }, [searchTerm, policyFilter, deptFilter]);
-
-  const handleDrill = (emp: EmployeeLeaveBalance) => {
-    // Find a request for this employee or create a dummy one for the modal
-    const request = MOCK_LEAVE_REQUESTS.find((r) => r.employeeId === emp.id) || {
-      ...MOCK_LEAVE_REQUESTS[0],
-      employeeId: emp.id,
-      employeeName: emp.name,
-      avatar: emp.avatar,
-      role: emp.role,
-      department: emp.department,
-      balances: emp.balances,
-    };
-    setSelectedRequest(request);
-    setIsModalOpen(true);
+  const handleSort = (column: string) => {
+    setSort((prev) => ({
+      sortBy: column,
+      sortOrder: prev.sortBy === column && prev.sortOrder === 'ASC' ? 'DESC' : 'ASC',
+    }));
   };
 
-  const columns: ColumnDef<EmployeeLeaveBalance>[] = [
+  const renderSortIcon = (column: string) => {
+    if (sort.sortBy !== column) return <ArrowUpDown size={14} opacity={0.3} />;
+    return sort.sortOrder === 'ASC' ? <ArrowUp size={14} /> : <ArrowDown size={14} />;
+  };
+
+  const totalItems = balanceResponse?.pagination?.total || 0;
+
+  const years = getYearOptions();
+
+  const data = balanceResponse?.data || [];
+
+  const columns: ColumnDef<ListBalanceItem>[] = [
     {
-      header: 'Employee',
-      accessorKey: 'name',
+      header: () => (
+        <div className={styles.sortableHeader} onClick={() => handleSort('employee_name')}>
+          Employee {renderSortIcon('employee_name')}
+        </div>
+      ),
+      accessorKey: 'employee_name',
       cell: ({ row }) => {
-        const emp = row.original;
+        const item = row.original;
+
         return (
-          <div className={styles.employeeCell} onClick={() => handleDrill(emp)}>
-            <img src={emp.avatar} alt={emp.name} className={styles.avatar} />
+          <div className={styles.employeeCell}>
+            <img
+              src={
+                item.employee_avatar_url ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(item.employee_name)}&background=random`
+              }
+              alt={item.employee_name}
+              className={styles.avatar}
+            />
             <div className={styles.info}>
-              <span className={styles.name}>{emp.name}</span>
-              <span className={styles.id}>ID: {emp.id}</span>
+              <span className={styles.name}>{item.employee_name}</span>
+              <span className={styles.id}>
+                ID: {item.employee_code || item.employee_id.slice(0, 8)}
+              </span>
             </div>
           </div>
         );
       },
     },
     {
-      header: 'Department',
-      accessorKey: 'department',
+      header: () => (
+        <div className={styles.sortableHeader} onClick={() => handleSort('department_name')}>
+          Department {renderSortIcon('department_name')}
+        </div>
+      ),
+      accessorKey: 'department_name',
+      cell: ({ row }) => row.original.department_name || 'N/A',
     },
     {
-      header: 'Policy Type',
-      accessorKey: 'policyType',
-    },
-    {
-      header: 'Total Balance',
-      accessorKey: 'totalBalance',
+      header: () => (
+        <div className={styles.sortableHeader} onClick={() => handleSort('total_available')}>
+          Available Balance {renderSortIcon('total_available')}
+        </div>
+      ),
+      accessorKey: 'total_available',
       cell: ({ row }) => {
-        const emp = row.original;
-        const percentage = (emp.totalBalance / emp.maxBalance) * 100;
-        const isHigh = emp.totalBalance > 15;
+        const item = row.original;
+        const available = item.total_available;
+        const allocated = item.total_allocated || 1;
+        const percentage = (available / allocated) * 100;
+        const isHigh = available > 15;
+
         return (
           <div className={styles.balanceCell}>
             <span className={`${styles.value} ${isHigh ? styles.high : styles.low}`}>
-              {emp.totalBalance.toFixed(1)} Days
+              {`${available.toFixed(1)} / ${item.total_allocated.toFixed(1)}`}
             </span>
             <div className={styles.progressBar}>
               <div
                 className={`${styles.progress} ${isHigh ? styles.high : styles.low}`}
-                style={{ width: `${percentage}%` }}
+                style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
               />
             </div>
           </div>
         );
       },
     },
-    {
-      header: 'Last Accrual',
-      accessorKey: 'lastAccrual',
-    },
+
     {
       header: 'Action',
       id: 'action',
       cell: ({ row }) => (
-        <div className={styles.actionCell} onClick={() => handleDrill(row.original)}>
+        <div
+          className={styles.actionCell}
+          onClick={() => {
+            setSelectedEmployee(row.original);
+            setIsModalOpen(true);
+          }}
+        >
           <Eye size={18} />
         </div>
       ),
@@ -143,47 +164,46 @@ export const LeaveBalanceView: React.FC = () => {
               <Command size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> /
             </div>
           </div>
+          <div className={styles.selectWrapper}>
+            <Select
+              options={deptOptions}
+              value={deptFilter}
+              onChange={(val) => setDeptFilter(String(val))}
+              placeholder="All Departments"
+            />
+          </div>
         </div>
         <div className={styles.rightFilters}>
           <div className={styles.selectWrapper}>
             <Select
-              options={policies}
-              value={policyFilter}
-              onChange={(val) => setPolicyFilter(val)}
-              placeholder="All Policies"
-            />
-          </div>
-          <div className={styles.selectWrapper}>
-            <Select
-              options={departments}
-              value={deptFilter}
-              onChange={(val) => setDeptFilter(val)}
-              placeholder="All Departments"
+              options={years}
+              value={yearFilter}
+              onChange={(val) => setYearFilter(Number(val))}
+              placeholder="Select Year"
             />
           </div>
         </div>
       </div>
 
       <div className={styles.tableCard}>
-        <DataTable
-          columns={columns}
-          data={filteredData}
-          pagination={pagination}
-          onPaginationChange={setPagination}
-          manualPagination={false}
-        />
+        {isLoading ? (
+          <div style={{ padding: '20px', textAlign: 'center' }}>Loading balances...</div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data}
+            pagination={pagination}
+            onPaginationChange={setPagination}
+            manualPagination={true}
+            pageCount={Math.ceil(totalItems / pagination.pageSize)}
+          />
+        )}
       </div>
 
-      <RequestDetailsModal
-        key={selectedRequest?.id || 'none'}
+      <EmployeeBalanceModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedRequest(null);
-        }}
-        request={selectedRequest}
-        onApprove={() => showToast('Request approved!', 'success')}
-        onReject={() => showToast('Request rejected!', 'error')}
+        onClose={() => setIsModalOpen(false)}
+        employee={selectedEmployee}
       />
     </div>
   );

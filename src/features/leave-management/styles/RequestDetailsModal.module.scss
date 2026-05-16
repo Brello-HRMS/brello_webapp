@@ -1,0 +1,177 @@
+@use '../../../assets/styles/mixins';
+
+.modalBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.empProfileCard {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+
+  .largeAvatar {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+  }
+
+  .profileInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .name {
+      font-size: 20px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary-500);
+    }
+
+    .role {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+
+    .deptBadge {
+      align-self: flex-start;
+      background: var(--color-gray-50);
+      color: var(--color-text-primary-500);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: var(--font-weight-medium);
+      border: 1px solid var(--color-gray-200);
+      margin-top: 4px;
+    }
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .sectionTitle {
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  .infoItem {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 14px;
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary-500);
+    }
+
+    .box {
+      background: var(--color-gray-50);
+      border: 1px solid var(--color-gray-100);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      font-size: 14px;
+      color: var(--color-text-primary-500);
+    }
+  }
+}
+
+.reasonBox {
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+  position: relative;
+
+  &::before {
+    content: '"';
+    font-size: 24px;
+    color: var(--color-gray-300);
+    position: absolute;
+    left: 8px;
+    top: 4px;
+  }
+}
+
+
+.reviewNotes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary-500);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+
+    &:focus {
+      border-color: var(--color-primary-purple);
+    }
+  }
+}
+
+.modalFooter {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  border-top: 1px solid var(--color-gray-100);
+
+  button {
+    width: 200px;
+    height: 44px;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .rejectBtn {
+    background: var(--color-error-50);
+    color: var(--color-error-700);
+    border: 1px solid var(--color-error-200);
+
+    &:hover {
+      background: var(--color-error-100);
+    }
+  }
+
+  .approveBtn {
+    background: var(--color-primary-border);
+    color: var(--color-white);
+    border: 1px solid var(--color-primary-border);
+
+    &:hover {
+      background: var(--color-primary-700);
+    }
+  }
+}

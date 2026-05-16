@@ -1,0 +1,211 @@
+@use '../../../assets/styles/mixins';
+
+.dashboardContainer {
+  padding: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  background-color: var(--color-background);
+  min-height: calc(100vh - var(--header-height));
+
+  @media (max-width: 768px) {
+    padding: var(--spacing-4);
+  }
+}
+
+.viewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.filterSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+
+  .leftFilters {
+    display: flex;
+    gap: var(--spacing-4);
+    align-items: center;
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .filterBtn {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-secondary);
+    border-color: var(--color-gray-200);
+  }
+
+  .rightFilters {
+    display: flex;
+    gap: var(--spacing-3);
+  }
+
+  .searchInputWrapper {
+    max-width: 400px;
+    width: 100%;
+    position: relative;
+
+    input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      outline: none;
+      background: var(--color-white);
+
+      &:focus {
+        border-color: var(--color-primary-purple);
+      }
+    }
+
+    .searchIcon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-gray-500);
+    }
+
+    .commandIcon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-gray-500);
+      font-size: 14px;
+      pointer-events: none;
+    }
+  }
+
+  .selectWrapper {
+    min-width: 160px;
+  }
+}
+
+.tableCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-gray-200);
+  box-shadow: var(--shadow-card);
+}
+
+// Custom Table Styles
+.employeeCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  cursor: pointer;
+
+  &:hover {
+    .name {
+      color: var(--color-primary-purple);
+    }
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+
+    .name {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary-500);
+      font-size: 14px;
+    }
+
+    .id {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+.balanceCell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 140px;
+
+  .value {
+    font-weight: var(--font-weight-semibold);
+    font-size: 14px;
+
+    &.high {
+      color: var(--color-success-700);
+    }
+
+    &.low {
+      color: var(--color-priority-medium-text);
+    }
+  }
+
+  .progressBar {
+    width: 100%;
+    height: 6px;
+    background-color: var(--color-gray-100);
+    border-radius: 3px;
+    overflow: hidden;
+
+    .progress {
+      height: 100%;
+      border-radius: 3px;
+
+      &.high {
+        background-color: #12b76a;
+      }
+
+      &.low {
+        background-color: var(--color-priority-medium-text);
+      }
+    }
+  }
+
+  .subValue {
+    font-size: 11px;
+    color: var(--color-gray-500);
+    margin-top: 2px;
+  }
+}
+
+.actionCell {
+  display: flex;
+  justify-content: center;
+  color: var(--color-gray-500);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-primary-purple);
+  }
+}
+
+.sortableHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    color: var(--color-primary-purple);
+  }
+}
+
+:global(.DataTable_table__container) {
+  border: none !important;
+  box-shadow: none !important;
+}
