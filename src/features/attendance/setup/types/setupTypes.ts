@@ -54,6 +54,7 @@ export interface IRule {
   overtime_after_hours?: number;
   overtime_multiplier?: number;
   require_geo_fencing: boolean;
+  allow_multiple_checkins?: boolean;
   geo_fence?: IGeoFence;
   status: Status;
   shift?: { id: string; name: string };
@@ -75,6 +76,7 @@ export interface ICreateRuleForm {
   overtime_after_hours?: number;
   overtime_multiplier?: number;
   require_geo_fencing: boolean;
+  allow_multiple_checkins?: boolean;
   geo_fence?: IGeoFence;
 }
 

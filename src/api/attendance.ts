@@ -9,6 +9,53 @@ import type {
 
 const BASE = `${envVars.BRELLO_BASE_API}/attendance`;
 
+// --- Types ---
+export interface TodayAttendance {
+  attendance_id: string | null;
+  attendance_session_id: string | null;
+  date: string;
+  attendance_mode: string | null;
+  attendance_status: string | null;
+  check_in_time: string | null;
+  check_out_time: string | null;
+  worked_duration_live: string;
+  live_session: boolean;
+  shift: { shift_name: string; start_time: string; end_time: string } | null;
+  office: { office_name: string } | null;
+}
+
+export interface CheckInPayload {
+  latitude?: number;
+  longitude?: number;
+  device?: 'WEB' | 'MOBILE';
+  remote_reason?: string;
+  notes?: string;
+}
+
+export interface CheckOutPayload {
+  latitude?: number;
+  longitude?: number;
+  notes?: string;
+}
+
+interface ApiEnvelope<T> {
+  success: boolean;
+  data: T;
+  timestamp: string;
+}
+
+// --- Attendance Actions ---
+export const clockIn = (data: CheckInPayload = {}): Promise<unknown> =>
+  apiClient.post(`${BASE}/check-in`, data);
+
+export const clockOut = (data: CheckOutPayload = {}): Promise<unknown> =>
+  apiClient.post(`${BASE}/check-out`, data);
+
+export const getTodayAttendance = (): Promise<TodayAttendance> =>
+  (apiClient.get(`${BASE}/me/today`) as Promise<ApiEnvelope<TodayAttendance>>).then(
+    (res) => res.data,
+  );
+
 // --- Shifts ---
 export const getShifts = (params?: { page?: number; limit?: number }) =>
   apiClient.get(`${BASE}/shifts`, { params });

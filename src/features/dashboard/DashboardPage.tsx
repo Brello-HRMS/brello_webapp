@@ -14,10 +14,12 @@ import { DailyAttendanceReport } from './components/DailyAttendanceReport/DailyA
 import { HolidaysCard } from './components/HolidaysCard/HolidaysCard';
 import { NewHiresCard } from './components/NewHiresCard/NewHiresCard';
 import { useDashboard } from './hooks/useDashboard';
+import { useDashboardStats } from './hooks/useDashboardStats';
 import styles from './DashboardPage.module.scss';
 
 export const DashboardPage: React.FC = () => {
   const data = useDashboard();
+  const stats = useDashboardStats();
   const user = getAuthUser();
   const firstName = user?.first_name ?? 'there';
   const greeting = getGreeting();
@@ -47,15 +49,29 @@ export const DashboardPage: React.FC = () => {
           <div className={styles.statsRow}>
             <StatCard
               label="Total Employees"
-              value={String(data.stats.totalEmployees)}
+              value={stats.totalEmployees != null ? String(stats.totalEmployees) : '—'}
               icon={Users}
-              trend={{ value: data.stats.employeeTrend, direction: 'up' }}
+              trend={
+                stats.employeeTrend
+                  ? {
+                      value: stats.employeeTrend,
+                      direction: stats.employeeTrend.startsWith('-') ? 'down' : 'up',
+                    }
+                  : undefined
+              }
             />
             <StatCard
               label="Attendance"
-              value={data.stats.attendancePercent}
+              value={stats.attendancePercent ?? '—'}
               icon={CalendarCheck2}
-              trend={{ value: data.stats.attendanceTrend, direction: 'up' }}
+              trend={
+                stats.attendanceTrend
+                  ? {
+                      value: stats.attendanceTrend,
+                      direction: stats.attendanceTrend.startsWith('-') ? 'down' : 'up',
+                    }
+                  : undefined
+              }
             />
             <StatCard
               label="Payroll"
@@ -70,11 +86,11 @@ export const DashboardPage: React.FC = () => {
       {/* Dashboard grid */}
       <div className={styles.grid}>
         <ApprovalRequestsCard items={data.approvalItems} totalCount={totalApprovals} />
-        <BirthdaysCard birthdays={data.birthdays} />
+        <BirthdaysCard />
         <AnnouncementCard todayCount={data.announcementCount} />
         <DailyAttendanceReport rows={data.attendanceReport} />
-        <HolidaysCard holidays={data.holidays} count={data.holidayCount} />
-        <NewHiresCard hires={data.newHires} />
+        <HolidaysCard />
+        <NewHiresCard />
       </div>
     </div>
   );

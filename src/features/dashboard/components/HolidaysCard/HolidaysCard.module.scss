@@ -89,3 +89,80 @@
   color: var(--color-text-primary-500);
   flex-shrink: 0;
 }
+
+.listScrollable {
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: var(--spacing-1);
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track {
+    background: var(--color-gray-100);
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-gray-300);
+    border-radius: 9999px;
+  }
+}
+
+.empty {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--spacing-4) 0;
+  margin: 0;
+}
+
+.error {
+  font-size: 0.8125rem;
+  color: var(--color-error-2);
+  text-align: center;
+  margin: 0;
+}
+
+// Skeleton loader
+.skeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4) 0;
+  border-bottom: 1px solid var(--color-border-light);
+
+  &:last-child { border-bottom: none; }
+}
+
+.skeletonLines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.skeletonName {
+  height: 14px;
+  width: 140px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray-200);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.skeletonDay {
+  height: 11px;
+  width: 80px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray-200);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.skeletonBadge {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--color-gray-200);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}

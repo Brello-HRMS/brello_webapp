@@ -19,11 +19,18 @@ interface CreateShiftModalProps {
   initialData?: IShift | null;
 }
 
+// If the flag wasn't saved correctly, infer it from times (end < start means spans midnight)
+function detectNightShift(data?: IShift | null): boolean {
+  if (data?.is_night_shift) return true;
+  if (data?.start_time && data?.end_time) return data.end_time < data.start_time;
+  return false;
+}
+
 const getInitialForm = (data?: IShift | null): ShiftFormInput => ({
   name: data?.name ?? '',
   start_time: data?.start_time ?? '',
   end_time: data?.end_time ?? '',
-  is_night_shift: data?.is_night_shift ?? false,
+  is_night_shift: detectNightShift(data),
   late_grace_minutes: data?.late_grace_minutes ?? 15,
   auto_checkout_time: data?.auto_checkout_time ?? '',
   full_day_hours: data?.full_day_hours ?? 8,
