@@ -8,7 +8,8 @@ import { RegisterForm } from '../features/auth/components/Register/RegisterForm'
 import { LeadForm } from '../features/auth/components/Lead/LeadForm';
 import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen';
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
-import EmployeeProfilePage from '../pages/Employee/Profile/EmployeeProfilePage';
+import EmployeeProfilePage from '../pages/attendance/EmployeeProfilePage';
+import DailyPreviewPage from '../pages/attendance/DailyPreviewPage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
 import ClientPage from '../pages/client/ClientPage';
@@ -154,6 +155,10 @@ const router = createBrowserRouter([
       {
         path: 'attendance/holidays/:id',
         element: <HolidayCalendarView />,
+      },
+      {
+        path: 'attendance/daily',
+        element: <DailyPreviewPage />,
       },
       {
         path: 'project/projects',
