@@ -48,6 +48,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     if (!path) return false;
     const currentPath = location.pathname.split('/').slice(0, 3).join('/');
     const targetPath = path.split('/').slice(0, 3).join('/');
+
     return currentPath === targetPath;
   };
 
