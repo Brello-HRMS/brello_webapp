@@ -62,29 +62,30 @@ const UsersPage: React.FC = () => {
   const { users, meta, isLoading, assignRoles, updateRoles, removeUser, isAssigning, isUpdating } =
     useAccessUsers(params);
 
-  const handleEdit = useCallback(
-    (user: AccessUser) => {
-      if (!hasEditAccess) return;
-      setSelectedUser(user);
-      setIsDialogOpen(true);
-    },
-    [hasEditAccess],
-  );
+  const handleEdit = useCallback((user: AccessUser) => {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  }, []);
 
   const handleDelete = useCallback(
     async (user: AccessUser) => {
-      if (!hasDeleteAccess) return;
       const fullName = `${user.firstName} ${user.lastName}`.trim();
       if (window.confirm(`Are you sure you want to remove "${fullName}" from access control?`)) {
         await removeUser(user);
       }
     },
-    [removeUser, hasDeleteAccess],
+    [removeUser],
   );
 
+  // Pass callbacks only when the user has the matching permission so
+  // TableActions hides the button entirely when access is absent.
   const columns = useMemo(
-    () => accessUsersColumns({ onEdit: handleEdit, onDelete: handleDelete }),
-    [handleEdit, handleDelete],
+    () =>
+      accessUsersColumns({
+        onEdit: hasEditAccess ? handleEdit : undefined,
+        onDelete: hasDeleteAccess ? handleDelete : undefined,
+      }),
+    [handleEdit, handleDelete, hasEditAccess, hasDeleteAccess],
   );
 
   const handleAddNew = () => {

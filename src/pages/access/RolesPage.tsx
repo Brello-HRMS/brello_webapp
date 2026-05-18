@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { Loader2 } from 'lucide-react';
 
 import { PageHeader, DataTable, ListControls, PermissionGate } from '../../components/common';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -46,29 +47,29 @@ const RolesPage: React.FC = () => {
     },
   );
 
-  const handleEdit = useCallback(
-    (role: Role) => {
-      if (!hasEditAccess) return;
-      setSelectedRole(role);
-      setIsDrawerOpen(true);
-    },
-    [hasEditAccess],
-  );
+  const handleEdit = useCallback((role: Role) => {
+    setSelectedRole(role);
+    setIsDrawerOpen(true);
+  }, []);
 
   const handleDelete = useCallback(
     async (role: Role) => {
-      if (!hasDeleteAccess) return;
       if (window.confirm(`Are you sure you want to delete the role "${role.name}"?`)) {
         await deleteRole(role.id);
       }
     },
-    [deleteRole, hasDeleteAccess],
+    [deleteRole],
   );
 
-  // Handlers include internal guards — rolesColumns requires non-optional callbacks
+  // Only wire callbacks when the user has the matching permission so
+  // TableActions hides the button entirely when access is absent.
   const columns = useMemo(
-    () => rolesColumns({ onEdit: handleEdit, onDelete: handleDelete }),
-    [handleEdit, handleDelete],
+    () =>
+      rolesColumns({
+        onEdit: hasEditAccess ? handleEdit : undefined,
+        onDelete: hasDeleteAccess ? handleDelete : undefined,
+      }),
+    [handleEdit, handleDelete, hasEditAccess, hasDeleteAccess],
   );
 
   const handleCreateNew = () => {
@@ -116,7 +117,9 @@ const RolesPage: React.FC = () => {
 
       <div className={styles.tableContainer}>
         {isLoading ? (
-          <div className={styles.loader} />
+          <div className={styles.loader}>
+            <Loader2 className={styles.spin} size={28} />
+          </div>
         ) : (
           <DataTable columns={columns} data={roles} rowIdField="id" />
         )}

@@ -33,7 +33,9 @@ const PermissionsPage: React.FC = () => {
   const { roles, isLoading: isRolesLoading } = useRoles();
   const availableApps = getAvailableApps();
 
-  const { data: serverPermissions = EMPTY_PERMISSIONS, isFetching: isPermissionsLoading } =
+  // isPending is true only on the very first load (no data yet).
+  // isFetching would be true on every background refetch, causing a spinner flash after save.
+  const { data: serverPermissions = EMPTY_PERMISSIONS, isPending: isPermissionsLoading } =
     useRolePermissionsQuery(selectedRoleId);
   const { mutate: updatePermissions, isPending: isUpdating } = useUpdateRolePermissionsMutation();
 
