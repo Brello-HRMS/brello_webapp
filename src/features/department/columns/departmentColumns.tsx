@@ -8,8 +8,8 @@ import type { Department } from '../types/departmentType';
 interface DepartmentColumnProps {
   isMultiSelectActive: boolean;
   onView: (department: Department) => void;
-  onEdit: (department: Department) => void;
-  onDelete: (department: Department) => void;
+  onEdit?: (department: Department) => void;
+  onDelete?: (department: Department) => void;
 }
 
 export const departmentColumns = ({
@@ -67,8 +67,8 @@ export const departmentColumns = ({
         isMultiSelectActive ? null : (
           <TableActions
             onView={() => onView(info.row.original)}
-            onEdit={() => onEdit(info.row.original)}
-            onDelete={() => onDelete(info.row.original)}
+            onEdit={onEdit ? () => onEdit(info.row.original) : undefined}
+            onDelete={onDelete ? () => onDelete(info.row.original) : undefined}
           />
         ),
     },

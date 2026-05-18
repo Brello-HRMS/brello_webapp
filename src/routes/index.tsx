@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider, Navigate, redirect } from 'react-router-dom';
 
 import { MainLayout } from '../components/layout/MainLayout';
+import { RequireAccess } from '../components/common';
+import { ModuleCode } from '../enum/modules';
 import HomePage from '../pages/HomePage';
 import { AuthLayout } from '../features/auth/components/AuthLayout/AuthLayout';
 import { Login } from '../features/auth/components/Login/Login';
@@ -68,45 +70,17 @@ const router = createBrowserRouter([
     element: <AuthLayout />,
     loader: publicLoader,
     children: [
-      {
-        path: 'login',
-        element: <Login />,
-      },
-      // {
-      //   path: 'lead',
-      //   element: <LeadForm />,
-      // },
-      {
-        path: 'register',
-        element: <RegisterForm />,
-      },
-      // {
-      //   path: 'login',
-      //   element: <LoginForm />,
-      // },
-      {
-        path: 'otp',
-        element: <OtpForm />,
-      },
-      {
-        path: 'lead',
-        element: <LeadForm />,
-      },
-      // {
-      //   path: 'test',
-      //   element: <Leadtest />,
-      // },
-      {
-        path: '',
-        element: <Navigate to="login" replace />,
-      },
+      { path: 'login', element: <Login /> },
+      { path: 'register', element: <RegisterForm /> },
+      { path: 'otp', element: <OtpForm /> },
+      { path: 'lead', element: <LeadForm /> },
+      { path: '', element: <Navigate to="login" replace /> },
     ],
   },
   {
     path: '/auth/welcome',
     element: <WelcomeScreen />,
   },
-
   {
     path: '/',
     element: <MainLayout />,
@@ -116,70 +90,162 @@ const router = createBrowserRouter([
         path: '/dashboard',
         element: <HomePage />,
       },
+
+      // ── Organisation ───────────────────────────────────────────────────────
       {
         path: 'organisation/departments',
-        element: <DepartmentPage />,
-      },
-      {
-        path: 'organisation/policies',
-        element: <PoliciesPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ORG_DEPARTMENTS}>
+            <DepartmentPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'organisation/departments/:id',
-        element: <DepartmentDetailPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ORG_DEPARTMENTS}>
+            <DepartmentDetailPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'organisation/designations',
-        element: <DesignationPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ORG_DESIGNATIONS}>
+            <DesignationPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'organisation/designations/:id',
-        element: <DesignationDetailPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ORG_DESIGNATIONS}>
+            <DesignationDetailPage />
+          </RequireAccess>
+        ),
       },
       {
-        path: 'employee/profile/:id',
-        element: <EmployeeProfilePage />,
-      },
-      {
-        path: 'project/clients',
-        element: <ClientPage />,
-      },
-      {
-        path: 'project/clients/:id',
-        element: <ClientDetailPage />,
-      },
-      {
-        path: 'attendance/holidays',
-        element: <HolidaysPage />,
-      },
-      {
-        path: 'attendance/holidays/:id',
-        element: <HolidayCalendarView />,
-      },
-      {
-        path: 'project/projects',
-        element: <ProjectPage />,
-      },
-      {
-        path: 'project/clients/:clientId/projects/:projectId',
-        element: <ProjectDetailPage />,
-      },
-      {
-        path: 'employee/directory',
-        element: <EmployeeDirectoryPage />,
+        path: 'organisation/policies',
+        element: (
+          <RequireAccess module={ModuleCode.ORG_POLICIES}>
+            <PoliciesPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'organisation/payroll',
-        element: <PayrollConfigPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ORG_PAYROLL}>
+            <PayrollConfigPage />
+          </RequireAccess>
+        ),
       },
       {
+        path: 'organisation/leave-config',
+        element: (
+          <RequireAccess module={ModuleCode.LEAVE_SETUP}>
+            <LeaveConfigPage />
+          </RequireAccess>
+        ),
+      },
+
+      // ── Employee ───────────────────────────────────────────────────────────
+      {
+        path: 'employee/directory',
+        element: (
+          <RequireAccess module={ModuleCode.EMP_DIRECTORY}>
+            <EmployeeDirectoryPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'employee/profile/:id',
+        element: (
+          <RequireAccess module={ModuleCode.EMP_PROFILE_ADMIN}>
+            <EmployeeProfilePage />
+          </RequireAccess>
+        ),
+      },
+
+      // ── Attendance ─────────────────────────────────────────────────────────
+      {
+        path: 'attendance/holidays',
+        element: (
+          <RequireAccess module={ModuleCode.LEAVE_HOLIDAYS}>
+            <HolidaysPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'attendance/holidays/:id',
+        element: (
+          <RequireAccess module={ModuleCode.LEAVE_HOLIDAYS}>
+            <HolidayCalendarView />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'attendance/setup',
+        element: (
+          <RequireAccess module={ModuleCode.ATTENDANCE_SETUP}>
+            <AttendanceSetupPage />
+          </RequireAccess>
+        ),
+      },
+
+      // ── Projects ───────────────────────────────────────────────────────────
+      {
+        path: 'project/clients',
+        element: (
+          <RequireAccess module={ModuleCode.PROJECT_CLIENTS}>
+            <ClientPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'project/clients/:id',
+        element: (
+          <RequireAccess module={ModuleCode.PROJECT_CLIENTS}>
+            <ClientDetailPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'project/projects',
+        element: (
+          <RequireAccess module={ModuleCode.PROJECT_PROJECTS}>
+            <ProjectPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'project/clients/:clientId/projects/:projectId',
+        element: (
+          <RequireAccess module={ModuleCode.PROJECT_PROJECTS}>
+            <ProjectDetailPage />
+          </RequireAccess>
+        ),
+      },
+
+      // ── Payroll ────────────────────────────────────────────────────────────
+      {
         path: 'payroll/listing',
-        element: <PayrollEmployeesPage />,
+        element: (
+          <RequireAccess module={ModuleCode.PAYROLL_OVERVIEW}>
+            <PayrollEmployeesPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'payroll/listing/:employeeId',
-        element: <PayrollEmployeeDetailPage />,
+        element: (
+          <RequireAccess module={ModuleCode.PAYROLL_OVERVIEW}>
+            <PayrollEmployeeDetailPage />
+          </RequireAccess>
+        ),
       },
+
+      // ── Reimbursement ──────────────────────────────────────────────────────
       {
         path: 'reimbursement',
         loader: () => {
@@ -188,11 +254,7 @@ const router = createBrowserRouter([
             try {
               const authResponse = JSON.parse(authResponseStr);
               const appId = authResponse?.data?.defaultAppId;
-              // Admin App ID
-              if (appId === AppId.ADMIN) {
-                return redirect('/reimbursement/list');
-              }
-              // Default to employee view
+              if (appId === AppId.ADMIN) return redirect('/reimbursement/list');
               return redirect('/reimbursement/me');
             } catch {
               return redirect('/auth/login');
@@ -202,29 +264,19 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: 'access/roles',
-        element: <RolesPage />,
-      },
-      {
-        path: 'access/users',
-        element: <UsersPage />,
-      },
-      {
-        path: 'access/permissions',
-        element: <PermissionsPage />,
-      },
-      {
         path: 'reimbursement/list',
-        element: <ReimbursementPage />,
+        element: (
+          <RequireAccess module={ModuleCode.REIMBURSEMENT}>
+            <ReimbursementPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'reimbursement/me',
         element: <EmployeeReimbursementPage />,
       },
-      {
-        path: 'organisation/leave-config',
-        element: <LeaveConfigPage />,
-      },
+
+      // ── Announcements ──────────────────────────────────────────────────────
       {
         path: 'announcements',
         loader: () => {
@@ -233,9 +285,7 @@ const router = createBrowserRouter([
             try {
               const authResponse = JSON.parse(authResponseStr);
               const appId = authResponse?.data?.defaultAppId;
-              if (appId === AppId.ADMIN) {
-                return redirect('/announcements/list');
-              }
+              if (appId === AppId.ADMIN) return redirect('/announcements/list');
               return redirect('/announcements/me');
             } catch {
               return redirect('/auth/login');
@@ -246,21 +296,44 @@ const router = createBrowserRouter([
       },
       {
         path: 'announcements/list',
-        element: <AnnouncementPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ANNOUNCEMENT}>
+            <AnnouncementPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'announcements/me',
         element: <EmployeeAnnouncementPage />,
       },
-      {
-        path: 'attendance/setup',
-        element: <AttendanceSetupPage />,
-      },
-      {
-        path: '*',
 
-        element: <div>404 Not Found</div>,
+      // ── Access Control ─────────────────────────────────────────────────────
+      {
+        path: 'access/roles',
+        element: (
+          <RequireAccess module={ModuleCode.ACCESS_ROLES}>
+            <RolesPage />
+          </RequireAccess>
+        ),
       },
+      {
+        path: 'access/users',
+        element: (
+          <RequireAccess module={ModuleCode.ACCESS_USERS}>
+            <UsersPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'access/permissions',
+        element: (
+          <RequireAccess module={ModuleCode.ACCESS_PERMISSIONS}>
+            <PermissionsPage />
+          </RequireAccess>
+        ),
+      },
+
+      { path: '*', element: <div>404 Not Found</div> },
     ],
   },
 ]);

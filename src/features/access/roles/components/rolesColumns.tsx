@@ -6,8 +6,8 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { Role } from '../types';
 
 interface RolesColumnsProps {
-  onEdit: (role: Role) => void;
-  onDelete: (role: Role) => void;
+  onEdit?: (role: Role) => void;
+  onDelete?: (role: Role) => void;
 }
 
 export const rolesColumns = ({ onEdit, onDelete }: RolesColumnsProps): ColumnDef<Role>[] => [
@@ -46,8 +46,8 @@ export const rolesColumns = ({ onEdit, onDelete }: RolesColumnsProps): ColumnDef
     header: 'Action',
     cell: (info) => (
       <TableActions
-        onEdit={() => onEdit(info.row.original)}
-        onDelete={() => onDelete(info.row.original)}
+        onEdit={onEdit ? () => onEdit(info.row.original) : undefined}
+        onDelete={onDelete ? () => onDelete(info.row.original) : undefined}
       />
     ),
   },

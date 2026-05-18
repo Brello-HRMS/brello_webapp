@@ -1,4 +1,6 @@
 export * from './NoDataFound';
+export * from './PermissionGate';
+export * from './RequireAccess';
 export * from './ListControls/ListControls';
 export * from './DataTable';
 export * from './PageHeader/PageHeader';
