@@ -1,12 +1,5 @@
-import styles from './HomePage.module.scss';
+import { DashboardPage } from '../features/dashboard/DashboardPage';
 
-const HomePage = () => {
-  return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Welcome to Brello</h1>
-      <p className={styles.description}>A production-ready scalable web application.</p>
-    </div>
-  );
-};
+const HomePage = () => <DashboardPage />;
 
 export default HomePage;

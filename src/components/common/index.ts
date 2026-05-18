@@ -15,4 +15,7 @@ export * from './ToggleButton/ToggleButton';
 export * from './Accordion';
 export * from './Popover/Popover';
 export * from './Select/Select';
+export * from './MultiSelect/MultiSelect';
 export * from './Modal/Modal';
+export * from './TimePicker/TimePicker';
+export * from './LocationPickerMap/LocationPickerMap';

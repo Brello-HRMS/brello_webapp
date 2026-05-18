@@ -1,0 +1,123 @@
+.titleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.titleText {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.priorityBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.priorityNormal {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+}
+
+.priorityImportant {
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+}
+
+.priorityUrgent {
+  background: var(--color-error-50);
+  color: var(--color-error-700);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.statusDraft {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-600);
+}
+
+.statusScheduled {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.statusPublished {
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+}
+
+.statusArchived {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-500);
+}
+
+.dateCell {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.readCount {
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary-500);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  color: var(--color-icon-gray);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+
+  &:hover {
+    color: var(--color-primary-purple);
+    border-color: var(--color-primary-purple);
+    background-color: var(--color-primary-50);
+  }
+
+  &.danger:hover {
+    color: var(--color-error-700);
+    border-color: var(--color-error-700);
+    background-color: var(--color-error-50);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}

@@ -9,6 +9,7 @@ import {
   ScrollText,
   Tags,
   Layers,
+  Megaphone,
   Circle,
   type LucideIcon,
 } from 'lucide-react';
@@ -24,6 +25,7 @@ export const iconMap: Record<string, LucideIcon> = {
   ScrollText,
   Tags,
   Layers,
+  Megaphone,
 };
 
 export const getIconComponent = (iconName: string | null): LucideIcon => {

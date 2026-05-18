@@ -1,0 +1,163 @@
+.daysContainer {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
+}
+
+.dayButton {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-white);
+  color: var(--color-text-primary-500);
+  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: var(--color-surface);
+  }
+
+  &.selected {
+    border-color: var(--color-primary-purple);
+    color: var(--color-primary-purple);
+    background-color: var(--color-primary-50);
+  }
+}
+
+.helpText {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-6);
+}
+
+.saturdaySection {
+  margin-top: var(--spacing-6);
+
+  .saturdayTitle {
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary-500);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .saturdayOptions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .saturdayOption {
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-white);
+    color: var(--color-text-primary-500);
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: var(--color-surface);
+    }
+
+    &.selected {
+      border-color: var(--color-primary-purple);
+      color: var(--color-primary-purple);
+      background-color: var(--color-primary-50);
+    }
+  }
+
+  .weeksContainer {
+    display: flex;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+
+  .weekChip {
+    width: 48px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-white);
+    color: var(--color-text-primary-500);
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: var(--color-surface);
+    }
+
+    &.selected {
+      border-color: var(--color-primary-purple);
+      color: var(--color-primary-purple);
+      background-color: var(--color-primary-50);
+    }
+  }
+}
+
+.dayButton.partial {
+  border-color: var(--color-warning-500, #f59e0b);
+  color: var(--color-warning-600, #d97706);
+  background-color: var(--color-warning-50, #fffbeb);
+}
+
+.previewBox {
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4);
+  margin-top: var(--spacing-6);
+
+  .previewHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-success-700);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-2);
+
+    &::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--color-success-700);
+    }
+  }
+
+  .previewTitle {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary-500);
+    margin-bottom: var(--spacing-1);
+  }
+
+  .previewText {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+
+    .highlight {
+      color: var(--color-primary-purple);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+}

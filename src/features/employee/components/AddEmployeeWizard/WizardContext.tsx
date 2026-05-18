@@ -5,6 +5,7 @@ interface WizardState {
   currentStep: number;
   employeeId: string | null;
   formData: any;
+  isEditMode: boolean;
   setEmployeeId: (id: string) => void;
   setFormData: (data: any) => void;
   updateFormData: (data: any) => void;
@@ -12,6 +13,7 @@ interface WizardState {
   prevStep: () => void;
   goToStep: (step: number) => void;
   resetWizard: () => void;
+  initEditMode: (employeeId: string, prefillData: any) => void;
 }
 
 const WizardContext = createContext<WizardState | undefined>(undefined);
@@ -55,10 +57,15 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return {};
   });
 
+  const [isEditMode, setIsEditMode] = useState(false);
+
   React.useEffect(() => {
-    const state = { currentStep, employeeId, formData };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [currentStep, employeeId, formData]);
+    // Only persist state for add mode, not edit mode
+    if (!isEditMode) {
+      const state = { currentStep, employeeId, formData };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+  }, [currentStep, employeeId, formData, isEditMode]);
 
   const nextStep = () => setCurrentStep((prev) => prev + 1);
   const prevStep = () => setCurrentStep((prev) => Math.max(1, prev - 1));
@@ -72,8 +79,16 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setCurrentStep(1);
     setEmployeeId(null);
     setFormData({});
+    setIsEditMode(false);
     localStorage.removeItem(STORAGE_KEY);
   };
+
+  const initEditMode = useCallback((editEmployeeId: string, prefillData: any) => {
+    setIsEditMode(true);
+    setEmployeeId(editEmployeeId);
+    setFormData(prefillData);
+    setCurrentStep(1);
+  }, []);
 
   return (
     <WizardContext.Provider
@@ -81,6 +96,7 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         currentStep,
         employeeId,
         formData,
+        isEditMode,
         setEmployeeId,
         setFormData,
         updateFormData,
@@ -88,6 +104,7 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         prevStep,
         goToStep,
         resetWizard,
+        initEditMode,
       }}
     >
       {children}

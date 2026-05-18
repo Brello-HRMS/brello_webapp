@@ -4,13 +4,10 @@ import { MainLayout } from '../components/layout/MainLayout';
 import HomePage from '../pages/HomePage';
 import { AuthLayout } from '../features/auth/components/AuthLayout/AuthLayout';
 import { Login } from '../features/auth/components/Login/Login';
-// import { LeadForm } from '../features/auth/components/Lead/leadForm';
 import { RegisterForm } from '../features/auth/components/Register/RegisterForm';
-// import { LoginForm } from '../features/auth/components/LoginForm/LoginForm';
 import { LeadForm } from '../features/auth/components/Lead/LeadForm';
 import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen';
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
-// import { Leadtest } from '../features/auth/components/leadtest/Leadtest';
 import EmployeeProfilePage from '../pages/Employee/Profile/EmployeeProfilePage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
@@ -32,6 +29,11 @@ import UsersPage from '../pages/access/UsersPage';
 import PermissionsPage from '../pages/access/PermissionsPage';
 import ReimbursementPage from '../pages/reimbursement/ReimbursementPage';
 import EmployeeReimbursementPage from '../pages/reimbursement/EmployeeReimbursementPage';
+import LeaveConfigPage from '../pages/leave/LeaveConfigPage';
+import AnnouncementPage from '../pages/announcement/AnnouncementPage';
+import EmployeeAnnouncementPage from '../pages/announcement/EmployeeAnnouncementPage';
+import AttendanceSetupPage from '../pages/attendance/setup/AttendanceSetupPage';
+import { AppId } from '../enum/app';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -111,7 +113,7 @@ const router = createBrowserRouter([
     loader: protectedLoader,
     children: [
       {
-        path: '/',
+        path: '/dashboard',
         element: <HomePage />,
       },
       {
@@ -179,6 +181,27 @@ const router = createBrowserRouter([
         element: <PayrollEmployeeDetailPage />,
       },
       {
+        path: 'reimbursement',
+        loader: () => {
+          const authResponseStr = sessionStorage.getItem('auth_response');
+          if (authResponseStr) {
+            try {
+              const authResponse = JSON.parse(authResponseStr);
+              const appId = authResponse?.data?.defaultAppId;
+              // Admin App ID
+              if (appId === AppId.ADMIN) {
+                return redirect('/reimbursement/list');
+              }
+              // Default to employee view
+              return redirect('/reimbursement/me');
+            } catch {
+              return redirect('/auth/login');
+            }
+          }
+          return redirect('/auth/login');
+        },
+      },
+      {
         path: 'access/roles',
         element: <RolesPage />,
       },
@@ -191,12 +214,47 @@ const router = createBrowserRouter([
         element: <PermissionsPage />,
       },
       {
-        path: 'payroll/reimbursements',
+        path: 'reimbursement/list',
         element: <ReimbursementPage />,
       },
       {
-        path: 'payroll/reimbursements/me',
+        path: 'reimbursement/me',
         element: <EmployeeReimbursementPage />,
+      },
+      {
+        path: 'organisation/leave-config',
+        element: <LeaveConfigPage />,
+      },
+      {
+        path: 'announcements',
+        loader: () => {
+          const authResponseStr = sessionStorage.getItem('auth_response');
+          if (authResponseStr) {
+            try {
+              const authResponse = JSON.parse(authResponseStr);
+              const appId = authResponse?.data?.defaultAppId;
+              if (appId === AppId.ADMIN) {
+                return redirect('/announcements/list');
+              }
+              return redirect('/announcements/me');
+            } catch {
+              return redirect('/auth/login');
+            }
+          }
+          return redirect('/auth/login');
+        },
+      },
+      {
+        path: 'announcements/list',
+        element: <AnnouncementPage />,
+      },
+      {
+        path: 'announcements/me',
+        element: <EmployeeAnnouncementPage />,
+      },
+      {
+        path: 'attendance/setup',
+        element: <AttendanceSetupPage />,
       },
       {
         path: '*',

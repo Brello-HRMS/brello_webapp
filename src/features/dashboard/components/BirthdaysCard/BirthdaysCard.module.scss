@@ -1,0 +1,107 @@
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5) var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--color-gray-100);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+}
+
+.subtitle {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 0;
+  border-bottom: 1px solid var(--color-border-light);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-primary-200);
+  color: var(--color-primary-700);
+  font-size: 0.8125rem;
+  font-weight: var(--font-weight-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 0.9375rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empId {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.dayBadge {
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  flex-shrink: 0;
+}

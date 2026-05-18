@@ -33,7 +33,7 @@ interface PayrollStepProps {
 }
 
 export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
-  const { employeeId, formData, updateFormData, nextStep } = useWizard();
+  const { employeeId, formData, updateFormData, nextStep, isEditMode } = useWizard();
   const { payrollMutation } = useEmployeeWizard();
 
   const {
@@ -250,11 +250,11 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
         <Button
           variant="secondary"
           type="button"
-          onClick={handleSaveDraft}
+          onClick={isEditMode ? onClose : handleSaveDraft}
           className={styles.saveDraftButton}
           isLoading={isPending}
         >
-          Save draft
+          {isEditMode ? 'Cancel' : 'Save draft'}
         </Button>
         <Button variant="primary" type="submit" className={styles.nextButton} isLoading={isPending}>
           Next
