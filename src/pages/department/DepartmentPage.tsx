@@ -10,6 +10,7 @@ import {
   ListControls,
   NoDataFound,
   PageHeader,
+  PermissionGate,
   WarningModal,
   AlertModal,
 } from '../../components/common';
@@ -19,6 +20,8 @@ import { useDeleteDepartment } from '../../features/department/hooks/useDeleteDe
 import { useDepartments } from '../../features/department/hooks/useDepartments';
 import { useUpdateDepartment } from '../../features/department/hooks/useUpdateDepartment';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode, ActionCode } from '../../enum/modules';
 import { SortOrder, Status } from '../../types/common';
 import { AddDepartmentModal } from '../../features/department/components/AddDepartmentModal/AddDepartmentModal';
 
@@ -47,7 +50,6 @@ const DepartmentPage = () => {
   const [selectedSort, setSelectedSort] = useState(`name:${SortOrder.ASC}`);
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
-  // Modal states
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [showCannotDeactivateModal, setShowCannotDeactivateModal] = useState(false);
   const [showDeleteDeptModal, setShowDeleteDeptModal] = useState(false);
@@ -55,15 +57,15 @@ const DepartmentPage = () => {
   const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const [isAddDepartmentOpen, setIsAddDepartmentOpen] = useState(false);
 
-  // Multi-select state
   const [isMultiSelectActive, setIsMultiSelectActive] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
 
+  const { hasCreateAccess, hasEditAccess, hasDeleteAccess, hasExportAccess, hasActivateAccess } =
+    useModuleAccess(ModuleCode.ORG_DEPARTMENTS);
+
   const { mutate: deleteDept } = useDeleteDepartment();
   const { mutate: updateDept } = useUpdateDepartment();
-
   const navigate = useNavigate();
-
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const queryParams = useMemo(() => {
@@ -79,12 +81,7 @@ const DepartmentPage = () => {
   }, [selectedSort, selectedStatus, pagination, debouncedSearchQuery]);
 
   const { data: response, isLoading } = useDepartments(queryParams);
-
   const departmentList = useMemo(() => response?.data?.data || [], [response]);
-
-  const filteredData = useMemo(() => {
-    return departmentList;
-  }, [departmentList]);
 
   const handleAddDepartment = useCallback(() => {
     setEditingDepartment(null);
@@ -119,9 +116,7 @@ const DepartmentPage = () => {
             status: selectedDepartment.status === Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE,
           },
         },
-        {
-          onSuccess: () => setShowDeactivateModal(false),
-        },
+        { onSuccess: () => setShowDeactivateModal(false) },
       );
     }
   }, [selectedDepartment, updateDept]);
@@ -136,34 +131,28 @@ const DepartmentPage = () => {
 
   const excelExportData = useMemo(() => {
     const dataToExport = isMultiSelectActive
-      ? filteredData.filter((dept) => selectedIds[dept.id])
-      : filteredData;
-
+      ? departmentList.filter((dept) => selectedIds[dept.id])
+      : departmentList;
     return dataToExport.map((dept) => ({
       Name: dept.name,
       Code: dept.code,
       Description: dept.description,
       Status: dept.status,
     }));
-  }, [filteredData, isMultiSelectActive, selectedIds]);
+  }, [departmentList, isMultiSelectActive, selectedIds]);
 
   const handleToggleSelection = useCallback((id: string) => {
-    setSelectedIds((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+    setSelectedIds((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
   const handleView = useCallback(
-    (dept: Department) => {
-      navigate(`/organisation/departments/${dept.id}`);
-    },
+    (dept: Department) => navigate(`/organisation/departments/${dept.id}`),
     [navigate],
   );
 
   const renderContent = () => {
     if (viewType === 'grid') {
-      if (filteredData.length === 0) {
+      if (departmentList.length === 0) {
         return (
           <NoDataFound
             title="No Departments Found"
@@ -180,9 +169,9 @@ const DepartmentPage = () => {
             <DepartmentCard
               key={item.id}
               department={item}
-              onEditClick={() => handleEditDepartment(item)}
-              onToggleStatus={() => handleDeactivateClick(item)}
-              onDelete={() => handleDeleteClick(item)}
+              onEditClick={hasEditAccess ? () => handleEditDepartment(item) : undefined}
+              onToggleStatus={hasActivateAccess ? () => handleDeactivateClick(item) : undefined}
+              onDelete={hasDeleteAccess ? () => handleDeleteClick(item) : undefined}
               isSelecting={isMultiSelectActive}
               isSelected={!!selectedIds[item.id]}
               onSelect={() => handleToggleSelection(item.id)}
@@ -197,8 +186,8 @@ const DepartmentPage = () => {
         columns={departmentColumns({
           isMultiSelectActive,
           onView: handleView,
-          onEdit: handleEditDepartment,
-          onDelete: handleDeleteClick,
+          onEdit: hasEditAccess ? handleEditDepartment : undefined,
+          onDelete: hasDeleteAccess ? handleDeleteClick : undefined,
         })}
         data={departmentList}
         pagination={pagination}
@@ -213,7 +202,6 @@ const DepartmentPage = () => {
     );
   };
 
-  // Main empty state
   if (
     !isLoading &&
     departmentList.length === 0 &&
@@ -227,11 +215,10 @@ const DepartmentPage = () => {
           description="Set up your first department to structure your organization and keep your workforce efficiently managed and organized."
           noDataImage={no_department}
           noDataImageAlt="No Department Found"
-          buttonText="Add New Department"
-          onButtonClick={handleAddDepartment}
-          showButtonIcon
+          buttonText={hasCreateAccess ? 'Add New Department' : undefined}
+          onButtonClick={hasCreateAccess ? handleAddDepartment : undefined}
+          showButtonIcon={hasCreateAccess}
         />
-
         <AddDepartmentModal
           key={isAddDepartmentOpen ? editingDepartment?.id || 'new' : 'closed'}
           open={isAddDepartmentOpen}
@@ -252,29 +239,33 @@ const DepartmentPage = () => {
         subtitle="Define and manage company departments."
         actions={
           <>
-            <ExcelExport
-              data={excelExportData}
-              filename="departments.xlsx"
-              sheetName="Departments"
-              buttonText={
-                isMultiSelectActive
-                  ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
-                  : 'Export All'
-              }
-              variant="secondary"
-              disabled={
-                isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
-              }
-            />
-            <Button
-              variant="primary"
-              onClick={handleAddDepartment}
-              disabled={isMultiSelectActive}
-              title={isMultiSelectActive ? 'Disable multi-select to add department' : undefined}
-            >
-              <Plus size={16} />
-              Add department
-            </Button>
+            {hasExportAccess && (
+              <ExcelExport
+                data={excelExportData}
+                filename="departments.xlsx"
+                sheetName="Departments"
+                buttonText={
+                  isMultiSelectActive
+                    ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
+                    : 'Export All'
+                }
+                variant="secondary"
+                disabled={
+                  isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
+                }
+              />
+            )}
+            <PermissionGate module={ModuleCode.ORG_DEPARTMENTS} action={ActionCode.CREATE}>
+              <Button
+                variant="primary"
+                onClick={handleAddDepartment}
+                disabled={isMultiSelectActive}
+                title={isMultiSelectActive ? 'Disable multi-select to add department' : undefined}
+              >
+                <Plus size={16} />
+                Add department
+              </Button>
+            </PermissionGate>
           </>
         }
       />
@@ -296,9 +287,7 @@ const DepartmentPage = () => {
         isMultiSelectActive={isMultiSelectActive}
         onMultiSelectToggle={() => {
           setIsMultiSelectActive(!isMultiSelectActive);
-          if (isMultiSelectActive) {
-            setSelectedIds({});
-          }
+          if (isMultiSelectActive) setSelectedIds({});
         }}
       />
 
