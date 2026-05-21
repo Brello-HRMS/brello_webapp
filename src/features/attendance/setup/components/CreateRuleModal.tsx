@@ -30,7 +30,15 @@ const getInitialForm = (data?: IRule | null): ICreateRuleForm => ({
   overtime_after_hours: data?.overtime_after_hours ?? 8,
   overtime_multiplier: data?.overtime_multiplier ?? 1.5,
   require_geo_fencing: data?.require_geo_fencing ?? false,
-  geo_fence: data?.geo_fence,
+  allow_multiple_checkins: data?.allow_multiple_checkins ?? false,
+  geo_fence: data?.geo_fence
+    ? {
+        office_name: data.geo_fence.office_name,
+        latitude: Number(data.geo_fence.latitude),
+        longitude: Number(data.geo_fence.longitude),
+        radius_meters: data.geo_fence.radius_meters,
+      }
+    : undefined,
 });
 
 // Parent should pass key={initialData?.id ?? 'new'} to force remount
@@ -185,6 +193,14 @@ const CreateRuleModal: React.FC<CreateRuleModalProps> = ({ isOpen, onClose, init
             />
           </div>
         )}
+
+        <div className={styles.toggleRow} style={{ marginTop: '16px' }}>
+          <span className={styles.toggleLabel}>Allow Multiple Check-ins</span>
+          <ToggleButton
+            checked={form.allow_multiple_checkins ?? false}
+            onChange={(v) => handleChange('allow_multiple_checkins', v)}
+          />
+        </div>
       </div>
 
       {isEditing && (

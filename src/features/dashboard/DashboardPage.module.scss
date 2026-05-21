@@ -1,0 +1,181 @@
+.page {
+  padding-block: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--spacing-4);
+  align-items: start;
+}
+
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.heroRight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-width: 0;
+}
+
+/* Greeting */
+.greeting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.greetingTitle {
+  font-size: 1.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.greetingSubtitle {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Banner — fixed height so it never bleeds behind siblings */
+.heroBanner {
+  width: 100%;
+  height: 220px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  isolation: isolate; /* own stacking context — prevents z-index bleed */
+}
+
+/* Stat cards */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+}
+
+/* ── Dashboard grid ─────────────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+}
+
+/* ── 1280px ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .hero {
+    grid-template-columns: 280px 1fr;
+  }
+}
+
+/* ── 1100px ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .hero {
+    grid-template-columns: 250px 1fr;
+  }
+
+  .heroBanner {
+    height: 200px;
+  }
+}
+
+/* ── 960px ──────────────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: 220px 1fr;
+  }
+
+  .greetingTitle {
+    font-size: 1.625rem;
+  }
+}
+
+/* ── 860px — stack hero ──────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .heroLeft {
+    width: 100%;
+  }
+
+  .heroBanner {
+    height: 220px;
+  }
+}
+
+/* ── 720px ──────────────────────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .heroBanner {
+    height: 190px;
+  }
+}
+
+/* ── 640px ──────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .page {
+    padding-block: var(--spacing-4);
+    gap: var(--spacing-3);
+  }
+
+  .hero {
+    gap: var(--spacing-3);
+  }
+
+  .greetingTitle {
+    font-size: 1.5rem;
+  }
+
+  .heroBanner {
+    height: 170px;
+  }
+
+  .statsRow {
+    gap: var(--spacing-3);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+}
+
+/* ── 480px ──────────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .greetingTitle {
+    font-size: 1.375rem;
+  }
+
+  .heroBanner {
+    height: 150px;
+  }
+
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 360px ──────────────────────────────────────────────────────────────────── */
+@media (max-width: 360px) {
+  .page {
+    padding-block: var(--spacing-3);
+  }
+
+  .greetingTitle {
+    font-size: 1.25rem;
+  }
+}

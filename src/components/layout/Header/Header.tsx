@@ -29,15 +29,12 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
-  // const navigate = useNavigate();
   const { mutate: logout } = useLogout();
 
   const breadcrumbs = useMemo(() => {
     const segments = location.pathname.split('/').filter(Boolean);
 
-    // Function to truncate long IDs (UUIDs)
     const truncateId = (id: string, startChars = 8, endChars = 8) => {
-      // Check if it looks like a UUID (long string with dashes)
       if (id.length > 20 && id.includes('-')) {
         return `${id.substring(0, startChars)}...${id.substring(id.length - endChars)}`;
       }
@@ -51,13 +48,8 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
 
     if (allCrumbs.length <= 4) return allCrumbs;
 
-    // Smart truncation for long paths
     return [allCrumbs[0], { label: '...', path: '' }, ...allCrumbs.slice(-2)];
   }, [location.pathname]);
-
-  // const handleCrumbClick = (path: string) => {
-  //   if (path) navigate(path);
-  // };
 
   const showNotification = useMediaQuery('(min-width: 801px)');
   const showSettings = useMediaQuery('(min-width: 701px)');
@@ -68,9 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
           {
             icon: <Bell size={16} />,
             title: 'Notification',
-            action: () => {
-              setIsProfileOpen(false);
-            },
+            action: () => setIsProfileOpen(false),
           },
         ]
       : []),
@@ -79,9 +69,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
           {
             icon: <Settings size={16} />,
             title: 'Setting',
-            action: () => {
-              setIsProfileOpen(false);
-            },
+            action: () => setIsProfileOpen(false),
           },
         ]
       : []),
@@ -112,10 +100,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
             return (
               <div key={`${crumb.path}-${index}`} className={styles.breadcrumbSegment}>
                 {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
-                <div
-                  className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''}`}
-                  // onClick={() => handleCrumbClick(crumb.path)}
-                >
+                <div className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''}`}>
                   {crumb.label}
                 </div>
               </div>

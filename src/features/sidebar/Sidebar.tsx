@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Search, Command, Layers, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
+import { useSearchStore } from '../search/store/search.store';
+
 import styles from './Sidebar.module.scss';
 import { NavItem } from './components/NavItem';
 import { useSidebarMenu } from './hooks/useSidebarMenu';
@@ -20,6 +22,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const location = useLocation();
   const { data: menuResponse, isLoading, error } = useSidebarMenu();
+  const { openModal } = useSearchStore();
 
   const MENU_ITEMS: MenuItem[] = useMemo(() => {
     if (!menuResponse?.data?.length) return [];
@@ -66,6 +69,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     if (!path) return false;
     const currentPath = location.pathname.split('/').slice(0, 3).join('/');
     const targetPath = path.split('/').slice(0, 3).join('/');
+
     return currentPath === targetPath;
   };
 
@@ -97,13 +101,13 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
       {!isCollapsed && (
         <div className={styles.searchContainer}>
-          <div className={styles.searchWrapper}>
-            <Search size={24} />
-            <input type="text" placeholder="Search" />
+          <button className={styles.searchWrapper} onClick={openModal} aria-label="Open search">
+            <Search size={16} />
+            <span className={styles.searchPlaceholder}>Search</span>
             <div className={styles.shortcut}>
-              <Command size={18} /> /
+              <Command size={14} /> /
             </div>
-          </div>
+          </button>
         </div>
       )}
 

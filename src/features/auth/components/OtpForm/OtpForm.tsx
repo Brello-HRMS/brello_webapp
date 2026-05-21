@@ -108,7 +108,7 @@ export const OtpForm: React.FC = () => {
               if (setup_required) {
                 navigate('/auth/lead', { state: { userId: user.id } });
               } else {
-                navigate('/');
+                navigate('/dashboard');
               }
             },
           },

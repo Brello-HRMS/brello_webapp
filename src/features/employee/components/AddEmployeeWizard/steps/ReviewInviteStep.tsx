@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, User, Building2, Wallet, FileCheck } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { Button } from '../../../../../components/common';
 import { useWizard } from '../WizardContext';
@@ -12,10 +13,20 @@ interface ReviewInviteStepProps {
 }
 
 export const ReviewInviteStep: React.FC<ReviewInviteStepProps> = ({ onClose }) => {
-  const { employeeId, formData, resetWizard } = useWizard();
+  const { employeeId, formData, resetWizard, isEditMode } = useWizard();
   const { finalizeMutation } = useEmployeeWizard();
+  const queryClient = useQueryClient();
 
   const handleFinalize = () => {
+    if (isEditMode) {
+      // In edit mode, just invalidate queries and close
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
+      queryClient.invalidateQueries({ queryKey: ['employee', employeeId] });
+      resetWizard();
+      onClose();
+      return;
+    }
+
     if (!employeeId) return;
 
     finalizeMutation.mutate(employeeId, {
@@ -32,8 +43,14 @@ export const ReviewInviteStep: React.FC<ReviewInviteStepProps> = ({ onClose }) =
     <div className={styles.container}>
       <div className={styles.successAnimation}>
         <CheckCircle2 size={64} className={styles.successIcon} />
-        <h2 className={styles.title}>All set! Ready to onboard?</h2>
-        <p className={styles.subtitle}>Review the details below before sending the invitation.</p>
+        <h2 className={styles.title}>
+          {isEditMode ? 'Changes saved!' : 'All set! Ready to onboard?'}
+        </h2>
+        <p className={styles.subtitle}>
+          {isEditMode
+            ? 'Review the updated details below.'
+            : 'Review the details below before sending the invitation.'}
+        </p>
       </div>
 
       <div className={styles.summaryGrid}>
@@ -99,7 +116,7 @@ export const ReviewInviteStep: React.FC<ReviewInviteStepProps> = ({ onClose }) =
           className={styles.nextButton}
           isLoading={isPending}
         >
-          Finish & Invite Employee
+          {isEditMode ? 'Save Changes' : 'Finish & Invite Employee'}
         </Button>
       </div>
     </div>
