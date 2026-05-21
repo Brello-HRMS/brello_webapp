@@ -10,7 +10,6 @@ import { RegisterForm } from '../features/auth/components/Register/RegisterForm'
 import { LeadForm } from '../features/auth/components/Lead/LeadForm';
 import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen';
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
-import EmployeeProfilePage from '../pages/attendance/EmployeeProfilePage';
 import DailyPreviewPage from '../pages/attendance/DailyPreviewPage';
 import DepartmentPage from '../pages/department/DepartmentPage';
 import DepartmentDetailPage from '../pages/department/DepartmentDetailPage';
@@ -24,6 +23,7 @@ import PoliciesPage from '../pages/policies/PoliciesPage';
 import HolidaysPage from '../pages/holidays/HolidaysPage';
 import HolidayCalendarView from '../pages/holidays/HolidayCalendarView';
 import EmployeeDirectoryPage from '../pages/Employee/Directory/EmployeeDirectoryPage';
+import EmployeeProfileAdminPage from '../pages/Employee/Profile/EmployeeProfilePage';
 import PayrollConfigPage from '../pages/payroll/PayrollConfigPage';
 import PayrollEmployeesPage from '../pages/payroll/PayrollEmployeesPage';
 import PayrollEmployeeDetailPage from '../pages/payroll/PayrollEmployeeDetailPage';
@@ -128,10 +128,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'employee/profile/:id',
-        element: <EmployeeProfilePage />,
-      },
-      {
         path: 'project/clients',
         element: <ClientPage />,
       },
@@ -166,10 +162,6 @@ const router = createBrowserRouter([
       {
         path: 'project/clients/:clientId/projects/:projectId',
         element: <ProjectDetailPage />,
-      },
-      {
-        path: 'employee/directory',
-        element: <EmployeeDirectoryPage />,
       },
       {
         path: 'organisation/policies',
@@ -209,7 +201,7 @@ const router = createBrowserRouter([
         path: 'employee/profile/:id',
         element: (
           <RequireAccess module={ModuleCode.EMP_PROFILE_ADMIN}>
-            <EmployeeProfilePage />
+            <EmployeeProfileAdminPage />
           </RequireAccess>
         ),
       },
