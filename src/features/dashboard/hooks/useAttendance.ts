@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-import { clockIn, clockOut, getTodayAttendance } from '../../../api/attendance';
+import { clockIn, clockOut, getTodayAttendance, preCheckCheckIn } from '../../../api/attendance';
 
-import type { TodayAttendance } from '../../../api/attendance';
+import type { TodayAttendance, PreCheckResponse } from '../../../api/attendance';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -35,6 +35,8 @@ export const useAttendance = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [coords, setCoords] = useState<Coords | null>(null);
   const [locationStatus, setLocationStatus] = useState<LocationStatus>('requesting');
+  const [isPreCheckModalOpen, setIsPreCheckModalOpen] = useState(false);
+  const [preCheckData, setPreCheckData] = useState<PreCheckResponse | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Request location permission on mount — mandatory for geo-fenced attendance
@@ -91,22 +93,47 @@ export const useAttendance = () => {
     fetchToday();
   }, [fetchToday]);
 
-  const handleCheckIn = useCallback(async () => {
+  const handleConfirmCheckIn = useCallback(
+    async (reason?: string) => {
+      setActionLoading(true);
+      setError(null);
+      try {
+        await clockIn({
+          device: 'WEB',
+          latitude: coords?.latitude,
+          longitude: coords?.longitude,
+          remote_reason: reason,
+        });
+        setIsPreCheckModalOpen(false);
+        setPreCheckData(null);
+        await fetchToday();
+      } catch (err: unknown) {
+        setError((err as { message?: string }).message ?? 'Check-in failed');
+      } finally {
+        setActionLoading(false);
+      }
+    },
+    [fetchToday, coords],
+  );
+
+  const handlePreCheck = useCallback(async () => {
     setActionLoading(true);
     setError(null);
     try {
-      await clockIn({
-        device: 'WEB',
-        latitude: coords?.latitude,
-        longitude: coords?.longitude,
-      });
-      await fetchToday();
+      const result = await preCheckCheckIn(coords?.latitude, coords?.longitude);
+      if (result.is_late || (result.is_remote && result.require_remote_reason)) {
+        setPreCheckData(result);
+        setIsPreCheckModalOpen(true);
+        setActionLoading(false);
+      } else {
+        // Not late and not requiring remote reason -> proceed to check in directly
+        handleConfirmCheckIn();
+      }
     } catch (err: unknown) {
-      setError((err as { message?: string }).message ?? 'Check-in failed');
-    } finally {
+      setError((err as { message?: string }).message ?? 'Check-in pre-check failed');
       setActionLoading(false);
     }
-  }, [fetchToday, coords]);
+  }, [coords, handleConfirmCheckIn]);
 
   const handleCheckOut = useCallback(async () => {
     setActionLoading(true);
@@ -144,10 +171,14 @@ export const useAttendance = () => {
     actionLoading,
     error,
     locationStatus,
-    checkIn: handleCheckIn,
+    checkIn: handlePreCheck,
     checkOut: handleCheckOut,
     shiftDisplay,
     checkInTime: today?.check_in_time ?? null,
     attendanceStatus: today?.attendance_status ?? null,
+    isPreCheckModalOpen,
+    setIsPreCheckModalOpen,
+    preCheckData,
+    confirmCheckIn: handleConfirmCheckIn,
   };
 };

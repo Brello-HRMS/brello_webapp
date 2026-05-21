@@ -29,58 +29,60 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className={styles.page}>
       {/* Hero: left = greeting + clock · right = banner + stat cards */}
-      <div className={styles.hero}>
+      <div className={styles.heroContainer}>
         {/* Left column */}
-        <div className={styles.heroLeft}>
-          <div className={styles.greeting}>
-            <h1 className={styles.greetingTitle}>
-              {greeting}, {firstName}!
-            </h1>
-            <p className={styles.greetingSubtitle}>Here is your monthly overview.</p>
+        <div className={styles.greeting}>
+          <h1 className={styles.greetingTitle}>
+            {greeting}, {firstName}!
+          </h1>
+          <p className={styles.greetingSubtitle}>Here is your monthly overview.</p>
+        </div>
+        <div className={styles.heroBanner}>
+          <SceneBanner />
+        </div>
+        <div className={styles.hero}>
+          <div className={styles.heroLeft}>
+            <ClockInCard />
           </div>
-          <ClockInCard />
+          <div className={styles.heroRight}>
+            <div className={styles.statsRow}>
+              <StatCard
+                label="Total Employees"
+                value={stats.totalEmployees != null ? String(stats.totalEmployees) : '—'}
+                icon={Users}
+                trend={
+                  stats.employeeTrend
+                    ? {
+                        value: stats.employeeTrend,
+                        direction: stats.employeeTrend.startsWith('-') ? 'down' : 'up',
+                      }
+                    : undefined
+                }
+              />
+              <StatCard
+                label="Attendance"
+                value={stats.attendancePercent ?? '—'}
+                icon={CalendarCheck2}
+                trend={
+                  stats.attendanceTrend
+                    ? {
+                        value: stats.attendanceTrend,
+                        direction: stats.attendanceTrend.startsWith('-') ? 'down' : 'up',
+                      }
+                    : undefined
+                }
+              />
+              <StatCard
+                label="Payroll"
+                value={data.stats.payrollAmount}
+                icon={HandCoins}
+                subtitle="This month"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Right column */}
-        <div className={styles.heroRight}>
-          <div className={styles.heroBanner}>
-            <SceneBanner />
-          </div>
-          <div className={styles.statsRow}>
-            <StatCard
-              label="Total Employees"
-              value={stats.totalEmployees != null ? String(stats.totalEmployees) : '—'}
-              icon={Users}
-              trend={
-                stats.employeeTrend
-                  ? {
-                      value: stats.employeeTrend,
-                      direction: stats.employeeTrend.startsWith('-') ? 'down' : 'up',
-                    }
-                  : undefined
-              }
-            />
-            <StatCard
-              label="Attendance"
-              value={stats.attendancePercent ?? '—'}
-              icon={CalendarCheck2}
-              trend={
-                stats.attendanceTrend
-                  ? {
-                      value: stats.attendanceTrend,
-                      direction: stats.attendanceTrend.startsWith('-') ? 'down' : 'up',
-                    }
-                  : undefined
-              }
-            />
-            <StatCard
-              label="Payroll"
-              value={data.stats.payrollAmount}
-              icon={HandCoins}
-              subtitle="This month"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Dashboard grid */}
@@ -88,7 +90,7 @@ export const DashboardPage: React.FC = () => {
         <ApprovalRequestsCard items={data.approvalItems} totalCount={totalApprovals} />
         <BirthdaysCard />
         <AnnouncementCard todayCount={data.announcementCount} />
-        <DailyAttendanceReport rows={data.attendanceReport} />
+        <DailyAttendanceReport />
         <HolidaysCard />
         <NewHiresCard />
       </div>
