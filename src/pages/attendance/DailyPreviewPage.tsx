@@ -12,114 +12,107 @@ import {
 } from 'lucide-react';
 
 import AddManualEntryModal from '../../components/attendance/AddManualEntryModal';
+import { useDailyPreview } from '../../features/attendance/hooks/useAttendance';
 
 import styles from './DailyPreviewPage.module.scss';
 
-import type { AttendanceRecord, AttendanceStats } from '../../types/attendance';
+import type { DailyPreviewSummary } from '../../features/attendance/types';
 
-const DUMMY_DATA: AttendanceRecord[] = [
-  {
-    id: '1',
-    employee: {
-      id: 'EMP001',
-      name: 'John Doe',
-      role: 'Senior Product Designer',
-      avatar: 'https://i.pravatar.cc/150?u=EMP001',
-    },
-    date: '27 Oct, 2025',
-    checkIn: '09:00 AM',
-    checkOut: '05:30 PM',
-    totalHours: '8h 30m',
-    status: 'Present',
-    notes: 'Regular shift',
-  },
-  {
-    id: '2',
-    employee: {
-      id: 'EMP002',
-      name: 'Sarah Smith',
-      role: 'Frontend Developer',
-      avatar: 'https://i.pravatar.cc/150?u=EMP002',
-    },
-    date: '27 Oct, 2025',
-    checkIn: '09:15 AM',
-    checkOut: '06:00 PM',
-    totalHours: '8h 45m',
-    status: 'Late',
-    notes: 'Traffic delay',
-  },
-  {
-    id: '3',
-    employee: {
-      id: 'EMP003',
-      name: 'Michael Brown',
-      role: 'Backend Engineer',
-      avatar: 'https://i.pravatar.cc/150?u=EMP003',
-    },
-    date: '27 Oct, 2025',
-    checkIn: '09:00 AM',
-    checkOut: '01:00 PM',
-    totalHours: '4h 00m',
-    status: 'Half-day',
-    notes: 'Doctor appointment',
-  },
-  {
-    id: '4',
-    employee: {
-      id: 'EMP004',
-      name: 'Emily Davis',
-      role: 'UI Designer',
-      avatar: 'https://i.pravatar.cc/150?u=EMP004',
-    },
-    date: '27 Oct, 2025',
-    checkIn: '-',
-    checkOut: '-',
-    totalHours: '0h 00m',
-    status: 'Absent',
-    notes: 'Sick leave',
-  },
-  // Add more entries to make it look like 167 entries
-  ...Array.from({ length: 6 }).map((_, i) => ({
-    id: `${i + 5}`,
-    employee: {
-      id: `EMP00${i + 5}`,
-      name: `Employee ${i + 5}`,
-      role: 'Team Member',
-      avatar: `https://i.pravatar.cc/150?u=EMP00${i + 5}`,
-    },
-    date: '27 Oct, 2025',
-    checkIn: '09:00 AM',
-    checkOut: '05:00 PM',
-    totalHours: '8h 00m',
-    status: 'Present' as const,
-    notes: '-',
-  })),
-];
-
-const STATS: AttendanceStats = {
-  totalPresent: 142,
-  totalAbsent: 12,
-  lateArrivals: 8,
-  halfDays: 5,
-  totalEntries: 167,
+const DEFAULT_STATS: DailyPreviewSummary = {
+  present: 0,
+  absent: 0,
+  late: 0,
+  half_day: 0,
+  on_leave: 0,
+  missed_checkout: 0,
+  office_in: 0,
+  remote_in: 0,
+  geo_violations: 0,
 };
 
 const DailyPreviewPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [currentDate, setCurrentDate] = useState(() => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
+
+  const { data: response, isLoading } = useDailyPreview({
+    date: currentDate,
+    search: searchTerm,
+    page,
+    limit: 20,
+  });
+
+  const records = response?.data?.items || [];
+  const stats = response?.data?.summary || DEFAULT_STATS;
+
+  const formatDateDisplay = (dateStr: string) => {
+    if (!dateStr) return '';
+    try {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      if (isNaN(year) || isNaN(month) || isNaN(day)) return dateStr;
+      const date = new Date(year, month - 1, day);
+      return date.toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'Present':
+    if (!status) return '';
+    switch (status.toUpperCase()) {
+      case 'PRESENT':
+      case 'OVERTIME':
         return styles.present;
-      case 'Late':
+      case 'LATE':
         return styles.late;
-      case 'Half-day':
+      case 'HALF_DAY':
+      case 'HALF-DAY':
         return styles.halfDay;
-      case 'Absent':
+      case 'ABSENT':
+      case 'MISSED_CHECKOUT':
         return styles.absent;
       default:
         return '';
+    }
+  };
+
+  const formatStatus = (status: string) => {
+    if (!status) return '-';
+    switch (status.toUpperCase()) {
+      case 'PRESENT':
+        return 'Present';
+      case 'LATE':
+        return 'Late';
+      case 'HALF_DAY':
+      case 'HALF-DAY':
+        return 'Half-day';
+      case 'ABSENT':
+        return 'Absent';
+      case 'ON_LEAVE':
+        return 'On Leave';
+      case 'HOLIDAY':
+        return 'Holiday';
+      case 'WEEKLY_OFF':
+        return 'Weekly Off';
+      case 'MISSED_CHECKOUT':
+        return 'Missed Checkout';
+      case 'OVERTIME':
+        return 'Overtime';
+      case 'PENDING_APPROVAL':
+        return 'Pending';
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase().replace(/_/g, ' ');
     }
   };
 
@@ -127,35 +120,52 @@ const DailyPreviewPage: React.FC = () => {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>Daily Preview</h1>
-        <div className={styles.dateSelector}>
+        <div className={styles.dateSelector} style={{ position: 'relative' }}>
           <CalendarIcon size={16} />
-          <span>27 Oct, 2025</span>
+          <span>{formatDateDisplay(currentDate)}</span>
+          <input
+            type="date"
+            value={currentDate}
+            onChange={(e) => {
+              setCurrentDate(e.target.value);
+              setPage(1);
+            }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0,
+              cursor: 'pointer',
+            }}
+          />
         </div>
       </header>
 
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Total Present</span>
-          <span className={styles.statValue}>{STATS.totalPresent}</span>
+          <span className={styles.statValue}>{stats.present}</span>
         </div>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Total Absent</span>
-          <span className={styles.statValue}>{STATS.totalAbsent}</span>
+          <span className={styles.statValue}>{stats.absent}</span>
         </div>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Late Arrivals</span>
-          <span className={styles.statValue}>{STATS.lateArrivals}</span>
+          <span className={styles.statValue}>{stats.late}</span>
         </div>
         <div className={styles.statCard}>
           <span className={styles.statLabel}>Half-Day</span>
-          <span className={styles.statValue}>{STATS.halfDays}</span>
+          <span className={styles.statValue}>{stats.half_day}</span>
         </div>
       </div>
 
       <section className={styles.tableSection}>
         <div className={styles.tableHeader}>
           <div className={styles.titleRow}>
-            <h2>Employee Attendance - {STATS.totalEntries} Entries</h2>
+            <h2>Employee Attendance </h2>
             <button className={styles.addEntryBtn} onClick={() => setIsModalOpen(true)}>
               <Plus size={18} />
               Add manual entry
@@ -169,7 +179,10 @@ const DailyPreviewPage: React.FC = () => {
                 type="text"
                 placeholder="Search employees..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(1);
+                }}
               />
             </div>
 
@@ -202,51 +215,80 @@ const DailyPreviewPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {DUMMY_DATA.map((record) => (
-                <tr key={record.id}>
-                  <td>
-                    <div className={styles.employeeCell}>
-                      <img
-                        src={record.employee.avatar}
-                        alt={record.employee.name}
-                        className={styles.avatar}
-                      />
-                      <div className={styles.info}>
-                        <span className={styles.name}>{record.employee.name}</span>
-                        <span className={styles.role}>
-                          {record.employee.id} • {record.employee.role}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{record.date}</td>
-                  <td>{record.checkIn}</td>
-                  <td>{record.checkOut}</td>
-                  <td>{record.totalHours}</td>
-                  <td>
-                    <span className={`${styles.statusBadge} ${getStatusClass(record.status)}`}>
-                      {record.status}
-                    </span>
-                  </td>
-                  <td>{record.notes || '-'}</td>
-                  <td>
-                    <button className={styles.iconBtn}>
-                      <MoreVertical size={16} />
-                    </button>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '24px' }}>
+                    Loading...
                   </td>
                 </tr>
-              ))}
+              ) : records.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '24px' }}>
+                    No records found
+                  </td>
+                </tr>
+              ) : (
+                records.map((record) => (
+                  <tr key={record.attendance_id}>
+                    <td>
+                      <div className={styles.employeeCell}>
+                        <img
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(record.employee.name)}&background=random`}
+                          alt={record.employee.name}
+                          className={styles.avatar}
+                        />
+                        <div className={styles.info}>
+                          <span className={styles.name}>{record.employee.name}</span>
+                          <span className={styles.role}>
+                            {record.employee.emp_code} •{' '}
+                            {record.employee.department || 'No Department'}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{record.date}</td>
+                    <td>{record.check_in || '-'}</td>
+                    <td>{record.check_out || '-'}</td>
+                    <td>{record.worked_hours || '-'}</td>
+                    <td>
+                      <span
+                        className={`${styles.statusBadge} ${getStatusClass(record.attendance_status)}`}
+                      >
+                        {formatStatus(record.attendance_status)}
+                      </span>
+                    </td>
+                    <td>{record.notes || '-'}</td>
+                    <td>
+                      <button className={styles.iconBtn}>
+                        <MoreVertical size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         <div className={styles.pagination}>
-          <span className={styles.pageInfo}>Showing 1 to 10 of {STATS.totalEntries} entries</span>
+          <span className={styles.pageInfo}>
+            Showing {records.length > 0 ? (page - 1) * 20 + 1 : 0} to{' '}
+            {Math.min(page * 20, response?.data?.pagination?.total || 0)} of{' '}
+            {response?.data?.pagination?.total || 0} entries
+          </span>
           <div className={styles.pageActions}>
-            <button className={styles.iconBtn} disabled>
+            <button
+              className={styles.iconBtn}
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
               <ChevronLeft size={18} />
             </button>
-            <button className={styles.iconBtn}>
+            <button
+              className={styles.iconBtn}
+              disabled={!response?.data?.pagination || page * 20 >= response.data.pagination.total}
+              onClick={() => setPage((p) => p + 1)}
+            >
               <ChevronRight size={18} />
             </button>
           </div>
