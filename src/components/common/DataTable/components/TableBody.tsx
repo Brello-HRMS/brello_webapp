@@ -4,9 +4,10 @@ import styles from '../DataTable.module.scss';
 
 interface TableBodyProps<TData> {
   table: Table<TData>;
+  onRowClick?: (row: TData) => void;
 }
 
-export const TableBody = <TData,>({ table }: TableBodyProps<TData>) => {
+export const TableBody = <TData,>({ table, onRowClick }: TableBodyProps<TData>) => {
   return (
     <tbody>
       {table.getRowModel().rows.length > 0 ? (
@@ -15,8 +16,16 @@ export const TableBody = <TData,>({ table }: TableBodyProps<TData>) => {
           return (
             <tr
               key={row.id}
-              className={`${styles.row} ${isSelected ? styles.selectedRow : ''}`}
-              onClick={() => row.getCanSelect() && row.toggleSelected()}
+              className={`${styles.row} ${isSelected ? styles.selectedRow : ''} ${
+                onRowClick ? styles.clickableRow : ''
+              }`}
+              onClick={() => {
+                if (onRowClick) {
+                  onRowClick(row.original);
+                } else if (row.getCanSelect()) {
+                  row.toggleSelected();
+                }
+              }}
             >
               {row.getVisibleCells().map((cell) => {
                 const isPinned = cell.column.getIsPinned();

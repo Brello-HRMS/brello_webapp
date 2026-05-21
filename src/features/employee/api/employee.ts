@@ -54,6 +54,26 @@ export const linkDocuments = async (id: string, data: { documents: any[] }) => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/employees/${id}/documents`, data);
 };
 
+export const updatePersonalDetails = async (id: string, data: any) => {
+  return apiClient.patch(`${envVars.BRELLO_BASE_API}/employees/${id}/personal`, data);
+};
+
+export const updateEducationItem = async (id: string, eduId: string, data: EducationDto) => {
+  return apiClient.patch(`${envVars.BRELLO_BASE_API}/employees/${id}/education/${eduId}`, data);
+};
+
+export const deleteEducationItem = async (id: string, eduId: string) => {
+  return apiClient.delete(`${envVars.BRELLO_BASE_API}/employees/${id}/education/${eduId}`);
+};
+
+export const updateExperienceItem = async (id: string, expId: string, data: ExperienceDto) => {
+  return apiClient.patch(`${envVars.BRELLO_BASE_API}/employees/${id}/experience/${expId}`, data);
+};
+
+export const deleteExperienceItem = async (id: string, expId: string) => {
+  return apiClient.delete(`${envVars.BRELLO_BASE_API}/employees/${id}/experience/${expId}`);
+};
+
 export const getEmployeeDropdown = async () => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/employees/dropdown`);
 };

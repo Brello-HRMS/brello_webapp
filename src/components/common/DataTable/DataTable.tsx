@@ -33,6 +33,7 @@ export const DataTable = <TData, TValue>({
   enableRowSelection = false,
   rowSelection,
   onRowSelectionChange,
+  onRowClick,
 }: DataTableProps<TData, TValue>) => {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
@@ -121,7 +122,7 @@ export const DataTable = <TData, TValue>({
       <div className={styles.tableWrapper}>
         <table className={styles.table} style={{ width: '100%', minWidth: table.getTotalSize() }}>
           <TableHead table={table} />
-          <TableBody table={table} />
+          <TableBody table={table} onRowClick={onRowClick} />
         </table>
       </div>
 

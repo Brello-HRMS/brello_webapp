@@ -23,7 +23,7 @@ interface SystemAccessStepProps {
 }
 
 export const SystemAccessStep: React.FC<SystemAccessStepProps> = ({ onClose }) => {
-  const { employeeId, formData, updateFormData, nextStep } = useWizard();
+  const { employeeId, formData, updateFormData, nextStep, isEditMode } = useWizard();
   const { systemAccessMutation } = useEmployeeWizard();
   const { data: rolesResponse, isLoading: isLoadingRoles } = useRoles();
   const [selectedAssets, setSelectedAssets] = useState<string[]>(formData.assignedAssets || []);
@@ -192,11 +192,11 @@ export const SystemAccessStep: React.FC<SystemAccessStepProps> = ({ onClose }) =
         <Button
           variant="secondary"
           type="button"
-          onClick={handleSaveDraft}
+          onClick={isEditMode ? onClose : handleSaveDraft}
           className={styles.saveDraftButton}
           disabled={isPending}
         >
-          Save draft
+          {isEditMode ? 'Cancel' : 'Save draft'}
         </Button>
         <Button
           variant="primary"

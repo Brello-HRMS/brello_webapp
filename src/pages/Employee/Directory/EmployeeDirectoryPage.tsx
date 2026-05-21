@@ -49,10 +49,10 @@ const EmployeeDirectoryPage = () => {
   const [selectedSort, setSelectedSort] = useState(`first_name:${SortOrder.ASC}`);
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
-  // Multi-select state
   const [isMultiSelectActive, setIsMultiSelectActive] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
   const [isAddWizardOpen, setIsAddWizardOpen] = useState(false);
+  const [editEmployeeId, setEditEmployeeId] = useState<string | null>(null);
 
   const { hasCreateAccess, hasEditAccess, hasDeleteAccess, hasExportAccess } = useModuleAccess(
     ModuleCode.EMP_DIRECTORY,
@@ -85,12 +85,9 @@ const EmployeeDirectoryPage = () => {
     setIsAddWizardOpen(true);
   }, []);
 
-  const handleEditEmployee = useCallback(
-    (emp: Employee) => {
-      navigate(`/employee/profile/${emp.id}/edit`);
-    },
-    [navigate],
-  );
+  const handleEditEmployee = useCallback((emp: Employee) => {
+    setEditEmployeeId(emp.id);
+  }, []);
 
   const handleDeleteEmployee = useCallback((emp: Employee) => {
     // Delete action placeholder
@@ -345,7 +342,14 @@ const EmployeeDirectoryPage = () => {
 
         {renderContent()}
 
-        <AddEmployeeWizard open={isAddWizardOpen} onClose={() => setIsAddWizardOpen(false)} />
+        <AddEmployeeWizard
+          open={isAddWizardOpen || !!editEmployeeId}
+          onClose={() => {
+            setIsAddWizardOpen(false);
+            setEditEmployeeId(null);
+          }}
+          editEmployeeId={editEmployeeId || undefined}
+        />
       </div>
     </WizardProvider>
   );

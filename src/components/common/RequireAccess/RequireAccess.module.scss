@@ -1,0 +1,16 @@
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary-purple);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

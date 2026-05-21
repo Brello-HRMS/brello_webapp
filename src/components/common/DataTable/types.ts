@@ -16,4 +16,5 @@ export interface DataTableProps<TData, TValue> {
   enableRowSelection?: boolean;
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (rowSelection: Record<string, boolean>) => void;
+  onRowClick?: (row: TData) => void;
 }

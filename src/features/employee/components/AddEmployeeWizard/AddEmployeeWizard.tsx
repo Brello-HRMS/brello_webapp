@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
 
 import { Dialog } from '../../../../components/common';
+import { useEmployeeDetail } from '../../hooks/useEmployeeDetail';
 
 import { useWizard } from './WizardContext';
 import { WizardStepper } from './WizardStepper';
@@ -16,33 +18,135 @@ import { EducationStep } from './steps/EducationStep';
 import { ExperienceStep } from './steps/ExperienceStep';
 import { ReviewInviteStep } from './steps/ReviewInviteStep';
 
-const AddEmployeeWizardContent: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { currentStep, prevStep } = useWizard();
+/**
+ * Maps the GET /employees/:id response into the wizard's flat formData shape.
+ */
+function mapEmployeeToFormData(employee: any): any {
+  const profile = employee.profile || {};
+  const bankInfo = employee.bankInfo || {};
+  const govInfo = employee.govInfo || {};
+
+  return {
+    firstName: employee.firstName || '',
+    lastName: employee.lastName || '',
+    email: employee.email || '',
+    phone: employee.phone || '',
+    dob: profile.dob || '',
+    address: profile.address || '',
+    emergencyContact: '',
+    avatar: null,
+
+    // Employment
+    departmentId: employee.departmentId || '',
+    designationId: employee.designationId || '',
+    reportsTo: employee.reportsTo || '',
+    employmentDate: profile.employmentDate || '',
+    joiningDate: profile.joiningDate || '',
+    workLocation: profile.workModel || profile.workLocation || '',
+    probationPeriod: profile.probationPeriod || '',
+    notes: profile.notes || '',
+
+    // Payroll
+    taxRegime: profile.taxRegime || govInfo.tax_regime || 'NEW',
+    pan: govInfo.pan || '',
+    uan: govInfo.uan || '',
+    accountNumber: bankInfo.account_number || '',
+    bankName: bankInfo.bank_name || '',
+    ifscCode: bankInfo.ifsc_code || '',
+
+    // Education & Experience (arrays for listing)
+    education: employee.education || [],
+    experience: employee.experience || [],
+
+    // Documents
+    documents: employee.documents || [],
+
+    // Assets
+    assets: employee.assets || [],
+  };
+}
+
+interface WizardContentProps {
+  onClose: () => void;
+  editEmployeeId?: string;
+}
+
+const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editEmployeeId }) => {
+  const { currentStep, prevStep, isEditMode, initEditMode } = useWizard();
+  const isEditIntent = !!editEmployeeId;
+
+  // Fetch employee data when in edit mode
+  const { data: employeeResponse, isLoading: isLoadingEmployee } = useEmployeeDetail(
+    isEditIntent ? editEmployeeId : undefined,
+  );
+
+  // Initialize edit mode once data arrives
+  const hasInitialized = React.useRef(false);
+  React.useEffect(() => {
+    if (isEditIntent && employeeResponse && !hasInitialized.current) {
+      const employee = (employeeResponse as any)?.data || employeeResponse;
+      const prefill = mapEmployeeToFormData(employee);
+      initEditMode(editEmployeeId!, prefill);
+      hasInitialized.current = true;
+    }
+  }, [isEditIntent, employeeResponse, editEmployeeId, initEditMode]);
+
+  // Reset ref when dialog closes/reopens
+  React.useEffect(() => {
+    return () => {
+      hasInitialized.current = false;
+    };
+  }, []);
 
   const handleClose = () => {
     onClose();
   };
 
+  // Show a loading state while fetching employee data for edit
+  if (isEditIntent && isLoadingEmployee) {
+    return (
+      <Dialog
+        title="Loading Employee..."
+        open={true}
+        onClose={handleClose}
+        maxWidth="600px"
+        position="right"
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '300px',
+          }}
+        >
+          <Loader2 size={32} style={{ animation: 'spin 1s linear infinite' }} />
+        </div>
+      </Dialog>
+    );
+  }
+
   const getTitle = () => {
+    const prefix = isEditMode ? 'Edit' : '';
     switch (currentStep) {
       case 1:
-        return 'Personal Info';
+        return `${prefix} Personal Info`.trim();
       case 2:
-        return 'Employment Details';
+        return `${prefix} Employment Details`.trim();
       case 3:
-        return 'Payroll & Compensation';
+        return `${prefix} Payroll & Compensation`.trim();
       case 4:
-        return 'Documents';
+        return `${prefix} Documents`.trim();
       case 5:
-        return 'System Access';
+        return `${prefix} System Access`.trim();
       case 6:
-        return 'Education';
+        return `${prefix} Education`.trim();
       case 7:
-        return 'Experience';
+        return `${prefix} Experience`.trim();
       case 8:
-        return 'Review & Invite';
+        return isEditMode ? 'Review Changes' : 'Review & Invite';
       default:
-        return 'Add Employee';
+        return isEditMode ? 'Edit Employee' : 'Add Employee';
     }
   };
 
@@ -94,11 +198,18 @@ const AddEmployeeWizardContent: React.FC<{ onClose: () => void }> = ({ onClose }
   );
 };
 
-export const AddEmployeeWizard: React.FC<{ open: boolean; onClose: () => void }> = ({
+interface AddEmployeeWizardProps {
+  open: boolean;
+  onClose: () => void;
+  editEmployeeId?: string;
+}
+
+export const AddEmployeeWizard: React.FC<AddEmployeeWizardProps> = ({
   open,
   onClose,
+  editEmployeeId,
 }) => {
   if (!open) return null;
 
-  return <AddEmployeeWizardContent onClose={onClose} />;
+  return <AddEmployeeWizardContent onClose={onClose} editEmployeeId={editEmployeeId} />;
 };

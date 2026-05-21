@@ -36,7 +36,7 @@ export const AppSwitcher: React.FC = () => {
         sessionStorage.setItem('auth_response', JSON.stringify(auth));
 
         // Use window.location to trigger a full refresh and re-route based on new appId
-        window.location.assign('/');
+        window.location.assign('/dashboard');
       }
     } catch {
       toast.error('Failed to switch app');

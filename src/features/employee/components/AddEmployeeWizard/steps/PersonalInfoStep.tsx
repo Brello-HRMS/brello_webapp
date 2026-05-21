@@ -30,8 +30,8 @@ interface PersonalInfoStepProps {
 }
 
 export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) => {
-  const { employeeId, setEmployeeId, updateFormData, nextStep, formData } = useWizard();
-  const { createDraftMutation } = useEmployeeWizard();
+  const { employeeId, setEmployeeId, updateFormData, nextStep, formData, isEditMode } = useWizard();
+  const { createDraftMutation, updatePersonalMutation } = useEmployeeWizard();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(formData.avatar || null);
 
@@ -65,8 +65,25 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
   const onSubmit = (data: FormData) => {
     updateFormData(data);
 
+    if (isEditMode && employeeId) {
+      updatePersonalMutation.mutate(
+        {
+          id: employeeId,
+          data: {
+            dob: data.dob || undefined,
+            presentAddress: data.address || undefined,
+          },
+        },
+        {
+          onSuccess: () => {
+            nextStep();
+          },
+        },
+      );
+      return;
+    }
+
     if (employeeId) {
-      // In a real app we might patch here if changes made, but for now just move next
       nextStep();
       return;
     }
@@ -115,7 +132,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
     onClose();
   };
 
-  const isPending = createDraftMutation.isPending;
+  const isPending = createDraftMutation.isPending || updatePersonalMutation.isPending;
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -164,6 +181,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
         {...register('email')}
         error={errors.email?.message}
         className={styles.fullWidth}
+        disabled={isEditMode}
       />
 
       <div className={styles.infoAlert}>
@@ -217,11 +235,11 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
         <Button
           variant="secondary"
           type="button"
-          onClick={handleSaveDraft}
+          onClick={isEditMode ? onClose : handleSaveDraft}
           className={styles.saveDraftButton}
           isLoading={isPending}
         >
-          Save draft
+          {isEditMode ? 'Cancel' : 'Save draft'}
         </Button>
         <Button variant="primary" type="submit" className={styles.nextButton} isLoading={isPending}>
           Next
