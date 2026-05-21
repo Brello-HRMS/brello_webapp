@@ -1,0 +1,144 @@
+.page {
+  padding-block: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.hero {
+  display: flex;
+  gap: var(--spacing-4);
+  align-items: stretch;
+}
+
+/* Left column: greeting + clock-in card */
+.heroLeft {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* Right column: scenic banner + stat cards */
+.heroRight {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+/* Greeting text block */
+.greeting {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+.greetingTitle {
+  font-size: 1.875rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.greetingSubtitle {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Scenic banner — fills all remaining vertical space in right column */
+.heroBanner {
+  flex: 1;
+  min-height: 160px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Three stat cards row — sits below the banner */
+.statsRow {
+  display: flex;
+  gap: var(--spacing-4);
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ── Dashboard grid ───────────────────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+}
+
+/* ── Responsive: 1100px ───────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .heroLeft {
+    flex: 0 0 260px;
+  }
+}
+
+/* ── Responsive: tablet ───────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .heroLeft {
+    flex: none;
+    width: 100%;
+  }
+
+  .heroBanner {
+    flex: none;
+    min-height: 200px;
+  }
+
+  .statsRow {
+    > * {
+      flex: 1 1 calc(33% - var(--spacing-2));
+    }
+  }
+}
+
+/* ── Responsive: mobile ───────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .page {
+    padding-block: var(--spacing-4);
+    gap: var(--spacing-3);
+  }
+
+  .hero {
+    gap: var(--spacing-3);
+  }
+
+  .greetingTitle {
+    font-size: 1.375rem;
+  }
+
+  .statsRow {
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+
+    > * {
+      flex: 1 1 calc(50% - var(--spacing-1));
+      min-width: 130px;
+    }
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-3);
+  }
+}
+
+@media (max-width: 400px) {
+  .statsRow > * {
+    flex: 1 1 100%;
+  }
+}

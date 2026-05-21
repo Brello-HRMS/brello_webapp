@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { PageHeader, DataTable, ListControls } from '../../components/common';
+import { PageHeader, DataTable, ListControls, PermissionGate } from '../../components/common';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode, ActionCode } from '../../enum/modules';
 import { useAccessUsers } from '../../features/access/users/hooks/useAccessUsers';
 import { accessUsersColumns } from '../../features/access/users/components/accessUsersColumns';
 import { AddUserDialog } from '../../features/access/users/components/AddUserDialog';
@@ -18,28 +20,23 @@ const UsersPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AccessUser | null>(null);
-
   const [sortValue, setSortValue] = useState('urm.created_at:DESC');
   const [selectedRole, setSelectedRole] = useState('');
+
+  const { hasEditAccess, hasDeleteAccess } = useModuleAccess(ModuleCode.ACCESS_USERS);
 
   const { data: roles } = useRoles();
 
   const roleOptions = useMemo(() => {
     let list: Role[] = [];
-
     if (Array.isArray(roles?.data?.data)) {
       list = roles.data.data;
     } else if (Array.isArray(roles?.data)) {
       list = roles.data as unknown as Role[];
     }
-
     return list.map((r) => ({ label: r.name, value: r.id }));
   }, [roles]);
 
@@ -80,9 +77,15 @@ const UsersPage: React.FC = () => {
     [removeUser],
   );
 
+  // Pass callbacks only when the user has the matching permission so
+  // TableActions hides the button entirely when access is absent.
   const columns = useMemo(
-    () => accessUsersColumns({ onEdit: handleEdit, onDelete: handleDelete }),
-    [handleEdit, handleDelete],
+    () =>
+      accessUsersColumns({
+        onEdit: hasEditAccess ? handleEdit : undefined,
+        onDelete: hasDeleteAccess ? handleDelete : undefined,
+      }),
+    [handleEdit, handleDelete, hasEditAccess, hasDeleteAccess],
   );
 
   const handleAddNew = () => {
@@ -101,12 +104,14 @@ const UsersPage: React.FC = () => {
   return (
     <div>
       <PageHeader
-        title="User"
+        title="Users"
         subtitle="Manage users and assign roles."
         actions={
-          <button className={styles.createButton} onClick={handleAddNew}>
-            <span className={styles.plus}>+</span> Add User
-          </button>
+          <PermissionGate module={ModuleCode.ACCESS_USERS} action={ActionCode.CREATE}>
+            <button className={styles.createButton} onClick={handleAddNew}>
+              <span className={styles.plus}>+</span> Add User
+            </button>
+          </PermissionGate>
         }
       />
 

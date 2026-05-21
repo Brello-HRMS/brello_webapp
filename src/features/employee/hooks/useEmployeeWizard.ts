@@ -10,6 +10,11 @@ import {
   addExperience,
   finalizeOnboarding,
   linkDocuments,
+  updatePersonalDetails,
+  updateEducationItem,
+  deleteEducationItem,
+  updateExperienceItem,
+  deleteExperienceItem,
 } from '../api/employee';
 import { showToast } from '../../ToastFeature/ShowToast';
 
@@ -97,6 +102,63 @@ export const useEmployeeWizard = () => {
     },
   });
 
+  const updatePersonalMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => updatePersonalDetails(id, data),
+    onSuccess: () => {
+      showToast('Personal details updated', 'success');
+      queryClient.invalidateQueries({ queryKey: ['employee'] });
+    },
+    onError: (error: any) => {
+      showToast(error?.data?.message || 'Failed to update personal details', 'error');
+    },
+  });
+
+  const updateEducationMutation = useMutation({
+    mutationFn: ({ id, eduId, data }: { id: string; eduId: string; data: any }) =>
+      updateEducationItem(id, eduId, data),
+    onSuccess: () => {
+      showToast('Education updated', 'success');
+      queryClient.invalidateQueries({ queryKey: ['employee'] });
+    },
+    onError: (error: any) => {
+      showToast(error?.data?.message || 'Failed to update education', 'error');
+    },
+  });
+
+  const deleteEducationMutation = useMutation({
+    mutationFn: ({ id, eduId }: { id: string; eduId: string }) => deleteEducationItem(id, eduId),
+    onSuccess: () => {
+      showToast('Education removed', 'success');
+      queryClient.invalidateQueries({ queryKey: ['employee'] });
+    },
+    onError: (error: any) => {
+      showToast(error?.data?.message || 'Failed to remove education', 'error');
+    },
+  });
+
+  const updateExperienceMutation = useMutation({
+    mutationFn: ({ id, expId, data }: { id: string; expId: string; data: any }) =>
+      updateExperienceItem(id, expId, data),
+    onSuccess: () => {
+      showToast('Experience updated', 'success');
+      queryClient.invalidateQueries({ queryKey: ['employee'] });
+    },
+    onError: (error: any) => {
+      showToast(error?.data?.message || 'Failed to update experience', 'error');
+    },
+  });
+
+  const deleteExperienceMutation = useMutation({
+    mutationFn: ({ id, expId }: { id: string; expId: string }) => deleteExperienceItem(id, expId),
+    onSuccess: () => {
+      showToast('Experience removed', 'success');
+      queryClient.invalidateQueries({ queryKey: ['employee'] });
+    },
+    onError: (error: any) => {
+      showToast(error?.data?.message || 'Failed to remove experience', 'error');
+    },
+  });
+
   return {
     createDraftMutation,
     employmentMutation,
@@ -106,5 +168,10 @@ export const useEmployeeWizard = () => {
     experienceMutation,
     finalizeMutation,
     linkDocumentsMutation,
+    updatePersonalMutation,
+    updateEducationMutation,
+    deleteEducationMutation,
+    updateExperienceMutation,
+    deleteExperienceMutation,
   };
 };

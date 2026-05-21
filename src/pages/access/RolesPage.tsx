@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { PageHeader, DataTable, ListControls } from '../../components/common';
+import { PageHeader, DataTable, ListControls, PermissionGate } from '../../components/common';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode, ActionCode } from '../../enum/modules';
 import { useRoles } from '../../features/access/roles/hooks/useRoles';
 import { rolesColumns } from '../../features/access/roles/components/rolesColumns';
 import { RoleDrawer } from '../../features/access/roles/components/RoleDrawer';
@@ -22,13 +24,12 @@ const RolesPage: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
+  const { hasEditAccess, hasDeleteAccess } = useModuleAccess(ModuleCode.ACCESS_ROLES);
+
   const availableApps = getAvailableApps();
   const filterOptions = [
     { label: 'All Apps', value: '' },
-    ...availableApps.map((app) => ({
-      label: app.name,
-      value: app.id,
-    })),
+    ...availableApps.map((app) => ({ label: app.name, value: app.id })),
   ];
 
   const sortOptions = [
@@ -60,9 +61,15 @@ const RolesPage: React.FC = () => {
     [deleteRole],
   );
 
+  // Only wire callbacks when the user has the matching permission so
+  // TableActions hides the button entirely when access is absent.
   const columns = useMemo(
-    () => rolesColumns({ onEdit: handleEdit, onDelete: handleDelete }),
-    [handleEdit, handleDelete],
+    () =>
+      rolesColumns({
+        onEdit: hasEditAccess ? handleEdit : undefined,
+        onDelete: hasDeleteAccess ? handleDelete : undefined,
+      }),
+    [handleEdit, handleDelete, hasEditAccess, hasDeleteAccess],
   );
 
   const handleCreateNew = () => {
@@ -84,9 +91,11 @@ const RolesPage: React.FC = () => {
         title="Roles"
         subtitle="Define system roles and access levels."
         actions={
-          <button className={styles.createButton} onClick={handleCreateNew}>
-            <span className={styles.plus}>+</span> Create role
-          </button>
+          <PermissionGate module={ModuleCode.ACCESS_ROLES} action={ActionCode.CREATE}>
+            <button className={styles.createButton} onClick={handleCreateNew}>
+              <span className={styles.plus}>+</span> Create role
+            </button>
+          </PermissionGate>
         }
       />
 

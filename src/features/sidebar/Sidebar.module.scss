@@ -63,27 +63,28 @@
 }
 
 .searchWrapper {
-  position: relative;
   display: flex;
   align-items: center;
+  gap: var(--spacing-2);
+  width: 100%;
   background-color: var(--color-gray);
   border-radius: var(--radius-md);
   padding: var(--spacing-2) var(--spacing-3);
   color: var(--color-secondary);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease;
 
-  input {
-    background: transparent;
-    border: none;
-    outline: none;
-    margin-left: var(--spacing-2);
-    font-size: 0.875rem;
-    width: 100%;
-    color: var(--color-primary);
-
-    &::placeholder {
-      color: var(--color-secondary);
-    }
+  &:hover {
+    background-color: var(--color-gray-200);
   }
+}
+
+.searchPlaceholder {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--color-secondary);
 }
 
 .shortcut {
