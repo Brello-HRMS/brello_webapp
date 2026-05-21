@@ -14,6 +14,7 @@ import { AnnouncementCard } from './components/AnnouncementCard/AnnouncementCard
 import { DailyAttendanceReport } from './components/DailyAttendanceReport/DailyAttendanceReport';
 import { HolidaysCard } from './components/HolidaysCard/HolidaysCard';
 import { NewHiresCard } from './components/NewHiresCard/NewHiresCard';
+import { SetupGuide } from './components/SetupGuide/SetupGuide';
 import { useDashboard } from './hooks/useDashboard';
 import { useDashboardStats } from './hooks/useDashboardStats';
 import styles from './DashboardPage.module.scss';
@@ -100,6 +101,7 @@ export const DashboardPage: React.FC = () => {
         <HolidaysCard />
         <NewHiresCard />
       </div>
+      {!isEmployee && <SetupGuide />}
     </div>
   );
 };
