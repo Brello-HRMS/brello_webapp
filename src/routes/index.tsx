@@ -149,15 +149,27 @@ const router = createBrowserRouter([
       },
       {
         path: 'attendance/balance',
-        element: <LeaveManagementPage />,
+        element: (
+          <RequireAccess module={ModuleCode.LEAVE_BALANCE}>
+            <LeaveManagementPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'attendance/requests',
-        element: <LeaveRequestsPage />,
+        element: (
+          <RequireAccess module={ModuleCode.LEAVE_REQUESTS}>
+            <LeaveRequestsPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'attendance/daily',
-        element: <DailyPreviewPage />,
+        element: (
+          <RequireAccess module={ModuleCode.ATTENDANCE_DAILY}>
+            <DailyPreviewPage />
+          </RequireAccess>
+        ),
       },
       {
         path: 'project/projects',
