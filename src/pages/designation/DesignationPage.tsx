@@ -245,15 +245,26 @@ const DesignationPage = () => {
   // Main empty state
   if (!isLoading && designationList.length === 0) {
     return (
-      <NoDataFound
-        title="No Designations Added Yet"
-        description="Set up your first designation to structure your organization and keep your workforce efficiently managed and organized."
-        noDataImage={no_designation}
-        noDataImageAlt="No Designation Found"
-        buttonText="Add New Designation"
-        onButtonClick={handleAddDesignation}
-        showButtonIcon
-      />
+      <>
+        <NoDataFound
+          title="No Designations Added Yet"
+          description="Set up your first designation to structure your organization and keep your workforce efficiently managed and organized."
+          noDataImage={no_designation}
+          noDataImageAlt="No Designation Found"
+          buttonText="Add New Designation"
+          onButtonClick={handleAddDesignation}
+          showButtonIcon
+        />
+        <AddDesignationModal
+          key={isAddDesignationOpen ? selectedDesignation?.id || 'new' : 'closed'}
+          open={isAddDesignationOpen}
+          onClose={() => {
+            setIsAddDesignationOpen(false);
+            setEditingDesignation(null);
+          }}
+          designation={editingDesignation}
+        />
+      </>
     );
   }
 

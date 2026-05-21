@@ -33,7 +33,7 @@ interface EmploymentDetailsStepProps {
 }
 
 export const EmploymentDetailsStep: React.FC<EmploymentDetailsStepProps> = ({ onClose }) => {
-  const { employeeId, formData, updateFormData, nextStep } = useWizard();
+  const { employeeId, formData, updateFormData, nextStep, isEditMode } = useWizard();
   const { employmentMutation } = useEmployeeWizard();
 
   const { data: departmentsData } = useDepartments();
@@ -233,11 +233,11 @@ export const EmploymentDetailsStep: React.FC<EmploymentDetailsStepProps> = ({ on
         <Button
           variant="secondary"
           type="button"
-          onClick={handleSaveDraft}
+          onClick={isEditMode ? onClose : handleSaveDraft}
           className={styles.saveDraftButton}
           isLoading={isPending}
         >
-          Save draft
+          {isEditMode ? 'Cancel' : 'Save draft'}
         </Button>
         <Button variant="primary" type="submit" className={styles.nextButton} isLoading={isPending}>
           Next

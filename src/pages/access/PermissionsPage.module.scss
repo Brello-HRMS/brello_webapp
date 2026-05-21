@@ -1,0 +1,246 @@
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+// ── Save Button ───────────────────────────────────────────────────────────────
+
+.saveButton {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  border: none;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: opacity 0.15s, background 0.15s;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
+
+  &.saveDirty {
+    background: var(--color-primary-purple);
+    color: var(--color-white);
+  }
+
+  &.saveClean {
+    background: var(--color-gray-200);
+    color: var(--color-text-secondary);
+  }
+}
+
+// ── System Role Warning ───────────────────────────────────────────────────────
+
+.systemRoleWarning {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: 12px 16px;
+  background: var(--color-priority-medium-bg);
+  color: var(--color-priority-medium-text);
+  border: 1px solid var(--color-priority-medium-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-6);
+  font-size: 14px;
+}
+
+// ── Empty State ───────────────────────────────────────────────────────────────
+
+.emptyState {
+  text-align: center;
+  padding: 48px;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border);
+  font-size: 14px;
+}
+
+// ── Container ─────────────────────────────────────────────────────────────────
+
+.permissionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.filterSection {
+  background: var(--color-white);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+  display: flex;
+  gap: var(--spacing-6);
+  align-items: center;
+
+  .filterGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+
+    label {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary-500);
+      font-size: 14px;
+    }
+
+    .select {
+      min-width: 200px;
+    }
+  }
+}
+
+// ── Permission Groups ─────────────────────────────────────────────────────────
+
+.permissionGroups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.groupCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.groupHeader {
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .groupInfo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary-500);
+    }
+
+    .partialBadge {
+      background: var(--color-blue-50);
+      color: var(--color-blue-700);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  .groupActions {
+    display: flex;
+    gap: var(--spacing-3);
+
+    .actionButton {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid var(--color-border-light);
+      background: var(--color-white);
+
+      svg {
+        stroke-width: 2.5px;
+      }
+
+      &.allowAll {
+        color: var(--color-text-secondary);
+        &:hover {
+          background: var(--color-gray-50);
+        }
+      }
+
+      &.revokeAll {
+        color: var(--color-priority-medium-text);
+        border-color: var(--color-priority-medium-border);
+        &:hover {
+          background: var(--color-priority-medium-bg);
+        }
+      }
+    }
+  }
+}
+
+.groupBody {
+  padding: var(--spacing-5);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+}
+
+// ── Permission Card ───────────────────────────────────────────────────────────
+
+.permissionCard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s, background 0.15s;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--color-primary-200);
+    background: var(--color-gray-50);
+  }
+
+  &.checked {
+    border-color: var(--color-primary-purple);
+    background: var(--color-primary-100);
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .checkbox {
+    flex-shrink: 0;
+  }
+
+  .permissionLabel {
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary-500);
+  }
+}
+
+// ── Loader ────────────────────────────────────────────────────────────────────
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary-purple);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

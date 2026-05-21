@@ -20,8 +20,8 @@ const ROLE_COLORS = [
 ];
 
 interface AccessUsersColumnsProps {
-  onEdit: (user: AccessUser) => void;
-  onDelete: (user: AccessUser) => void;
+  onEdit?: (user: AccessUser) => void;
+  onDelete?: (user: AccessUser) => void;
 }
 
 export const accessUsersColumns = ({
@@ -93,8 +93,8 @@ export const accessUsersColumns = ({
     size: 100,
     cell: (info) => (
       <TableActions
-        onEdit={() => onEdit(info.row.original)}
-        onDelete={() => onDelete(info.row.original)}
+        onEdit={onEdit ? () => onEdit(info.row.original) : undefined}
+        onDelete={onDelete ? () => onDelete(info.row.original) : undefined}
       />
     ),
   },
