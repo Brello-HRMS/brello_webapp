@@ -39,3 +39,8 @@ export const getAvailableApps = (): { id: string; name: string; priority: number
   const response = getAuthResponse();
   return response?.data?.availableApps || [];
 };
+
+export const getCurrentAppId = (): string | undefined => {
+  const response = getAuthResponse();
+  return response?.data?.defaultAppId;
+};
