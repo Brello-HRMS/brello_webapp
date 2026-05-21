@@ -19,7 +19,16 @@ function parse24h(value: string): { hour: string; minute: string; period: string
   if (!value) return { hour: '09', minute: '00', period: 'AM' };
   const [hStr, mStr] = value.split(':');
   const h24 = parseInt(hStr, 10);
-  const period = h24 >= 12 ? 'PM' : 'AM';
+
+  let period = 'AM';
+  if (value.toUpperCase().includes('PM')) {
+    period = 'PM';
+  } else if (value.toUpperCase().includes('AM')) {
+    period = 'AM';
+  } else {
+    period = h24 >= 12 ? 'PM' : 'AM';
+  }
+
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
   return {
     hour: String(h12).padStart(2, '0'),
@@ -122,7 +131,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
         <div className={styles.dropdown}>
           <div className={styles.columns}>
             <div className={styles.column}>
-              <div className={styles.columnHeader}>{hour}</div>
+              <div className={styles.columnHeader}>Hour</div>
               <ScrollColumn
                 items={HOURS}
                 selected={hour}
@@ -130,7 +139,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               />
             </div>
             <div className={styles.column}>
-              <div className={styles.columnHeader}>{minute}</div>
+              <div className={styles.columnHeader}>Min</div>
               <ScrollColumn
                 items={MINUTES}
                 selected={minute}
@@ -138,7 +147,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({
               />
             </div>
             <div className={styles.column}>
-              <div className={styles.columnHeader}>{period}</div>
+              <div className={styles.columnHeader}>AM/PM</div>
               <ScrollColumn
                 items={PERIODS}
                 selected={period}
