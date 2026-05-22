@@ -4,6 +4,7 @@ import { LogIn, LogOut, Loader2, MapPin, MapPinOff } from 'lucide-react';
 import { formatFullDate, getDayName } from '../../../../utils/timeUtils';
 import { useAttendance } from '../../hooks/useAttendance';
 
+import { LateClockInModal } from './LateClockInModal';
 import styles from './ClockInCard.module.scss';
 
 const LOCATION_MESSAGES = {
@@ -26,6 +27,10 @@ export const ClockInCard: React.FC = () => {
     shiftDisplay,
     checkInTime,
     attendanceStatus,
+    isPreCheckModalOpen,
+    setIsPreCheckModalOpen,
+    preCheckData,
+    confirmCheckIn,
   } = useAttendance();
 
   const locationBlocked = locationStatus === 'denied' || locationStatus === 'unavailable';
@@ -95,6 +100,15 @@ export const ClockInCard: React.FC = () => {
           </>
         )}
       </div>
+
+      {preCheckData && (
+        <LateClockInModal
+          isOpen={isPreCheckModalOpen}
+          onClose={() => setIsPreCheckModalOpen(false)}
+          onSubmit={confirmCheckIn}
+          preCheckData={preCheckData}
+        />
+      )}
     </div>
   );
 };

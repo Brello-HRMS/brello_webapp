@@ -45,6 +45,27 @@ interface ApiEnvelope<T> {
 }
 
 // --- Attendance Actions ---
+export interface PreCheckResponse {
+  is_late: boolean;
+  late_minutes: number;
+  is_remote: boolean;
+  require_remote_reason: boolean;
+  distance_meters: number | null;
+  office_name: string | null;
+  office_latitude: number | null;
+  office_longitude: number | null;
+  radius_meters: number | null;
+  shift_start: string | null;
+  current_time: string;
+}
+
+export const preCheckCheckIn = (latitude?: number, longitude?: number): Promise<PreCheckResponse> =>
+  (
+    apiClient.get(`${BASE}/check-in/pre-check`, {
+      params: { latitude, longitude },
+    }) as Promise<ApiEnvelope<PreCheckResponse>>
+  ).then((res) => res.data);
+
 export const clockIn = (data: CheckInPayload = {}): Promise<unknown> =>
   apiClient.post(`${BASE}/check-in`, data);
 
@@ -108,3 +129,29 @@ export const assignRuleToDepartments = (ruleId: string, department_ids: string[]
 
 export const assignRuleToEmployees = (ruleId: string, employee_ids: string[]) =>
   apiClient.post(`${BASE}/rules/${ruleId}/assign/employees`, { employee_ids });
+
+// --- Admin ---
+export interface DailySummary {
+  present: number;
+  absent: number;
+  late: number;
+  half_day: number;
+  on_leave: number;
+  missed_checkout: number;
+  office_in: number;
+  remote_in: number;
+  geo_violations: number;
+}
+
+export interface AdminDailyPreviewResponse {
+  summary: DailySummary;
+  items: unknown[];
+  pagination: { page: number; limit: number; total: number };
+}
+
+export const getAdminDailyPreview = (date: string): Promise<AdminDailyPreviewResponse> =>
+  (
+    apiClient.get(`${BASE}/admin/daily-preview`, { params: { date, limit: 1 } }) as Promise<
+      ApiEnvelope<AdminDailyPreviewResponse>
+    >
+  ).then((res) => res.data);

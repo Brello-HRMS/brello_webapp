@@ -14,8 +14,6 @@ const Initials: React.FC<{ name: string }> = ({ name }) => {
 export const NewHiresCard: React.FC = () => {
   const { hires, loading, error } = useNewHires();
 
-  const monthName = new Date().toLocaleString('default', { month: 'long' });
-
   return (
     <div className={styles.card}>
       <div className={styles.header}>
@@ -23,7 +21,7 @@ export const NewHiresCard: React.FC = () => {
           <UserRoundPlus size={18} strokeWidth={1.8} />
         </span>
         <div>
-          <div className={styles.title}>New Hires in {monthName}</div>
+          <div className={styles.title}>New Hires</div>
           <div className={styles.subtitle}>
             {loading ? 'Loading…' : `${hires.length} hire${hires.length !== 1 ? 's' : ''}`}
           </div>

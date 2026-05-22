@@ -26,13 +26,6 @@ export const useDashboard = (): DashboardData => {
         { id: '2', name: 'James Smith', empId: 'EMP-042', birthDay: 15 },
       ],
       announcementCount: 0,
-      attendanceReport: [
-        { label: 'Absent', count: 0 },
-        { label: 'Earned Leave (2 Days)', count: 0 },
-        { label: 'Planned Leave', count: 0 },
-        { label: 'Sick Leave', count: 0 },
-        { label: 'Unplanned Leave', count: 0 },
-      ],
       holidays: [
         { id: '1', name: 'Maha Shivaratri', dayOfWeek: 'Tuesday', date: 8 },
         { id: '2', name: 'Shaheed Diwas', dayOfWeek: 'Monday', date: 23 },
