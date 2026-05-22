@@ -3,6 +3,9 @@ import { LogIn, LogOut, Loader2, MapPin, MapPinOff } from 'lucide-react';
 
 import { formatFullDate, getDayName } from '../../../../utils/timeUtils';
 import { useAttendance } from '../../hooks/useAttendance';
+import { useOrgSetupStatus } from '../../hooks/useOrgSetupStatus';
+import { AppId } from '../../../../enum/app';
+import { getCurrentAppId } from '../../../../utils/authUtils';
 
 import { LateClockInModal } from './LateClockInModal';
 import styles from './ClockInCard.module.scss';
@@ -33,8 +36,19 @@ export const ClockInCard: React.FC = () => {
     confirmCheckIn,
   } = useAttendance();
 
+  const { data: setupData, isLoading: isSetupLoading } = useOrgSetupStatus();
+  const currentAppId = getCurrentAppId();
+  const isAdmin = currentAppId === AppId.ADMIN;
+  const isSetupIncomplete = Boolean(isAdmin && setupData && setupData.completionPercentage < 100);
+
   const locationBlocked = locationStatus === 'denied' || locationStatus === 'unavailable';
-  const isDisabled = loading || actionLoading || locationStatus === 'requesting' || locationBlocked;
+  const isDisabled =
+    loading ||
+    actionLoading ||
+    locationStatus === 'requesting' ||
+    locationBlocked ||
+    (isAdmin && isSetupLoading) ||
+    isSetupIncomplete;
 
   return (
     <div className={styles.card}>
@@ -73,6 +87,11 @@ export const ClockInCard: React.FC = () => {
       )}
 
       {error && <p className={styles.error}>{error}</p>}
+      {isSetupIncomplete && (
+        <p className={styles.error} style={{ fontSize: '13px', marginTop: 4 }}>
+          Please complete organisation setup to clock in.
+        </p>
+      )}
 
       <button
         className={`${styles.clockBtn} ${isClockedIn ? styles.clockOut : styles.clockIn}`}
