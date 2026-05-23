@@ -28,11 +28,6 @@ export interface ApprovalItem {
   path: string;
 }
 
-export interface AttendanceReportRow {
-  label: string;
-  count: number;
-}
-
 export interface DashboardStats {
   totalEmployees: number;
   employeeTrend: string;
@@ -46,7 +41,6 @@ export interface DashboardData {
   approvalItems: ApprovalItem[];
   birthdays: BirthdayEmployee[];
   announcementCount: number;
-  attendanceReport: AttendanceReportRow[];
   holidays: Holiday[];
   holidayCount: number;
   newHires: NewHire[];

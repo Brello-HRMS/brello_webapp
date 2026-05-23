@@ -1,8 +1,9 @@
 import React from 'react';
 import { Users, CalendarCheck2, HandCoins } from 'lucide-react';
 
-import { getAuthUser } from '../../utils/authUtils';
+import { getAuthUser, getCurrentAppId } from '../../utils/authUtils';
 import { getGreeting } from '../../utils/timeUtils';
+import { AppId } from '../../enum/app';
 
 import { SceneBanner } from './components/SceneBanner/SceneBanner';
 import { ClockInCard } from './components/ClockInCard/ClockInCard';
@@ -13,6 +14,7 @@ import { AnnouncementCard } from './components/AnnouncementCard/AnnouncementCard
 import { DailyAttendanceReport } from './components/DailyAttendanceReport/DailyAttendanceReport';
 import { HolidaysCard } from './components/HolidaysCard/HolidaysCard';
 import { NewHiresCard } from './components/NewHiresCard/NewHiresCard';
+import { SetupGuide } from './components/SetupGuide/SetupGuide';
 import { useDashboard } from './hooks/useDashboard';
 import { useDashboardStats } from './hooks/useDashboardStats';
 import styles from './DashboardPage.module.scss';
@@ -21,6 +23,9 @@ export const DashboardPage: React.FC = () => {
   const data = useDashboard();
   const stats = useDashboardStats();
   const user = getAuthUser();
+  const currentAppId = getCurrentAppId();
+  const isEmployee = currentAppId === AppId.EMPLOYEE;
+
   const firstName = user?.first_name ?? 'there';
   const greeting = getGreeting();
 
@@ -29,69 +34,74 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className={styles.page}>
       {/* Hero: left = greeting + clock · right = banner + stat cards */}
-      <div className={styles.hero}>
+      <div className={styles.heroContainer}>
         {/* Left column */}
-        <div className={styles.heroLeft}>
-          <div className={styles.greeting}>
-            <h1 className={styles.greetingTitle}>
-              {greeting}, {firstName}!
-            </h1>
-            <p className={styles.greetingSubtitle}>Here is your monthly overview.</p>
-          </div>
-          <ClockInCard />
+        <div className={styles.greeting}>
+          <h1 className={styles.greetingTitle}>
+            {greeting}, {firstName}!
+          </h1>
+          <p className={styles.greetingSubtitle}>Here is your monthly overview.</p>
         </div>
-
-        {/* Right column */}
-        <div className={styles.heroRight}>
-          <div className={styles.heroBanner}>
-            <SceneBanner />
+        <div className={styles.heroBanner}>
+          <SceneBanner />
+        </div>
+        <div className={styles.hero}>
+          <div className={styles.heroLeft}>
+            <ClockInCard />
           </div>
-          <div className={styles.statsRow}>
-            <StatCard
-              label="Total Employees"
-              value={stats.totalEmployees != null ? String(stats.totalEmployees) : '—'}
-              icon={Users}
-              trend={
-                stats.employeeTrend
-                  ? {
-                      value: stats.employeeTrend,
-                      direction: stats.employeeTrend.startsWith('-') ? 'down' : 'up',
-                    }
-                  : undefined
-              }
-            />
-            <StatCard
-              label="Attendance"
-              value={stats.attendancePercent ?? '—'}
-              icon={CalendarCheck2}
-              trend={
-                stats.attendanceTrend
-                  ? {
-                      value: stats.attendanceTrend,
-                      direction: stats.attendanceTrend.startsWith('-') ? 'down' : 'up',
-                    }
-                  : undefined
-              }
-            />
-            <StatCard
-              label="Payroll"
-              value={data.stats.payrollAmount}
-              icon={HandCoins}
-              subtitle="This month"
-            />
+          <div className={styles.heroRight}>
+            {!isEmployee && (
+              <div className={styles.statsRow}>
+                <StatCard
+                  label="Total Employees"
+                  value={stats.totalEmployees != null ? String(stats.totalEmployees) : '—'}
+                  icon={Users}
+                  trend={
+                    stats.employeeTrend
+                      ? {
+                          value: stats.employeeTrend,
+                          direction: stats.employeeTrend.startsWith('-') ? 'down' : 'up',
+                        }
+                      : undefined
+                  }
+                />
+                <StatCard
+                  label="Attendance"
+                  value={stats.attendancePercent ?? '—'}
+                  icon={CalendarCheck2}
+                  trend={
+                    stats.attendanceTrend
+                      ? {
+                          value: stats.attendanceTrend,
+                          direction: stats.attendanceTrend.startsWith('-') ? 'down' : 'up',
+                        }
+                      : undefined
+                  }
+                />
+                <StatCard
+                  label="Payroll"
+                  value={data.stats.payrollAmount}
+                  icon={HandCoins}
+                  subtitle="This month"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Dashboard grid */}
       <div className={styles.grid}>
-        <ApprovalRequestsCard items={data.approvalItems} totalCount={totalApprovals} />
+        {!isEmployee && (
+          <ApprovalRequestsCard items={data.approvalItems} totalCount={totalApprovals} />
+        )}
         <BirthdaysCard />
         <AnnouncementCard todayCount={data.announcementCount} />
-        <DailyAttendanceReport rows={data.attendanceReport} />
+        {!isEmployee && <DailyAttendanceReport />}
         <HolidaysCard />
         <NewHiresCard />
       </div>
+      {!isEmployee && <SetupGuide />}
     </div>
   );
 };

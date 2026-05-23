@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from '../../features/sidebar/Sidebar';
 import { SearchModal } from '../../features/search/components/SearchModal/SearchModal';
 import { useSearchStore } from '../../features/search/store/search.store';
+import { SetupGuard } from '../common/SetupGuard/SetupGuard';
 
 import { Header } from './Header';
 import styles from './MainLayout.module.scss';
@@ -47,7 +48,9 @@ export const MainLayout = () => {
           toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
         <main className={styles.main}>
-          <Outlet />
+          <SetupGuard>
+            <Outlet />
+          </SetupGuard>
         </main>
       </div>
       <SearchModal />

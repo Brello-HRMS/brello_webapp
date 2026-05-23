@@ -2,10 +2,10 @@ import { Loader2 } from 'lucide-react';
 
 import ForbiddenPage from '../../../pages/ForbiddenPage';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
+import { ModuleCode } from '../../../enum/modules';
 
 import styles from './RequireAccess.module.scss';
 
-import type { ModuleCode } from '../../../enum/modules';
 import type { ReactNode } from 'react';
 
 interface RequireAccessProps {
@@ -21,8 +21,10 @@ interface RequireAccessProps {
  *
  * @example
  * // In routes/index.tsx
+ * // In routes/index.tsx
  * element: <RequireAccess module={ModuleCode.ACCESS_ROLES}><RolesPage /></RequireAccess>
  */
+
 export const RequireAccess = ({ module, children }: RequireAccessProps) => {
   const { hasViewAccess, isLoading } = useModuleAccess(module);
 
