@@ -78,6 +78,17 @@ export const getEmployeeDropdown = async () => {
   return apiClient.get(`${envVars.BRELLO_BASE_API}/employees/dropdown`);
 };
 
+export const uploadEmployeePhoto = async (
+  id: string,
+  file: File,
+): Promise<{ success: boolean; data: { avatar: string | null }; timestamp?: string }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/employees/${id}/photo`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
 export const getUploadUrl = async (data: {
   folderType: string;
   enterpriseId?: string;

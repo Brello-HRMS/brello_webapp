@@ -34,7 +34,7 @@ function mapEmployeeToFormData(employee: any): any {
     dob: profile.dob || '',
     address: profile.address || '',
     emergencyContact: '',
-    avatar: null,
+    avatar: employee.avatar || null,
 
     // Employment
     departmentId: employee.departmentId || '',

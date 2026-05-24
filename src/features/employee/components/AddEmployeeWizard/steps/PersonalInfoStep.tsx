@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/incompatible-library */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +8,8 @@ import { Camera, Info } from 'lucide-react';
 import { Input } from '../../../../../components/ui/Input/Input';
 import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { Button } from '../../../../../components/common';
+import { showToast } from '../../../../ToastFeature/ShowToast';
+import { uploadEmployeePhoto } from '../../../api/employee';
 import { useWizard } from '../WizardContext';
 import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
 
@@ -34,6 +36,33 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
   const { createDraftMutation, updatePersonalMutation } = useEmployeeWizard();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(formData.avatar || null);
+  const [photoFile, setPhotoFile] = React.useState<File | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = React.useState(false);
+
+  // Sync preview with the latest avatar URL when formData is hydrated (edit mode)
+  React.useEffect(() => {
+    if (formData.avatar && !photoFile) {
+      setPhotoPreview(formData.avatar);
+    }
+  }, [formData.avatar, photoFile]);
+
+  const uploadPhotoIfNeeded = React.useCallback(
+    async (targetEmployeeId: string) => {
+      if (!photoFile) return;
+      setIsUploadingPhoto(true);
+      try {
+        const res = await uploadEmployeePhoto(targetEmployeeId, photoFile);
+        const newUrl = res?.data?.avatar ?? null;
+        updateFormData({ avatar: newUrl });
+        setPhotoFile(null);
+      } catch (err: any) {
+        showToast(err?.data?.message || 'Failed to upload photo', 'error');
+      } finally {
+        setIsUploadingPhoto(false);
+      }
+    },
+    [photoFile, updateFormData],
+  );
 
   const {
     register,
@@ -75,7 +104,8 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
           },
         },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
+            await uploadPhotoIfNeeded(employeeId);
             nextStep();
           },
         },
@@ -84,7 +114,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
     }
 
     if (employeeId) {
-      nextStep();
+      uploadPhotoIfNeeded(employeeId).then(() => nextStep());
       return;
     }
 
@@ -96,10 +126,11 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
         phone: data.phone,
       },
       {
-        onSuccess: (response: any) => {
+        onSuccess: async (response: any) => {
           const newId = response?.data?.id;
           if (newId) {
             setEmployeeId(newId);
+            await uploadPhotoIfNeeded(newId);
           }
           nextStep();
         },
@@ -113,18 +144,21 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        return; // Silent fail or show toast if available
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setPhotoPreview(result);
-        updateFormData({ avatar: result });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Photo must be smaller than 5MB', 'error');
+      return;
     }
+    if (!file.type.startsWith('image/')) {
+      showToast('Selected file is not an image', 'error');
+      return;
+    }
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhotoPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSaveDraft = () => {
@@ -132,7 +166,8 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
     onClose();
   };
 
-  const isPending = createDraftMutation.isPending || updatePersonalMutation.isPending;
+  const isPending =
+    createDraftMutation.isPending || updatePersonalMutation.isPending || isUploadingPhoto;
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
