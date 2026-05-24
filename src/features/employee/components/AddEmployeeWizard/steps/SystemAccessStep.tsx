@@ -114,7 +114,7 @@ export const SystemAccessStep: React.FC<SystemAccessStepProps> = ({ onClose }) =
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
       <div className={styles.section}>
-        <h3 className={styles.groupTitle}>SALARY STRUCTURE</h3>
+        <h3 className={styles.groupTitle}>SYSTEM ROLE</h3>
         <Controller
           name="roleId"
           control={control}
