@@ -1,6 +1,18 @@
 /* eslint-disable react-refresh/only-export-components, @typescript-eslint/no-explicit-any */
 import React, { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 
+interface WizardSlice {
+  currentStep: number;
+  employeeId: string | null;
+  formData: any;
+}
+
+const emptySlice = (): WizardSlice => ({
+  currentStep: 1,
+  employeeId: null,
+  formData: {},
+});
+
 interface WizardState {
   currentStep: number;
   employeeId: string | null;
@@ -20,82 +32,97 @@ const WizardContext = createContext<WizardState | undefined>(undefined);
 
 const STORAGE_KEY = 'brello_onboarding_wizard_state';
 
+const loadPersistedAddSlice = (): WizardSlice => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return emptySlice();
+  try {
+    const parsed = JSON.parse(saved);
+    return {
+      currentStep: parsed.currentStep || 1,
+      employeeId: parsed.employeeId || null,
+      formData: parsed.formData || {},
+    };
+  } catch {
+    return emptySlice();
+  }
+};
+
 export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentStep, setCurrentStep] = useState<number>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved).currentStep || 1;
-      } catch {
-        return 1;
+  const [addSlice, setAddSlice] = useState<WizardSlice>(loadPersistedAddSlice);
+  const [editSlice, setEditSlice] = useState<WizardSlice>(emptySlice);
+  const [mode, setMode] = useState<'add' | 'edit'>('add');
+
+  const isEditMode = mode === 'edit';
+  const active = isEditMode ? editSlice : addSlice;
+
+  const updateSlice = useCallback(
+    (updater: (s: WizardSlice) => WizardSlice) => {
+      if (isEditMode) {
+        setEditSlice(updater);
+      } else {
+        setAddSlice(updater);
       }
-    }
-    return 1;
-  });
+    },
+    [isEditMode],
+  );
 
-  const [employeeId, setEmployeeId] = useState<string | null>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved).employeeId || null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
-
-  const [formData, setFormData] = useState<any>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        return JSON.parse(saved).formData || {};
-      } catch {
-        return {};
-      }
-    }
-    return {};
-  });
-
-  const [isEditMode, setIsEditMode] = useState(false);
-
+  // Persist only the add slice — edit-mode changes are ephemeral.
   React.useEffect(() => {
-    // Only persist state for add mode, not edit mode
-    if (!isEditMode) {
-      const state = { currentStep, employeeId, formData };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-  }, [currentStep, employeeId, formData, isEditMode]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(addSlice));
+  }, [addSlice]);
 
-  const nextStep = () => setCurrentStep((prev) => prev + 1);
-  const prevStep = () => setCurrentStep((prev) => Math.max(1, prev - 1));
-  const goToStep = (step: number) => setCurrentStep(step);
+  const setEmployeeId = useCallback(
+    (id: string) => updateSlice((s) => ({ ...s, employeeId: id })),
+    [updateSlice],
+  );
 
-  const updateFormData = useCallback((data: any) => {
-    setFormData((prev: any) => ({ ...prev, ...data }));
-  }, []);
+  const setFormData = useCallback(
+    (data: any) => updateSlice((s) => ({ ...s, formData: data })),
+    [updateSlice],
+  );
 
-  const resetWizard = () => {
-    setCurrentStep(1);
-    setEmployeeId(null);
-    setFormData({});
-    setIsEditMode(false);
-    localStorage.removeItem(STORAGE_KEY);
-  };
+  const updateFormData = useCallback(
+    (data: any) => updateSlice((s) => ({ ...s, formData: { ...s.formData, ...data } })),
+    [updateSlice],
+  );
+
+  const nextStep = useCallback(
+    () => updateSlice((s) => ({ ...s, currentStep: s.currentStep + 1 })),
+    [updateSlice],
+  );
+
+  const prevStep = useCallback(
+    () => updateSlice((s) => ({ ...s, currentStep: Math.max(1, s.currentStep - 1) })),
+    [updateSlice],
+  );
+
+  const goToStep = useCallback(
+    (step: number) => updateSlice((s) => ({ ...s, currentStep: step })),
+    [updateSlice],
+  );
 
   const initEditMode = useCallback((editEmployeeId: string, prefillData: any) => {
-    setIsEditMode(true);
-    setEmployeeId(editEmployeeId);
-    setFormData(prefillData);
-    setCurrentStep(1);
+    setEditSlice({ currentStep: 1, employeeId: editEmployeeId, formData: prefillData });
+    setMode('edit');
   }, []);
+
+  const resetWizard = useCallback(() => {
+    if (isEditMode) {
+      // End the edit session: drop edit state, return to add mode (add slice is preserved).
+      setEditSlice(emptySlice());
+      setMode('add');
+    } else {
+      setAddSlice(emptySlice());
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [isEditMode]);
 
   return (
     <WizardContext.Provider
       value={{
-        currentStep,
-        employeeId,
-        formData,
+        currentStep: active.currentStep,
+        employeeId: active.employeeId,
+        formData: active.formData,
         isEditMode,
         setEmployeeId,
         setFormData,
