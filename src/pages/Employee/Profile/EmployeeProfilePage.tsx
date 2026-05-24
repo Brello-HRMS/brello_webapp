@@ -111,11 +111,11 @@ const EmployeeProfilePage = () => {
               <div className={styles.profileZone}>
                 <div className={styles.profileLeft}>
                   <EmployeeDetailHeader employee={employee} />
-                  <HoursLoggedMockCard />
+                  <HoursLoggedMockCard employeeId={employee.id} />
                 </div>
                 <div className={styles.profileRight}>
                   <LeaveBalanceCard employeeId={employee.id} />
-                  <AttendanceCalendarMockCard />
+                  <AttendanceCalendarMockCard employeeId={employee.id} />
                 </div>
               </div>
 
