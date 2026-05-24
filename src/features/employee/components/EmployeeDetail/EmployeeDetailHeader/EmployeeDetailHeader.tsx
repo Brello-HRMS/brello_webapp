@@ -124,9 +124,11 @@ export const EmployeeDetailPageHeader: React.FC<{
         </h1>
         <p className={styles.pageSubtitle}>{empId}</p>
       </div>
-      <Button variant="primary" onClick={onOffboardClick} className={styles.offboardBtn}>
-        Offboard Employee
-      </Button>
+      {onOffboardClick && (
+        <Button variant="primary" onClick={onOffboardClick} className={styles.offboardBtn}>
+          Offboard Employee
+        </Button>
+      )}
     </div>
   );
 };

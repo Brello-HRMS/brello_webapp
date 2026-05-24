@@ -96,7 +96,7 @@ const EmployeeProfilePage = () => {
         <>
           <EmployeeDetailPageHeader
             employee={employee}
-            onOffboardClick={() => setConfirmModalOpen(true)}
+            onOffboardClick={offboardingStatus ? undefined : () => setConfirmModalOpen(true)}
           />
 
           {offboardingStatus ? (
