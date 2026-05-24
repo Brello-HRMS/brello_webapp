@@ -77,9 +77,20 @@ const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editE
     prevStep,
     isEditMode,
     initEditMode,
+    resetWizard,
     employeeId: contextEmployeeId,
   } = useWizard();
   const isEditIntent = !!editEmployeeId;
+
+  // If the wizard opens in add mode but the context is still in edit mode from a previous
+  // edit session, wipe the leftover state so the add form doesn't show that employee's data.
+  React.useEffect(() => {
+    if (!isEditIntent && isEditMode) {
+      resetWizard();
+    }
+    // Intentionally mount-only: re-running this on context changes would clobber legitimate state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Fetch employee data when in edit mode
   const { data: employeeResponse, isLoading: isLoadingEmployee } = useEmployeeDetail(
