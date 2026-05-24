@@ -1,4 +1,5 @@
 import React, { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { Loader2 } from 'lucide-react';
 
 import styles from './Button.module.scss';
 
@@ -22,10 +23,11 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`${styles.btn} ${variantClass} ${sizeClass} ${className} ${props.disabled ? styles.disabled : ''}`.trim()}
+      className={`${styles.btn} ${variantClass} ${sizeClass} ${className} ${props.disabled ? styles.disabled : ''} ${isLoading ? styles.loading : ''}`.trim()}
       {...props}
       disabled={isLoading || props.disabled}
     >
+      {isLoading && <Loader2 size={16} className={styles.spinner} />}
       {children}
     </button>
   );
