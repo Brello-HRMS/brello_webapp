@@ -62,11 +62,6 @@ export interface EmploymentDetailsDto {
 }
 
 export interface PayrollDetailsDto {
-  annualCtc?: string;
-  monthlyGross?: string;
-  allowances?: string;
-  bonus?: string;
-  totalCtc?: string;
   taxRegime?: string;
   gov_info?: {
     pan?: string;

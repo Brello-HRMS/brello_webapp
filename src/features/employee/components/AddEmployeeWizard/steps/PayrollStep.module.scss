@@ -22,37 +22,6 @@
   }
 }
 
-.totalCtcBox {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-4);
-  background-color: var(--color-gray-50);
-  border-radius: var(--radius-lg);
-  margin-top: 0;
-}
-
-.totalCtcContent {
-  display: flex;
-  flex-direction: column;
-}
-
-.totalCtcLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
-.totalCtcValue {
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
-  margin-top: var(--spacing-1);
-}
-
-.totalCtcIcon {
-  color: var(--color-gray-400);
-}
-
 .sectionDivider {
   height: 1px;
   background-color: var(--color-gray-100);

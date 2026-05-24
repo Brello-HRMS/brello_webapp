@@ -84,8 +84,10 @@ export const ReviewInviteStep: React.FC<ReviewInviteStepProps> = ({ onClose }) =
             <span>Payroll</span>
           </div>
           <div className={styles.cardContent}>
-            <p className={styles.mainInfo}>Annual CTC: ₹ {formData.annualCtc || '0.00'}</p>
-            <p className={styles.subInfo}>{formData.taxRegime || 'New'} Regime</p>
+            <p className={styles.mainInfo}>{formData.taxRegime || 'New'} Regime</p>
+            <p className={styles.subInfo}>
+              {formData.bankName ? `Bank: ${formData.bankName}` : 'Bank details pending'}
+            </p>
           </div>
         </div>
 
