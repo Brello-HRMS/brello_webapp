@@ -9,6 +9,7 @@ import { Input } from '../../../../../components/ui/Input/Input';
 import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { Button } from '../../../../../components/common';
 import { showToast } from '../../../../ToastFeature/ShowToast';
+import { resolveAssetUrl } from '../../../../../utils/assetUrl';
 import { uploadEmployeePhoto } from '../../../api/employee';
 import { useWizard } from '../WizardContext';
 import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
@@ -35,14 +36,16 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
   const { employeeId, setEmployeeId, updateFormData, nextStep, formData, isEditMode } = useWizard();
   const { createDraftMutation, updatePersonalMutation } = useEmployeeWizard();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [photoPreview, setPhotoPreview] = React.useState<string | null>(formData.avatar || null);
+  const [photoPreview, setPhotoPreview] = React.useState<string | null>(
+    resolveAssetUrl(formData.avatar),
+  );
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [isUploadingPhoto, setIsUploadingPhoto] = React.useState(false);
 
   // Sync preview with the latest avatar URL when formData is hydrated (edit mode)
   React.useEffect(() => {
     if (formData.avatar && !photoFile) {
-      setPhotoPreview(formData.avatar);
+      setPhotoPreview(resolveAssetUrl(formData.avatar));
     }
   }, [formData.avatar, photoFile]);
 

@@ -3,6 +3,7 @@ import React from 'react';
 import { EmployeeActionMenu } from '../EmployeeActionMenu/EmployeeActionMenu';
 import { StatusBadge } from '../../../../components/common';
 import { Status } from '../../../../types/common';
+import { resolveAssetUrl } from '../../../../utils/assetUrl';
 
 import styles from './EmployeeCard.module.scss';
 
@@ -65,7 +66,11 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({
 
       <div className={styles.avatarContainer}>
         {avatar ? (
-          <img src={avatar} alt={`${firstName} ${lastName}`} className={styles.avatar} />
+          <img
+            src={resolveAssetUrl(avatar) ?? undefined}
+            alt={`${firstName} ${lastName}`}
+            className={styles.avatar}
+          />
         ) : (
           <div className={styles.avatarFallback}>
             {firstName.charAt(0)}
