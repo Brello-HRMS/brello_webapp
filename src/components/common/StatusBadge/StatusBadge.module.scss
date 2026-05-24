@@ -49,6 +49,16 @@
       background: var(--color-blue-700, #1d4ed8);
     }
   }
+
+  &.offboarding {
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+
+    .dot {
+      background: #c2410c;
+    }
+  }
 }
 
 .dot {

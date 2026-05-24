@@ -21,6 +21,8 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ''
       case 'INACTIVE':
       case 'OFFBOARDED':
         return styles.inactive;
+      case 'OFFBOARDING':
+        return styles.offboarding;
       case Status.PENDING:
       case 'PENDING':
       case 'ONBOARDING':
