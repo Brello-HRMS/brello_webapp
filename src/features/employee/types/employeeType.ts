@@ -236,6 +236,7 @@ export interface EmployeeDetail {
   email: string;
   phone: string | null;
   reportsTo: string | null;
+  avatar: string | null;
   profile: EmployeeProfile;
   education: EducationItem[];
   experience: ExperienceItem[];

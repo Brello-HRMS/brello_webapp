@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Button } from '../../../../../components/common';
+import { resolveAssetUrl } from '../../../../../utils/assetUrl';
 
 import styles from './EmployeeDetailHeader.module.scss';
 
@@ -55,12 +56,13 @@ const formatDate = (val: string | null | undefined) => {
 };
 
 export const EmployeeDetailHeader: React.FC<EmployeeDetailHeaderProps> = ({ employee }) => {
-  const { firstName, lastName, profile } = employee;
+  const { firstName, lastName, profile, avatar } = employee;
   const empId = profile?.employeeId
     ? `EMP-${profile.employeeId}`
     : `EMP-${employee.id.substring(0, 3).toUpperCase()}`;
   const designation = profile?.designation || profile?.type || 'Employee';
   const bgColor = getAvatarColor(firstName);
+  const avatarUrl = resolveAssetUrl(avatar);
 
   const metrics = [
     { label: 'Department', value: profile?.department || '—' },
@@ -75,9 +77,17 @@ export const EmployeeDetailHeader: React.FC<EmployeeDetailHeaderProps> = ({ empl
         {/* Avatar */}
         <div className={styles.avatarWrapper}>
           <div className={styles.avatarBox} style={{ background: `${bgColor}22` }}>
-            <span className={styles.avatarInitials} style={{ color: bgColor }}>
-              {getInitials(firstName, lastName)}
-            </span>
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={`${firstName} ${lastName}`}
+                className={styles.avatarImage}
+              />
+            ) : (
+              <span className={styles.avatarInitials} style={{ color: bgColor }}>
+                {getInitials(firstName, lastName)}
+              </span>
+            )}
           </div>
           <span className={styles.activeBadge}>
             <span className={styles.activeDot} />
