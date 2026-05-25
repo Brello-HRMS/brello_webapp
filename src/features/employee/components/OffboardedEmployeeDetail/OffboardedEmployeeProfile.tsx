@@ -1,6 +1,8 @@
 import React from 'react';
 import { Lock, Calendar, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
 
+import { resolveAssetUrl } from '../../../../utils/assetUrl';
+
 import styles from './OffboardedEmployeeProfile.module.scss';
 
 import type { EmployeeDetail } from '../../../types/employeeType';
@@ -75,7 +77,7 @@ export const OffboardedEmployeeProfile: React.FC<Props> = ({
             <div className={styles.employeeSummary}>
               <div className={styles.avatar}>
                 {employee.avatar ? (
-                  <img src={employee.avatar} alt="Avatar" />
+                  <img src={resolveAssetUrl(employee.avatar) ?? undefined} alt="Avatar" />
                 ) : (
                   <div
                     style={{

@@ -8,6 +8,7 @@ export interface Employee {
   lastName: string;
   email: string;
   status: EmployeeStatus | string;
+  employeeStatus?: string | null;
   avatar: string | null;
   memberAvatars: string[];
 
@@ -61,11 +62,6 @@ export interface EmploymentDetailsDto {
 }
 
 export interface PayrollDetailsDto {
-  annualCtc?: string;
-  monthlyGross?: string;
-  allowances?: string;
-  bonus?: string;
-  totalCtc?: string;
   taxRegime?: string;
   gov_info?: {
     pan?: string;
@@ -235,6 +231,7 @@ export interface EmployeeDetail {
   email: string;
   phone: string | null;
   reportsTo: string | null;
+  avatar: string | null;
   profile: EmployeeProfile;
   education: EducationItem[];
   experience: ExperienceItem[];

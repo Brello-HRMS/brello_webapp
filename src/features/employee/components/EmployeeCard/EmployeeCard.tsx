@@ -3,6 +3,7 @@ import React from 'react';
 import { EmployeeActionMenu } from '../EmployeeActionMenu/EmployeeActionMenu';
 import { StatusBadge } from '../../../../components/common';
 import { Status } from '../../../../types/common';
+import { resolveAssetUrl } from '../../../../utils/assetUrl';
 
 import styles from './EmployeeCard.module.scss';
 
@@ -27,7 +28,8 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({
   isSelected = false,
   onSelect,
 }) => {
-  const { id, firstName, lastName, status, avatar, role, department, type } = employee;
+  const { id, firstName, lastName, status, employeeStatus, avatar, role, department, type } =
+    employee;
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -64,7 +66,11 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({
 
       <div className={styles.avatarContainer}>
         {avatar ? (
-          <img src={avatar} alt={`${firstName} ${lastName}`} className={styles.avatar} />
+          <img
+            src={resolveAssetUrl(avatar) ?? undefined}
+            alt={`${firstName} ${lastName}`}
+            className={styles.avatar}
+          />
         ) : (
           <div className={styles.avatarFallback}>
             {firstName.charAt(0)}
@@ -91,7 +97,7 @@ export const EmployeeCard: React.FC<EmployeeCardProps> = ({
 
       <div className={styles.footer}>
         <div className={styles.typeBadge}>{type || 'Full-time'}</div>
-        <StatusBadge status={status as Status} />
+        <StatusBadge status={employeeStatus || (status as Status)} />
       </div>
     </div>
   );

@@ -15,6 +15,7 @@ import { employeeColumns } from '../../../features/employee/columns/employeeColu
 import { EmployeeCard } from '../../../features/employee/components/EmployeeCard/EmployeeCard';
 import { AddEmployeeWizard } from '../../../features/employee/components/AddEmployeeWizard/AddEmployeeWizard';
 import { WizardProvider } from '../../../features/employee/components/AddEmployeeWizard/WizardContext';
+import { getEmployees } from '../../../features/employee/api/employee';
 import { useEmployees } from '../../../features/employee/hooks/useEmployees';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useModuleAccess } from '../../../hooks/useModuleAccess';
@@ -101,21 +102,51 @@ const EmployeeDirectoryPage = () => {
   );
 
   const excelExportData = useMemo(() => {
-    const dataToExport = isMultiSelectActive
-      ? filteredData.filter((emp) => selectedIds[emp.id])
-      : filteredData;
+    if (!isMultiSelectActive) return [];
+    const dataToExport = filteredData.filter((emp) => selectedIds[emp.id]);
 
     return dataToExport.map((emp) => ({
       'First Name': emp.firstName,
       'Last Name': emp.lastName,
       Email: emp.email,
-      Status: emp.status,
+      Status: emp.employeeStatus || emp.status,
       Department: emp.department || 'Not Specified',
       Type: emp.type || 'Not Specified',
       Location: emp.location || 'Not Specified',
       Role: emp.role || 'Not Specified',
     }));
   }, [filteredData, isMultiSelectActive, selectedIds]);
+
+  const handleExportData = useCallback(async () => {
+    try {
+      const [sortBy, sortOrder] = selectedSort.split(':');
+      const exportQueryParams = {
+        status: selectedStatus === 'ALL' ? undefined : selectedStatus,
+        sort_by: sortBy,
+        sort_order: sortOrder as SortOrder,
+        limit: 10000, // Large number to fetch all
+        page: 1,
+        search: debouncedSearchQuery || undefined,
+      };
+
+      const response = await getEmployees(exportQueryParams);
+      const allData = response.data?.data || [];
+
+      return allData.map((emp: Employee) => ({
+        'First Name': emp.firstName,
+        'Last Name': emp.lastName,
+        Email: emp.email,
+        Status: emp.employeeStatus || emp.status,
+        Department: emp.department || 'Not Specified',
+        Type: emp.type || 'Not Specified',
+        Location: emp.location || 'Not Specified',
+        Role: emp.role || 'Not Specified',
+      }));
+    } catch {
+      showToast('Failed to fetch data for export', 'error');
+      return [];
+    }
+  }, [selectedSort, selectedStatus, debouncedSearchQuery]);
 
   const handleToggleSelection = useCallback((id: string) => {
     setSelectedIds((prev) => ({
@@ -256,7 +287,8 @@ const EmployeeDirectoryPage = () => {
             <>
               {hasExportAccess && (
                 <ExcelExport
-                  data={excelExportData}
+                  data={isMultiSelectActive ? excelExportData : undefined}
+                  onExportData={!isMultiSelectActive ? handleExportData : undefined}
                   filename="employees.xlsx"
                   sheetName="Employees"
                   buttonText={

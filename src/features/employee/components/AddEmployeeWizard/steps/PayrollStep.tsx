@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/incompatible-library */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Info } from 'lucide-react';
 
 import { Input } from '../../../../../components/ui/Input/Input';
 import { Button, Select } from '../../../../../components/common';
@@ -13,11 +12,6 @@ import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
 import styles from './PayrollStep.module.scss';
 
 const schema = z.object({
-  annualCtc: z.string().min(1, 'Annual CTC is required'),
-  monthlyGross: z.string().min(1, 'Monthly gross is required'),
-  allowances: z.string().optional(),
-  bonus: z.string().optional(),
-  totalCtc: z.string().optional(),
   taxRegime: z.string().min(1, 'Tax regime is required'),
   pan: z.string().min(1, 'PAN is required'),
   uan: z.string().optional(),
@@ -41,16 +35,10 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
     handleSubmit,
     control,
     watch,
-    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      annualCtc: formData.annualCtc || '',
-      monthlyGross: formData.monthlyGross || '',
-      allowances: formData.allowances || '0',
-      bonus: formData.bonus || '0',
-      totalCtc: formData.totalCtc || '',
       taxRegime: formData.taxRegime || 'NEW',
       pan: formData.pan || '',
       uan: formData.uan || '',
@@ -68,23 +56,7 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
     return () => subscription.unsubscribe();
   }, [watch, updateFormData]);
 
-  // Handle calculated fields
-  const annualCtc = watch('annualCtc');
-  const allowances = watch('allowances');
-  const bonus = watch('bonus');
-
-  const totalCtc = watch('totalCtc');
-
-  useEffect(() => {
-    const ctc = parseFloat(annualCtc || '0');
-    const allow = parseFloat(allowances || '0');
-    const bns = parseFloat(bonus || '0');
-
-    if (!isNaN(ctc)) {
-      setValue('monthlyGross', (ctc / 12).toFixed(2));
-      setValue('totalCtc', (ctc + allow + bns).toString());
-    }
-  }, [annualCtc, allowances, bonus, setValue]);
+  // Auto-save to context on change via subscription
 
   const onSubmit = (data: FormData) => {
     updateFormData(data);
@@ -95,11 +67,6 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
       {
         id: employeeId,
         data: {
-          annualCtc: data.annualCtc,
-          monthlyGross: data.monthlyGross,
-          allowances: data.allowances,
-          bonus: data.bonus,
-          totalCtc: data.totalCtc,
           taxRegime: data.taxRegime,
           gov_info: {
             pan: data.pan,
@@ -134,56 +101,6 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-      <div className={styles.sectionTitle}>SALARY STRUCTURE</div>
-
-      <div className={styles.row}>
-        <Input
-          label="Annual CTC"
-          required
-          placeholder="₹ 12,00,000"
-          {...register('annualCtc')}
-          error={errors.annualCtc?.message}
-        />
-        <Input
-          label="Monthly Gross"
-          required
-          readOnly
-          placeholder="₹ 4,80,000"
-          {...register('monthlyGross')}
-          error={errors.monthlyGross?.message}
-        />
-      </div>
-
-      <div className={styles.row}>
-        <Input
-          label="Allowances"
-          placeholder="₹ 20,000"
-          {...register('allowances')}
-          error={errors.allowances?.message}
-        />
-        <Input
-          label="Bonus"
-          placeholder="₹ 0"
-          {...register('bonus')}
-          error={errors.bonus?.message}
-        />
-      </div>
-
-      <div className={styles.totalCtcBox}>
-        <div className={styles.totalCtcContent}>
-          <span className={styles.totalCtcLabel}>Total CTC</span>
-          <span className={styles.totalCtcValue}>
-            ₹{' '}
-            {totalCtc && !isNaN(parseFloat(totalCtc))
-              ? parseFloat(totalCtc).toLocaleString('en-IN')
-              : '0'}
-          </span>
-        </div>
-        <Info size={16} className={styles.totalCtcIcon} />
-      </div>
-
-      <div className={styles.sectionDivider} />
-
       <div className={styles.sectionTitle}>BANK DETAILS</div>
 
       <Input

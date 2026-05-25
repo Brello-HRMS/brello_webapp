@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-import { Input } from '../../../../../components/ui/Input/Input';
+import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { Button, Select } from '../../../../../components/common';
 import { useWizard } from '../WizardContext';
 import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
@@ -176,19 +176,31 @@ export const EmploymentDetailsStep: React.FC<EmploymentDetailsStepProps> = ({ on
       />
 
       <div className={styles.row}>
-        <Input
-          label="Employment Date"
-          type="date"
-          required
-          {...register('employmentDate')}
-          error={errors.employmentDate?.message}
+        <Controller
+          name="employmentDate"
+          control={control}
+          render={({ field }) => (
+            <DatePicker
+              label="Employment Date"
+              required
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.employmentDate?.message}
+            />
+          )}
         />
-        <Input
-          label="Date of Joining"
-          type="date"
-          required
-          {...register('joiningDate')}
-          error={errors.joiningDate?.message}
+        <Controller
+          name="joiningDate"
+          control={control}
+          render={({ field }) => (
+            <DatePicker
+              label="Date of Joining"
+              required
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.joiningDate?.message}
+            />
+          )}
         />
       </div>
 

@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/incompatible-library */
 import React, { useState } from 'react';
 import { Plus, MoreVertical } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
 import { Input } from '../../../../../components/ui/Input/Input';
+import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { Button } from '../../../../../components/common';
 import { useWizard } from '../WizardContext';
 import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
@@ -52,6 +53,7 @@ export const ExperienceStep: React.FC<ExperienceStepProps> = ({ onClose }) => {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     watch,
     formState: { errors },
@@ -171,20 +173,32 @@ export const ExperienceStep: React.FC<ExperienceStepProps> = ({ onClose }) => {
           />
 
           <div className={styles.row}>
-            <Input
-              label="From Date"
-              type="date"
-              required
-              {...register('fromDate')}
-              error={errors.fromDate?.message}
+            <Controller
+              name="fromDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  label="From Date"
+                  required
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.fromDate?.message}
+                />
+              )}
             />
             {!isCurrent && (
-              <Input
-                label="To Date"
-                type="date"
-                required
-                {...register('toDate')}
-                error={errors.toDate?.message}
+              <Controller
+                name="toDate"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    label="To Date"
+                    required
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.toDate?.message}
+                  />
+                )}
               />
             )}
           </div>

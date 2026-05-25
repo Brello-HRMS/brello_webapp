@@ -187,6 +187,41 @@
   }
 }
 
+.monthNav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 0;
+
+  &:hover {
+    background: var(--color-gray-50, #f9fafb);
+  }
+}
+
+.monthLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  min-width: 92px;
+  justify-content: center;
+}
+
 /* Calendar grid */
 .calGrid {
   display: grid;

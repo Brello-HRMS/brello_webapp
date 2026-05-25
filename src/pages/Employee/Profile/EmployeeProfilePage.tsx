@@ -15,7 +15,7 @@ import { DocumentsCard } from '../../../features/employee/components/EmployeeDet
 import { AssetsCard } from '../../../features/employee/components/EmployeeDetail/AssetsCard/AssetsCard';
 import { PersonalInfoCard } from '../../../features/employee/components/EmployeeDetail/PersonalInfoCard/PersonalInfoCard';
 import { PayrollSummaryCard } from '../../../features/employee/components/EmployeeDetail/PayrollSummaryCard/PayrollSummaryCard';
-import { LeaveMockCard } from '../../../features/employee/components/EmployeeDetail/LeaveMockCard/LeaveMockCard';
+import { LeaveBalanceCard } from '../../../features/employee/components/EmployeeDetail/LeaveBalanceCard/LeaveBalanceCard';
 import {
   HoursLoggedMockCard,
   AttendanceCalendarMockCard,
@@ -96,7 +96,7 @@ const EmployeeProfilePage = () => {
         <>
           <EmployeeDetailPageHeader
             employee={employee}
-            onOffboardClick={() => setConfirmModalOpen(true)}
+            onOffboardClick={offboardingStatus ? undefined : () => setConfirmModalOpen(true)}
           />
 
           {offboardingStatus ? (
@@ -111,11 +111,11 @@ const EmployeeProfilePage = () => {
               <div className={styles.profileZone}>
                 <div className={styles.profileLeft}>
                   <EmployeeDetailHeader employee={employee} />
-                  <HoursLoggedMockCard />
+                  <HoursLoggedMockCard employeeId={employee.id} />
                 </div>
                 <div className={styles.profileRight}>
-                  <LeaveMockCard />
-                  <AttendanceCalendarMockCard />
+                  <LeaveBalanceCard employeeId={employee.id} />
+                  <AttendanceCalendarMockCard employeeId={employee.id} />
                 </div>
               </div>
 

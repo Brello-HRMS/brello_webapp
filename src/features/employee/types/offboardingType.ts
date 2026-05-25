@@ -14,6 +14,9 @@ export const initiateOffboardingSchema = z.object({
   reason: z.string().min(1, 'Reason is required'),
   last_working_day: z.string().min(1, 'Last working day is required'),
   notice_period: z.number().optional(),
+  handover_to_user_id: z.string().uuid().optional(),
+  assets_to_recover: z.array(z.string()).optional(),
+  schedule_exit_interview: z.boolean().optional(),
 });
 
 export type InitiateOffboardingDto = z.infer<typeof initiateOffboardingSchema>;

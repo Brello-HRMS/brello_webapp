@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, MoreVertical } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
 import { Input } from '../../../../../components/ui/Input/Input';
+import { DatePicker } from '../../../../../components/ui/DatePicker/DatePicker';
 import { Button } from '../../../../../components/common';
 import { useWizard } from '../WizardContext';
 import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
@@ -45,6 +46,7 @@ export const EducationStep: React.FC<EducationStepProps> = ({ onClose }) => {
   const {
     register,
     handleSubmit,
+    control,
     reset,
     formState: { errors },
   } = useForm<EducationFormData>({
@@ -157,12 +159,18 @@ export const EducationStep: React.FC<EducationStepProps> = ({ onClose }) => {
           />
 
           <div className={styles.row}>
-            <Input
-              label="Completion Date"
-              type="date"
-              required
-              {...register('completionDate')}
-              error={errors.completionDate?.message}
+            <Controller
+              name="completionDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  label="Completion Date"
+                  required
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.completionDate?.message}
+                />
+              )}
             />
             <Input
               label="Completion Year"

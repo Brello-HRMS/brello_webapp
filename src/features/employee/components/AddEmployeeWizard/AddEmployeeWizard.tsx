@@ -34,7 +34,7 @@ function mapEmployeeToFormData(employee: any): any {
     dob: profile.dob || '',
     address: profile.address || '',
     emergencyContact: '',
-    avatar: null,
+    avatar: employee.avatar || null,
 
     // Employment
     departmentId: employee.departmentId || '',
@@ -72,29 +72,47 @@ interface WizardContentProps {
 }
 
 const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editEmployeeId }) => {
-  const { currentStep, prevStep, isEditMode, initEditMode } = useWizard();
+  const {
+    currentStep,
+    prevStep,
+    isEditMode,
+    initEditMode,
+    resetWizard,
+    employeeId: contextEmployeeId,
+  } = useWizard();
   const isEditIntent = !!editEmployeeId;
+
+  // If the wizard opens in add mode but the context is still in edit mode from a previous
+  // edit session, wipe the leftover state so the add form doesn't show that employee's data.
+  React.useEffect(() => {
+    if (!isEditIntent && isEditMode) {
+      resetWizard();
+    }
+    // Intentionally mount-only: re-running this on context changes would clobber legitimate state.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Fetch employee data when in edit mode
   const { data: employeeResponse, isLoading: isLoadingEmployee } = useEmployeeDetail(
     isEditIntent ? editEmployeeId : undefined,
   );
 
-  // Initialize edit mode once data arrives
-  const hasInitialized = React.useRef(false);
+  // Initialize edit mode once data arrives. Re-init when the target employee changes
+  // (e.g. user opens edit for B without closing after editing A).
+  const initializedFor = React.useRef<string | null>(null);
   React.useEffect(() => {
-    if (isEditIntent && employeeResponse && !hasInitialized.current) {
+    if (isEditIntent && employeeResponse && initializedFor.current !== editEmployeeId) {
       const employee = (employeeResponse as any)?.data || employeeResponse;
       const prefill = mapEmployeeToFormData(employee);
       initEditMode(editEmployeeId!, prefill);
-      hasInitialized.current = true;
+      initializedFor.current = editEmployeeId!;
     }
   }, [isEditIntent, employeeResponse, editEmployeeId, initEditMode]);
 
   // Reset ref when dialog closes/reopens
   React.useEffect(() => {
     return () => {
-      hasInitialized.current = false;
+      initializedFor.current = null;
     };
   }, []);
 
@@ -102,8 +120,12 @@ const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editE
     onClose();
   };
 
+  // Hold the steps until edit context is fully prefilled — otherwise the steps' useForm
+  // captures empty defaults before initEditMode runs, leaving fields blank on first open.
+  const isPrefilling = isEditIntent && contextEmployeeId !== editEmployeeId;
+
   // Show a loading state while fetching employee data for edit
-  if (isEditIntent && isLoadingEmployee) {
+  if (isEditIntent && (isLoadingEmployee || isPrefilling)) {
     return (
       <Dialog
         title="Loading Employee..."

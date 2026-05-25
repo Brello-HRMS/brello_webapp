@@ -77,6 +77,44 @@ export const getTodayAttendance = (): Promise<TodayAttendance> =>
     (res) => res.data,
   );
 
+// --- Employee Attendance History (Admin view) ---
+export interface AttendanceHistoryItem {
+  attendance_id: string;
+  date: string; // YYYY-MM-DD
+  check_in: string | null;
+  check_out: string | null;
+  worked_hours: string; // HH:mm
+  worked_minutes: number;
+  attendance_mode: string;
+  attendance_status: string;
+  shift: string | null;
+  remote_reason: string | null;
+}
+
+export interface AttendanceHistoryResponse {
+  items: AttendanceHistoryItem[];
+  pagination: { page: number; limit: number; total: number };
+}
+
+export interface AttendanceHistoryParams {
+  page?: number;
+  limit?: number;
+  month?: number;
+  year?: number;
+  attendance_mode?: string;
+  attendance_status?: string;
+}
+
+export const getEmployeeAttendanceHistory = (
+  employeeId: string,
+  params?: AttendanceHistoryParams,
+): Promise<AttendanceHistoryResponse> =>
+  (
+    apiClient.get(`${BASE}/admin/employees/${employeeId}/history`, {
+      params,
+    }) as Promise<ApiEnvelope<AttendanceHistoryResponse>>
+  ).then((res) => res.data);
+
 // --- Shifts ---
 export const getShifts = (params?: { page?: number; limit?: number }) =>
   apiClient.get(`${BASE}/shifts`, { params });

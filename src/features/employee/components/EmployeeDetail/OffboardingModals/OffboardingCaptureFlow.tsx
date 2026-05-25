@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Lock, Briefcase } from 'lucide-react';
 
 import { Dialog, Button, Select, Checkbox } from '../../../../../components/common';
+import { useEmployeesDropdown } from '../../../../../hooks/useEmployees';
 import {
   initiateOffboardingSchema,
   type InitiateOffboardingDto,
@@ -28,6 +29,13 @@ const EXIT_REASON_OPTIONS = Object.entries(ExitType).map(([_key, value]) => ({
   value: value,
 }));
 
+const ASSET_OPTIONS: { label: string; value: string }[] = [
+  { label: 'Laptop', value: 'LAPTOP' },
+  { label: 'Access card', value: 'ACCESS_CARD' },
+  { label: 'Mobile device', value: 'MOBILE' },
+  { label: 'Office keys', value: 'KEYS' },
+];
+
 export const OffboardingCaptureFlow: React.FC<Props> = ({
   employee,
   isOpen,
@@ -42,6 +50,7 @@ export const OffboardingCaptureFlow: React.FC<Props> = ({
     control,
     handleSubmit,
     setValue,
+    trigger,
     formState: { errors },
   } = useForm<InitiateOffboardingDto>({
     resolver: zodResolver(initiateOffboardingSchema),
@@ -49,6 +58,9 @@ export const OffboardingCaptureFlow: React.FC<Props> = ({
       exit_type: undefined,
       last_working_day: '',
       reason: '',
+      handover_to_user_id: undefined,
+      assets_to_recover: [],
+      schedule_exit_interview: false,
     },
   });
 
@@ -59,13 +71,15 @@ export const OffboardingCaptureFlow: React.FC<Props> = ({
     }
   }, [effectiveImmediately, setValue]);
 
-  // Asset mock state for step 2
-  const [assets, setAssets] = useState({
-    laptop: false,
-    accessCard: false,
-    mobile: false,
-    keys: false,
-  });
+  const { data: employeesResponse, isLoading: isEmployeesLoading } = useEmployeesDropdown();
+
+  const handoverOptions = useMemo(
+    () =>
+      (employeesResponse?.data ?? [])
+        .filter((e) => e.id !== employee.id)
+        .map((e) => ({ label: e.name, value: e.id })),
+    [employeesResponse, employee.id],
+  );
 
   const onSubmit = (data: InitiateOffboardingDto) => {
     initiateOffboard(data, {
@@ -77,9 +91,16 @@ export const OffboardingCaptureFlow: React.FC<Props> = ({
 
   const handleNext = async () => {
     if (step === 1) {
+      const isValid = await trigger(['exit_type', 'last_working_day', 'reason']);
+      if (!isValid) return;
       setStep(2);
     }
   };
+
+  const handleFinalSubmit = handleSubmit(onSubmit, () => {
+    // Send the user back to step 1 so they can see and fix the field errors.
+    setStep(1);
+  });
 
   const dialogFooter = (
     <div className={styles.btnGroup}>
@@ -97,7 +118,7 @@ export const OffboardingCaptureFlow: React.FC<Props> = ({
       ) : (
         <Button
           variant="primary"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleFinalSubmit}
           isLoading={isPending}
           className={styles.btn}
         >
@@ -231,55 +252,62 @@ export const OffboardingCaptureFlow: React.FC<Props> = ({
           </div>
 
           <div className={styles.formGroup}>
-            <label>
-              Handover to<span className={styles.asterisk}>*</span>
-            </label>
-            <Select
-              options={[{ label: 'Akshay Verma', value: 'u-1' }]} // Dummy for visual completion
-              value="u-1"
-              onChange={() => {}}
-              placeholder="Select employee"
+            <label>Handover to</label>
+            <Controller
+              name="handover_to_user_id"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  options={handoverOptions}
+                  value={field.value ?? ''}
+                  onChange={(val) => field.onChange(val ? String(val) : undefined)}
+                  placeholder={isEmployeesLoading ? 'Loading employees…' : 'Select employee'}
+                />
+              )}
             />
           </div>
 
           <div className={styles.formGroup}>
-            <label>
-              Access to recover<span className={styles.asterisk}>*</span>
-            </label>
-            <div className={styles.assetGrid}>
-              <div className={styles.assetCard}>
-                <Checkbox
-                  label="Laptop"
-                  checked={assets.laptop}
-                  onChange={(e) => setAssets({ ...assets, laptop: e.target.checked })}
-                />
-              </div>
-              <div className={styles.assetCard}>
-                <Checkbox
-                  label="Access card"
-                  checked={assets.accessCard}
-                  onChange={(e) => setAssets({ ...assets, accessCard: e.target.checked })}
-                />
-              </div>
-              <div className={styles.assetCard}>
-                <Checkbox
-                  label="Mobile device"
-                  checked={assets.mobile}
-                  onChange={(e) => setAssets({ ...assets, mobile: e.target.checked })}
-                />
-              </div>
-              <div className={styles.assetCard}>
-                <Checkbox
-                  label="Office keys"
-                  checked={assets.keys}
-                  onChange={(e) => setAssets({ ...assets, keys: e.target.checked })}
-                />
-              </div>
-            </div>
+            <label>Access to recover</label>
+            <Controller
+              name="assets_to_recover"
+              control={control}
+              render={({ field }) => {
+                const selected = field.value ?? [];
+                const toggle = (value: string, checked: boolean) => {
+                  field.onChange(
+                    checked ? [...selected, value] : selected.filter((v) => v !== value),
+                  );
+                };
+                return (
+                  <div className={styles.assetGrid}>
+                    {ASSET_OPTIONS.map((opt) => (
+                      <div key={opt.value} className={styles.assetCard}>
+                        <Checkbox
+                          label={opt.label}
+                          checked={selected.includes(opt.value)}
+                          onChange={(e) => toggle(opt.value, e.target.checked)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                );
+              }}
+            />
           </div>
 
           <div style={{ marginTop: '32px' }}>
-            <Checkbox label="Schedule exit interview" checked={false} onChange={() => {}} />
+            <Controller
+              name="schedule_exit_interview"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  label="Schedule exit interview"
+                  checked={!!field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                />
+              )}
+            />
           </div>
         </div>
       )}

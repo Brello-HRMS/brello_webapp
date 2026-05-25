@@ -1,5 +1,5 @@
 import { TableActions, StatusBadge } from '../../../components/common';
-import { Status } from '../../../types/common';
+import { resolveAssetUrl } from '../../../utils/assetUrl';
 
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Employee } from '../types/employeeType';
@@ -30,7 +30,7 @@ export const employeeColumns = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
             {avatar ? (
               <img
-                src={avatar}
+                src={resolveAssetUrl(avatar) ?? undefined}
                 alt={`${firstName} ${lastName}`}
                 style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
               />
@@ -105,11 +105,12 @@ export const employeeColumns = ({
       },
     },
     {
-      accessorKey: 'status',
+      accessorKey: 'employeeStatus',
       header: 'Status',
       size: 120,
       cell: (info) => {
-        const status = info.getValue() as Status;
+        const empStatus = info.getValue() as string;
+        const status = empStatus || info.row.original.status;
         return <StatusBadge status={status} />;
       },
     },

@@ -28,6 +28,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [view, setView] = useState<'days' | 'months' | 'years'>('days');
   const [placement, setPlacement] = useState<'left' | 'right'>('left');
   const [vPlacement, setVPlacement] = useState<'top' | 'bottom'>('bottom');
   const [currentDate, setCurrentDate] = useState(() => {
@@ -48,6 +49,12 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setTimeout(() => setView('days'), 200);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const trackPosition = () => {
@@ -76,12 +83,29 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = (year: number, month: number) => new Date(year, month, 1).getDay();
 
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  const handlePrevClick = () => {
+    if (view === 'days') {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    } else if (view === 'months') {
+      setCurrentDate(new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), 1));
+    } else if (view === 'years') {
+      setCurrentDate(new Date(currentDate.getFullYear() - 12, currentDate.getMonth(), 1));
+    }
   };
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  const handleNextClick = () => {
+    if (view === 'days') {
+      setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    } else if (view === 'months') {
+      setCurrentDate(new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), 1));
+    } else if (view === 'years') {
+      setCurrentDate(new Date(currentDate.getFullYear() + 12, currentDate.getMonth(), 1));
+    }
+  };
+
+  const handleHeaderClick = () => {
+    if (view === 'days') setView('months');
+    else if (view === 'months') setView('years');
   };
 
   const handleDateSelect = (day: number) => {
@@ -133,68 +157,146 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   const monthName = currentDate.toLocaleString('default', { month: 'long' });
   const year = currentDate.getFullYear();
+  const startYear = year - (year % 12);
+  const yearRange = `${startYear} - ${startYear + 11}`;
+
+  const headerText =
+    view === 'days' ? `${monthName} ${year}` : view === 'months' ? `${year}` : yearRange;
+
+  const renderMonths = () => {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return (
+      <motion.div
+        key="months"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className={styles.monthYearGrid}
+      >
+        {months.map((m, idx) => (
+          <div
+            key={m}
+            className={`${styles.monthYearCell} ${idx === currentDate.getMonth() && currentDate.getFullYear() === new Date().getFullYear() ? styles.current : ''}`}
+            onClick={() => {
+              setCurrentDate(new Date(currentDate.getFullYear(), idx, 1));
+              setView('days');
+            }}
+          >
+            {m}
+          </div>
+        ))}
+      </motion.div>
+    );
+  };
+
+  const renderYears = () => {
+    const yearsList = Array.from({ length: 12 }, (_, i) => startYear + i);
+    return (
+      <motion.div
+        key="years"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className={styles.monthYearGrid}
+      >
+        {yearsList.map((y) => (
+          <div
+            key={y}
+            className={`${styles.monthYearCell} ${y === new Date().getFullYear() ? styles.current : ''}`}
+            onClick={() => {
+              setCurrentDate(new Date(y, currentDate.getMonth(), 1));
+              setView('months');
+            }}
+          >
+            {y}
+          </div>
+        ))}
+      </motion.div>
+    );
+  };
 
   const calendarGrid = (
     <div
       className={`${styles.calendarContainer} ${inline ? styles.inline : `${styles[placement]} ${styles[vPlacement]}`}`}
     >
       <div className={styles.calendarHeader}>
-        <button type="button" onClick={handlePrevMonth} className={styles.navBtn}>
+        <button type="button" onClick={handlePrevClick} className={styles.navBtn}>
           <ChevronLeft size={20} />
         </button>
-        <span className={styles.currentMonth}>
-          {monthName} {year}
+        <span className={styles.currentMonth} onClick={handleHeaderClick}>
+          {headerText}
         </span>
-        <button type="button" onClick={handleNextMonth} className={styles.navBtn}>
+        <button type="button" onClick={handleNextClick} className={styles.navBtn}>
           <ChevronRight size={20} />
         </button>
       </div>
 
-      <div className={styles.weekDays}>
-        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
-          <span key={day}>{day}</span>
-        ))}
-      </div>
+      {view === 'days' && (
+        <div className={styles.weekDays}>
+          {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+            <span key={day}>{day}</span>
+          ))}
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
-        <motion.div
-          key={currentDate.toISOString()}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2 }}
-          className={styles.daysGrid}
-        >
-          {generateDays().map((date, index) => {
-            const isToday =
-              date.type === 'current' &&
-              date.day === new Date().getDate() &&
-              currentDate.getMonth() === new Date().getMonth() &&
-              currentDate.getFullYear() === new Date().getFullYear();
+        {view === 'days' && (
+          <motion.div
+            key={`days-${currentDate.toISOString()}`}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2 }}
+            className={styles.daysGrid}
+          >
+            {generateDays().map((date, index) => {
+              const isToday =
+                date.type === 'current' &&
+                date.day === new Date().getDate() &&
+                currentDate.getMonth() === new Date().getMonth() &&
+                currentDate.getFullYear() === new Date().getFullYear();
 
-            const isSelected =
-              value &&
-              date.type === 'current' &&
-              (() => {
-                const parsed = parseLocalDate(value);
-                return (
-                  parsed.getDate() === date.day &&
-                  parsed.getMonth() === currentDate.getMonth() &&
-                  parsed.getFullYear() === currentDate.getFullYear()
-                );
-              })();
+              const isSelected =
+                value &&
+                date.type === 'current' &&
+                (() => {
+                  const parsed = parseLocalDate(value);
+                  return (
+                    parsed.getDate() === date.day &&
+                    parsed.getMonth() === currentDate.getMonth() &&
+                    parsed.getFullYear() === currentDate.getFullYear()
+                  );
+                })();
 
-            return (
-              <div
-                key={index}
-                className={`${styles.dayCell} ${date.type === 'otherMonth' ? styles.otherMonth : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''}`}
-                onClick={() => date.type === 'current' && handleDateSelect(date.day)}
-              >
-                {date.day}
-              </div>
-            );
-          })}
-        </motion.div>
+              return (
+                <div
+                  key={index}
+                  className={`${styles.dayCell} ${date.type === 'otherMonth' ? styles.otherMonth : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''}`}
+                  onClick={() => date.type === 'current' && handleDateSelect(date.day)}
+                >
+                  {date.day}
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
+        {view === 'months' && renderMonths()}
+        {view === 'years' && renderYears()}
       </AnimatePresence>
     </div>
   );
