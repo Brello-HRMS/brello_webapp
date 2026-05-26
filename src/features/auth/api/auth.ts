@@ -44,7 +44,23 @@ export const verifyLoginOtp = async (data: VerifyLoginOtpRequest): Promise<Login
 };
 
 export const setupCompany = async (data: SetupCompanyRequest): Promise<LoginResponse> => {
-  return apiClient.post(`${envVars.BRELLO_BASE_API}/organizations/setup`, data);
+  const formData = new FormData();
+  formData.append('name', data.name);
+  if (data.subdomain) {
+    formData.append('subdomain', data.subdomain);
+  }
+  formData.append('website_url', data.website_url);
+  formData.append('business_type_id', data.business_type_id);
+  formData.append('user_id', data.user_id);
+  if (data.logo) {
+    formData.append('logo', data.logo);
+  }
+
+  return apiClient.post(`${envVars.BRELLO_BASE_API}/organizations/setup`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 };
 
 export const getIndustryTypes = async (): Promise<GetIndustryTypesResponse> => {

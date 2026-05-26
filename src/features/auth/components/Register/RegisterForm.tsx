@@ -1,7 +1,9 @@
-import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 import { useRegister } from '../../api/useRegister';
+import { useCheckAvailability } from '../../api/useCheckAvailability';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Input } from '../../../../components/ui/Input/Input';
@@ -32,7 +34,67 @@ export const RegisterForm: React.FC = () => {
     handleSubmit,
     formState: { errors },
     getValues,
-  } = useForm<RegisterFormData>();
+    setError,
+    clearErrors,
+    control,
+  } = useForm<RegisterFormData>({
+    mode: 'onTouched',
+  });
+
+  const emailValue = useWatch({ control, name: 'email' });
+  const phoneValue = useWatch({ control, name: 'phone' });
+
+  const { mutate: checkAvailability } = useCheckAvailability();
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const email =
+        emailValue && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(emailValue)
+          ? emailValue
+          : undefined;
+      const phone = phoneValue && /^[0-9]{10}$/.test(phoneValue) ? phoneValue : undefined;
+
+      if (email || phone) {
+        checkAvailability(
+          { email, phone },
+          {
+            onSuccess: (data) => {
+              if (email) {
+                if (!data.emailAvailable) {
+                  setError('email', {
+                    type: 'manual',
+                    message: 'This email is already registered',
+                  });
+                } else if (errors.email?.type === 'manual') {
+                  clearErrors('email');
+                }
+              }
+              if (phone) {
+                if (!data.phoneAvailable) {
+                  setError('phone', {
+                    type: 'manual',
+                    message: 'This phone is already registered',
+                  });
+                } else if (errors.phone?.type === 'manual') {
+                  clearErrors('phone');
+                }
+              }
+            },
+          },
+        );
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [
+    emailValue,
+    phoneValue,
+    checkAvailability,
+    setError,
+    clearErrors,
+    errors.email?.type,
+    errors.phone?.type,
+  ]);
 
   const onSubmit = (data: RegisterFormData) => {
     if (!planId) return;

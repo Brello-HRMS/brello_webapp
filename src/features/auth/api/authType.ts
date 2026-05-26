@@ -95,9 +95,11 @@ export type VerifyLoginOtpRequest = {
 
 export type SetupCompanyRequest = {
   name: string;
-  subdomain: string;
+  subdomain?: string;
+  website_url: string;
   business_type_id: string;
   user_id: string;
+  logo?: File;
 };
 
 export type SetupCompanyResponse = {

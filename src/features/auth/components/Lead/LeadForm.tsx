@@ -1,15 +1,15 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { Layers } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { useSetupCompany } from '../../api/useSetupCompany';
 import { useIndustryTypes } from '../../api/useIndustryTypes';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
-import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Button } from '../../../../components/ui/Button/Button';
 import { Input } from '../../../../components/ui/Input/Input';
-import { Select } from '../../../../components/ui/Select/Select';
+import { Select } from '../../../../components/common';
 
 import styles from './LeadForm.module.scss';
 
@@ -19,7 +19,8 @@ type LeadFormData = {
   logo?: FileList;
   industry: string;
   companyName: string;
-  workspaceURL: string;
+  workspaceURL?: string;
+  websiteUrl: string;
 };
 
 export const LeadForm: React.FC = () => {
@@ -30,18 +31,32 @@ export const LeadForm: React.FC = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<LeadFormData>();
 
-  const {
-    mutate: setupCompany,
-    isPending,
-    error: apiError,
-  } = useSetupCompany({
+  const logo = useWatch({ control, name: 'logo' });
+  const imgRef = React.useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (logo && logo.length > 0) {
+      const file = logo[0];
+      const url = URL.createObjectURL(file);
+      if (imgRef.current) {
+        imgRef.current.src = url;
+      }
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [logo]);
+
+  const { mutate: setupCompany, isPending } = useSetupCompany({
     onSuccess: (data: LoginResponse) => {
       sessionStorage.setItem('auth_response', JSON.stringify(data));
 
       navigate('/auth/welcome');
+    },
+    onError: (error) => {
+      toast.error((error as Error)?.message || 'Company setup failed.');
     },
   });
 
@@ -50,11 +65,14 @@ export const LeadForm: React.FC = () => {
 
   const onSubmit = (data: LeadFormData) => {
     if (!userId) return;
+
     setupCompany({
       name: data.companyName,
-      subdomain: data.workspaceURL,
+      subdomain: data.workspaceURL || undefined,
+      website_url: data.websiteUrl,
       business_type_id: data.industry,
       user_id: userId,
+      logo: data.logo && data.logo.length > 0 ? data.logo[0] : undefined,
     });
   };
 
@@ -67,7 +85,20 @@ export const LeadForm: React.FC = () => {
       >
         <div className={styles.uploadSection}>
           <div className={styles.uploadBox}>
-            <Layers className={styles.uploadIconPlaceholder} />
+            {logo && logo.length > 0 ? (
+              <img
+                ref={imgRef}
+                alt="Logo preview"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 'inherit',
+                }}
+              />
+            ) : (
+              <Layers className={styles.uploadIconPlaceholder} />
+            )}
             <input
               type="file"
               accept="image/*"
@@ -77,7 +108,7 @@ export const LeadForm: React.FC = () => {
             />
           </div>
           <label htmlFor="logo-upload" className={styles.uploadLabel}>
-            Click to upload your logo
+            {logo && logo.length > 0 ? 'Change logo' : 'Click to upload your logo'}
           </label>
         </div>
 
@@ -91,29 +122,33 @@ export const LeadForm: React.FC = () => {
         />
 
         <Input
-          label="Workspace URL *"
-          id="workspaceURL"
+          label="Website URL *"
+          id="websiteUrl"
           type="text"
-          placeholder="Workspace URL"
-          {...register('workspaceURL', { required: 'Please enter your workspace URL' })}
-          error={errors.workspaceURL?.message}
+          placeholder="e.g. brello.com"
+          {...register('websiteUrl', { required: 'Please enter your website URL' })}
+          error={errors.websiteUrl?.message}
         />
 
-        <Select
-          label="Industry / Business Type *"
-          id="industry"
-          placeholder={isIndustryTypesLoading ? 'Loading industries...' : 'Select an industry'}
-          options={industryTypes.map((industry) => ({ value: industry.id, label: industry.name }))}
-          disabled={isIndustryTypesLoading}
-          {...register('industry', { required: 'Please select an industry' })}
-          error={errors.industry?.message}
+        <Controller
+          name="industry"
+          control={control}
+          rules={{ required: 'Please select an industry' }}
+          render={({ field }) => (
+            <Select
+              label="Industry / Business Type *"
+              placeholder={isIndustryTypesLoading ? 'Loading industries...' : 'Select an industry'}
+              options={industryTypes.map((industry) => ({
+                value: industry.id,
+                label: industry.name,
+              }))}
+              disabled={isIndustryTypesLoading}
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.industry?.message}
+            />
+          )}
         />
-
-        {apiError && (
-          <span className={elementsStyles.error} style={{ display: 'block', marginBottom: '16px' }}>
-            {(apiError as Error)?.message || 'Company setup failed.'}
-          </span>
-        )}
 
         <Button type="submit" variant="primary" disabled={isPending}>
           {isPending ? 'Setting up...' : 'Continue'}
