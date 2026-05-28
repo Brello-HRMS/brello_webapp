@@ -1,0 +1,267 @@
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 1.25rem;
+  transition: color 0.12s;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.saveRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+
+.tableCard {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--color-bg-card, #fff);
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.04),
+    0 1px 2px -1px rgb(0 0 0 / 0.04);
+  margin-bottom: 1.5rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 0.625rem 0.875rem;
+    text-align: left;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-gray-400);
+    white-space: nowrap;
+    background: var(--color-bg-subtle, #f9fafb);
+    border-bottom: 1px solid var(--color-border);
+
+    &.center {
+      text-align: center;
+    }
+  }
+
+  td {
+    padding: 0 0.875rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--color-border);
+
+    &.center {
+      text-align: center;
+    }
+  }
+}
+
+// ── Column header with select-all checkbox ────────────────────────────────────
+
+.thCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+// ── App group header ───────────────────────────────────────────────────────────
+
+.appGroupRow td {
+  padding: 0.5rem 0.875rem;
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-bg-subtle, #f9fafb));
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
+}
+
+// ── Module rows ───────────────────────────────────────────────────────────────
+
+.moduleRow {
+  height: 48px;
+  background: var(--color-bg-card, #fff);
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--color-bg-subtle, #f9fafb);
+  }
+
+  &:last-child td {
+    border-bottom: none;
+  }
+}
+
+.moduleRow.disabled {
+  opacity: 0.6;
+}
+
+.moduleName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-text);
+}
+
+.wbsBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: monospace;
+  color: var(--color-gray-400);
+  background: var(--color-bg-subtle, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.1rem 0.4rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// ── Checkboxes ────────────────────────────────────────────────────────────────
+
+.checkCell {
+  text-align: center;
+  width: 72px;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+}
+
+.includeCell {
+  text-align: center;
+  width: 72px;
+}
+
+.includeCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+// ── Accordion hierarchy ───────────────────────────────────────────────────────
+
+.chevronBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-card, #fff);
+  cursor: pointer;
+  color: var(--color-gray-400);
+  padding: 0;
+  transition: color 0.12s, background 0.12s, border-color 0.12s;
+
+  &:hover {
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, white);
+    border-color: var(--color-primary);
+  }
+}
+
+.chevronPlaceholder {
+  display: inline-block;
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.chevronIcon {
+  transition: transform 0.2s ease;
+}
+
+.chevronIconOpen {
+  transform: rotate(180deg);
+}
+
+.childCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: var(--color-bg-subtle, #f3f4f6);
+  border: 1px solid var(--color-border);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-gray-500);
+}
+
+.childModuleRow {
+  background: color-mix(in srgb, var(--color-bg-subtle, #f9fafb) 50%, var(--color-bg-card, #fff));
+
+  &:hover {
+    background: var(--color-bg-subtle, #f9fafb);
+  }
+}
+
+.moduleNameChild {
+  padding-left: 0.125rem;
+}
+
+.childIndent {
+  width: 32px;
+  flex-shrink: 0;
+  align-self: stretch;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    width: 16px;
+    height: 1px;
+    background: var(--color-border);
+  }
+}
+
+// ── Loading / empty ───────────────────────────────────────────────────────────
+
+.loading {
+  padding: 3rem;
+  text-align: center;
+  color: var(--color-gray-400);
+  font-size: 0.875rem;
+}
+
+.hint {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--color-gray-400);
+  text-align: right;
+}

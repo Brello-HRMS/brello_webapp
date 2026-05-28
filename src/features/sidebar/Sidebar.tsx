@@ -45,6 +45,7 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     label: 'Setup',
     icon: Settings,
     children: [
+      { label: 'Actions', path: '/platform/setup/actions' },
       { label: 'Industry Types', path: '/platform/setup/industry-types' },
       { label: 'Departments', path: '/platform/setup/departments' },
       { label: 'Designations', path: '/platform/setup/designations' },

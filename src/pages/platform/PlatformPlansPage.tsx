@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Check, CreditCard, Pencil, Plus, Trash2, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Check, CreditCard, Pencil, Plus, Settings2, Trash2, Zap } from 'lucide-react';
 
 import { Button, NoDataFound, PageHeader, WarningModal } from '../../components/common';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -24,6 +25,7 @@ const TIER_COLORS: Record<number, string> = {
 };
 
 const PlatformPlansPage = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
@@ -112,6 +114,7 @@ const PlatformPlansPage = () => {
                   plan={plan}
                   onEdit={handleEdit}
                   onDelete={setDeleteTarget}
+                  onConfigure={(p) => navigate(`/platform/plans/${p.id}/permissions`)}
                 />
               ))}
             </div>
@@ -137,9 +140,10 @@ interface PlanCardProps {
   plan: Plan;
   onEdit: (plan: Plan) => void;
   onDelete: (plan: Plan) => void;
+  onConfigure: (plan: Plan) => void;
 }
 
-const PlanCard = ({ plan, onEdit, onDelete }: PlanCardProps) => {
+const PlanCard = ({ plan, onEdit, onDelete, onConfigure }: PlanCardProps) => {
   const tierLabel = TIER_LABELS[plan.tier_rank] ?? `Tier ${plan.tier_rank}`;
   const tierColor = TIER_COLORS[plan.tier_rank] ?? 'var(--color-primary)';
 
@@ -151,6 +155,14 @@ const PlanCard = ({ plan, onEdit, onDelete }: PlanCardProps) => {
           {tierLabel}
         </div>
         <div className={styles.cardActions}>
+          <button
+            className={styles.iconBtn}
+            onClick={() => onConfigure(plan)}
+            aria-label="Configure permissions"
+            title="Configure permissions"
+          >
+            <Settings2 size={15} />
+          </button>
           <button
             className={styles.iconBtn}
             onClick={() => onEdit(plan)}
