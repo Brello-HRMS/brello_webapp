@@ -62,6 +62,11 @@ const PlatformDepartmentPage = () => {
     setFormOpen(true);
   }, []);
 
+  const handleClose = useCallback(() => {
+    setFormOpen(false);
+    setEditingItem(null);
+  }, []);
+
   const handleDelete = useCallback(() => {
     if (!deleteTarget) return;
     remove(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) });
@@ -103,9 +108,11 @@ const PlatformDepartmentPage = () => {
     [handleEdit],
   );
 
-  if (!isLoading && allItems.length === 0 && !debouncedSearch) {
-    return (
-      <>
+  const showEmptyState = !isLoading && allItems.length === 0 && !debouncedSearch;
+
+  return (
+    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
+      {showEmptyState ? (
         <NoDataFound
           title="No Default Departments Yet"
           description="Add default departments that will be automatically copied to every new organization on setup."
@@ -115,62 +122,50 @@ const PlatformDepartmentPage = () => {
           onButtonClick={handleAdd}
           showButtonIcon
         />
-        <DepartmentFormModal
-          key={formOpen ? (editingItem?.id ?? 'new') : 'closed'}
-          open={formOpen}
-          onClose={() => setFormOpen(false)}
-          department={editingItem}
-        />
-      </>
-    );
-  }
-
-  return (
-    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
-      <PageHeader
-        title="Departments"
-        subtitle="Default departments copied to every new organization on setup."
-        actions={
-          <Button variant="primary" onClick={handleAdd}>
-            <Plus size={16} />
-            Add department
-          </Button>
-        }
-      />
-
-      <ListControls
-        searchPlaceholder="Search department..."
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-
-      {filtered.length === 0 ? (
-        <NoDataFound
-          title="No Departments Found"
-          description="Try adjusting your search criteria."
-          noDataImage={no_department}
-          noDataImageAlt="No Departments"
-        />
       ) : (
-        <DataTable
-          columns={columns}
-          data={paginated}
-          pagination={pagination}
-          onPaginationChange={setPagination}
-          manualPagination={false}
-          pageCount={totalPages}
-        />
+        <>
+          <PageHeader
+            title="Departments"
+            subtitle="Default departments copied to every new organization on setup."
+            actions={
+              <Button variant="primary" onClick={handleAdd}>
+                <Plus size={16} />
+                Add department
+              </Button>
+            }
+          />
+
+          <ListControls
+            searchPlaceholder="Search department..."
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            showFilters={false}
+            showSort={false}
+            showViewSwitcher={false}
+            showMultiSelect={false}
+          />
+
+          {filtered.length === 0 ? (
+            <NoDataFound
+              title="No Departments Found"
+              description="Try adjusting your search criteria."
+              noDataImage={no_department}
+              noDataImageAlt="No Departments"
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={paginated}
+              pagination={pagination}
+              onPaginationChange={setPagination}
+              manualPagination={false}
+              pageCount={totalPages}
+            />
+          )}
+        </>
       )}
 
-      <DepartmentFormModal
-        key={formOpen ? (editingItem?.id ?? 'new') : 'closed'}
-        open={formOpen}
-        onClose={() => {
-          setFormOpen(false);
-          setEditingItem(null);
-        }}
-        department={editingItem}
-      />
+      <DepartmentFormModal open={formOpen} onClose={handleClose} department={editingItem} />
 
       <WarningModal
         isOpen={!!deleteTarget}

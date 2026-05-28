@@ -9,8 +9,8 @@ import {
   PageHeader,
   WarningModal,
 } from '../../components/common';
+import { TableActions } from '../../components/common';
 import { useDebounce } from '../../hooks/useDebounce';
-import { SortOrder } from '../../types/common';
 import { IndustryTypeFormModal } from '../../features/platform/industryTypes/IndustryTypeFormModal';
 import {
   useIndustryTypesList,
@@ -19,20 +19,11 @@ import {
 
 import styles from './PlatformSetup.module.scss';
 
-import type { SortOption } from '../../components/common';
 import type { IndustryType } from '../../features/platform/industryTypes/types';
 import type { ColumnDef } from '@tanstack/react-table';
 
-const SORT_OPTIONS: SortOption[] = [
-  { label: 'Alphabetical (A-Z)', value: `name:${SortOrder.ASC}` },
-  { label: 'Alphabetical (Z-A)', value: `name:${SortOrder.DESC}` },
-  { label: 'Newest First', value: `created_at:${SortOrder.DESC}` },
-  { label: 'Oldest First', value: `created_at:${SortOrder.ASC}` },
-];
-
 const PlatformIndustryTypePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSort, setSelectedSort] = useState(`name:${SortOrder.ASC}`);
   const [formOpen, setFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<IndustryType | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<IndustryType | null>(null);
@@ -44,17 +35,10 @@ const PlatformIndustryTypePage = () => {
   const allItems = useMemo(() => response?.data ?? [], [response]);
 
   const filtered = useMemo(() => {
-    const [sortBy, sortOrder] = selectedSort.split(':') as [string, SortOrder];
     const q = debouncedSearch.toLowerCase();
-
-    const result = allItems.filter((item) => !q || item.name.toLowerCase().includes(q));
-
-    return [...result].sort((a, b) => {
-      const av = sortBy === 'name' ? a.name : a.created_at;
-      const bv = sortBy === 'name' ? b.name : b.created_at;
-      return sortOrder === SortOrder.ASC ? av.localeCompare(bv) : bv.localeCompare(av);
-    });
-  }, [allItems, debouncedSearch, selectedSort]);
+    if (!q) return allItems;
+    return allItems.filter((item) => item.name.toLowerCase().includes(q));
+  }, [allItems, debouncedSearch]);
 
   const handleAdd = useCallback(() => {
     setEditingItem(null);
@@ -66,10 +50,14 @@ const PlatformIndustryTypePage = () => {
     setFormOpen(true);
   }, []);
 
+  const handleClose = useCallback(() => {
+    setFormOpen(false);
+    setEditingItem(null);
+  }, []);
+
   const handleDeleteConfirm = useCallback(() => {
-    if (deleteTarget) {
-      deleteType(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) });
-    }
+    if (!deleteTarget) return;
+    deleteType(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) });
   }, [deleteTarget, deleteType]);
 
   const columns: ColumnDef<IndustryType>[] = useMemo(
@@ -86,25 +74,24 @@ const PlatformIndustryTypePage = () => {
       },
       {
         id: 'actions',
-        header: '',
+        header: 'Actions',
+        size: 100,
         cell: ({ row }) => (
-          <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-            <Button variant="secondary" onClick={() => handleEdit(row.original)}>
-              Edit
-            </Button>
-            <Button variant="danger" onClick={() => setDeleteTarget(row.original)}>
-              Delete
-            </Button>
-          </div>
+          <TableActions
+            onEdit={() => handleEdit(row.original)}
+            onDelete={() => setDeleteTarget(row.original)}
+          />
         ),
       },
     ],
     [handleEdit],
   );
 
-  if (!isLoading && allItems.length === 0 && !debouncedSearch) {
-    return (
-      <>
+  const showEmptyState = !isLoading && allItems.length === 0 && !debouncedSearch;
+
+  return (
+    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
+      {showEmptyState ? (
         <NoDataFound
           title="No Industry Types Added Yet"
           description="Add your first industry type to get started."
@@ -114,49 +101,43 @@ const PlatformIndustryTypePage = () => {
           noDataImage=""
           noDataImageAlt=""
         />
-        <IndustryTypeFormModal
-          key={formOpen ? (editingItem?.id ?? 'new') : 'closed'}
-          open={formOpen}
-          onClose={() => setFormOpen(false)}
-          industryType={editingItem}
-        />
-      </>
-    );
-  }
+      ) : (
+        <>
+          <PageHeader
+            title="Industry Types"
+            subtitle="Manage global industry type master data."
+            actions={
+              <Button variant="primary" onClick={handleAdd}>
+                <Plus size={16} />
+                Add Industry Type
+              </Button>
+            }
+          />
 
-  return (
-    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
-      <PageHeader
-        title="Industry Types"
-        subtitle="Manage global industry type master data."
-        actions={
-          <Button variant="primary" onClick={handleAdd}>
-            <Plus size={16} />
-            Add Industry Type
-          </Button>
-        }
-      />
+          <ListControls
+            searchPlaceholder="Search industry types..."
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            showFilters={false}
+            showSort={false}
+            showViewSwitcher={false}
+            showMultiSelect={false}
+          />
 
-      <ListControls
-        searchPlaceholder="Search industry types..."
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        sortOptions={SORT_OPTIONS}
-        selectedSort={selectedSort}
-        onSortChange={setSelectedSort}
-      />
+          {filtered.length === 0 ? (
+            <NoDataFound
+              title="No Industry Types Found"
+              description="Try adjusting your search criteria."
+              noDataImage=""
+              noDataImageAlt=""
+            />
+          ) : (
+            <DataTable columns={columns} data={filtered} />
+          )}
+        </>
+      )}
 
-      <DataTable columns={columns} data={filtered} />
-
-      <IndustryTypeFormModal
-        key={formOpen ? (editingItem?.id ?? 'new') : 'closed'}
-        open={formOpen}
-        onClose={() => {
-          setFormOpen(false);
-          setEditingItem(null);
-        }}
-        industryType={editingItem}
-      />
+      <IndustryTypeFormModal open={formOpen} onClose={handleClose} industryType={editingItem} />
 
       <WarningModal
         isOpen={!!deleteTarget}

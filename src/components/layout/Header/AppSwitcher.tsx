@@ -3,6 +3,7 @@ import { LayoutGrid, Shield, User, Users, Wallet } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 import { getAvailableApps, getAuthResponse } from '../../../utils/authUtils';
+import { getCookie, setCookie } from '../../../utils/cookieUtils';
 import { Popover } from '../../common/Popover';
 import { switchApp } from '../../../features/auth/api/auth';
 
@@ -28,12 +29,12 @@ export const AppSwitcher: React.FC = () => {
       const response = await switchApp({ appId });
       const { data } = response;
 
-      const authResponseStr = sessionStorage.getItem('auth_response');
+      const authResponseStr = getCookie('auth_response');
       if (authResponseStr && data) {
         const auth = JSON.parse(authResponseStr);
         auth.data.access_token = data.access_token;
         auth.data.defaultAppId = data.appId;
-        sessionStorage.setItem('auth_response', JSON.stringify(auth));
+        setCookie('auth_response', JSON.stringify(auth));
 
         // Use window.location to trigger a full refresh and re-route based on new appId
         window.location.assign('/dashboard');

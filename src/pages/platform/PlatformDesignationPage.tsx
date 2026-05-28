@@ -62,6 +62,11 @@ const PlatformDesignationPage = () => {
     setFormOpen(true);
   }, []);
 
+  const handleClose = useCallback(() => {
+    setFormOpen(false);
+    setEditingItem(null);
+  }, []);
+
   const handleDelete = useCallback(() => {
     if (!deleteTarget) return;
     remove(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) });
@@ -103,9 +108,11 @@ const PlatformDesignationPage = () => {
     [handleEdit],
   );
 
-  if (!isLoading && allItems.length === 0 && !debouncedSearch) {
-    return (
-      <>
+  const showEmptyState = !isLoading && allItems.length === 0 && !debouncedSearch;
+
+  return (
+    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
+      {showEmptyState ? (
         <NoDataFound
           title="No Default Designations Yet"
           description="Add default designations that will be automatically copied to every new organization on setup."
@@ -115,62 +122,50 @@ const PlatformDesignationPage = () => {
           onButtonClick={handleAdd}
           showButtonIcon
         />
-        <DesignationFormModal
-          key={formOpen ? (editingItem?.id ?? 'new') : 'closed'}
-          open={formOpen}
-          onClose={() => setFormOpen(false)}
-          designation={editingItem}
-        />
-      </>
-    );
-  }
-
-  return (
-    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
-      <PageHeader
-        title="Designations"
-        subtitle="Default designations copied to every new organization on setup."
-        actions={
-          <Button variant="primary" onClick={handleAdd}>
-            <Plus size={16} />
-            Add designation
-          </Button>
-        }
-      />
-
-      <ListControls
-        searchPlaceholder="Search designation..."
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
-
-      {filtered.length === 0 ? (
-        <NoDataFound
-          title="No Designations Found"
-          description="Try adjusting your search criteria."
-          noDataImage={no_designation}
-          noDataImageAlt="No Designations"
-        />
       ) : (
-        <DataTable
-          columns={columns}
-          data={paginated}
-          pagination={pagination}
-          onPaginationChange={setPagination}
-          manualPagination={false}
-          pageCount={totalPages}
-        />
+        <>
+          <PageHeader
+            title="Designations"
+            subtitle="Default designations copied to every new organization on setup."
+            actions={
+              <Button variant="primary" onClick={handleAdd}>
+                <Plus size={16} />
+                Add designation
+              </Button>
+            }
+          />
+
+          <ListControls
+            searchPlaceholder="Search designation..."
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            showFilters={false}
+            showSort={false}
+            showViewSwitcher={false}
+            showMultiSelect={false}
+          />
+
+          {filtered.length === 0 ? (
+            <NoDataFound
+              title="No Designations Found"
+              description="Try adjusting your search criteria."
+              noDataImage={no_designation}
+              noDataImageAlt="No Designations"
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={paginated}
+              pagination={pagination}
+              onPaginationChange={setPagination}
+              manualPagination={false}
+              pageCount={totalPages}
+            />
+          )}
+        </>
       )}
 
-      <DesignationFormModal
-        key={formOpen ? (editingItem?.id ?? 'new') : 'closed'}
-        open={formOpen}
-        onClose={() => {
-          setFormOpen(false);
-          setEditingItem(null);
-        }}
-        designation={editingItem}
-      />
+      <DesignationFormModal open={formOpen} onClose={handleClose} designation={editingItem} />
 
       <WarningModal
         isOpen={!!deleteTarget}

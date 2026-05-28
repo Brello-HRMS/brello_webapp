@@ -7,11 +7,11 @@ export interface AuthUser {
   organization_id: string;
 }
 
+import { getCookie } from './cookieUtils';
+
 export const getAuthResponse = () => {
   try {
-    // Support both localStorage and sessionStorage depending on how auth is persisted
-    const authStr =
-      localStorage.getItem('auth_response') || sessionStorage.getItem('auth_response');
+    const authStr = getCookie('auth_response');
     if (authStr) {
       return JSON.parse(authStr);
     }

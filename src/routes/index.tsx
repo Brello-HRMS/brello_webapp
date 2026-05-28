@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate, redirect } from 'react-router-dom';
 
+import { getCookie } from '../utils/cookieUtils';
 import { MainLayout } from '../components/layout/MainLayout';
 import { RequireAccess } from '../components/common';
 import { ModuleCode } from '../enum/modules';
@@ -45,7 +46,7 @@ import PlatformDepartmentPage from '../pages/platform/PlatformDepartmentPage';
 import PlatformDesignationPage from '../pages/platform/PlatformDesignationPage';
 
 const isAuthenticated = () => {
-  const authResponse = sessionStorage.getItem('auth_response');
+  const authResponse = getCookie('auth_response');
   if (authResponse) {
     try {
       const parsed = JSON.parse(authResponse);
@@ -58,7 +59,7 @@ const isAuthenticated = () => {
 };
 
 const isPlatformAdmin = () => {
-  const authResponse = sessionStorage.getItem('auth_response');
+  const authResponse = getCookie('auth_response');
   if (authResponse) {
     try {
       const parsed = JSON.parse(authResponse);
@@ -334,7 +335,7 @@ const router = createBrowserRouter([
       {
         path: 'reimbursement',
         loader: () => {
-          const authResponseStr = sessionStorage.getItem('auth_response');
+          const authResponseStr = getCookie('auth_response');
           if (authResponseStr) {
             try {
               const authResponse = JSON.parse(authResponseStr);
@@ -365,7 +366,7 @@ const router = createBrowserRouter([
       {
         path: 'announcements',
         loader: () => {
-          const authResponseStr = sessionStorage.getItem('auth_response');
+          const authResponseStr = getCookie('auth_response');
           if (authResponseStr) {
             try {
               const authResponse = JSON.parse(authResponseStr);
