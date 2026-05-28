@@ -59,6 +59,7 @@ export type User = {
   last_name: string;
   enterprise_id: string | null;
   organization_id: string | null;
+  is_platform_admin?: boolean;
 };
 
 export type Apps = {

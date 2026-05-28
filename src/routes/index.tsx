@@ -39,6 +39,7 @@ import AttendanceSetupPage from '../pages/attendance/setup/AttendanceSetupPage';
 import { AppId } from '../enum/app';
 import LeaveManagementPage from '../pages/attendance/LeaveManagementPage';
 import LeaveRequestsPage from '../pages/attendance/LeaveRequestsPage';
+import PlatformDashboardPage from '../pages/platform/PlatformDashboardPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -53,10 +54,29 @@ const isAuthenticated = () => {
   return false;
 };
 
+const isPlatformAdmin = () => {
+  const authResponse = sessionStorage.getItem('auth_response');
+  if (authResponse) {
+    try {
+      const parsed = JSON.parse(authResponse);
+      return !!parsed?.data?.user?.is_platform_admin;
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};
+
 const protectedLoader = () => {
   if (!isAuthenticated()) {
     return redirect('/auth/login');
   }
+  return null;
+};
+
+const platformAdminLoader = () => {
+  if (!isAuthenticated()) return redirect('/auth/login');
+  if (!isPlatformAdmin()) return redirect('/dashboard');
   return null;
 };
 
@@ -83,6 +103,11 @@ const router = createBrowserRouter([
   {
     path: '/auth/welcome',
     element: <WelcomeScreen />,
+  },
+  {
+    path: '/platform/dashboard',
+    element: <PlatformDashboardPage />,
+    loader: platformAdminLoader,
   },
   {
     path: '/',

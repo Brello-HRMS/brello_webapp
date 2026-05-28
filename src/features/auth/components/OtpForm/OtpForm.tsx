@@ -105,7 +105,9 @@ export const OtpForm: React.FC = () => {
             onSuccess: (data: LoginResponse) => {
               const { user, setup_required } = data.data;
               sessionStorage.setItem('auth_response', JSON.stringify(data));
-              if (setup_required) {
+              if (user.is_platform_admin) {
+                navigate('/platform/dashboard');
+              } else if (setup_required) {
                 navigate('/auth/lead', { state: { userId: user.id } });
               } else {
                 navigate('/dashboard');
