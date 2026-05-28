@@ -40,6 +40,9 @@ import { AppId } from '../enum/app';
 import LeaveManagementPage from '../pages/attendance/LeaveManagementPage';
 import LeaveRequestsPage from '../pages/attendance/LeaveRequestsPage';
 import PlatformDashboardPage from '../pages/platform/PlatformDashboardPage';
+import PlatformIndustryTypePage from '../pages/platform/PlatformIndustryTypePage';
+import PlatformDepartmentPage from '../pages/platform/PlatformDepartmentPage';
+import PlatformDesignationPage from '../pages/platform/PlatformDesignationPage';
 
 const isAuthenticated = () => {
   const authResponse = sessionStorage.getItem('auth_response');
@@ -105,9 +108,15 @@ const router = createBrowserRouter([
     element: <WelcomeScreen />,
   },
   {
-    path: '/platform/dashboard',
-    element: <PlatformDashboardPage />,
+    path: '/platform',
+    element: <MainLayout />,
     loader: platformAdminLoader,
+    children: [
+      { path: 'dashboard', element: <PlatformDashboardPage /> },
+      { path: 'setup/industry-types', element: <PlatformIndustryTypePage /> },
+      { path: 'setup/departments', element: <PlatformDepartmentPage /> },
+      { path: 'setup/designations', element: <PlatformDesignationPage /> },
+    ],
   },
   {
     path: '/',

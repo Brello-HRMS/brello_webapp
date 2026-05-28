@@ -44,3 +44,8 @@ export const getCurrentAppId = (): string | undefined => {
   const response = getAuthResponse();
   return response?.data?.defaultAppId;
 };
+
+export const isPlatformAdmin = (): boolean => {
+  const response = getAuthResponse();
+  return !!response?.data?.user?.is_platform_admin;
+};

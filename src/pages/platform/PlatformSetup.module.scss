@@ -1,0 +1,10 @@
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  transition: opacity 0.2s;
+
+  &.loading {
+    opacity: 0.6;
+  }
+}
