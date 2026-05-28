@@ -44,6 +44,9 @@ import PlatformDashboardPage from '../pages/platform/PlatformDashboardPage';
 import PlatformIndustryTypePage from '../pages/platform/PlatformIndustryTypePage';
 import PlatformDepartmentPage from '../pages/platform/PlatformDepartmentPage';
 import PlatformDesignationPage from '../pages/platform/PlatformDesignationPage';
+import PlatformPlansPage from '../pages/platform/PlatformPlansPage';
+import PlatformAppsPage from '../pages/platform/PlatformAppsPage';
+import PlatformModulesPage from '../pages/platform/PlatformModulesPage';
 
 const isAuthenticated = () => {
   const authResponse = getCookie('auth_response');
@@ -114,6 +117,9 @@ const router = createBrowserRouter([
     loader: platformAdminLoader,
     children: [
       { path: 'dashboard', element: <PlatformDashboardPage /> },
+      { path: 'plans', element: <PlatformPlansPage /> },
+      { path: 'apps', element: <PlatformAppsPage /> },
+      { path: 'modules', element: <PlatformModulesPage /> },
       { path: 'setup/industry-types', element: <PlatformIndustryTypePage /> },
       { path: 'setup/departments', element: <PlatformDepartmentPage /> },
       { path: 'setup/designations', element: <PlatformDesignationPage /> },

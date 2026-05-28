@@ -1,6 +1,15 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Command, Layers, Loader2, LayoutDashboard, Settings } from 'lucide-react';
+import {
+  Search,
+  Command,
+  Layers,
+  Loader2,
+  LayoutDashboard,
+  Settings,
+  CreditCard,
+  Boxes,
+} from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { useSearchStore } from '../search/store/search.store';
@@ -18,6 +27,19 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     path: '/platform/dashboard',
+  },
+  {
+    label: 'Plans',
+    icon: CreditCard,
+    path: '/platform/plans',
+  },
+  {
+    label: 'App & Modules',
+    icon: Boxes,
+    children: [
+      { label: 'Apps', path: '/platform/apps' },
+      { label: 'Modules', path: '/platform/modules' },
+    ],
   },
   {
     label: 'Setup',
