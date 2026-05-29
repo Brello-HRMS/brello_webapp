@@ -2,9 +2,16 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, CreditCard, Pencil, Plus, Settings2, Trash2, Zap } from 'lucide-react';
 
-import { Button, NoDataFound, PageHeader, WarningModal } from '../../components/common';
+import {
+  Button,
+  ListControls,
+  NoDataFound,
+  PageHeader,
+  WarningModal,
+} from '../../components/common';
 import { useDebounce } from '../../hooks/useDebounce';
 import { usePlansList, useDeletePlan } from '../../features/platform/plans/hooks';
+import { useEnterprisesList } from '../../features/platform/enterprises/hooks';
 import { PlanFormModal } from '../../features/platform/plans/PlanFormModal';
 import { StatusBadge } from '../../components/common';
 
@@ -27,15 +34,18 @@ const TIER_COLORS: Record<number, string> = {
 const PlatformPlansPage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [enterpriseFilter, setEnterpriseFilter] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Plan | null>(null);
 
   const debouncedSearch = useDebounce(searchQuery, 300);
-  const { data: response, isLoading } = usePlansList();
+  const { data: response, isLoading } = usePlansList(enterpriseFilter || undefined);
+  const { data: entResponse } = useEnterprisesList();
   const { mutate: remove } = useDeletePlan();
 
   const allPlans = useMemo(() => response?.data ?? [], [response]);
+  const enterprises = useMemo(() => entResponse?.data ?? [], [entResponse]);
 
   const filtered = useMemo(() => {
     const q = debouncedSearch.toLowerCase();
@@ -90,14 +100,22 @@ const PlatformPlansPage = () => {
             }
           />
 
-          <div className={styles.searchBar}>
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search plans..."
-              className={styles.searchInput}
-            />
-          </div>
+          <ListControls
+            searchPlaceholder="Search plans..."
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            showFilters={true}
+            filterTitle="Enterprise"
+            filterOptions={[
+              { label: 'All Enterprises', value: '' },
+              ...enterprises.map((e) => ({ label: e.name, value: e.id })),
+            ]}
+            selectedFilter={enterpriseFilter}
+            onFilterChange={setEnterpriseFilter}
+            showSort={false}
+            showViewSwitcher={false}
+            showMultiSelect={false}
+          />
 
           {filtered.length === 0 ? (
             <NoDataFound
@@ -108,21 +126,33 @@ const PlatformPlansPage = () => {
             />
           ) : (
             <div className={styles.grid}>
-              {filtered.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  onEdit={handleEdit}
-                  onDelete={setDeleteTarget}
-                  onConfigure={(p) => navigate(`/platform/plans/${p.id}/permissions`)}
-                />
-              ))}
+              {filtered.map((plan) => {
+                const entName = plan.enterprise_id
+                  ? (enterprises.find((e) => e.id === plan.enterprise_id)?.name ??
+                    plan.enterprise_id)
+                  : null;
+                return (
+                  <PlanCard
+                    key={plan.id}
+                    plan={plan}
+                    enterpriseName={entName}
+                    onEdit={handleEdit}
+                    onDelete={setDeleteTarget}
+                    onConfigure={(p) => navigate(`/platform/plans/${p.id}/permissions`)}
+                  />
+                );
+              })}
             </div>
           )}
         </>
       )}
 
-      <PlanFormModal open={formOpen} onClose={handleClose} plan={editingPlan} />
+      <PlanFormModal
+        open={formOpen}
+        onClose={handleClose}
+        plan={editingPlan}
+        defaultEnterpriseId={enterpriseFilter || undefined}
+      />
 
       <WarningModal
         isOpen={!!deleteTarget}
@@ -138,12 +168,13 @@ const PlatformPlansPage = () => {
 
 interface PlanCardProps {
   plan: Plan;
+  enterpriseName: string | null;
   onEdit: (plan: Plan) => void;
   onDelete: (plan: Plan) => void;
   onConfigure: (plan: Plan) => void;
 }
 
-const PlanCard = ({ plan, onEdit, onDelete, onConfigure }: PlanCardProps) => {
+const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanCardProps) => {
   const tierLabel = TIER_LABELS[plan.tier_rank] ?? `Tier ${plan.tier_rank}`;
   const tierColor = TIER_COLORS[plan.tier_rank] ?? 'var(--color-primary)';
 
@@ -230,6 +261,7 @@ const PlanCard = ({ plan, onEdit, onDelete, onConfigure }: PlanCardProps) => {
           <CreditCard size={13} />
           {plan.billing_cycle_default}
         </span>
+        {enterpriseName && <span className={styles.enterpriseTag}>{enterpriseName}</span>}
       </div>
     </div>
   );

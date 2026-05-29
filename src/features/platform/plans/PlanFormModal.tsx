@@ -7,6 +7,7 @@ import { Input } from '../../../components/ui/Input/Input';
 import { TextArea } from '../../../components/ui/TextArea/TextArea';
 import { Select } from '../../../components/ui/Select/Select';
 import { Status } from '../../../types/common';
+import { useEnterprisesList } from '../enterprises/hooks';
 
 import { useCreatePlan, useUpdatePlan } from './hooks';
 import { BillingCycle } from './types';
@@ -17,9 +18,11 @@ interface Props {
   open: boolean;
   onClose: () => void;
   plan?: Plan | null;
+  defaultEnterpriseId?: string;
 }
 
 type FormValues = {
+  enterprise_id: string;
   name: string;
   price: string;
   price_per_employee_annual: string;
@@ -38,8 +41,11 @@ const BILLING_CYCLE_OPTIONS = [
   { value: BillingCycle.ANNUAL, label: 'Annual' },
 ];
 
-export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
+export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan, defaultEnterpriseId }) => {
   const isEdit = !!plan;
+
+  const { data: entResponse } = useEnterprisesList();
+  const enterprises = entResponse?.data ?? [];
 
   const {
     register,
@@ -50,6 +56,7 @@ export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
+      enterprise_id: defaultEnterpriseId ?? '',
       name: '',
       price: '',
       price_per_employee_annual: '',
@@ -75,6 +82,7 @@ export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
     if (open) {
       if (plan) {
         reset({
+          enterprise_id: plan.enterprise_id ?? '',
           name: plan.name,
           price: String(plan.price),
           price_per_employee_annual: String(plan.price_per_employee_annual),
@@ -89,6 +97,7 @@ export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
         });
       } else {
         reset({
+          enterprise_id: defaultEnterpriseId ?? '',
           name: '',
           price: '',
           price_per_employee_annual: '',
@@ -103,7 +112,7 @@ export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
         });
       }
     }
-  }, [open, plan, reset]);
+  }, [open, plan, defaultEnterpriseId, reset]);
 
   const addFeature = () => {
     const trimmed = featureInput.trim();
@@ -129,6 +138,7 @@ export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
 
   const onSubmit = (values: FormValues) => {
     const payload = {
+      enterprise_id: values.enterprise_id || undefined,
       name: values.name.trim(),
       price: parseFloat(values.price) || 0,
       price_per_employee_annual: parseFloat(values.price_per_employee_annual) || 0,
@@ -177,6 +187,39 @@ export const PlanFormModal: React.FC<Props> = ({ open, onClose, plan }) => {
         onSubmit={handleSubmit(onSubmit)}
         style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
       >
+        <div>
+          <label
+            style={{
+              display: 'block',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              marginBottom: '0.375rem',
+            }}
+          >
+            Enterprise
+          </label>
+          <select
+            {...register('enterprise_id')}
+            style={{
+              width: '100%',
+              padding: '0.5rem 0.75rem',
+              border: '1px solid var(--color-border)',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              background: 'var(--color-bg-input, #fff)',
+              color: 'var(--color-text)',
+              outline: 'none',
+            }}
+          >
+            <option value="">No enterprise (global)</option>
+            {enterprises.map((ent) => (
+              <option key={ent.id} value={ent.id}>
+                {ent.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <Input
           {...register('name', { required: 'Plan name is required' })}
           label="Plan Name"

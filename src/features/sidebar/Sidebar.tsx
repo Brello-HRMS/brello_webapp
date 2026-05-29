@@ -11,6 +11,7 @@ import {
   Boxes,
   Users,
   Building2,
+  Network,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -39,6 +40,11 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     label: 'Enterprises',
     icon: Building2,
     path: '/platform/enterprises',
+  },
+  {
+    label: 'Organisations',
+    icon: Network,
+    path: '/platform/organizations',
   },
   {
     label: 'Plans',

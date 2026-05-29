@@ -5,7 +5,10 @@ import type { PlansResponse, CreatePlanRequest, UpdatePlanRequest } from './type
 
 const BASE = `${envVars.BRELLO_BASE_API}/plans`;
 
-export const getPlans = (): Promise<PlansResponse> => apiClient.get(BASE);
+export const getPlans = (enterpriseId?: string): Promise<PlansResponse> => {
+  const qs = enterpriseId ? `?enterprise_id=${enterpriseId}` : '';
+  return apiClient.get(`${BASE}${qs}`);
+};
 
 export const createPlan = (
   data: CreatePlanRequest,

@@ -7,6 +7,7 @@ export enum BillingCycle {
 
 export type Plan = {
   id: string;
+  enterprise_id: string | null;
   name: string;
   price: number;
   price_per_employee_annual: number;
@@ -30,6 +31,7 @@ export type PlansResponse = {
 export type CreatePlanRequest = {
   name: string;
   price: number;
+  enterprise_id?: string;
   price_per_employee_annual?: number;
   annual_discount_percent?: number;
   tier_rank?: number;

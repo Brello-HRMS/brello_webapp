@@ -5,6 +5,7 @@ export type RegisterRequest = {
   phone: string;
   password: string;
   plan_id: string;
+  enterprise_id?: string;
   location?: string;
   device?: string;
   source?: string;

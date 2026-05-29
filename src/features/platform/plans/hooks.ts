@@ -9,10 +9,10 @@ import type { CreatePlanRequest, UpdatePlanRequest } from './types';
 
 const QUERY_KEY = ['platform', 'plans'];
 
-export const usePlansList = () =>
+export const usePlansList = (enterpriseId?: string) =>
   useQuery({
-    queryKey: QUERY_KEY,
-    queryFn: getPlans,
+    queryKey: enterpriseId ? [...QUERY_KEY, enterpriseId] : QUERY_KEY,
+    queryFn: () => getPlans(enterpriseId),
   });
 
 export const useCreatePlan = () => {
