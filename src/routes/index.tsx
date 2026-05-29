@@ -49,6 +49,8 @@ import PlatformAppsPage from '../pages/platform/PlatformAppsPage';
 import PlatformModulesPage from '../pages/platform/PlatformModulesPage';
 import PlatformActionsPage from '../pages/platform/PlatformActionsPage';
 import PlatformPlanPermissionsPage from '../pages/platform/PlatformPlanPermissionsPage';
+import PlatformLeadsPage from '../pages/platform/PlatformLeadsPage';
+import PlatformEnterprisesPage from '../pages/platform/PlatformEnterprisesPage';
 
 const isAuthenticated = () => {
   const authResponse = getCookie('auth_response');
@@ -119,6 +121,8 @@ const router = createBrowserRouter([
     loader: platformAdminLoader,
     children: [
       { path: 'dashboard', element: <PlatformDashboardPage /> },
+      { path: 'leads', element: <PlatformLeadsPage /> },
+      { path: 'enterprises', element: <PlatformEnterprisesPage /> },
       { path: 'plans', element: <PlatformPlansPage /> },
       { path: 'apps', element: <PlatformAppsPage /> },
       { path: 'modules', element: <PlatformModulesPage /> },

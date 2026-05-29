@@ -9,6 +9,8 @@ import {
   Settings,
   CreditCard,
   Boxes,
+  Users,
+  Building2,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -27,6 +29,16 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     path: '/platform/dashboard',
+  },
+  {
+    label: 'Leads',
+    icon: Users,
+    path: '/platform/leads',
+  },
+  {
+    label: 'Enterprises',
+    icon: Building2,
+    path: '/platform/enterprises',
   },
   {
     label: 'Plans',
