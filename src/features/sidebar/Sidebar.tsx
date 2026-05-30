@@ -12,6 +12,7 @@ import {
   Users,
   Building2,
   Network,
+  Lock,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -50,6 +51,14 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     label: 'Plans',
     icon: CreditCard,
     path: '/platform/plans',
+  },
+  {
+    label: 'Access',
+    icon: Lock,
+    children: [
+      { label: 'Roles', path: '/platform/access/roles' },
+      { label: 'Permissions', path: '/platform/access/permissions' },
+    ],
   },
   {
     label: 'App & Modules',

@@ -15,6 +15,12 @@ import {
   ReceiptText,
   Receipt,
   CalendarOff,
+  Briefcase,
+  FolderKanban,
+  Building2,
+  UserCog,
+  DollarSign,
+  Shield,
   Circle,
   type LucideIcon,
 } from 'lucide-react';
@@ -36,6 +42,12 @@ export const iconMap: Record<string, LucideIcon> = {
   ReceiptText,
   Receipt,
   CalendarOff,
+  Briefcase,
+  FolderKanban,
+  Building2,
+  UserCog,
+  DollarSign,
+  Shield,
 };
 
 export const getIconComponent = (iconName: string | null): LucideIcon => {

@@ -6,33 +6,7 @@
 
   &.loading {
     opacity: 0.6;
-  }
-}
-
-.searchBar {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.searchInput {
-  width: 280px;
-  padding: 0.5rem 0.875rem;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  outline: none;
-  background: var(--color-bg-input, #fff);
-  color: var(--color-text);
-  transition: border-color 0.15s;
-
-  &::placeholder {
-    color: var(--color-gray-400);
-  }
-
-  &:focus {
-    border-color: var(--color-primary);
+    pointer-events: none;
   }
 }
 
@@ -47,16 +21,23 @@
 .card {
   background: var(--color-bg-card, #fff);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s;
 
   &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border-color: var(--color-border-hover, var(--color-border));
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--tier-color, var(--color-primary)) 40%, var(--color-border));
   }
+}
+
+.cardAccent {
+  height: 3px;
+  background: var(--tier-color, var(--color-primary));
+  flex-shrink: 0;
 }
 
 .cardHeader {
@@ -69,20 +50,25 @@
 .cardTierBadge {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  font-size: 0.7rem;
-  font-weight: 600;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.2rem 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.225rem 0.625rem;
   border-radius: 20px;
-  border: 1px solid currentColor;
-  background: color-mix(in srgb, currentColor 8%, transparent);
+  background: color-mix(in srgb, currentColor 10%, transparent);
 }
 
 .cardActions {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.125rem;
+  opacity: 0.45;
+  transition: opacity 0.15s;
+
+  .card:hover & {
+    opacity: 1;
+  }
 }
 
 .iconBtn {
@@ -91,7 +77,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  border-radius: 7px;
   border: none;
   background: none;
   cursor: pointer;
@@ -111,77 +97,123 @@
   }
 }
 
+// ── Body ──────────────────────────────────────────────────────────────────────
+
 .cardBody {
-  padding: 0.875rem 1rem 0.75rem;
+  padding: 0.875rem 1.125rem 1rem;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.625rem;
 }
 
 .planName {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-text);
-  line-height: 1.3;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
-.priceRow {
+// ── Pricing ───────────────────────────────────────────────────────────────────
+
+.pricingSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.priceMainRow {
   display: flex;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: 0.375rem;
   flex-wrap: wrap;
 }
 
-.price {
-  font-size: 1.5rem;
+.priceStrike {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-400);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.priceValue {
+  font-size: 1.875rem;
   font-weight: 800;
   color: var(--color-text);
   line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .pricePer {
   font-size: 0.75rem;
   font-weight: 400;
-  color: var(--color-gray-500);
-  margin-left: 0.125rem;
-}
-
-.annualPrice {
-  font-size: 0.8rem;
-  color: var(--color-gray-500);
-}
-
-.discountRow {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  color: var(--color-gray-400);
 }
 
 .discountBadge {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  color: #16a34a;
+  color: #15803d;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-radius: 20px;
   padding: 0.15rem 0.55rem;
+  align-self: center;
+  white-space: nowrap;
+}
+
+.priceAnnualRow {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.priceStrikeSmall {
+  font-size: 0.75rem;
+  color: var(--color-gray-400);
+  text-decoration: line-through;
+}
+
+.priceAnnualValue {
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+}
+
+.discountBadgeSmall {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #15803d;
+  background: #f0fdf4;
+  border-radius: 20px;
+  padding: 0.1rem 0.45rem;
+  white-space: nowrap;
+}
+
+// ── Content ───────────────────────────────────────────────────────────────────
+
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 0.125rem 0;
 }
 
 .description {
   font-size: 0.8125rem;
-  color: var(--color-gray-600);
-  line-height: 1.5;
+  color: var(--color-gray-500);
+  line-height: 1.55;
   margin: 0;
 }
 
 .featureList {
   list-style: none;
   padding: 0;
-  margin: 0.25rem 0 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.4rem;
 }
 
 .featureItem {
@@ -197,11 +229,13 @@
   flex-shrink: 0;
 }
 
+// ── Footer ────────────────────────────────────────────────────────────────────
+
 .cardFooter {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
+  gap: 0.5rem;
+  padding: 0.75rem 1.125rem;
   border-top: 1px solid var(--color-border);
   background: var(--color-bg-subtle, #f9fafb);
 }
@@ -211,8 +245,24 @@
   align-items: center;
   gap: 0.3rem;
   font-size: 0.75rem;
-  color: var(--color-gray-500);
+  color: var(--color-gray-400);
+  margin-left: auto;
 }
+
+.enterpriseTag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  background: var(--color-primary-light, #ede9f8);
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+// ── Misc ──────────────────────────────────────────────────────────────────────
 
 .filterSelect {
   height: 38px;
@@ -228,17 +278,4 @@
     outline: none;
     border-color: var(--color-primary);
   }
-}
-
-.enterpriseTag {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  padding: 0.125rem 0.5rem;
-  border-radius: 20px;
-  background: var(--color-primary-light, #ede9f8);
-  color: var(--color-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 120px;
 }

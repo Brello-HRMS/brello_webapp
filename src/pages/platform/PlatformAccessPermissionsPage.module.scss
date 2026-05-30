@@ -1,0 +1,233 @@
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+// ── Save button ────────────────────────────────────────────────────────────────
+
+.saveBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: opacity 0.15s, background 0.15s;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+}
+
+.saveDirty {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.saveClean {
+  background: var(--color-bg-subtle, #f3f4f6);
+  color: var(--color-gray-500);
+}
+
+// ── Info banner ────────────────────────────────────────────────────────────────
+
+.infoBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 0.625rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+// ── Filters ────────────────────────────────────────────────────────────────────
+
+.filters {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: var(--color-bg-card, #fff);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 220px;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-gray-600);
+    white-space: nowrap;
+  }
+}
+
+// ── Permission groups ──────────────────────────────────────────────────────────
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.groupCard {
+  background: var(--color-bg-card, #fff);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.groupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-bg-subtle, #f9fafb);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.groupTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  h3 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+}
+
+.partial {
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+  padding: 0.1rem 0.5rem;
+}
+
+.groupActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btnAllow,
+.btnRevoke {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.12s;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card, #fff);
+}
+
+.btnAllow {
+  color: var(--color-gray-600);
+
+  &:hover {
+    background: var(--color-bg-subtle, #f3f4f6);
+  }
+}
+
+.btnRevoke {
+  color: var(--color-error, #ef4444);
+  border-color: #fecaca;
+
+  &:hover {
+    background: #fef2f2;
+  }
+}
+
+.groupBody {
+  padding: 1rem 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+// ── Permission card ────────────────────────────────────────────────────────────
+
+.permCard {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  background: var(--color-bg-subtle, #f9fafb);
+
+  &:hover {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 5%, #fff);
+  }
+}
+
+.permChecked {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, #fff);
+}
+
+.cb {
+  flex-shrink: 0;
+}
+
+.permLabel {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+// ── Empty / loader ─────────────────────────────────────────────────────────────
+
+.empty {
+  text-align: center;
+  padding: 3rem;
+  font-size: 0.875rem;
+  color: var(--color-gray-400);
+  background: var(--color-bg-card, #fff);
+  border: 1px dashed var(--color-border);
+  border-radius: 12px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

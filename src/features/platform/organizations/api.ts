@@ -13,5 +13,5 @@ export const getOrganization = (id: string): Promise<{ data: Organization }> =>
 
 export const getOrgStats = (id: string): Promise<OrgStats> => apiClient.get(`${BASE}/${id}/stats`);
 
-export const getOrgSubscriptions = (orgId: string): Promise<OrgSubscription[]> =>
+export const getOrgSubscriptions = (orgId: string): Promise<{ data: OrgSubscription[] }> =>
   apiClient.get(`${SUB_BASE}/organization/${orgId}`);

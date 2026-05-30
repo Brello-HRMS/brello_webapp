@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 import { useRegister } from '../../api/useRegister';
 import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
@@ -8,7 +9,6 @@ import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Input } from '../../../../components/ui/Input/Input';
 import { PhoneInput } from '../../../../components/ui/PhoneInput/PhoneInput';
 import { Button } from '../../../../components/ui/Button/Button';
-import { apiClient } from '../../../../lib/axios';
 import { envVars } from '../../../../utils/envVars';
 
 import styles from './RegisterForm.module.scss';
@@ -32,7 +32,7 @@ export const RegisterForm: React.FC = () => {
 
   const { data: planData } = useQuery<{ enterprise_id: string | null }>({
     queryKey: ['plan', planId],
-    queryFn: () => apiClient.get(`${envVars.BRELLO_BASE_API}/plans/${planId}`),
+    queryFn: () => axios.get(`${envVars.BRELLO_BASE_API}/plans/${planId}`).then((r) => r.data),
     enabled: !!planId,
   });
 

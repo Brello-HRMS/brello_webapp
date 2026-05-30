@@ -53,6 +53,8 @@ import PlatformLeadsPage from '../pages/platform/PlatformLeadsPage';
 import PlatformEnterprisesPage from '../pages/platform/PlatformEnterprisesPage';
 import PlatformOrganizationsPage from '../pages/platform/PlatformOrganizationsPage';
 import PlatformOrganizationDetailPage from '../pages/platform/PlatformOrganizationDetailPage';
+import PlatformRolesPage from '../pages/platform/PlatformRolesPage';
+import PlatformAccessPermissionsPage from '../pages/platform/PlatformAccessPermissionsPage';
 
 const isAuthenticated = () => {
   const authResponse = getCookie('auth_response');
@@ -128,6 +130,9 @@ const router = createBrowserRouter([
       { path: 'organizations', element: <PlatformOrganizationsPage /> },
       { path: 'organizations/:orgId', element: <PlatformOrganizationDetailPage /> },
       { path: 'plans', element: <PlatformPlansPage /> },
+      { path: 'roles', element: <PlatformRolesPage /> },
+      { path: 'access/roles', element: <PlatformRolesPage /> },
+      { path: 'access/permissions', element: <PlatformAccessPermissionsPage /> },
       { path: 'apps', element: <PlatformAppsPage /> },
       { path: 'modules', element: <PlatformModulesPage /> },
       { path: 'plans/:planId/permissions', element: <PlatformPlanPermissionsPage /> },
@@ -181,22 +186,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'project/clients',
-        element: <ClientPage />,
-      },
-      {
-        path: 'project/clients/:id',
-        element: <ClientDetailPage />,
-      },
-      {
-        path: 'attendance/holidays',
-        element: <HolidaysPage />,
-      },
-      {
-        path: 'attendance/holidays/:id',
-        element: <HolidayCalendarView />,
-      },
-      {
         path: 'attendance/balance',
         element: (
           <RequireAccess module={ModuleCode.LEAVE_BALANCE}>
@@ -219,14 +208,6 @@ const router = createBrowserRouter([
             <DailyPreviewPage />
           </RequireAccess>
         ),
-      },
-      {
-        path: 'project/projects',
-        element: <ProjectPage />,
-      },
-      {
-        path: 'project/clients/:clientId/projects/:projectId',
-        element: <ProjectDetailPage />,
       },
       {
         path: 'organisation/policies',

@@ -111,7 +111,7 @@ const PlatformOrganizationDetailPage = () => {
 
   const org = orgData?.data;
   const profile = org?.profile;
-  const activeSub = subscriptions?.find(
+  const activeSub = subscriptions?.data.find(
     (s) => s.sub_status === 'Active' || s.sub_status === 'Trial',
   );
 
@@ -177,7 +177,7 @@ const PlatformOrganizationDetailPage = () => {
         </div>
         <div className={styles.statCard}>
           <FileText size={20} className={styles.statIcon} />
-          <div className={styles.statValue}>{subscriptions?.length ?? 0}</div>
+          <div className={styles.statValue}>{subscriptions?.data.length ?? 0}</div>
           <div className={styles.statLabel}>Subscriptions</div>
         </div>
       </div>
@@ -261,11 +261,11 @@ const PlatformOrganizationDetailPage = () => {
 
       {activeTab === 'Subscriptions' && (
         <div className={styles.tabContent}>
-          {!subscriptions || subscriptions.length === 0 ? (
+          {!subscriptions || subscriptions.data.length === 0 ? (
             <div className={styles.emptySection}>No subscriptions found for this organisation.</div>
           ) : (
             <div className={styles.subList}>
-              {subscriptions.map((sub) => (
+              {subscriptions.data.map((sub) => (
                 <SubscriptionCard key={sub.id} sub={sub} />
               ))}
             </div>

@@ -17,7 +17,7 @@ import {
   createPlanModuleAction,
   updatePlanModuleAction,
 } from '../../features/platform/planPermissions/api';
-import { usePlansList } from '../../features/platform/plans/hooks';
+import { usePlansList, usePlanApps, useSyncPlanApps } from '../../features/platform/plans/hooks';
 
 import styles from './PlatformPlanPermissionsPage.module.scss';
 
@@ -118,10 +118,21 @@ const PlatformPlanPermissionsPage = () => {
     [planModuleActionsResp],
   );
 
+  const [activeTab, setActiveTab] = useState<'modules' | 'apps'>('modules');
   const [permState, setPermState] = useState<PermState>({});
   const [originalState, setOriginalState] = useState<PermState>({});
   const [isSaving, setIsSaving] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
+  const [selectedAppIds, setSelectedAppIds] = useState<Set<string>>(new Set());
+
+  const { data: planAppsData } = usePlanApps(planId!);
+  const { mutate: syncApps, isPending: isSyncingApps } = useSyncPlanApps(planId!);
+
+  useEffect(() => {
+    if (planAppsData) {
+      setSelectedAppIds(new Set(planAppsData.map((a) => a.app_id)));
+    }
+  }, [planAppsData]);
 
   const toggleExpanded = useCallback((moduleId: string) => {
     setExpandedModules((prev) => {
@@ -349,186 +360,255 @@ const PlatformPlanPermissionsPage = () => {
         subtitle="Configure which modules and actions are available in this plan."
       />
 
-      {isLoading || !allActions.length ? (
-        <div className={styles.loading}>
-          {!allActions.length && !isLoading
-            ? 'No actions found. Add actions under Setup → Actions first.'
-            : 'Loading…'}
-        </div>
-      ) : appGroups.length === 0 ? (
-        <div className={styles.loading}>
-          No modules found. Add modules under App & Modules → Modules first.
-        </div>
-      ) : (
-        <div className={styles.tableCard}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th style={{ minWidth: 260 }}>Module</th>
-                <th className={styles.includeCell}>
-                  <div className={styles.thCell}>
-                    <SelectAllCheckbox
-                      checked={includeStats.checked}
-                      indeterminate={includeStats.indeterminate}
-                      onChange={setAllIncluded}
-                      className={styles.checkbox}
-                    />
-                    Include
-                  </div>
-                </th>
-                {allActions.map((action) => (
-                  <th key={action.id} className={styles.checkCell}>
-                    <div className={styles.thCell}>
-                      <SelectAllCheckbox
-                        checked={actionStats[action.id]?.checked ?? false}
-                        indeterminate={actionStats[action.id]?.indeterminate ?? false}
-                        onChange={(checked) => setAllActionEnabled(action.id, checked)}
-                        className={styles.checkbox}
-                      />
-                      {action.name}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {appGroups.map(({ app, modules }) => (
-                <React.Fragment key={app.id}>
-                  <tr className={styles.appGroupRow}>
-                    <td colSpan={2 + allActions.length}>{app.name}</td>
-                  </tr>
-                  {modules.map(({ mod: parent, children }) => {
-                    const parentRow = permState[parent.id];
-                    if (!parentRow) return null;
-                    const hasChildren = children.length > 0;
-                    const isExpanded = expandedModules.has(parent.id);
-                    return (
-                      <React.Fragment key={parent.id}>
-                        {/* Parent row */}
-                        <tr
-                          className={`${styles.moduleRow} ${!parentRow.included ? styles.disabled : ''}`}
-                        >
-                          <td>
-                            <div className={styles.moduleName}>
-                              {hasChildren ? (
-                                <button
-                                  className={styles.chevronBtn}
-                                  onClick={() => toggleExpanded(parent.id)}
-                                  aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                                >
-                                  <ChevronDown
-                                    size={12}
-                                    className={`${styles.chevronIcon} ${isExpanded ? styles.chevronIconOpen : ''}`}
-                                  />
-                                </button>
-                              ) : (
-                                <span className={styles.chevronPlaceholder} />
-                              )}
-                              <span className={styles.wbsBadge}>{parent.wbs_code}</span>
-                              {parent.name}
-                              {hasChildren && (
-                                <span className={styles.childCount}>{children.length}</span>
-                              )}
-                            </div>
-                          </td>
-                          <td className={styles.includeCell}>
-                            <input
-                              type="checkbox"
-                              className={styles.includeCheckbox}
-                              checked={parentRow.included}
-                              onChange={(e) => setIncluded(parent.id, e.target.checked)}
-                            />
-                          </td>
-                          {allActions.map((action) => (
-                            <td key={action.id} className={styles.checkCell}>
-                              <input
-                                type="checkbox"
-                                className={styles.checkbox}
-                                checked={parentRow.actions[action.id]?.enabled ?? false}
-                                disabled={!parentRow.included}
-                                onChange={(e) =>
-                                  setActionEnabled(parent.id, action.id, e.target.checked)
-                                }
-                              />
-                            </td>
-                          ))}
-                        </tr>
+      <div className={styles.tabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'modules' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('modules')}
+        >
+          Modules & Actions
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'apps' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('apps')}
+        >
+          Apps
+          {selectedAppIds.size > 0 && (
+            <span className={styles.tabBadge}>{selectedAppIds.size}</span>
+          )}
+        </button>
+      </div>
 
-                        {/* Child rows — visible only when parent is expanded */}
-                        {isExpanded &&
-                          children.map((child) => {
-                            const childRow = permState[child.id];
-                            if (!childRow) return null;
-                            const effectivelyDisabled = !childRow.included || !parentRow.included;
-                            return (
-                              <tr
-                                key={child.id}
-                                className={`${styles.moduleRow} ${styles.childModuleRow} ${effectivelyDisabled ? styles.disabled : ''}`}
-                              >
-                                <td>
-                                  <div className={`${styles.moduleName} ${styles.moduleNameChild}`}>
-                                    <span className={styles.childIndent} />
-                                    <span className={styles.wbsBadge}>{child.wbs_code}</span>
-                                    {child.name}
-                                  </div>
-                                </td>
-                                <td className={styles.includeCell}>
-                                  <input
-                                    type="checkbox"
-                                    className={styles.includeCheckbox}
-                                    checked={childRow.included}
-                                    disabled={!parentRow.included}
-                                    onChange={(e) => setIncluded(child.id, e.target.checked)}
-                                  />
-                                </td>
-                                {allActions.map((action) => (
-                                  <td key={action.id} className={styles.checkCell}>
-                                    <input
-                                      type="checkbox"
-                                      className={styles.checkbox}
-                                      checked={childRow.actions[action.id]?.enabled ?? false}
-                                      disabled={effectivelyDisabled}
-                                      onChange={(e) =>
-                                        setActionEnabled(child.id, action.id, e.target.checked)
-                                      }
-                                    />
-                                  </td>
-                                ))}
-                              </tr>
-                            );
-                          })}
-                      </React.Fragment>
-                    );
-                  })}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
+      {activeTab === 'apps' && (
+        <div className={styles.appsSection}>
+          <p className={styles.appsHint}>
+            Select which apps are included in this plan. Only roles from selected apps are cloned to
+            new organisations.
+          </p>
+          <div className={styles.appsGrid}>
+            {apps.map((app) => {
+              const checked = selectedAppIds.has(app.id);
+              return (
+                <label
+                  key={app.id}
+                  className={`${styles.appCard} ${checked ? styles.appCardChecked : ''}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(e) => {
+                      setSelectedAppIds((prev) => {
+                        const next = new Set(prev);
+                        if (e.target.checked) next.add(app.id);
+                        else next.delete(app.id);
+                        return next;
+                      });
+                    }}
+                    className={styles.appCheckbox}
+                  />
+                  <span className={styles.appCardName}>{app.name}</span>
+                </label>
+              );
+            })}
+          </div>
+          <div className={styles.saveRow}>
+            <Button
+              variant="primary"
+              onClick={() => syncApps(Array.from(selectedAppIds))}
+              isLoading={isSyncingApps}
+            >
+              <Save size={15} />
+              Save apps
+            </Button>
+          </div>
         </div>
       )}
 
-      <div className={styles.saveRow}>
-        <Button
-          variant="secondary"
-          onClick={() => setPermState(originalState)}
-          disabled={!hasChanges || isSaving}
-        >
-          Discard
-        </Button>
-        <Button
-          variant="primary"
-          onClick={handleSave}
-          isLoading={isSaving}
-          disabled={!hasChanges || isSaving}
-        >
-          <Save size={15} />
-          Save changes
-        </Button>
-      </div>
+      {activeTab === 'modules' &&
+        (isLoading || !allActions.length ? (
+          <div className={styles.loading}>
+            {!allActions.length && !isLoading
+              ? 'No actions found. Add actions under Setup → Actions first.'
+              : 'Loading…'}
+          </div>
+        ) : appGroups.length === 0 ? (
+          <div className={styles.loading}>
+            No modules found. Add modules under App & Modules → Modules first.
+          </div>
+        ) : (
+          <div className={styles.tableCard}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th style={{ minWidth: 260 }}>Module</th>
+                  <th className={styles.includeCell}>
+                    <div className={styles.thCell}>
+                      <SelectAllCheckbox
+                        checked={includeStats.checked}
+                        indeterminate={includeStats.indeterminate}
+                        onChange={setAllIncluded}
+                        className={styles.checkbox}
+                      />
+                      Include
+                    </div>
+                  </th>
+                  {allActions.map((action) => (
+                    <th key={action.id} className={styles.checkCell}>
+                      <div className={styles.thCell}>
+                        <SelectAllCheckbox
+                          checked={actionStats[action.id]?.checked ?? false}
+                          indeterminate={actionStats[action.id]?.indeterminate ?? false}
+                          onChange={(checked) => setAllActionEnabled(action.id, checked)}
+                          className={styles.checkbox}
+                        />
+                        {action.name}
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {appGroups.map(({ app, modules }) => (
+                  <React.Fragment key={app.id}>
+                    <tr className={styles.appGroupRow}>
+                      <td colSpan={2 + allActions.length}>{app.name}</td>
+                    </tr>
+                    {modules.map(({ mod: parent, children }) => {
+                      const parentRow = permState[parent.id];
+                      if (!parentRow) return null;
+                      const hasChildren = children.length > 0;
+                      const isExpanded = expandedModules.has(parent.id);
+                      return (
+                        <React.Fragment key={parent.id}>
+                          {/* Parent row */}
+                          <tr
+                            className={`${styles.moduleRow} ${!parentRow.included ? styles.disabled : ''}`}
+                          >
+                            <td>
+                              <div className={styles.moduleName}>
+                                {hasChildren ? (
+                                  <button
+                                    className={styles.chevronBtn}
+                                    onClick={() => toggleExpanded(parent.id)}
+                                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                                  >
+                                    <ChevronDown
+                                      size={12}
+                                      className={`${styles.chevronIcon} ${isExpanded ? styles.chevronIconOpen : ''}`}
+                                    />
+                                  </button>
+                                ) : (
+                                  <span className={styles.chevronPlaceholder} />
+                                )}
+                                <span className={styles.wbsBadge}>{parent.wbs_code}</span>
+                                {parent.name}
+                                {hasChildren && (
+                                  <span className={styles.childCount}>{children.length}</span>
+                                )}
+                              </div>
+                            </td>
+                            <td className={styles.includeCell}>
+                              <input
+                                type="checkbox"
+                                className={styles.includeCheckbox}
+                                checked={parentRow.included}
+                                onChange={(e) => setIncluded(parent.id, e.target.checked)}
+                              />
+                            </td>
+                            {allActions.map((action) => (
+                              <td key={action.id} className={styles.checkCell}>
+                                <input
+                                  type="checkbox"
+                                  className={styles.checkbox}
+                                  checked={parentRow.actions[action.id]?.enabled ?? false}
+                                  disabled={!parentRow.included}
+                                  onChange={(e) =>
+                                    setActionEnabled(parent.id, action.id, e.target.checked)
+                                  }
+                                />
+                              </td>
+                            ))}
+                          </tr>
 
-      <p className={styles.hint}>
-        Include = module is available in this plan · Checkboxes = allowed actions per module
-      </p>
+                          {/* Child rows — visible only when parent is expanded */}
+                          {isExpanded &&
+                            children.map((child) => {
+                              const childRow = permState[child.id];
+                              if (!childRow) return null;
+                              const effectivelyDisabled = !childRow.included || !parentRow.included;
+                              return (
+                                <tr
+                                  key={child.id}
+                                  className={`${styles.moduleRow} ${styles.childModuleRow} ${effectivelyDisabled ? styles.disabled : ''}`}
+                                >
+                                  <td>
+                                    <div
+                                      className={`${styles.moduleName} ${styles.moduleNameChild}`}
+                                    >
+                                      <span className={styles.childIndent} />
+                                      <span className={styles.wbsBadge}>{child.wbs_code}</span>
+                                      {child.name}
+                                    </div>
+                                  </td>
+                                  <td className={styles.includeCell}>
+                                    <input
+                                      type="checkbox"
+                                      className={styles.includeCheckbox}
+                                      checked={childRow.included}
+                                      disabled={!parentRow.included}
+                                      onChange={(e) => setIncluded(child.id, e.target.checked)}
+                                    />
+                                  </td>
+                                  {allActions.map((action) => (
+                                    <td key={action.id} className={styles.checkCell}>
+                                      <input
+                                        type="checkbox"
+                                        className={styles.checkbox}
+                                        checked={childRow.actions[action.id]?.enabled ?? false}
+                                        disabled={effectivelyDisabled}
+                                        onChange={(e) =>
+                                          setActionEnabled(child.id, action.id, e.target.checked)
+                                        }
+                                      />
+                                    </td>
+                                  ))}
+                                </tr>
+                              );
+                            })}
+                        </React.Fragment>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+
+      {activeTab === 'modules' && (
+        <>
+          <div className={styles.saveRow}>
+            <Button
+              variant="secondary"
+              onClick={() => setPermState(originalState)}
+              disabled={!hasChanges || isSaving}
+            >
+              Discard
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              isLoading={isSaving}
+              disabled={!hasChanges || isSaving}
+            >
+              <Save size={15} />
+              Save changes
+            </Button>
+          </div>
+          <p className={styles.hint}>
+            Include = module is available in this plan · Checkboxes = allowed actions per module
+          </p>
+        </>
+      )}
     </div>
   );
 };

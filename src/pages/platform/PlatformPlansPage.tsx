@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, CreditCard, Pencil, Plus, Settings2, Trash2, Zap } from 'lucide-react';
 
@@ -178,11 +178,29 @@ const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanC
   const tierLabel = TIER_LABELS[plan.tier_rank] ?? `Tier ${plan.tier_rank}`;
   const tierColor = TIER_COLORS[plan.tier_rank] ?? 'var(--color-primary)';
 
+  const price = Number(plan.price);
+  const annualPrice = Number(plan.price_per_employee_annual);
+  const discount = Number(plan.discount);
+  const annualDiscount = Number(plan.annual_discount_percent);
+
+  const hasMonthlyDiscount = discount > 0;
+  const hasAnnualDiscount = annualDiscount > 0;
+
+  const discountedMonthly = hasMonthlyDiscount
+    ? Math.round(price * (1 - discount / 100) * 100) / 100
+    : price;
+  const discountedAnnual =
+    hasAnnualDiscount && annualPrice > 0
+      ? Math.round(annualPrice * (1 - annualDiscount / 100) * 100) / 100
+      : annualPrice;
+
   return (
-    <div className={styles.card}>
+    <div className={styles.card} style={{ '--tier-color': tierColor } as React.CSSProperties}>
+      <div className={styles.cardAccent} />
+
       <div className={styles.cardHeader}>
-        <div className={styles.cardTierBadge} style={{ color: tierColor, borderColor: tierColor }}>
-          <Zap size={12} />
+        <div className={styles.cardTierBadge} style={{ color: tierColor }}>
+          <Zap size={11} />
           {tierLabel}
         </div>
         <div className={styles.cardActions}>
@@ -192,7 +210,7 @@ const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanC
             aria-label="Configure permissions"
             title="Configure permissions"
           >
-            <Settings2 size={15} />
+            <Settings2 size={14} />
           </button>
           <button
             className={styles.iconBtn}
@@ -200,7 +218,7 @@ const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanC
             aria-label="Edit plan"
             title="Edit"
           >
-            <Pencil size={15} />
+            <Pencil size={14} />
           </button>
           <button
             className={`${styles.iconBtn} ${styles.iconBtnDanger}`}
@@ -208,7 +226,7 @@ const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanC
             aria-label="Delete plan"
             title="Delete"
           >
-            <Trash2 size={15} />
+            <Trash2 size={14} />
           </button>
         </div>
       </div>
@@ -216,29 +234,35 @@ const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanC
       <div className={styles.cardBody}>
         <div className={styles.planName}>{plan.name}</div>
 
-        <div className={styles.priceRow}>
-          <span className={styles.price}>
-            ₹{Number(plan.price).toLocaleString('en-IN')}
+        <div className={styles.pricingSection}>
+          <div className={styles.priceMainRow}>
+            {hasMonthlyDiscount && (
+              <span className={styles.priceStrike}>₹{price.toLocaleString('en-IN')}</span>
+            )}
+            <span className={styles.priceValue}>₹{discountedMonthly.toLocaleString('en-IN')}</span>
             <span className={styles.pricePer}>/emp/mo</span>
-          </span>
-          {Number(plan.price_per_employee_annual) > 0 && (
-            <span className={styles.annualPrice}>
-              ₹{Number(plan.price_per_employee_annual).toLocaleString('en-IN')}/emp/yr
-            </span>
+            {hasMonthlyDiscount && <span className={styles.discountBadge}>{discount}% off</span>}
+          </div>
+
+          {annualPrice > 0 && (
+            <div className={styles.priceAnnualRow}>
+              {hasAnnualDiscount && (
+                <span className={styles.priceStrikeSmall}>
+                  ₹{annualPrice.toLocaleString('en-IN')}
+                </span>
+              )}
+              <span className={styles.priceAnnualValue}>
+                ₹{discountedAnnual.toLocaleString('en-IN')}/emp/yr
+              </span>
+              {hasAnnualDiscount && (
+                <span className={styles.discountBadgeSmall}>save {annualDiscount}%</span>
+              )}
+            </div>
           )}
         </div>
 
-        {(Number(plan.discount) > 0 || Number(plan.annual_discount_percent) > 0) && (
-          <div className={styles.discountRow}>
-            {Number(plan.discount) > 0 && (
-              <span className={styles.discountBadge}>{plan.discount}% off</span>
-            )}
-            {Number(plan.annual_discount_percent) > 0 && (
-              <span className={styles.discountBadge}>
-                {plan.annual_discount_percent}% annual discount
-              </span>
-            )}
-          </div>
+        {(plan.description || (plan.feature && plan.feature.length > 0)) && (
+          <div className={styles.divider} />
         )}
 
         {plan.description && <p className={styles.description}>{plan.description}</p>}
@@ -247,7 +271,7 @@ const PlanCard = ({ plan, enterpriseName, onEdit, onDelete, onConfigure }: PlanC
           <ul className={styles.featureList}>
             {plan.feature.map((feature, index) => (
               <li key={index} className={styles.featureItem}>
-                <Check size={14} className={styles.featureCheck} />
+                <Check size={13} className={styles.featureCheck} />
                 <span>{feature}</span>
               </li>
             ))}

@@ -21,3 +21,9 @@ export const updatePlan = (
   apiClient.patch(`${BASE}/${id}`, data);
 
 export const deletePlan = (id: string): Promise<void> => apiClient.delete(`${BASE}/${id}`);
+
+export const getPlanApps = (planId: string): Promise<{ app_id: string }[]> =>
+  apiClient.get(`${BASE}/${planId}/apps`);
+
+export const syncPlanApps = (planId: string, appIds: string[]): Promise<void> =>
+  apiClient.post(`${BASE}/${planId}/apps`, { appIds });
