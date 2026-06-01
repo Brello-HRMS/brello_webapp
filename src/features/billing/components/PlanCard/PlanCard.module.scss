@@ -1,0 +1,120 @@
+.card {
+  position: relative;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  flex: 1;
+  min-width: 0;
+}
+
+.card.hovered {
+  border-color: rgba(131, 0, 255, 0.35);
+  box-shadow: 0 6px 24px rgba(131, 0, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.card.current {
+  background: var(--color-gray-50);
+}
+
+.taglineBanner {
+  background: var(--color-primary-100);
+  padding: var(--spacing-2) var(--spacing-4);
+  text-align: center;
+
+  span {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary-purple);
+  }
+}
+
+.body {
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.planName {
+  font-size: 18px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  margin: 0;
+}
+
+.description {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.price {
+  font-size: 36px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  line-height: 1;
+}
+
+.priceSuffix {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-regular);
+}
+
+.trialBadge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 2px 10px;
+  background: var(--color-primary-50);
+  color: var(--color-primary-purple);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-1);
+}
+
+.actionBtn {
+  width: 100%;
+  margin-bottom: var(--spacing-1);
+}
+
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: var(--spacing-1) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.checkIcon {
+  color: var(--color-success-700);
+  flex-shrink: 0;
+}
