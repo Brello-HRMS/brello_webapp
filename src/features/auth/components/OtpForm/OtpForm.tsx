@@ -105,6 +105,7 @@ export const OtpForm: React.FC = () => {
           {
             onSuccess: (data: LoginResponse) => {
               const { user, setup_required } = data.data;
+
               setCookie('auth_response', JSON.stringify(data));
               if (user.is_platform_admin) {
                 navigate('/platform/dashboard');

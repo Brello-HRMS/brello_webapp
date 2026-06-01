@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { LayoutGrid, Shield, User, Users, Wallet } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-import { getAvailableApps, getAuthResponse } from '../../../utils/authUtils';
+import { getAuthResponse } from '../../../utils/authUtils';
 import { getCookie, setCookie } from '../../../utils/cookieUtils';
 import { Popover } from '../../common/Popover';
 import { switchApp } from '../../../features/auth/api/auth';
+import { useAvailableApps } from '../../../features/auth/api/useAvailableApps';
 
 import styles from './Header.module.scss';
 
@@ -20,7 +21,7 @@ const getAppIcon = (name: string) => {
 
 export const AppSwitcher: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const apps = getAvailableApps();
+  const { data: apps = [] } = useAvailableApps();
   const authResponse = getAuthResponse();
   const currentAppId = authResponse?.data?.defaultAppId;
 
