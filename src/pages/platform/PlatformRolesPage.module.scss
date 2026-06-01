@@ -1,0 +1,206 @@
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  transition: opacity 0.2s;
+
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+// ── Banner ─────────────────────────────────────────────────────────────────────
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+// ── Filter chips ───────────────────────────────────────────────────────────────
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+
+.filterChip {
+  padding: 0.3rem 0.875rem;
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card, #fff);
+  color: var(--color-gray-600);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+.filterChipActive {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+// ── Groups & Table ─────────────────────────────────────────────────────────────
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.group {
+  background: var(--color-bg-card, #fff);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.groupHeader {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-gray-500);
+  background: var(--color-bg-subtle, #f9fafb);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 2fr 100px 90px 72px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-subtle, #f9fafb);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 2fr 100px 90px 72px;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: background 0.12s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--color-bg-subtle, #f9fafb);
+  }
+}
+
+.roleName {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.code {
+  font-size: 0.8125rem;
+}
+
+.codeTag {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  background: var(--color-bg-subtle, #f3f4f6);
+  border: 1px solid var(--color-border);
+  border-radius: 5px;
+  padding: 0.125rem 0.4rem;
+  color: var(--color-primary);
+}
+
+.desc {
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 0.5rem;
+}
+
+.empty {
+  color: var(--color-gray-300);
+}
+
+.defaultBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 0.15rem 0.55rem;
+}
+
+// ── Actions ────────────────────────────────────────────────────────────────────
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--color-gray-400);
+  transition: background 0.15s, color 0.15s;
+
+  &:hover {
+    background: var(--color-bg-subtle, #f3f4f6);
+    color: var(--color-text);
+  }
+}
+
+.iconBtnDanger {
+  &:hover {
+    background: #fef2f2;
+    color: var(--color-error, #ef4444);
+  }
+}

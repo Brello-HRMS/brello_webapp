@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider, Navigate, redirect } from 'react-router-dom';
 
+import { getCookie } from '../utils/cookieUtils';
 import { MainLayout } from '../components/layout/MainLayout';
 import { RequireAccess } from '../components/common';
 import { ModuleCode } from '../enum/modules';
@@ -39,9 +40,25 @@ import AttendanceSetupPage from '../pages/attendance/setup/AttendanceSetupPage';
 import { AppId } from '../enum/app';
 import LeaveManagementPage from '../pages/attendance/LeaveManagementPage';
 import LeaveRequestsPage from '../pages/attendance/LeaveRequestsPage';
+import PlatformDashboardPage from '../pages/platform/PlatformDashboardPage';
+import PlatformIndustryTypePage from '../pages/platform/PlatformIndustryTypePage';
+import PlatformDepartmentPage from '../pages/platform/PlatformDepartmentPage';
+import PlatformDesignationPage from '../pages/platform/PlatformDesignationPage';
+import PlatformPlansPage from '../pages/platform/PlatformPlansPage';
+import PlatformAppsPage from '../pages/platform/PlatformAppsPage';
+import PlatformModulesPage from '../pages/platform/PlatformModulesPage';
+import PlatformActionsPage from '../pages/platform/PlatformActionsPage';
+import PlatformPlanPermissionsPage from '../pages/platform/PlatformPlanPermissionsPage';
+import PlatformLeadsPage from '../pages/platform/PlatformLeadsPage';
+import PlatformEnterprisesPage from '../pages/platform/PlatformEnterprisesPage';
+import PlatformOrganizationsPage from '../pages/platform/PlatformOrganizationsPage';
+import PlatformOrganizationDetailPage from '../pages/platform/PlatformOrganizationDetailPage';
+import PlatformRolesPage from '../pages/platform/PlatformRolesPage';
+import PlatformAccessPermissionsPage from '../pages/platform/PlatformAccessPermissionsPage';
+import PlatformLettersPage from '../pages/platform/PlatformLettersPage';
 
 const isAuthenticated = () => {
-  const authResponse = sessionStorage.getItem('auth_response');
+  const authResponse = getCookie('auth_response');
   if (authResponse) {
     try {
       const parsed = JSON.parse(authResponse);
@@ -53,10 +70,29 @@ const isAuthenticated = () => {
   return false;
 };
 
+const isPlatformAdmin = () => {
+  const authResponse = getCookie('auth_response');
+  if (authResponse) {
+    try {
+      const parsed = JSON.parse(authResponse);
+      return !!parsed?.data?.user?.is_platform_admin;
+    } catch {
+      return false;
+    }
+  }
+  return false;
+};
+
 const protectedLoader = () => {
   if (!isAuthenticated()) {
     return redirect('/auth/login');
   }
+  return null;
+};
+
+const platformAdminLoader = () => {
+  if (!isAuthenticated()) return redirect('/auth/login');
+  if (!isPlatformAdmin()) return redirect('/dashboard');
   return null;
 };
 
@@ -83,6 +119,30 @@ const router = createBrowserRouter([
   {
     path: '/auth/welcome',
     element: <WelcomeScreen />,
+  },
+  {
+    path: '/platform',
+    element: <MainLayout />,
+    loader: platformAdminLoader,
+    children: [
+      { path: 'dashboard', element: <PlatformDashboardPage /> },
+      { path: 'leads', element: <PlatformLeadsPage /> },
+      { path: 'enterprises', element: <PlatformEnterprisesPage /> },
+      { path: 'organizations', element: <PlatformOrganizationsPage /> },
+      { path: 'organizations/:orgId', element: <PlatformOrganizationDetailPage /> },
+      { path: 'plans', element: <PlatformPlansPage /> },
+      { path: 'roles', element: <PlatformRolesPage /> },
+      { path: 'access/roles', element: <PlatformRolesPage /> },
+      { path: 'access/permissions', element: <PlatformAccessPermissionsPage /> },
+      { path: 'apps', element: <PlatformAppsPage /> },
+      { path: 'modules', element: <PlatformModulesPage /> },
+      { path: 'plans/:planId/permissions', element: <PlatformPlanPermissionsPage /> },
+      { path: 'setup/actions', element: <PlatformActionsPage /> },
+      { path: 'setup/industry-types', element: <PlatformIndustryTypePage /> },
+      { path: 'setup/departments', element: <PlatformDepartmentPage /> },
+      { path: 'setup/designations', element: <PlatformDesignationPage /> },
+      { path: 'letters', element: <PlatformLettersPage /> },
+    ],
   },
   {
     path: '/',
@@ -128,22 +188,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'project/clients',
-        element: <ClientPage />,
-      },
-      {
-        path: 'project/clients/:id',
-        element: <ClientDetailPage />,
-      },
-      {
-        path: 'attendance/holidays',
-        element: <HolidaysPage />,
-      },
-      {
-        path: 'attendance/holidays/:id',
-        element: <HolidayCalendarView />,
-      },
-      {
         path: 'attendance/balance',
         element: (
           <RequireAccess module={ModuleCode.LEAVE_BALANCE}>
@@ -166,14 +210,6 @@ const router = createBrowserRouter([
             <DailyPreviewPage />
           </RequireAccess>
         ),
-      },
-      {
-        path: 'project/projects',
-        element: <ProjectPage />,
-      },
-      {
-        path: 'project/clients/:clientId/projects/:projectId',
-        element: <ProjectDetailPage />,
       },
       {
         path: 'organisation/policies',
@@ -300,7 +336,7 @@ const router = createBrowserRouter([
       {
         path: 'reimbursement',
         loader: () => {
-          const authResponseStr = sessionStorage.getItem('auth_response');
+          const authResponseStr = getCookie('auth_response');
           if (authResponseStr) {
             try {
               const authResponse = JSON.parse(authResponseStr);
@@ -331,7 +367,7 @@ const router = createBrowserRouter([
       {
         path: 'announcements',
         loader: () => {
-          const authResponseStr = sessionStorage.getItem('auth_response');
+          const authResponseStr = getCookie('auth_response');
           if (authResponseStr) {
             try {
               const authResponse = JSON.parse(authResponseStr);

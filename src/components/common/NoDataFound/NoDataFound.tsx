@@ -8,8 +8,8 @@ export interface NoDataFoundProps {
   description: string;
   buttonText?: string;
   onButtonClick?: () => void;
-  noDataImage: string;
-  noDataImageAlt: string;
+  noDataImage?: string;
+  noDataImageAlt?: string;
   showButtonIcon?: boolean;
 }
 
@@ -24,9 +24,11 @@ export const NoDataFound: React.FC<NoDataFoundProps> = ({
 }) => {
   return (
     <div className={styles.container}>
-      <div className={styles.imageWrapper}>
-        <img src={noDataImage} alt={noDataImageAlt} className={styles.image} />
-      </div>
+      {noDataImage && (
+        <div className={styles.imageWrapper}>
+          <img src={noDataImage} alt={noDataImageAlt} className={styles.image} />
+        </div>
+      )}
       <h2 className={styles.title}>{title}</h2>
       <p className={styles.description}>{description}</p>
       {buttonText && onButtonClick && (
