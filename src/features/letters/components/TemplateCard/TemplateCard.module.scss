@@ -1,0 +1,305 @@
+// ── Template card ─────────────────────────────────────────────────────────────
+
+.templateCard {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--color-border, #eaecf0);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.05);
+  transition: box-shadow 0.18s, border-color 0.18s, transform 0.18s;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.1);
+    border-color: #c4b5fd;
+    transform: translateY(-2px);
+
+    .templateCardOverlay { opacity: 1; }
+  }
+}
+
+.templateCardAccent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.75;
+}
+
+// ── Preview area ──────────────────────────────────────────────────────────────
+
+.templateCardPreview {
+  position: relative;
+  background: #f8f9fb;
+  border-bottom: 1px solid var(--color-border, #eaecf0);
+  padding: 1rem 1rem 0.875rem;
+  min-height: 168px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.templateCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(105, 65, 198, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.18s;
+  backdrop-filter: blur(1px);
+}
+
+.overlayEditBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4375rem 0.875rem;
+  background: var(--color-primary, #6941c6);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: sans-serif;
+  box-shadow: 0 2px 8px rgb(105 65 198 / 0.35);
+}
+
+// ── Mini document paper ───────────────────────────────────────────────────────
+
+.miniDoc {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  padding: 0.625rem 0.75rem 0.75rem;
+  min-height: 140px;
+}
+
+.miniHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.miniLogo {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.miniHeaderLines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.miniHeaderLine {
+  height: 4px;
+  border-radius: 2px;
+}
+
+.miniBlocks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.miniLine {
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.miniHeadingLine {
+  height: 5px;
+  border-radius: 2px;
+  width: 65%;
+}
+
+.miniSubjectLine {
+  height: 4px;
+  border-radius: 2px;
+  width: 78%;
+}
+
+.miniTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.miniDivider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 2px 0;
+}
+
+.miniTable {
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.miniTableRow {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-child { border-bottom: none; }
+}
+
+.miniTableCell {
+  height: 7px;
+  border-right: 1px solid #f3f4f6;
+
+  &:last-child { border-right: none; }
+}
+
+.miniCallout {
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid;
+  width: 90%;
+}
+
+.miniSig {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.miniSigLine {
+  height: 3px;
+  border-radius: 2px;
+  width: 55%;
+}
+
+// ── Card footer ───────────────────────────────────────────────────────────────
+
+.templateCardFooter {
+  padding: 0.75rem 0.875rem 0.875rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.templateCardMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.templateCardName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-gray-900, #101828);
+  margin: 0 0 0.3125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.templateCardStats {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4375rem;
+}
+
+.statChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.625rem;
+  font-family: sans-serif;
+  color: var(--color-gray-500, #667085);
+  background: var(--color-gray-50, #f9fafb);
+  border: 1px solid var(--color-border, #eaecf0);
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1.4;
+}
+
+// ── Block type badges ─────────────────────────────────────────────────────────
+
+.blockBadgeStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.blockBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  font-family: sans-serif;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #f4f3ff;
+  color: #5925dc;
+  border: 1px solid #ddd6fe;
+  line-height: 1.5;
+}
+
+.blockBadgeCount {
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.noBlocksHint {
+  font-size: 0.625rem;
+  color: #c8d0db;
+  font-style: italic;
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+
+.templateCardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tplActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--color-border, #eaecf0);
+  background: #fff;
+  color: var(--color-gray-400, #98a2b3);
+  cursor: pointer;
+  transition: all 0.12s;
+
+  &:hover {
+    border-color: #c4b5fd;
+    background: var(--color-primary-50, #f5f0ff);
+    color: var(--color-primary, #6941c6);
+  }
+}
+
+.tplActionBtnDelete {
+  &:hover {
+    border-color: #fca5a5;
+    background: #fef2f2;
+    color: #dc2626;
+  }
+}

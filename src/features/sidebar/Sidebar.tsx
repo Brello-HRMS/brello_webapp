@@ -13,6 +13,7 @@ import {
   Building2,
   Network,
   Lock,
+  FileText,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -77,6 +78,11 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
       { label: 'Departments', path: '/platform/setup/departments' },
       { label: 'Designations', path: '/platform/setup/designations' },
     ],
+  },
+  {
+    label: 'Letter Templates',
+    icon: FileText,
+    path: '/platform/letters',
   },
 ];
 

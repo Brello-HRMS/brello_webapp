@@ -32,7 +32,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   if (previewOnly) {
     return (
       <div className={`${styles.previewWrapper} ${className}`}>
-        <MdPreview modelValue={value} />
+        <MdPreview value={value} />
       </div>
     );
   }
@@ -59,7 +59,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       <div className={styles.editorWrapper}>
         {activeTab === 'write' ? (
           <MdEditor
-            modelValue={value}
+            value={value}
             onChange={onChange || (() => {})}
             placeholder={placeholder}
             disabled={readOnly}
@@ -95,7 +95,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           />
         ) : (
           <div className={styles.previewContent}>
-            <MdPreview modelValue={value} />
+            <MdPreview value={value} />
           </div>
         )}
       </div>

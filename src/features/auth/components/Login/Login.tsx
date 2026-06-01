@@ -24,10 +24,11 @@ export const Login: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     getValues,
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange',
   });
 
   const {
@@ -75,7 +76,7 @@ export const Login: React.FC = () => {
             type="submit"
             variant="primary"
             className={styles.submitBtn}
-            disabled={isLoginWithOTPPending}
+            disabled={isLoginWithOTPPending || !isValid}
           >
             {isLoginWithOTPPending ? 'Sending...' : 'Send OTP'}
           </Button>

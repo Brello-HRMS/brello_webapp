@@ -55,6 +55,7 @@ import PlatformOrganizationsPage from '../pages/platform/PlatformOrganizationsPa
 import PlatformOrganizationDetailPage from '../pages/platform/PlatformOrganizationDetailPage';
 import PlatformRolesPage from '../pages/platform/PlatformRolesPage';
 import PlatformAccessPermissionsPage from '../pages/platform/PlatformAccessPermissionsPage';
+import PlatformLettersPage from '../pages/platform/PlatformLettersPage';
 
 const isAuthenticated = () => {
   const authResponse = getCookie('auth_response');
@@ -140,6 +141,7 @@ const router = createBrowserRouter([
       { path: 'setup/industry-types', element: <PlatformIndustryTypePage /> },
       { path: 'setup/departments', element: <PlatformDepartmentPage /> },
       { path: 'setup/designations', element: <PlatformDesignationPage /> },
+      { path: 'letters', element: <PlatformLettersPage /> },
     ],
   },
   {

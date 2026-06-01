@@ -1,0 +1,202 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--color-gray-50, #f9fafb);
+  border-radius: 8px;
+  min-height: 300px;
+}
+
+// ── Paper ────────────────────────────────────────────────────────────────────
+
+.paper {
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 2.5rem 3rem;
+  box-shadow:
+    0 4px 16px rgb(0 0 0 / 0.06),
+    0 1px 4px rgb(0 0 0 / 0.04);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #111;
+}
+
+// ── Date ─────────────────────────────────────────────────────────────────────
+
+.dateLine {
+  text-align: right;
+  margin-bottom: 1.75rem;
+  font-size: 0.8125rem;
+  color: var(--color-gray-500, #667085);
+  font-family: inherit;
+}
+
+// ── Logo ─────────────────────────────────────────────────────────────────────
+
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 1.75rem;
+}
+
+.logoBadge {
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background: var(--color-primary, #6941c6);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
+}
+
+.logoMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.logoLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-gray-500, #667085);
+  font-family: sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.logoSub {
+  font-size: 0.6875rem;
+  color: var(--color-gray-400, #98a2b3);
+  font-family: sans-serif;
+}
+
+// ── Subject ───────────────────────────────────────────────────────────────────
+
+.subject {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+
+  :global(.letter-variable) {
+    color: #4338ca;
+    font-weight: 400;
+  }
+}
+
+// ── Body ─────────────────────────────────────────────────────────────────────
+
+.body {
+  :global(p) {
+    margin-bottom: 0.875rem;
+    line-height: 1.75;
+  }
+
+  :global(strong) {
+    font-weight: 700;
+  }
+
+  :global(em) {
+    font-style: italic;
+  }
+
+  :global(ul),
+  :global(ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 0.875rem;
+  }
+
+  :global(li) {
+    margin-bottom: 0.25rem;
+  }
+
+  :global(h1),
+  :global(h2),
+  :global(h3) {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  // Variable spans rendered in blue
+  :global(.letter-variable) {
+    color: #4338ca;
+    font-style: normal;
+    font-weight: 400;
+  }
+}
+
+.bodyEmpty {
+  color: var(--color-gray-400, #98a2b3);
+  font-size: 0.875rem;
+  font-family: sans-serif;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+.footer {
+  margin-top: 2.5rem;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  margin-bottom: 0.75rem;
+}
+
+.poweredBy {
+  font-size: 0.6875rem;
+  color: var(--color-gray-400, #98a2b3);
+  font-family: sans-serif;
+  text-align: center;
+  display: block;
+  letter-spacing: 0.02em;
+}
+
+// ── Variable helper (used inside dateLine) ────────────────────────────────────
+
+.variable {
+  color: #4338ca;
+}
+
+// ── Download row ──────────────────────────────────────────────────────────────
+
+.downloadRow {
+  display: flex;
+  justify-content: center;
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: sans-serif;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #222;
+  }
+}
