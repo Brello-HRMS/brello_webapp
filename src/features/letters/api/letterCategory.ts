@@ -6,11 +6,15 @@ import type {
   LetterCategoryListResponse,
   CreateLetterCategoryParams,
   UpdateLetterCategoryParams,
+  DocumentType,
 } from '../types/letterTypes';
 
 const BASE = `${envVars.BRELLO_BASE_API}/letter-categories`;
 
-export const getLetterCategories = (): Promise<LetterCategoryListResponse> => apiClient.get(BASE);
+export const getLetterCategories = (
+  documentType?: DocumentType,
+): Promise<LetterCategoryListResponse> =>
+  apiClient.get(BASE, { params: documentType ? { document_type: documentType } : undefined });
 
 export const getLetterCategoryById = (id: string): Promise<{ data: LetterCategory }> =>
   apiClient.get(`${BASE}/${id}`);

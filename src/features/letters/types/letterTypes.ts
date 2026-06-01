@@ -4,12 +4,94 @@ import type { TemplateDesign } from './designerTypes';
 
 export type EntityStatus = 'ACTIVE' | 'INACTIVE';
 
+// ─── Document Types ───────────────────────────────────────────────────────────
+
+export type DocumentType =
+  | 'hr_letter'
+  | 'payslip'
+  | 'onboarding'
+  | 'policy'
+  | 'notice'
+  | 'certificate'
+  | 'appraisal';
+
+export interface DocumentTypeMeta {
+  label: string;
+  description: string;
+  emoji: string;
+  color: string;
+  bg: string;
+}
+
+export const DOCUMENT_TYPES: DocumentType[] = [
+  'hr_letter',
+  'payslip',
+  'onboarding',
+  'policy',
+  'notice',
+  'certificate',
+  'appraisal',
+];
+
+export const DOCUMENT_TYPE_META: Record<DocumentType, DocumentTypeMeta> = {
+  hr_letter: {
+    label: 'HR Letters',
+    description: 'Offer, relieving & experience letters',
+    emoji: '📄',
+    color: '#6941c6',
+    bg: '#f4f3ff',
+  },
+  payslip: {
+    label: 'Payslip',
+    description: 'Monthly salary statements',
+    emoji: '💰',
+    color: '#059669',
+    bg: '#ecfdf5',
+  },
+  onboarding: {
+    label: 'Onboarding',
+    description: 'New employee welcome documents',
+    emoji: '🎉',
+    color: '#d97706',
+    bg: '#fffbeb',
+  },
+  policy: {
+    label: 'Policies',
+    description: 'Company rules & procedures',
+    emoji: '📋',
+    color: '#1d4ed8',
+    bg: '#eff6ff',
+  },
+  notice: {
+    label: 'Notices',
+    description: 'Circulars and announcements',
+    emoji: '📢',
+    color: '#dc2626',
+    bg: '#fef2f2',
+  },
+  certificate: {
+    label: 'Certificates',
+    description: 'Awards and recognition letters',
+    emoji: '🏆',
+    color: '#b45309',
+    bg: '#fffbeb',
+  },
+  appraisal: {
+    label: 'Appraisal',
+    description: 'Performance review documents',
+    emoji: '📊',
+    color: '#0d9488',
+    bg: '#f0fdfa',
+  },
+};
+
 // ─── Letter Category (L1) ────────────────────────────────────────────────────
 
 export interface LetterCategory {
   id: string;
   name: string;
   description?: string;
+  document_type: DocumentType;
   is_system: boolean;
   status: EntityStatus;
   created_at: string;
@@ -23,6 +105,7 @@ export interface LetterCategoryListResponse {
 export interface CreateLetterCategoryParams {
   name: string;
   description?: string;
+  document_type: DocumentType;
 }
 
 export interface UpdateLetterCategoryParams {
