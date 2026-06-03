@@ -57,6 +57,8 @@ import PlatformRolesPage from '../pages/platform/PlatformRolesPage';
 import PlatformAccessPermissionsPage from '../pages/platform/PlatformAccessPermissionsPage';
 import PlatformLettersPage from '../pages/platform/PlatformLettersPage';
 import BillingPlanPage from '../pages/billing/BillingPlanPage';
+import BillingInvoicePage from '../pages/billing/BillingInvoicePage';
+import BillingPaymentHistoryPage from '../pages/billing/BillingPaymentHistoryPage';
 
 const isAuthenticated = () => {
   const authResponse = getCookie('auth_response');
@@ -425,6 +427,14 @@ const router = createBrowserRouter([
       {
         path: 'billing/plan',
         element: <BillingPlanPage />,
+      },
+      {
+        path: 'billing/invoice',
+        element: <BillingInvoicePage />,
+      },
+      {
+        path: 'billing/payments',
+        element: <BillingPaymentHistoryPage />,
       },
 
       { path: '*', element: <div>404 Not Found</div> },

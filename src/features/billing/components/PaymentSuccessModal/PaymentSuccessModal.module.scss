@@ -1,0 +1,98 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-6);
+  gap: var(--spacing-4);
+  text-align: center;
+  max-width: 520px;
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #e6f9f0;
+}
+
+.icon {
+  color: #22c55e;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.detailCard {
+  width: 100%;
+  background: var(--color-gray-50, #f9fafb);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-4) var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.detailLabel {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.detailValue {
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+  text-align: right;
+}
+
+.receiptNote {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.email {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-3);
+  width: 100%;
+  margin-top: var(--spacing-2);
+}
+
+.backBtn {
+  flex: 1;
+}
+
+.downloadBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+}

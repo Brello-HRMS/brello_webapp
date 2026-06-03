@@ -1,11 +1,9 @@
 import React from 'react';
 import { SendHorizonal } from 'lucide-react';
 
-import { SubscriptionStatus } from '../../types';
-
 import styles from './CurrentPlanSummary.module.scss';
 
-import type { CurrentSubscription } from '../../types';
+import type { SubscriptionOverviewData } from '../../types';
 
 interface StatItemProps {
   label: string;
@@ -20,20 +18,15 @@ const StatItem: React.FC<StatItemProps> = ({ label, value, highlight }) => (
   </div>
 );
 
-const STATUS_LABEL: Record<SubscriptionStatus, string> = {
-  [SubscriptionStatus.ACTIVE]: 'Active',
-  [SubscriptionStatus.INACTIVE]: 'Inactive',
-  [SubscriptionStatus.TRIAL]: 'Trial',
-  [SubscriptionStatus.EXPIRED]: 'Expired',
-};
-
 interface CurrentPlanSummaryProps {
-  subscription: CurrentSubscription;
+  overview: SubscriptionOverviewData;
 }
 
-export const CurrentPlanSummary: React.FC<CurrentPlanSummaryProps> = ({ subscription }) => {
-  const formattedRenewalDate = subscription.renewal_date
-    ? new Date(subscription.renewal_date).toLocaleDateString('en-IN', {
+export const CurrentPlanSummary: React.FC<CurrentPlanSummaryProps> = ({ overview }) => {
+  const { subscription, employee_billing, trial } = overview;
+
+  const formattedRenewalDate = subscription.next_renewal_date
+    ? new Date(subscription.next_renewal_date).toLocaleDateString('en-IN', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
@@ -48,27 +41,31 @@ export const CurrentPlanSummary: React.FC<CurrentPlanSummaryProps> = ({ subscrip
         </div>
         <div className={styles.planText}>
           <span className={styles.planLabel}>Current Plan</span>
-          <h2 className={styles.planName}>{subscription.plan_name}</h2>
-          <p className={styles.planDesc}>{subscription.plan_description}</p>
+          <h2 className={styles.planName}>{subscription.plan.name}</h2>
+          <p className={styles.planDesc}>
+            {trial.is_trial
+              ? `${trial.days_remaining} days left in trial`
+              : 'Manage your subscription and billing details'}
+          </p>
         </div>
       </div>
 
       <div className={styles.statsGrid}>
         <StatItem label="Billing cycle" value={subscription.billing_cycle} />
-        <StatItem label="Status" value={STATUS_LABEL[subscription.status]} />
+        <StatItem label="Status" value={subscription.sub_status} />
         <StatItem label="Renewal Date" value={formattedRenewalDate} />
-        <StatItem label="Active Employees" value={subscription.active_employees} />
+        <StatItem label="Active Employees" value={employee_billing.active_employees} />
         <StatItem
           label="Price Per Employee"
-          value={`₹${subscription.price_per_employee} / month`}
+          value={`₹${employee_billing.price_per_employee} / month`}
         />
         <StatItem
           label="Estimated Renewal"
           highlight
           value={
             <>
-              ₹{subscription.estimated_renewal.toFixed(2)}{' '}
-              <span className={styles.gstNote}>(+GST 18%)</span>
+              ₹{employee_billing.estimated_total.toFixed(2)}{' '}
+              <span className={styles.gstNote}>(+GST {employee_billing.gst_rate}%)</span>
             </>
           }
         />

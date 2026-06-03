@@ -1,30 +1,45 @@
 import React, { useState } from 'react';
-import { Check, Zap, type LucideIcon } from 'lucide-react';
+import { Check, type LucideIcon } from 'lucide-react';
 
-import { Button } from '../../../../components/common/Button/Button';
+import { Button } from '../../../../components/ui/Button/Button';
 
 import styles from './PlanCard.module.scss';
 
-import type { OrgPlan } from '../../types';
+import type { PlanData, BillingCycle } from '../../types';
+
+type PlanCta = PlanData['cta'];
+
+const CTA_VARIANT: Record<PlanCta, 'primary' | 'secondary' | 'outline'> = {
+  'Current Plan': 'secondary',
+  'Upgrade Now': 'primary',
+  'Downgrade Next Cycle': 'outline',
+  'Switch to Annual': 'outline',
+  'Switch to Monthly': 'outline',
+  'Choose Plan': 'primary',
+};
 
 interface PlanCardProps {
-  plan: OrgPlan;
+  plan: PlanData;
   icon: LucideIcon;
   iconColor: string;
-  isCurrentPlan: boolean;
-  isUpgrading: boolean;
-  onUpgrade: (planId: string) => void;
+  isChanging: boolean;
+  onChangePlan: (planId: string) => void;
+  billingCycle: BillingCycle;
 }
 
 export const PlanCard: React.FC<PlanCardProps> = ({
   plan,
   icon: Icon,
   iconColor,
-  isCurrentPlan,
-  isUpgrading,
-  onUpgrade,
+  isChanging,
+  onChangePlan,
+  billingCycle,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const isYearly = billingCycle === 'Annual';
+  const isCurrentPlan = plan.is_current && plan.is_current_cycle;
+  const cta = plan.cta as PlanCta;
+  const isDisabled = cta === 'Current Plan';
 
   return (
     <div
@@ -32,12 +47,6 @@ export const PlanCard: React.FC<PlanCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {isHovered && !isCurrentPlan && (
-        <div className={styles.taglineBanner}>
-          <span>{plan.tagline}</span>
-        </div>
-      )}
-
       <div className={styles.body}>
         <div className={styles.header}>
           <Icon size={20} color={iconColor} />
@@ -46,29 +55,26 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         <p className={styles.description}>{plan.description}</p>
 
         <div className={styles.pricing}>
-          <span className={styles.price}>₹{plan.price_per_employee}</span>
-          <span className={styles.priceSuffix}> /employee /mo</span>
+          <span className={styles.price}>
+            ₹{isYearly ? plan.price_per_employee_annual : plan.price_per_employee_monthly}
+          </span>
+          <span className={styles.priceSuffix}> /employee /{isYearly ? 'yr' : 'mo'}</span>
         </div>
 
-        <div className={styles.trialBadge}>{plan.trial_days} day free trial</div>
+        <div className={styles.trialBadge}>30 day free trial</div>
 
-        {isCurrentPlan ? (
-          <Button variant="secondary" disabled className={styles.actionBtn}>
-            Current Plan
-          </Button>
-        ) : (
-          <Button
-            variant={isHovered ? 'primary' : 'outline'}
-            isLoading={isUpgrading}
-            onClick={() => onUpgrade(plan.id)}
-            className={styles.actionBtn}
-          >
-            <Zap size={14} /> Upgrade
-          </Button>
-        )}
+        <Button
+          variant={isHovered && !isDisabled ? 'primary' : CTA_VARIANT[cta]}
+          isLoading={isChanging}
+          disabled={isDisabled || isChanging}
+          onClick={() => !isDisabled && onChangePlan(plan.id)}
+          className={styles.actionBtn}
+        >
+          {cta}
+        </Button>
 
         <ul className={styles.featureList}>
-          {plan.features.map((feature) => (
+          {plan.feature?.map((feature) => (
             <li key={feature} className={styles.featureItem}>
               <Check size={14} className={styles.checkIcon} />
               <span>{feature}</span>

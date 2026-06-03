@@ -2,10 +2,11 @@ import React from 'react';
 import { Zap, Crown } from 'lucide-react';
 
 import { PlanCard } from '../PlanCard/PlanCard';
+import { BillingCycleToggle } from '../BillingCycleToggle/BillingCycleToggle';
 
 import styles from './PricingSection.module.scss';
 
-import type { OrgPlan } from '../../types';
+import type { PlanData, BillingCycle } from '../../types';
 
 const PLAN_ICON_MAP: Record<string, { icon: typeof Zap; iconColor: string }> = {
   standard: { icon: Zap, iconColor: '#22c55e' },
@@ -13,17 +14,19 @@ const PLAN_ICON_MAP: Record<string, { icon: typeof Zap; iconColor: string }> = {
 };
 
 interface PricingSectionProps {
-  plans: OrgPlan[];
-  currentPlanId: string;
-  upgradingPlanId: string | null;
-  onUpgrade: (planId: string) => void;
+  plans: PlanData[];
+  changingPlanId: string | null;
+  onChangePlan: (planId: string) => void;
+  billingCycle: BillingCycle;
+  onCycleChange: (cycle: BillingCycle) => void;
 }
 
 export const PricingSection: React.FC<PricingSectionProps> = ({
   plans,
-  currentPlanId,
-  upgradingPlanId,
-  onUpgrade,
+  changingPlanId,
+  onChangePlan,
+  billingCycle,
+  onCycleChange,
 }) => {
   return (
     <div className={styles.section}>
@@ -32,18 +35,23 @@ export const PricingSection: React.FC<PricingSectionProps> = ({
         <h2 className={styles.title}>Flexible Pricing For Every Organisation</h2>
       </div>
 
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+        <BillingCycleToggle value={billingCycle} onChange={onCycleChange} />
+      </div>
+
       <div className={styles.plansGrid}>
         {plans.map((plan) => {
-          const iconConfig = PLAN_ICON_MAP[plan.tier] ?? PLAN_ICON_MAP.standard;
+          const planKey = plan.name?.toLowerCase() || 'standard';
+          const iconConfig = PLAN_ICON_MAP[planKey] ?? PLAN_ICON_MAP.standard;
           return (
             <PlanCard
               key={plan.id}
               plan={plan}
               icon={iconConfig.icon}
               iconColor={iconConfig.iconColor}
-              isCurrentPlan={plan.id === currentPlanId}
-              isUpgrading={upgradingPlanId === plan.id}
-              onUpgrade={onUpgrade}
+              isChanging={changingPlanId === plan.id}
+              onChangePlan={onChangePlan}
+              billingCycle={billingCycle}
             />
           );
         })}
