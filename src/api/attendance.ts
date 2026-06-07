@@ -77,6 +77,18 @@ export const getTodayAttendance = (): Promise<TodayAttendance> =>
     (res) => res.data,
   );
 
+export interface PeerAttendance {
+  id: string;
+  name: string;
+  department: string | null;
+  time: string;
+}
+
+export const getPeersToday = (): Promise<PeerAttendance[]> =>
+  (apiClient.get(`${BASE}/me/peers/today`) as Promise<ApiEnvelope<PeerAttendance[]>>).then(
+    (res) => res.data,
+  );
+
 // --- Employee Attendance History (Admin view) ---
 export interface AttendanceHistoryItem {
   attendance_id: string;

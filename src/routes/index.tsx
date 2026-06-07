@@ -150,6 +150,10 @@ const router = createBrowserRouter([
     loader: protectedLoader,
     children: [
       {
+        index: true,
+        element: <Navigate to="/dashboard" replace />,
+      },
+      {
         path: '/dashboard',
         element: <HomePage />,
       },
