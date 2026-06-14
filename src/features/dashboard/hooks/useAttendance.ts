@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { clockIn, clockOut, getTodayAttendance, preCheckCheckIn } from '../../../api/attendance';
+import { todayLocalDate } from '../../../utils/timeUtils';
 
 import type { TodayAttendance, PreCheckResponse } from '../../../api/attendance';
 
@@ -28,6 +30,7 @@ interface Coords {
 }
 
 export const useAttendance = () => {
+  const queryClient = useQueryClient();
   const [today, setToday] = useState<TodayAttendance | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -107,13 +110,15 @@ export const useAttendance = () => {
         setIsPreCheckModalOpen(false);
         setPreCheckData(null);
         await fetchToday();
+        queryClient.invalidateQueries({ queryKey: ['dashboard', 'stats'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-daily-preview', todayLocalDate()] });
       } catch (err: unknown) {
         setError((err as { message?: string }).message ?? 'Check-in failed');
       } finally {
         setActionLoading(false);
       }
     },
-    [fetchToday, coords],
+    [fetchToday, coords, queryClient],
   );
 
   const handlePreCheck = useCallback(async () => {
@@ -148,12 +153,14 @@ export const useAttendance = () => {
         intervalRef.current = null;
       }
       await fetchToday();
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'stats'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-daily-preview', todayLocalDate()] });
     } catch (err: unknown) {
       setError((err as { message?: string }).message ?? 'Check-out failed');
     } finally {
       setActionLoading(false);
     }
-  }, [fetchToday, coords]);
+  }, [fetchToday, coords, queryClient]);
 
   const h = Math.floor(elapsedSeconds / 3600);
   const m = Math.floor((elapsedSeconds % 3600) / 60);
