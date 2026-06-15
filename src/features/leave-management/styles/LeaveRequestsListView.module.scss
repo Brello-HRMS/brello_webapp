@@ -6,68 +6,6 @@
   gap: var(--spacing-4);
 }
 
-.filterSection {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-4);
-  flex-wrap: wrap;
-
-  .leftFilters {
-    display: flex;
-    gap: var(--spacing-4);
-    align-items: center;
-    flex: 1;
-    min-width: 300px;
-  }
-
-  .filterBtn {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--color-text-secondary);
-    border-color: var(--color-gray-200);
-  }
-
-  .searchInputWrapper {
-    max-width: 400px;
-    width: 100%;
-    position: relative;
-
-    input {
-      width: 100%;
-      padding: 10px 14px 10px 40px;
-      border: 1px solid var(--color-gray-300);
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      outline: none;
-      background: var(--color-white);
-
-      &:focus {
-        border-color: var(--color-primary-purple);
-      }
-    }
-
-    .searchIcon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--color-gray-500);
-    }
-
-    .commandIcon {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--color-gray-500);
-      font-size: 14px;
-      pointer-events: none;
-    }
-  }
-}
 
 .tableCard {
   background: var(--color-white);

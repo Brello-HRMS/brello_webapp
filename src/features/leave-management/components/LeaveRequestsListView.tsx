@@ -1,8 +1,8 @@
-import { Search, Eye, Command, X, Check, Filter } from 'lucide-react';
+import { Eye, X, Check } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Button } from '../../../components/common/Button/Button';
 import { DataTable } from '../../../components/common/DataTable/DataTable';
+import { ListControls } from '../../../components/common';
 import {
   useLeaveRequests,
   useApproveLeaveRequest,
@@ -15,8 +15,17 @@ import { RequestDetailsModal } from './RequestDetailsModal';
 
 import type { ColumnDef } from '@tanstack/react-table';
 
+const STATUS_OPTIONS = [
+  { label: 'All Statuses', value: 'ALL' },
+  { label: 'Pending', value: LeaveRequestStatus.PENDING },
+  { label: 'Approved', value: LeaveRequestStatus.APPROVED },
+  { label: 'Rejected', value: LeaveRequestStatus.REJECTED },
+  { label: 'Cancelled', value: LeaveRequestStatus.CANCELLED },
+];
+
 export const LeaveRequestsListView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
@@ -25,6 +34,7 @@ export const LeaveRequestsListView: React.FC = () => {
     page: pagination.pageIndex + 1,
     limit: pagination.pageSize,
     search: searchTerm || undefined,
+    status: selectedStatus === 'ALL' ? undefined : [selectedStatus as LeaveRequestStatus],
   });
 
   const { mutate: approveRequest } = useApproveLeaveRequest();
@@ -139,26 +149,23 @@ export const LeaveRequestsListView: React.FC = () => {
 
   return (
     <div className={styles.viewContainer}>
-      <div className={styles.filterSection}>
-        <div className={styles.leftFilters}>
-          <div className={styles.searchInputWrapper}>
-            <Search size={18} className={styles.searchIcon} />
-            <input
-              type="text"
-              placeholder="Search employee name or ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className={styles.commandIcon}>
-              <Command size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> /
-            </div>
-          </div>
-          <Button variant="outline" className={styles.filterBtn}>
-            <Filter size={16} />
-            Filters
-          </Button>
-        </div>
-      </div>
+      <ListControls
+        searchPlaceholder="Search employee name or ID..."
+        searchQuery={searchTerm}
+        onSearchChange={(val) => {
+          setSearchTerm(val);
+          setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+        }}
+        showViewSwitcher={false}
+        showSort={false}
+        filterOptions={STATUS_OPTIONS}
+        selectedFilter={selectedStatus}
+        onFilterChange={(val) => {
+          setSelectedStatus(val);
+          setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+        }}
+        filterTitle="Filter Status"
+      />
 
       <div className={styles.tableCard}>
         {isLoading ? (

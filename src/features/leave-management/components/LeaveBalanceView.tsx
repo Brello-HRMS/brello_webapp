@@ -6,7 +6,7 @@ import { Select } from '../../../components/common/Select/Select';
 import styles from '../styles/LeaveBalanceView.module.scss';
 import { useLeaveBalances } from '../../../hooks/useLeaveBalances';
 import { useDepartments } from '../../department/hooks/useDepartments';
-import { getYearOptions } from '../../../utils/dateUtils';
+import { usePolicyTypes } from '../../policies/hooks/usePolicyTypes';
 
 import { EmployeeBalanceModal } from './EmployeeBalanceModal';
 
@@ -15,7 +15,7 @@ import type { ListBalanceItem } from '../../../api/leaveBalances';
 
 export const LeaveBalanceView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [yearFilter, setYearFilter] = useState<number>(new Date().getFullYear());
+  const [policyFilter, setPolicyFilter] = useState<string>('all');
   const [deptFilter, setDeptFilter] = useState<string>('all');
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [sort, setSort] = useState<{ sortBy: string; sortOrder: 'ASC' | 'DESC' }>({
@@ -26,8 +26,10 @@ export const LeaveBalanceView: React.FC = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<ListBalanceItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const currentYear = new Date().getFullYear();
+
   const { data: balanceResponse, isLoading } = useLeaveBalances({
-    leave_year: yearFilter,
+    leave_year: currentYear,
     department_id: deptFilter === 'all' ? undefined : deptFilter,
     sort_by: sort.sortBy,
     sort_order: sort.sortOrder,
@@ -37,10 +39,16 @@ export const LeaveBalanceView: React.FC = () => {
   });
 
   const { data: departmentsRes } = useDepartments();
+  const { data: policyTypes = [] } = usePolicyTypes();
 
   const deptOptions = [
     { label: 'All Departments', value: 'all' },
     ...(departmentsRes?.data?.data?.map((d) => ({ label: d.name, value: d.id })) || []),
+  ];
+
+  const policyOptions = [
+    { label: 'All Policies', value: 'all' },
+    ...(policyTypes?.map((pt) => ({ label: pt.name, value: pt.id })) || []),
   ];
 
   const handleSort = (column: string) => {
@@ -56,8 +64,7 @@ export const LeaveBalanceView: React.FC = () => {
   };
 
   const totalItems = balanceResponse?.pagination?.total || 0;
-
-  const years = getYearOptions();
+  const pageCount = Math.ceil(totalItems / pagination.pageSize);
 
   const data = balanceResponse?.data || [];
 
@@ -164,22 +171,22 @@ export const LeaveBalanceView: React.FC = () => {
               <Command size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> /
             </div>
           </div>
+        </div>
+        <div className={styles.rightFilters}>
+          <div className={styles.selectWrapper}>
+            <Select
+              options={policyOptions}
+              value={policyFilter}
+              onChange={(val) => setPolicyFilter(String(val))}
+              placeholder="All Policies"
+            />
+          </div>
           <div className={styles.selectWrapper}>
             <Select
               options={deptOptions}
               value={deptFilter}
               onChange={(val) => setDeptFilter(String(val))}
               placeholder="All Departments"
-            />
-          </div>
-        </div>
-        <div className={styles.rightFilters}>
-          <div className={styles.selectWrapper}>
-            <Select
-              options={years}
-              value={yearFilter}
-              onChange={(val) => setYearFilter(Number(val))}
-              placeholder="Select Year"
             />
           </div>
         </div>
@@ -195,7 +202,7 @@ export const LeaveBalanceView: React.FC = () => {
             pagination={pagination}
             onPaginationChange={setPagination}
             manualPagination={true}
-            pageCount={Math.ceil(totalItems / pagination.pageSize)}
+            pageCount={pageCount}
           />
         )}
       </div>
