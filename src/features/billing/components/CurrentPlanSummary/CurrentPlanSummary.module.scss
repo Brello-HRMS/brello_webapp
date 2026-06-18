@@ -7,6 +7,12 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+
+  // 768px content + 230px sidebar = 998px viewport
+  @media (max-width: 998px) {
+    flex-direction: column;
+    gap: var(--spacing-5);
+  }
 }
 
 .planInfo {
@@ -18,6 +24,15 @@
   padding-right: var(--spacing-8);
   margin-right: var(--spacing-8);
   border-right: 1px solid var(--color-border);
+
+  @media (max-width: 998px) {
+    width: 100%;
+    padding-right: 0;
+    margin-right: 0;
+    border-right: none;
+    padding-bottom: var(--spacing-5);
+    border-bottom: 1px solid var(--color-border);
+  }
 }
 
 .iconWrap {
@@ -67,6 +82,16 @@
   gap: var(--spacing-4) var(--spacing-6);
   flex: 1;
   align-content: center;
+
+  // 600px content + 230px sidebar
+  @media (max-width: 830px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // 380px content + 230px sidebar
+  @media (max-width: 610px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .statItem {

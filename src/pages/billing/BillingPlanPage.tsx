@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2, AlertTriangle, Clock, X } from 'lucide-react';
+import { Loader2, AlertTriangle, Clock, TriangleAlert, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { PageHeader } from '../../components/common/PageHeader/PageHeader';
@@ -38,6 +38,27 @@ const BillingPlanPage: React.FC = () => {
 
   // Is there a scheduled plan change?
   const hasPendingChange = !!(subscription?.pending_plan_id || subscription?.pending_billing_cycle);
+
+  const expiryDaysRemaining = subscription?.end_date
+    ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(subscription.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+        ),
+      )
+    : null;
+
+  // Only surface the expiry warning when ≤ 3 days remain
+  const showExpiryBanner =
+    !!subscription?.renewal_cta && expiryDaysRemaining !== null && expiryDaysRemaining <= 3;
+
+  const formattedExpiryDate = subscription?.end_date
+    ? new Date(subscription.end_date).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : null;
 
   // Find the name of the pending plan from the current plans list
   const pendingPlanName =
@@ -109,6 +130,36 @@ const BillingPlanPage: React.FC = () => {
         title="Plan & Subscription"
         subtitle="Manage your subscription, view billing details and upgrade your plan."
       />
+
+      {/* ── Expiry warning banner ──────────────────────────────────────────── */}
+      {showExpiryBanner && (
+        <div className={styles.expiryBanner}>
+          <div className={styles.expiryLeft}>
+            <TriangleAlert size={20} className={styles.expiryIcon} />
+            <div>
+              <span className={styles.expiryTitle}>
+                Your{' '}
+                <span className={styles.expiryPlanName}>{subscription?.plan.name}</span>{' '}
+                Plan is going to expire!
+              </span>
+              <span className={styles.expiryDesc}>
+                Your current plan will expire in{' '}
+                {expiryDaysRemaining !== null && (
+                  <strong className={styles.expiryDays}>
+                    {String(expiryDaysRemaining).padStart(2, '0')} days
+                  </strong>
+                )}{' '}
+                {formattedExpiryDate && (
+                  <>on <span className={styles.expiryDate}>{formattedExpiryDate}</span></>
+                )}.
+              </span>
+            </div>
+          </div>
+          <Button variant="primary" size="sm" onClick={() => navigate('/billing/invoice')}>
+            {subscription?.renewal_cta ?? 'Renew Now'}
+          </Button>
+        </div>
+      )}
 
       {/* ── Pending plan-change banner ─────────────────────────────────────── */}
       {hasPendingChange && (

@@ -30,7 +30,15 @@
 }
 
 .plansGrid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
   gap: var(--spacing-5);
-  align-items: stretch;
+  justify-content: center;
+
+  // 680px content + 230px sidebar
+  @media (max-width: 910px) {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
 }
