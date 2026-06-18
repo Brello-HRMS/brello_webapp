@@ -16,6 +16,7 @@ export interface DialogProps {
   position?: 'center' | 'right';
   showCloseButton?: boolean;
   headerAddon?: React.ReactNode;
+  contentClassName?: string;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -29,6 +30,7 @@ export const Dialog: React.FC<DialogProps> = ({
   position = 'center',
   showCloseButton = true,
   headerAddon,
+  contentClassName,
 }) => {
   useEffect(() => {
     if (open) {
@@ -89,7 +91,7 @@ export const Dialog: React.FC<DialogProps> = ({
               </div>
               {headerAddon && <div className={styles.headerAddon}>{headerAddon}</div>}
             </div>
-            <div className={styles.content}>{children}</div>
+            <div className={`${styles.content} ${contentClassName ?? ''}`}>{children}</div>
             {actions && <div className={styles.footer}>{actions}</div>}
           </motion.div>
         </motion.div>

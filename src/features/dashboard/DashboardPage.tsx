@@ -1,9 +1,8 @@
 import React from 'react';
 import { Users, CalendarCheck2, HandCoins } from 'lucide-react';
 
-import { getAuthUser, getCurrentAppId } from '../../utils/authUtils';
+import { getAuthUser } from '../../utils/authUtils';
 import { getGreeting } from '../../utils/timeUtils';
-import { AppId } from '../../enum/app';
 
 import { SceneBanner } from './components/SceneBanner/SceneBanner';
 import { ClockInCard } from './components/ClockInCard/ClockInCard';
@@ -15,6 +14,8 @@ import { DailyAttendanceReport } from './components/DailyAttendanceReport/DailyA
 import { HolidaysCard } from './components/HolidaysCard/HolidaysCard';
 import { NewHiresCard } from './components/NewHiresCard/NewHiresCard';
 import { SetupGuide } from './components/SetupGuide/SetupGuide';
+import { EmployeeDailyAttendanceCard } from './components/EmployeeDailyAttendanceCard/EmployeeDailyAttendanceCard';
+import { useDashboardWidgets, DashboardWidget } from './config/dashboardWidgets';
 import { useDashboard } from './hooks/useDashboard';
 import { useDashboardStats } from './hooks/useDashboardStats';
 import styles from './DashboardPage.module.scss';
@@ -23,8 +24,7 @@ export const DashboardPage: React.FC = () => {
   const data = useDashboard();
   const stats = useDashboardStats();
   const user = getAuthUser();
-  const currentAppId = getCurrentAppId();
-  const isEmployee = currentAppId === AppId.EMPLOYEE;
+  const { canView } = useDashboardWidgets();
 
   const firstName = user?.first_name ?? 'there';
   const greeting = getGreeting();
@@ -50,7 +50,7 @@ export const DashboardPage: React.FC = () => {
             <ClockInCard />
           </div>
           <div className={styles.heroRight}>
-            {!isEmployee && (
+            {canView(DashboardWidget.HERO_STATS) && (
               <div className={styles.statsRow}>
                 <StatCard
                   label="Total Employees"
@@ -92,16 +92,19 @@ export const DashboardPage: React.FC = () => {
 
       {/* Dashboard grid */}
       <div className={styles.grid}>
-        {!isEmployee && (
+        {canView(DashboardWidget.APPROVAL_REQUESTS) && (
           <ApprovalRequestsCard items={data.approvalItems} totalCount={totalApprovals} />
         )}
-        <BirthdaysCard />
-        <AnnouncementCard todayCount={data.announcementCount} />
-        {!isEmployee && <DailyAttendanceReport />}
-        <HolidaysCard />
-        <NewHiresCard />
+        {canView(DashboardWidget.BIRTHDAYS) && <BirthdaysCard />}
+        {canView(DashboardWidget.ANNOUNCEMENTS) && (
+          <AnnouncementCard todayCount={data.announcementCount} />
+        )}
+        {canView(DashboardWidget.DAILY_ATTENDANCE_REPORT) && <DailyAttendanceReport />}
+        {canView(DashboardWidget.EMPLOYEE_DAILY_ATTENDANCE) && <EmployeeDailyAttendanceCard />}
+        {canView(DashboardWidget.HOLIDAYS) && <HolidaysCard />}
+        {canView(DashboardWidget.NEW_HIRES) && <NewHiresCard />}
       </div>
-      {!isEmployee && <SetupGuide />}
+      {canView(DashboardWidget.SETUP_GUIDE) && <SetupGuide />}
     </div>
   );
 };
