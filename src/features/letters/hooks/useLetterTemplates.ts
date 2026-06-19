@@ -71,4 +71,3 @@ export const useDeleteLetterTemplate = (categoryId: string) => {
     },
   });
 };
-

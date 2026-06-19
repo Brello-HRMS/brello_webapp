@@ -14,6 +14,7 @@ import {
   Network,
   Lock,
   FileText,
+  LifeBuoy,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -29,8 +30,7 @@ import { getIconComponent } from './utils/iconMapper';
 
 import type { MenuItem } from './sidebarConfig';
 
-const isPathFree = (path?: string) =>
-  !!path && SETUP_FREE_PATHS.some((r) => r.test(path));
+const isPathFree = (path?: string) => !!path && SETUP_FREE_PATHS.some((r) => r.test(path));
 
 const isMenuItemFree = (item: { path?: string; children?: { path: string }[] }) => {
   if (item.path && isPathFree(item.path)) return true;
@@ -95,6 +95,14 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     icon: FileText,
     path: '/platform/letters',
   },
+  {
+    label: 'Support',
+    icon: LifeBuoy,
+    children: [
+      { label: 'Feedback', path: '/platform/support/feedback' },
+      { label: 'Reports', path: '/platform/support/report' },
+    ],
+  },
 ];
 
 export interface SidebarProps {
@@ -107,7 +115,11 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const location = useLocation();
   const isPlatformAdminUser = isPlatformAdmin();
-  const { data: menuResponse, isLoading, error } = useSidebarMenu({ enabled: !isPlatformAdminUser });
+  const {
+    data: menuResponse,
+    isLoading,
+    error,
+  } = useSidebarMenu({ enabled: !isPlatformAdminUser });
   const { data: setupData } = useOrgSetupStatus({ enabled: !isPlatformAdminUser });
   const { openModal } = useSearchStore();
 

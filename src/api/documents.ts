@@ -19,6 +19,10 @@ export const uploadDocumentData = (documentId: string, file: File) => {
   });
 };
 
+export const getDocumentSignedUrl = (documentId: string): Promise<{ url: string }> => {
+  return apiClient.get(`${envVars.BRELLO_BASE_API}/documents/${documentId}/signed-url`);
+};
+
 export const deleteDocument = (documentId: string) => {
   return apiClient.delete(`${envVars.BRELLO_BASE_API}/documents/${documentId}`);
 };

@@ -24,6 +24,7 @@ const BillingPlanPage: React.FC = () => {
   const [cycle, setCycle] = useState<BillingCycle>(BillingCycle.MONTHLY);
   const [changingPlanId, setChangingPlanId] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [now] = useState(Date.now);
 
   const { data: subscriptionRes, isLoading: isSubLoading } = useSubscription();
   const { data: plansRes, isLoading: isPlansLoading } = useOrgPlans(cycle);
@@ -42,9 +43,7 @@ const BillingPlanPage: React.FC = () => {
   const expiryDaysRemaining = subscription?.end_date
     ? Math.max(
         0,
-        Math.ceil(
-          (new Date(subscription.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-        ),
+        Math.ceil((new Date(subscription.end_date).getTime() - now) / (1000 * 60 * 60 * 24)),
       )
     : null;
 
@@ -138,9 +137,8 @@ const BillingPlanPage: React.FC = () => {
             <TriangleAlert size={20} className={styles.expiryIcon} />
             <div>
               <span className={styles.expiryTitle}>
-                Your{' '}
-                <span className={styles.expiryPlanName}>{subscription?.plan.name}</span>{' '}
-                Plan is going to expire!
+                Your <span className={styles.expiryPlanName}>{subscription?.plan.name}</span> Plan
+                is going to expire!
               </span>
               <span className={styles.expiryDesc}>
                 Your current plan will expire in{' '}
@@ -150,8 +148,11 @@ const BillingPlanPage: React.FC = () => {
                   </strong>
                 )}{' '}
                 {formattedExpiryDate && (
-                  <>on <span className={styles.expiryDate}>{formattedExpiryDate}</span></>
-                )}.
+                  <>
+                    on <span className={styles.expiryDate}>{formattedExpiryDate}</span>
+                  </>
+                )}
+                .
               </span>
             </div>
           </div>

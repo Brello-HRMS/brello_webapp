@@ -21,3 +21,4 @@ export * from './MultiSelect/MultiSelect';
 export * from './Modal/Modal';
 export * from './TimePicker/TimePicker';
 export * from './LocationPickerMap/LocationPickerMap';
+export * from './DocumentRender/DocumentRender';

@@ -327,9 +327,7 @@ const TemplateDesignerInner: React.FC<Omit<Props, 'open'>> = ({
         </button>
         <div className={styles.topBarDivider} />
         {viewOnly ? (
-          <span className={styles.nameInputReadOnly}>
-            {name || 'Platform Template'}
-          </span>
+          <span className={styles.nameInputReadOnly}>{name || 'Platform Template'}</span>
         ) : (
           <input
             className={styles.nameInput}

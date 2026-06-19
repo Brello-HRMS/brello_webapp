@@ -1,3 +1,12 @@
+export const formatDateTime = (iso: string): string =>
+  new Date(iso).toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
 export const formatTime = (time: string) => {
   if (!time) return '-';
   const [h, m] = time.split(':').map(Number);

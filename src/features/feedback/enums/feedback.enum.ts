@@ -1,0 +1,33 @@
+export enum FeedbackType {
+  FEEDBACK = 'FEEDBACK',
+  ISSUE_REPORT = 'ISSUE_REPORT',
+}
+
+export enum FeedbackCategory {
+  FEATURE_REQUEST = 'FEATURE_REQUEST',
+  SUGGESTION = 'SUGGESTION',
+  PRAISE = 'PRAISE',
+  BUG = 'BUG',
+  UI_UX = 'UI_UX',
+  PERFORMANCE = 'PERFORMANCE',
+  DATA_ISSUE = 'DATA_ISSUE',
+}
+
+export enum FeedbackStatus {
+  SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  PLANNED = 'PLANNED',
+  DECLINED = 'DECLINED',
+  RELEASED = 'RELEASED',
+  ACKNOWLEDGED = 'ACKNOWLEDGED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  RESOLVED = 'RESOLVED',
+  CLOSED = 'CLOSED',
+}
+
+export enum FeedbackPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
+}

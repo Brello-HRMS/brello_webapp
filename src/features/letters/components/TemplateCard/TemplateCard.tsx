@@ -26,7 +26,14 @@ interface Props {
   readOnly?: boolean;
 }
 
-export const TemplateCard: React.FC<Props> = ({ tpl, index, onEdit, onDelete, onPreview, readOnly }) => {
+export const TemplateCard: React.FC<Props> = ({
+  tpl,
+  index,
+  onEdit,
+  onDelete,
+  onPreview,
+  readOnly,
+}) => {
   const design = tpl.design as TemplateDesign | null | undefined;
   const blockCount = design?.blocks?.length ?? 0;
   const varCount = tpl.variables.length;

@@ -18,8 +18,8 @@ import { CategoryFormModal } from '../../features/letters/components/CategoryFor
 import { TemplateDesigner } from '../../features/letters/components/TemplateDesigner/TemplateDesigner';
 import { TemplateCard } from '../../features/letters/components/TemplateCard/TemplateCard';
 import { DOCUMENT_TYPES, DOCUMENT_TYPE_META } from '../../features/letters/types/letterTypes';
-
 import styles from '../platform/PlatformLettersPage.module.scss';
+
 import pageStyles from './OrgLetterTemplatesPage.module.scss';
 
 import type {

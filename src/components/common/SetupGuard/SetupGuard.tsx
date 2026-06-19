@@ -7,6 +7,7 @@ import { isAdminApp, isPlatformAdmin } from '../../../utils/authUtils';
 import { SetupRequiredBlocker } from '../RequireAccess/SetupRequiredBlocker';
 import styles from '../RequireAccess/RequireAccess.module.scss'; // Reuse loader styles
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const SETUP_FREE_PATHS = [
   /^\/$/,
   /^\/dashboard\/?$/,

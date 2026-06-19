@@ -1,5 +1,4 @@
 import { redirect } from 'react-router-dom';
-import type { RouteObject } from 'react-router-dom';
 
 import { getCookie } from '../utils/cookieUtils';
 import { isAdminApp } from '../utils/authUtils';
@@ -36,6 +35,10 @@ import BillingPlanPage from '../pages/billing/BillingPlanPage';
 import BillingInvoicePage from '../pages/billing/BillingInvoicePage';
 import BillingPaymentHistoryPage from '../pages/billing/BillingPaymentHistoryPage';
 import OrgLetterTemplatesPage from '../pages/letters/OrgLetterTemplatesPage';
+import FeedbackPage from '../pages/feedback/FeedbackPage';
+import { FeedbackType } from '../features/feedback/types/feedbackTypes';
+
+import type { RouteObject } from 'react-router-dom';
 
 export const adminRoutes: RouteObject[] = [
   { path: '/dashboard', element: <HomePage /> },
@@ -292,4 +295,22 @@ export const adminRoutes: RouteObject[] = [
   { path: 'billing/plan', element: <BillingPlanPage /> },
   { path: 'billing/invoice', element: <BillingInvoicePage /> },
   { path: 'billing/payments', element: <BillingPaymentHistoryPage /> },
+
+  // ── Support ───────────────────────────────────────────────────────────────
+  {
+    path: 'support/feedback',
+    element: (
+      <RequireAccess module={ModuleCode.SUPPORT_FEEDBACK}>
+        <FeedbackPage defaultType={FeedbackType.FEEDBACK} />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'support/report',
+    element: (
+      <RequireAccess module={ModuleCode.SUPPORT_REPORT}>
+        <FeedbackPage defaultType={FeedbackType.ISSUE_REPORT} />
+      </RequireAccess>
+    ),
+  },
 ];

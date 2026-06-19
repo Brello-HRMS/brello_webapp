@@ -1,5 +1,3 @@
-import type { RouteObject } from 'react-router-dom';
-
 import PlatformDashboardPage from '../pages/platform/PlatformDashboardPage';
 import PlatformIndustryTypePage from '../pages/platform/PlatformIndustryTypePage';
 import PlatformDepartmentPage from '../pages/platform/PlatformDepartmentPage';
@@ -16,6 +14,10 @@ import PlatformOrganizationDetailPage from '../pages/platform/PlatformOrganizati
 import PlatformRolesPage from '../pages/platform/PlatformRolesPage';
 import PlatformAccessPermissionsPage from '../pages/platform/PlatformAccessPermissionsPage';
 import PlatformLettersPage from '../pages/platform/PlatformLettersPage';
+import PlatformFeedbackPage from '../pages/platform/PlatformFeedbackPage';
+import { FeedbackType } from '../features/feedback/types/feedbackTypes';
+
+import type { RouteObject } from 'react-router-dom';
 
 export const platformAdminRoutes: RouteObject[] = [
   { path: 'dashboard', element: <PlatformDashboardPage /> },
@@ -35,4 +37,12 @@ export const platformAdminRoutes: RouteObject[] = [
   { path: 'setup/departments', element: <PlatformDepartmentPage /> },
   { path: 'setup/designations', element: <PlatformDesignationPage /> },
   { path: 'letters', element: <PlatformLettersPage /> },
+  {
+    path: 'support/feedback',
+    element: <PlatformFeedbackPage defaultType={FeedbackType.FEEDBACK} />,
+  },
+  {
+    path: 'support/report',
+    element: <PlatformFeedbackPage defaultType={FeedbackType.ISSUE_REPORT} />,
+  },
 ];

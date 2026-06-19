@@ -1,0 +1,233 @@
+// ── Root ────────────────────────────────────────────────────────────────────
+
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+// ── Variant sizing ───────────────────────────────────────────────────────────
+
+.thumbnail {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.preview {
+  width: 100%;
+  max-height: 420px;
+  min-height: 120px;
+}
+
+.full {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+}
+
+// ── Media renderers ──────────────────────────────────────────────────────────
+
+.img {
+  display: block;
+
+  &.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  &.preview,
+  &.full {
+    width: 100%;
+    height: 100%;
+    max-height: inherit;
+    object-fit: contain;
+  }
+}
+
+.video {
+  display: block;
+  background: var(--color-gray-900, #111);
+
+  &.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+  }
+
+  &.preview,
+  &.full {
+    width: 100%;
+    height: 100%;
+    max-height: inherit;
+    object-fit: contain;
+  }
+}
+
+.pdfFrame {
+  display: block;
+  border: none;
+  width: 100%;
+
+  &.preview {
+    height: 420px;
+  }
+
+  &.full {
+    height: 100%;
+    min-height: 600px;
+  }
+}
+
+// ── Download card ────────────────────────────────────────────────────────────
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  text-align: center;
+  padding: var(--spacing-2);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-secondary);
+
+  &.thumbnail {
+    width: 80px;
+    height: 80px;
+    gap: 4px;
+    padding: var(--spacing-1);
+  }
+
+  &.preview,
+  &.full {
+    padding: var(--spacing-6);
+    gap: var(--spacing-3);
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cardLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.cardName {
+  font-size: 12px;
+  color: var(--color-text-primary-500);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+
+  .thumbnail & {
+    font-size: 9px;
+    max-width: 72px;
+  }
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: 5px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary, #fff);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.downloadBtnSm {
+  padding: 3px 5px;
+  border-radius: 4px;
+  background: var(--color-bg-primary, #fff);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+
+  &:hover {
+    background: var(--color-bg-hover);
+  }
+}
+
+// ── Loading skeleton ─────────────────────────────────────────────────────────
+
+.skeleton {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonSpinner {
+  color: var(--color-text-muted);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// ── Error box ────────────────────────────────────────────────────────────────
+
+.errorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  border: 1px solid var(--color-error-border, #fca5a5);
+  background: var(--color-error-bg, #fff1f2);
+}
+
+.errorIcon {
+  color: var(--color-error);
+  flex-shrink: 0;
+}
+
+.errorText {
+  font-size: 12px;
+  color: var(--color-error);
+}
+
+// ── File type color accents ──────────────────────────────────────────────────
+
+.colorImage       { color: var(--color-primary-purple); }
+.colorVideo       { color: var(--color-primary-purple); }
+.colorPdf         { color: var(--color-error); }
+.colorCsv         { color: #0e7490; } // cyan-700 — no CSS variable for this tone
+.colorSpreadsheet { color: #16a34a; } // green-600
+.colorDocument    { color: #2563eb; } // blue-600
+.colorPresentation{ color: #d97706; } // amber-600
+.colorArchive     { color: var(--color-text-secondary); }
+.colorOther       { color: var(--color-text-muted); }
