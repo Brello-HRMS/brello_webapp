@@ -46,3 +46,18 @@
     transform: rotate(180deg);
   }
 }
+
+.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+
+  &:hover {
+    background-color: transparent !important;
+    color: var(--color-secondary) !important;
+  }
+}
+
+.lockIcon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}

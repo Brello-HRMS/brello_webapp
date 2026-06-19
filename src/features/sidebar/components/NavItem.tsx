@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { type MenuItem } from '../sidebarConfig';
@@ -18,6 +18,7 @@ interface NavItemProps {
   onToggle: (label: string) => void;
   hoveredMenu: string | null;
   setHoveredMenu: (label: string | null) => void;
+  isLocked?: boolean;
 }
 
 export const NavItem = ({
@@ -29,6 +30,7 @@ export const NavItem = ({
   onToggle,
   hoveredMenu,
   setHoveredMenu,
+  isLocked = false,
 }: NavItemProps) => {
   const navigate = useNavigate();
   const itemRef = useRef<HTMLDivElement>(null);
@@ -36,6 +38,7 @@ export const NavItem = ({
   const hasChildren = !!item.children;
 
   const handleClick = () => {
+    if (isLocked) return;
     if (hasChildren) {
       onToggle(item.label);
     } else if (item.path) {
@@ -44,16 +47,12 @@ export const NavItem = ({
   };
 
   const handleMouseEnter = () => {
-    if (isCollapsed) {
-      if (itemRef.current) {
-        const rect = itemRef.current.getBoundingClientRect();
-        setCoords({
-          top: rect.top,
-          left: rect.right + 8,
-        });
-      }
-      setHoveredMenu(item.label);
+    if (isLocked || !isCollapsed) return;
+    if (itemRef.current) {
+      const rect = itemRef.current.getBoundingClientRect();
+      setCoords({ top: rect.top, left: rect.right + 8 });
     }
+    setHoveredMenu(item.label);
   };
 
   const handleMouseLeave = () => {
@@ -66,7 +65,7 @@ export const NavItem = ({
     <>
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} ref={itemRef}>
         <div
-          className={`${styles.menuItem} ${isParentActive(item) ? styles.active : ''}`}
+          className={`${styles.menuItem} ${isParentActive(item) ? styles.active : ''} ${isLocked ? styles.locked : ''}`}
           onClick={handleClick}
         >
           <div className={styles.itemIcon}>
@@ -76,21 +75,23 @@ export const NavItem = ({
           {!isCollapsed && (
             <>
               <span className={styles.itemLabel}>{item.label}</span>
-              {hasChildren && (
+              {isLocked ? (
+                <Lock size={14} className={styles.lockIcon} />
+              ) : hasChildren ? (
                 <ChevronDown className={`${styles.chevron} ${isOpen ? styles.open : ''}`} />
-              )}
+              ) : null}
             </>
           )}
         </div>
 
         <AnimatePresence>
-          {!isCollapsed && isOpen && item.children && (
+          {!isCollapsed && !isLocked && isOpen && item.children && (
             <ExpandedSubMenu items={item.children} isActive={isActive} />
           )}
         </AnimatePresence>
       </div>
       <AnimatePresence>
-        {isCollapsed && hoveredMenu === item.label && hasChildren && (
+        {isCollapsed && !isLocked && hoveredMenu === item.label && hasChildren && (
           <CollapsedHoverSubMenu
             item={item}
             isActive={isActive}

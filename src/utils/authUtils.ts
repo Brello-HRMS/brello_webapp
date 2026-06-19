@@ -45,6 +45,16 @@ export const getCurrentAppId = (): string | undefined => {
   return response?.data?.defaultAppId;
 };
 
+export const getCurrentAppName = (): string | undefined => {
+  const response = getAuthResponse();
+  const defaultAppId = response?.data?.defaultAppId;
+  if (!defaultAppId) return undefined;
+  const apps: { id: string; name: string }[] = response?.data?.availableApps || [];
+  return apps.find((a) => a.id === defaultAppId)?.name;
+};
+
+export const isAdminApp = (): boolean => getCurrentAppName() === 'ADMIN';
+
 export const isPlatformAdmin = (): boolean => {
   const response = getAuthResponse();
   return !!response?.data?.user?.is_platform_admin;

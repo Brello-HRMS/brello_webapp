@@ -2,18 +2,11 @@ import type { TemplateDesign } from './designerTypes';
 
 // ─── Shared ───────────────────────────────────────────────────────────────────
 
-export type EntityStatus = 'ACTIVE' | 'INACTIVE';
+export type EntityStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'PENDING' | 'ARCHIVED';
 
 // ─── Document Types ───────────────────────────────────────────────────────────
 
-export type DocumentType =
-  | 'hr_letter'
-  | 'payslip'
-  | 'onboarding'
-  | 'policy'
-  | 'notice'
-  | 'certificate'
-  | 'appraisal';
+export type DocumentType = 'hr_letter' | 'onboarding' | 'notice';
 
 export interface DocumentTypeMeta {
   label: string;
@@ -23,65 +16,29 @@ export interface DocumentTypeMeta {
   bg: string;
 }
 
-export const DOCUMENT_TYPES: DocumentType[] = [
-  'hr_letter',
-  'payslip',
-  'onboarding',
-  'policy',
-  'notice',
-  'certificate',
-  'appraisal',
-];
+export const DOCUMENT_TYPES: DocumentType[] = ['hr_letter', 'onboarding', 'notice'];
 
 export const DOCUMENT_TYPE_META: Record<DocumentType, DocumentTypeMeta> = {
   hr_letter: {
     label: 'HR Letters',
-    description: 'Offer, relieving & experience letters',
+    description: 'Offer, confirmation, promotion & exit letters',
     emoji: '📄',
     color: '#6941c6',
     bg: '#f4f3ff',
   },
-  payslip: {
-    label: 'Payslip',
-    description: 'Monthly salary statements',
-    emoji: '💰',
-    color: '#059669',
-    bg: '#ecfdf5',
-  },
   onboarding: {
     label: 'Onboarding',
-    description: 'New employee welcome documents',
+    description: 'New hire welcome and joining documents',
     emoji: '🎉',
     color: '#d97706',
     bg: '#fffbeb',
   },
-  policy: {
-    label: 'Policies',
-    description: 'Company rules & procedures',
-    emoji: '📋',
-    color: '#1d4ed8',
-    bg: '#eff6ff',
-  },
   notice: {
     label: 'Notices',
-    description: 'Circulars and announcements',
+    description: 'Company-wide circulars and announcements',
     emoji: '📢',
     color: '#dc2626',
     bg: '#fef2f2',
-  },
-  certificate: {
-    label: 'Certificates',
-    description: 'Awards and recognition letters',
-    emoji: '🏆',
-    color: '#b45309',
-    bg: '#fffbeb',
-  },
-  appraisal: {
-    label: 'Appraisal',
-    description: 'Performance review documents',
-    emoji: '📊',
-    color: '#0d9488',
-    bg: '#f0fdfa',
   },
 };
 
@@ -170,7 +127,7 @@ export const VARIABLE_DISPLAY_LABELS: Record<string, string> = {
   department: 'Department',
   joining_date: 'Date of Joining',
   company_name: 'Company Name',
-  company_address: 'Employee Address',
+  company_address: 'Company Address',
   date: 'Date',
   effective_date: 'Effective Date',
   salary_amount: 'Salary Amount',
