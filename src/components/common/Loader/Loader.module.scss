@@ -1,0 +1,43 @@
+/* ============================================ */
+/* LOADER 1 — SEQUENTIAL PULSE BASE             */
+/* ============================================ */
+.loader {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  width: 60px;
+  height: 60px;
+}
+.loader .b {
+  border-radius: 7px;
+  background: var(--brand, #6D28D9);
+  animation: l1-pulse 1.4s infinite ease-in-out;
+}
+.loader .b.x {
+  background: var(--inactive, #E5E7EB);
+  animation: none;
+  opacity: 1;
+}
+
+.loader .b:nth-child(1) { animation-delay: 0s; }
+.loader .b:nth-child(3) { animation-delay: 0.2s; }
+.loader .b:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes l1-pulse {
+  0%, 100% { opacity: 0.25; }
+  40% { opacity: 1; }
+}
+
+/* ============================================ */
+/* SIZES                                        */
+/* ============================================ */
+.sizeXs { width: 24px; height: 24px; gap: 2px; }
+.sizeXs .b { border-radius: 3px; }
+
+.sizeSm { width: 40px; height: 40px; gap: 3px; }
+.sizeSm .b { border-radius: 5px; }
+
+.sizeMd { width: 60px; height: 60px; }
+
+.sizeLg { width: 96px; height: 96px; gap: 7px; }
+.sizeLg .b { border-radius: 11px; }
