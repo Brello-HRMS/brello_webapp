@@ -14,6 +14,7 @@ import {
   Network,
   Lock,
   FileText,
+  Clock,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -102,21 +103,52 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const MENU_ITEMS: MenuItem[] = useMemo(() => {
     if (isAdmin) return PLATFORM_ADMIN_MENU;
     if (!menuResponse?.data?.length) return [];
-    return menuResponse.data.map((item) => {
-      const children = item.children?.map((child) => ({
-        label: child.label,
-        path: child.path || '',
-        actions: child.actions,
-      }));
+
+    let hasAddedTimesheet = false;
+    const items = menuResponse.data.map((item) => {
+      const children = item.children ? [...item.children] : [];
+      const isProjectMenu =
+        item.label.toLowerCase() === 'project' || item.label.toLowerCase() === 'projects';
+
+      if (isProjectMenu) {
+        // Only push if not already present
+        if (!children.some((child) => child.path === '/project/timesheet')) {
+          children.push({
+            id: 'timesheet-menu-item',
+            label: 'Timesheet',
+            path: '/project/timesheet',
+            actions: ['view', 'create', 'edit', 'delete'],
+            module_id: 'timesheet',
+            created_at: '',
+            updated_at: '',
+          });
+        }
+        hasAddedTimesheet = true;
+      }
 
       return {
         label: item.label,
         icon: getIconComponent(item.icon),
         path: item.path || undefined,
         actions: item.actions,
-        children,
+        children: children.map((child) => ({
+          label: child.label,
+          path: child.path || '',
+          actions: child.actions,
+        })),
       };
     });
+
+    if (!hasAddedTimesheet) {
+      items.push({
+        label: 'Timesheet',
+        icon: Clock,
+        path: '/project/timesheet',
+        children: [],
+      });
+    }
+
+    return items;
   }, [isAdmin, menuResponse]);
 
   const toggleMenu = (label: string) => {
