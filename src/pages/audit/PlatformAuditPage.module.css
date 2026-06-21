@@ -1,0 +1,124 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+  min-width: 0;
+}
+
+/* ── Stats ───────────────────────────────────────────────────────────────── */
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-4);
+}
+
+@media (max-width: 1100px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  min-width: 0;
+}
+
+.statLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.statValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-primary-500);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Filters ─────────────────────────────────────────────────────────────── */
+
+.filtersRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.filterSearch {
+  flex: 1 1 200px;
+  min-width: 180px;
+  max-width: 280px;
+}
+
+.filterOrg {
+  flex: 1 1 180px;
+  min-width: 160px;
+  max-width: 240px;
+}
+
+.filterSelect {
+  flex: 0 1 160px;
+  min-width: 140px;
+}
+
+.filterDate {
+  flex: 0 1 150px;
+  min-width: 130px;
+}
+
+@media (max-width: 900px) {
+  .filterSearch,
+  .filterOrg {
+    max-width: 100%;
+    flex: 1 1 200px;
+  }
+
+  .filterSelect,
+  .filterDate {
+    flex: 1 1 140px;
+  }
+}
+
+@media (max-width: 600px) {
+  .filtersRow {
+    flex-direction: column;
+  }
+
+  .filterSearch,
+  .filterOrg,
+  .filterSelect,
+  .filterDate {
+    width: 100%;
+    max-width: 100%;
+    flex: unset;
+  }
+}
+
+/* ── Loader ──────────────────────────────────────────────────────────────── */
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: var(--color-primary-purple);
+}

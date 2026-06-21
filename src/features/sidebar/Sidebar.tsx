@@ -15,6 +15,7 @@ import {
   Lock,
   FileText,
   LifeBuoy,
+  ScrollText,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
@@ -94,6 +95,11 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     label: 'Letter Templates',
     icon: FileText,
     path: '/platform/letters',
+  },
+  {
+    label: 'Audit Logs',
+    icon: ScrollText,
+    path: '/platform/audit-logs',
   },
   {
     label: 'Support',

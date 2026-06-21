@@ -89,7 +89,7 @@ export const PlatformFeedbackDetailDrawer: React.FC<PlatformFeedbackDetailDrawer
     return () => {
       cancelled = true;
     };
-  }, [ticket?.id]);
+  }, [ticket?.id, ticket?.attachments]);
 
   const handleStatusChange = (newStatus: string | number) => {
     if (!ticketId) return;

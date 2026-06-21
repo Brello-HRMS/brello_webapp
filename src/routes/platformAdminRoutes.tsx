@@ -15,6 +15,7 @@ import PlatformRolesPage from '../pages/platform/PlatformRolesPage';
 import PlatformAccessPermissionsPage from '../pages/platform/PlatformAccessPermissionsPage';
 import PlatformLettersPage from '../pages/platform/PlatformLettersPage';
 import PlatformFeedbackPage from '../pages/platform/PlatformFeedbackPage';
+import PlatformAuditPage from '../pages/audit/PlatformAuditPage';
 import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 
 import type { RouteObject } from 'react-router-dom';
@@ -37,6 +38,7 @@ export const platformAdminRoutes: RouteObject[] = [
   { path: 'setup/departments', element: <PlatformDepartmentPage /> },
   { path: 'setup/designations', element: <PlatformDesignationPage /> },
   { path: 'letters', element: <PlatformLettersPage /> },
+  { path: 'audit-logs', element: <PlatformAuditPage /> },
   {
     path: 'support/feedback',
     element: <PlatformFeedbackPage defaultType={FeedbackType.FEEDBACK} />,
