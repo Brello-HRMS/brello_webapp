@@ -194,7 +194,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
             animate={{ opacity: 1 }}
             className={styles.brandName}
           >
-            Layers
+            Brello
           </motion.span>
         )}
       </div>
