@@ -11,8 +11,6 @@ import styles from './CategoryFormModal.module.scss';
 import type {
   LetterCategory,
   CreateLetterCategoryParams,
-  DocumentType,
-  DocumentTypeMeta,
 } from '../../types/letterTypes';
 
 interface Props {
@@ -21,8 +19,6 @@ interface Props {
   onSave: (params: CreateLetterCategoryParams) => void;
   editing?: LetterCategory | null;
   isPending?: boolean;
-  documentType: DocumentType;
-  documentTypeMeta: DocumentTypeMeta;
 }
 
 export const CategoryFormModal: React.FC<Props> = ({
@@ -31,8 +27,6 @@ export const CategoryFormModal: React.FC<Props> = ({
   onSave,
   editing,
   isPending,
-  documentType,
-  documentTypeMeta,
 }) => {
   const {
     register,
@@ -54,11 +48,10 @@ export const CategoryFormModal: React.FC<Props> = ({
     onSave({
       name: data.name,
       description: data.description?.trim() || undefined,
-      document_type: documentType,
     });
   };
 
-  const title = editing ? 'Edit Category' : `New ${documentTypeMeta.label} Category`;
+  const title = editing ? 'Edit Category' : 'New Category';
 
   return (
     <Dialog open={open} onClose={onClose} title={title} maxWidth="480px" position="right">

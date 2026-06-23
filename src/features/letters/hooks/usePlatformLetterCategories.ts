@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import {
-  getLetterCategories,
-  createLetterCategory,
-  updateLetterCategory,
-  deleteLetterCategory,
-} from '../api/letterCategory';
+  getPlatformLetterCategories,
+  createPlatformLetterCategory,
+  updatePlatformLetterCategory,
+  deletePlatformLetterCategory,
+} from '../api/platformLetterCategory';
 import { showToast } from '../../ToastFeature/ShowToast';
 
 import type { ApiError } from '../../../types/common';
@@ -14,14 +14,14 @@ import type {
   UpdateLetterCategoryParams,
 } from '../types/letterTypes';
 
-const QUERY_KEY = () => ['letter-categories'];
+const QUERY_KEY = () => ['platform-letter-categories'];
 
-export const useLetterCategories = () =>
+export const usePlatformLetterCategories = () =>
   useQuery({
     queryKey: QUERY_KEY(),
     queryFn: async () => {
       try {
-        const res = await getLetterCategories();
+        const res = await getPlatformLetterCategories();
         return res.data;
       } catch (error) {
         showToast((error as ApiError)?.data?.message ?? 'Failed to fetch categories', 'error');
@@ -31,12 +31,12 @@ export const useLetterCategories = () =>
     placeholderData: (prev) => prev,
   });
 
-export const useCreateLetterCategory = () => {
+export const useCreatePlatformLetterCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (params: CreateLetterCategoryParams) => createLetterCategory(params),
+    mutationFn: (params: CreateLetterCategoryParams) => createPlatformLetterCategory(params),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['platform-letter-categories'] });
       showToast('Category created', 'success');
     },
     onError: (error: ApiError) => {
@@ -45,13 +45,13 @@ export const useCreateLetterCategory = () => {
   });
 };
 
-export const useUpdateLetterCategory = () => {
+export const useUpdatePlatformLetterCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, params }: { id: string; params: UpdateLetterCategoryParams }) =>
-      updateLetterCategory(id, params),
+      updatePlatformLetterCategory(id, params),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['platform-letter-categories'] });
       showToast('Category updated', 'success');
     },
     onError: (error: ApiError) => {
@@ -60,12 +60,12 @@ export const useUpdateLetterCategory = () => {
   });
 };
 
-export const useDeleteLetterCategory = () => {
+export const useDeletePlatformLetterCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => deleteLetterCategory(id),
+    mutationFn: (id: string) => deletePlatformLetterCategory(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
+      queryClient.invalidateQueries({ queryKey: ['platform-letter-categories'] });
       showToast('Category deleted', 'success');
     },
     onError: (error: ApiError) => {

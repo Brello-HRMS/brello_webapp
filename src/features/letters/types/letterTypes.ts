@@ -4,51 +4,12 @@ import type { TemplateDesign } from './designerTypes';
 
 export type EntityStatus = 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'PENDING' | 'ARCHIVED';
 
-// ─── Document Types ───────────────────────────────────────────────────────────
-
-export type DocumentType = 'hr_letter' | 'onboarding' | 'notice';
-
-export interface DocumentTypeMeta {
-  label: string;
-  description: string;
-  emoji: string;
-  color: string;
-  bg: string;
-}
-
-export const DOCUMENT_TYPES: DocumentType[] = ['hr_letter', 'onboarding', 'notice'];
-
-export const DOCUMENT_TYPE_META: Record<DocumentType, DocumentTypeMeta> = {
-  hr_letter: {
-    label: 'HR Letters',
-    description: 'Offer, confirmation, promotion & exit letters',
-    emoji: '📄',
-    color: '#6941c6',
-    bg: '#f4f3ff',
-  },
-  onboarding: {
-    label: 'Onboarding',
-    description: 'New hire welcome and joining documents',
-    emoji: '🎉',
-    color: '#d97706',
-    bg: '#fffbeb',
-  },
-  notice: {
-    label: 'Notices',
-    description: 'Company-wide circulars and announcements',
-    emoji: '📢',
-    color: '#dc2626',
-    bg: '#fef2f2',
-  },
-};
-
 // ─── Letter Category (L1) ────────────────────────────────────────────────────
 
 export interface LetterCategory {
   id: string;
   name: string;
   description?: string;
-  document_type: DocumentType;
   is_system: boolean;
   status: EntityStatus;
   created_at: string;
@@ -62,7 +23,6 @@ export interface LetterCategoryListResponse {
 export interface CreateLetterCategoryParams {
   name: string;
   description?: string;
-  document_type: DocumentType;
 }
 
 export interface UpdateLetterCategoryParams {

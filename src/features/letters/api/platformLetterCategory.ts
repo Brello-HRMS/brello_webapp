@@ -8,21 +8,21 @@ import type {
   UpdateLetterCategoryParams,
 } from '../types/letterTypes';
 
-const BASE = `${envVars.BRELLO_BASE_API}/letter-categories`;
+const BASE = `${envVars.BRELLO_BASE_API}/platform-admin/letter-categories`;
 
-export const getLetterCategories = (): Promise<LetterCategoryListResponse> =>
+export const getPlatformLetterCategories = (): Promise<LetterCategoryListResponse> =>
   apiClient.get(BASE);
 
-export const getLetterCategoryById = (id: string): Promise<{ data: LetterCategory }> =>
+export const getPlatformLetterCategoryById = (id: string): Promise<{ data: LetterCategory }> =>
   apiClient.get(`${BASE}/${id}`);
 
-export const createLetterCategory = (params: CreateLetterCategoryParams): Promise<LetterCategory> =>
+export const createPlatformLetterCategory = (params: CreateLetterCategoryParams): Promise<LetterCategory> =>
   apiClient.post(BASE, params);
 
-export const updateLetterCategory = (
+export const updatePlatformLetterCategory = (
   id: string,
   params: UpdateLetterCategoryParams,
 ): Promise<LetterCategory> => apiClient.patch(`${BASE}/${id}`, params);
 
-export const deleteLetterCategory = (id: string): Promise<void> =>
+export const deletePlatformLetterCategory = (id: string): Promise<void> =>
   apiClient.delete(`${BASE}/${id}`);

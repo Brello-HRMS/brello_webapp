@@ -214,7 +214,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       <nav className={styles.nav}>
         {showLoading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-            <Loader size="sm" />
+            <Loader size="xs" />
           </div>
         ) : showError ? (
           <div style={{ textAlign: 'center', padding: '1rem', color: 'red', fontSize: '14px' }}>

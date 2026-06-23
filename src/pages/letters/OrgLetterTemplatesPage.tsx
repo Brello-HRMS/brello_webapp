@@ -17,7 +17,7 @@ import {
 import { CategoryFormModal } from '../../features/letters/components/CategoryFormModal/CategoryFormModal';
 import { TemplateDesigner } from '../../features/letters/components/TemplateDesigner/TemplateDesigner';
 import { TemplateCard } from '../../features/letters/components/TemplateCard/TemplateCard';
-import { DOCUMENT_TYPES, DOCUMENT_TYPE_META } from '../../features/letters/types/letterTypes';
+
 import styles from '../platform/PlatformLettersPage.module.scss';
 
 import pageStyles from './OrgLetterTemplatesPage.module.scss';
@@ -25,7 +25,6 @@ import pageStyles from './OrgLetterTemplatesPage.module.scss';
 import type {
   LetterCategory,
   LetterTemplate,
-  DocumentType,
 } from '../../features/letters/types/letterTypes';
 import type {
   CreateLetterCategoryParams,
@@ -36,7 +35,6 @@ import type {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 const OrgLetterTemplatesPage: React.FC = () => {
-  const [activeDocType, setActiveDocType] = useState<DocumentType>('hr_letter');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   const [categoryFormOpen, setCategoryFormOpen] = useState(false);
@@ -48,7 +46,7 @@ const OrgLetterTemplatesPage: React.FC = () => {
   const [previewTemplate, setPreviewTemplate] = useState<LetterTemplate | null>(null);
   const [deleteTemplateTarget, setDeleteTemplateTarget] = useState<LetterTemplate | null>(null);
 
-  const { data: categories = [], isLoading: isCatsLoading } = useLetterCategories(activeDocType);
+  const { data: categories = [], isLoading: isCatsLoading } = useLetterCategories();
 
   const activeCategoryId = selectedCategoryId ?? categories[0]?.id ?? null;
 
@@ -79,10 +77,7 @@ const OrgLetterTemplatesPage: React.FC = () => {
   );
   const { mutate: deleteTemplate } = useDeleteLetterTemplate(activeCategoryId ?? '');
 
-  const switchDocType = useCallback((type: DocumentType) => {
-    setActiveDocType(type);
-    setSelectedCategoryId(null);
-  }, []);
+
 
   const handleSaveCategory = useCallback(
     (params: CreateLetterCategoryParams) => {
@@ -145,8 +140,8 @@ const OrgLetterTemplatesPage: React.FC = () => {
     setTemplateFormOpen(true);
   }, []);
 
-  const activeDocMeta = DOCUMENT_TYPE_META[activeDocType];
-  const canCreateTemplate = !!activeCategoryId && !activeCategory?.is_system;
+
+  const canCreateTemplate = !!activeCategoryId;
 
   return (
     <div className={styles.container}>
@@ -163,28 +158,7 @@ const OrgLetterTemplatesPage: React.FC = () => {
         }
       />
 
-      {/* Document type tab bar */}
-      <div className={styles.typeTabBar}>
-        {DOCUMENT_TYPES.map((type) => {
-          const meta = DOCUMENT_TYPE_META[type];
-          const isActive = activeDocType === type;
-          return (
-            <button
-              key={type}
-              className={`${styles.typeTab} ${isActive ? styles.typeTabActive : ''}`}
-              style={
-                isActive
-                  ? ({ '--tab-color': meta.color, '--tab-bg': meta.bg } as React.CSSProperties)
-                  : undefined
-              }
-              onClick={() => switchDocType(type)}
-            >
-              <span className={styles.typeTabEmoji}>{meta.emoji}</span>
-              <span className={styles.typeTabLabel}>{meta.label}</span>
-            </button>
-          );
-        })}
-      </div>
+
 
       <div className={styles.layout}>
         {/* ── Sidebar ──────────────────────────────────────────────────────── */}
@@ -301,7 +275,7 @@ const OrgLetterTemplatesPage: React.FC = () => {
           {!activeCategoryId ? (
             <NoDataFound
               title="Select a category"
-              description={`Choose a ${activeDocMeta.label} category from the sidebar or create one to get started.`}
+              description="Choose a category from the sidebar or create one to get started."
             />
           ) : isTemplatesLoading ? (
             <div className={styles.skeletonGrid}>
@@ -315,11 +289,11 @@ const OrgLetterTemplatesPage: React.FC = () => {
               description={
                 activeCategory?.is_system
                   ? 'This is a platform category. No templates have been added yet — your organisation can still create templates here.'
-                  : `Design your first ${activeDocMeta.label} template with the visual block editor.`
+                  : 'Design your first template with the visual block editor.'
               }
-              buttonText={activeCategory?.is_system ? undefined : 'New Template'}
-              onButtonClick={activeCategory?.is_system ? undefined : openNewTemplate}
-              showButtonIcon={!activeCategory?.is_system}
+              buttonText="New Template"
+              onButtonClick={openNewTemplate}
+              showButtonIcon
             />
           ) : (
             <>
@@ -395,8 +369,6 @@ const OrgLetterTemplatesPage: React.FC = () => {
         onSave={handleSaveCategory}
         editing={editingCategory}
         isPending={isCreatingCat || isUpdatingCat}
-        documentType={activeDocType}
-        documentTypeMeta={activeDocMeta}
       />
 
       <TemplateDesigner

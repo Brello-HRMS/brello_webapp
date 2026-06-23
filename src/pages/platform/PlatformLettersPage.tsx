@@ -3,28 +3,27 @@ import { Plus, Pencil, Trash2, FolderOpen, LayoutTemplate } from 'lucide-react';
 
 import { Button, NoDataFound, PageHeader, WarningModal } from '../../components/common';
 import {
-  useLetterCategories,
-  useCreateLetterCategory,
-  useUpdateLetterCategory,
-  useDeleteLetterCategory,
-} from '../../features/letters/hooks/useLetterCategories';
+  usePlatformLetterCategories,
+  useCreatePlatformLetterCategory,
+  useUpdatePlatformLetterCategory,
+  useDeletePlatformLetterCategory,
+} from '../../features/letters/hooks/usePlatformLetterCategories';
 import {
-  useLetterTemplates,
-  useCreateLetterTemplate,
-  useUpdateLetterTemplate,
-  useDeleteLetterTemplate,
-} from '../../features/letters/hooks/useLetterTemplates';
+  usePlatformLetterTemplates,
+  useCreatePlatformLetterTemplate,
+  useUpdatePlatformLetterTemplate,
+  useDeletePlatformLetterTemplate,
+} from '../../features/letters/hooks/usePlatformLetterTemplates';
 import { CategoryFormModal } from '../../features/letters/components/CategoryFormModal/CategoryFormModal';
 import { TemplateDesigner } from '../../features/letters/components/TemplateDesigner/TemplateDesigner';
 import { TemplateCard } from '../../features/letters/components/TemplateCard/TemplateCard';
-import { DOCUMENT_TYPES, DOCUMENT_TYPE_META } from '../../features/letters/types/letterTypes';
+
 
 import styles from './PlatformLettersPage.module.scss';
 
 import type {
   LetterCategory,
   LetterTemplate,
-  DocumentType,
 } from '../../features/letters/types/letterTypes';
 import type {
   CreateLetterCategoryParams,
@@ -35,7 +34,6 @@ import type {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 const PlatformLettersPage: React.FC = () => {
-  const [activeDocType, setActiveDocType] = useState<DocumentType>('hr_letter');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   const [categoryFormOpen, setCategoryFormOpen] = useState(false);
@@ -46,11 +44,11 @@ const PlatformLettersPage: React.FC = () => {
   const [editingTemplate, setEditingTemplate] = useState<LetterTemplate | null>(null);
   const [deleteTemplateTarget, setDeleteTemplateTarget] = useState<LetterTemplate | null>(null);
 
-  const { data: categories = [], isLoading: isCatsLoading } = useLetterCategories(activeDocType);
+  const { data: categories = [], isLoading: isCatsLoading } = usePlatformLetterCategories();
 
   const activeCategoryId = selectedCategoryId ?? categories[0]?.id ?? null;
 
-  const { data: templates = [], isLoading: isTemplatesLoading } = useLetterTemplates(
+  const { data: templates = [], isLoading: isTemplatesLoading } = usePlatformLetterTemplates(
     activeCategoryId ?? undefined,
   );
 
@@ -59,22 +57,19 @@ const PlatformLettersPage: React.FC = () => {
     [categories, activeCategoryId],
   );
 
-  const { mutate: createCategory, isPending: isCreatingCat } = useCreateLetterCategory();
-  const { mutate: updateCategory, isPending: isUpdatingCat } = useUpdateLetterCategory();
-  const { mutate: deleteCategory } = useDeleteLetterCategory();
+  const { mutate: createCategory, isPending: isCreatingCat } = useCreatePlatformLetterCategory();
+  const { mutate: updateCategory, isPending: isUpdatingCat } = useUpdatePlatformLetterCategory();
+  const { mutate: deleteCategory } = useDeletePlatformLetterCategory();
 
-  const { mutate: createTemplate, isPending: isCreatingTpl } = useCreateLetterTemplate(
+  const { mutate: createTemplate, isPending: isCreatingTpl } = useCreatePlatformLetterTemplate(
     activeCategoryId ?? '',
   );
-  const { mutate: updateTemplate, isPending: isUpdatingTpl } = useUpdateLetterTemplate(
+  const { mutate: updateTemplate, isPending: isUpdatingTpl } = useUpdatePlatformLetterTemplate(
     activeCategoryId ?? '',
   );
-  const { mutate: deleteTemplate } = useDeleteLetterTemplate(activeCategoryId ?? '');
+  const { mutate: deleteTemplate } = useDeletePlatformLetterTemplate(activeCategoryId ?? '');
 
-  const switchDocType = useCallback((type: DocumentType) => {
-    setActiveDocType(type);
-    setSelectedCategoryId(null);
-  }, []);
+
 
   const handleSaveCategory = useCallback(
     (params: CreateLetterCategoryParams) => {
@@ -136,7 +131,7 @@ const PlatformLettersPage: React.FC = () => {
     setTemplateFormOpen(true);
   }, []);
 
-  const activeDocMeta = DOCUMENT_TYPE_META[activeDocType];
+
 
   return (
     <div className={styles.container}>
@@ -153,28 +148,7 @@ const PlatformLettersPage: React.FC = () => {
         }
       />
 
-      {/* Document type tab bar */}
-      <div className={styles.typeTabBar}>
-        {DOCUMENT_TYPES.map((type) => {
-          const meta = DOCUMENT_TYPE_META[type];
-          const isActive = activeDocType === type;
-          return (
-            <button
-              key={type}
-              className={`${styles.typeTab} ${isActive ? styles.typeTabActive : ''}`}
-              style={
-                isActive
-                  ? ({ '--tab-color': meta.color, '--tab-bg': meta.bg } as React.CSSProperties)
-                  : undefined
-              }
-              onClick={() => switchDocType(type)}
-            >
-              <span className={styles.typeTabEmoji}>{meta.emoji}</span>
-              <span className={styles.typeTabLabel}>{meta.label}</span>
-            </button>
-          );
-        })}
-      </div>
+
 
       <div className={styles.layout}>
         {/* Sidebar */}
@@ -257,7 +231,7 @@ const PlatformLettersPage: React.FC = () => {
           {!activeCategoryId ? (
             <NoDataFound
               title="Select a category"
-              description={`Choose a ${activeDocMeta.label} category from the sidebar or create one to get started.`}
+              description="Choose a category from the sidebar or create one to get started."
             />
           ) : isTemplatesLoading ? (
             <div className={styles.skeletonGrid}>
@@ -268,7 +242,7 @@ const PlatformLettersPage: React.FC = () => {
           ) : templates.length === 0 ? (
             <NoDataFound
               title={`No templates in "${activeCategory?.name ?? 'this category'}"`}
-              description={`Design your first ${activeDocMeta.label} template with the visual block editor.`}
+              description="Design your first template with the visual block editor."
               buttonText="New Template"
               onButtonClick={openNewTemplate}
               showButtonIcon
@@ -304,8 +278,6 @@ const PlatformLettersPage: React.FC = () => {
         onSave={handleSaveCategory}
         editing={editingCategory}
         isPending={isCreatingCat || isUpdatingCat}
-        documentType={activeDocType}
-        documentTypeMeta={activeDocMeta}
       />
 
       <TemplateDesigner
