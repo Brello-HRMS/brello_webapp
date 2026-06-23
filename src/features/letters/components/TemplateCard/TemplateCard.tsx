@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Layers } from 'lucide-react';
+import { Pencil, Trash2, Layers, Lock, Eye } from 'lucide-react';
 
 import { MiniDocPreview } from './MiniDocPreview';
 import { BlockTypeBadges } from './BlockTypeBadges';
@@ -22,9 +22,18 @@ interface Props {
   index: number;
   onEdit: () => void;
   onDelete: () => void;
+  onPreview?: () => void;
+  readOnly?: boolean;
 }
 
-export const TemplateCard: React.FC<Props> = ({ tpl, index, onEdit, onDelete }) => {
+export const TemplateCard: React.FC<Props> = ({
+  tpl,
+  index,
+  onEdit,
+  onDelete,
+  onPreview,
+  readOnly,
+}) => {
   const design = tpl.design as TemplateDesign | null | undefined;
   const blockCount = design?.blocks?.length ?? 0;
   const varCount = tpl.variables.length;
@@ -32,16 +41,38 @@ export const TemplateCard: React.FC<Props> = ({ tpl, index, onEdit, onDelete }) 
     design?.settings?.primaryColor ?? CARD_ACCENT_COLORS[index % CARD_ACCENT_COLORS.length];
 
   return (
-    <div className={styles.templateCard}>
-      {/* Preview area */}
-      <div className={styles.templateCardPreview} onClick={onEdit} style={{ cursor: 'pointer' }}>
-        <MiniDocPreview tpl={tpl} primaryColor={primaryColor} />
-        <div className={styles.templateCardOverlay}>
-          <span className={styles.overlayEditBtn}>
-            <Pencil size={13} />
-            Open Designer
-          </span>
+    <div className={`${styles.templateCard} ${readOnly ? styles.templateCardSystem : ''}`}>
+      {/* System badge — pinned to top-right corner */}
+      {readOnly && (
+        <div className={styles.systemBadge}>
+          <Lock size={9} />
+          Platform
         </div>
+      )}
+
+      {/* Preview area */}
+      <div
+        className={styles.templateCardPreview}
+        onClick={readOnly ? onPreview : onEdit}
+        style={{ cursor: readOnly && !onPreview ? 'default' : 'pointer' }}
+      >
+        <MiniDocPreview tpl={tpl} primaryColor={primaryColor} />
+
+        {readOnly ? (
+          <div className={styles.templateCardOverlay}>
+            <span className={styles.overlayViewBtn}>
+              <Eye size={13} />
+              Preview
+            </span>
+          </div>
+        ) : (
+          <div className={styles.templateCardOverlay}>
+            <span className={styles.overlayEditBtn}>
+              <Pencil size={13} />
+              Open Designer
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
@@ -66,18 +97,20 @@ export const TemplateCard: React.FC<Props> = ({ tpl, index, onEdit, onDelete }) 
           <BlockTypeBadges tpl={tpl} />
         </div>
 
-        <div className={styles.templateCardActions}>
-          <button className={styles.tplActionBtn} onClick={onEdit} title="Edit template">
-            <Pencil size={13} />
-          </button>
-          <button
-            className={`${styles.tplActionBtn} ${styles.tplActionBtnDelete}`}
-            onClick={onDelete}
-            title="Delete template"
-          >
-            <Trash2 size={13} />
-          </button>
-        </div>
+        {!readOnly && (
+          <div className={styles.templateCardActions}>
+            <button className={styles.tplActionBtn} onClick={onEdit} title="Edit template">
+              <Pencil size={13} />
+            </button>
+            <button
+              className={`${styles.tplActionBtn} ${styles.tplActionBtnDelete}`}
+              onClick={onDelete}
+              title="Delete template"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Accent bar */}

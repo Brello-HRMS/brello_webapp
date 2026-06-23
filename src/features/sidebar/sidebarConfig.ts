@@ -12,4 +12,5 @@ export type MenuItem = {
   path?: string;
   actions?: string[];
   children?: SubMenuItem[];
+  isLocked?: boolean;
 };

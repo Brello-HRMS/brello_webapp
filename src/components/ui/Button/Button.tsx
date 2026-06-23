@@ -37,7 +37,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button ref={ref} className={classes} {...props} disabled={props.disabled || isLoading}>
         {isLoading && <Loader2 className={styles.spinner} />}
-        <span className={isLoading ? styles.hiddenText : ''}>{children}</span>
+        <span
+          className={[styles.content, isLoading ? styles.hiddenText : ''].filter(Boolean).join(' ')}
+        >
+          {children}
+        </span>
       </button>
     );
   },

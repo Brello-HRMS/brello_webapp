@@ -27,7 +27,6 @@ export const useLetterTemplates = (categoryId?: string) =>
       }
     },
     enabled: !!categoryId,
-    placeholderData: (prev) => prev,
   });
 
 export const useCreateLetterTemplate = (categoryId: string) => {

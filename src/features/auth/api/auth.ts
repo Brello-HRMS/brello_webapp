@@ -2,6 +2,7 @@ import { envVars } from '../../../utils/envVars';
 import { apiClient } from '../../../lib/axios';
 
 import type {
+  Apps,
   LoginRequest,
   LoginResponse,
   LoginWithOtpRequest,
@@ -61,4 +62,8 @@ export const resendOtp = async (data: ResendOtpRequest): Promise<ResendOtpRespon
 
 export const switchApp = async (data: { appId: string }): Promise<SwitchAppResponse> => {
   return apiClient.post(`${envVars.BRELLO_BASE_API}/auth/switch-app`, data);
+};
+
+export const getAvailableApps = async (): Promise<{ success: boolean; data: Apps[] }> => {
+  return apiClient.get(`${envVars.BRELLO_BASE_API}/auth/apps`);
 };

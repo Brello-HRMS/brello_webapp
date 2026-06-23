@@ -8,7 +8,12 @@ import { letterCategorySchema, type LetterCategoryFormInput } from '../../valida
 
 import styles from './CategoryFormModal.module.scss';
 
-import type { LetterCategory, CreateLetterCategoryParams } from '../../types/letterTypes';
+import type {
+  LetterCategory,
+  CreateLetterCategoryParams,
+  DocumentType,
+  DocumentTypeMeta,
+} from '../../types/letterTypes';
 
 interface Props {
   open: boolean;
@@ -16,6 +21,8 @@ interface Props {
   onSave: (params: CreateLetterCategoryParams) => void;
   editing?: LetterCategory | null;
   isPending?: boolean;
+  documentType: DocumentType;
+  documentTypeMeta: DocumentTypeMeta;
 }
 
 export const CategoryFormModal: React.FC<Props> = ({
@@ -24,6 +31,8 @@ export const CategoryFormModal: React.FC<Props> = ({
   onSave,
   editing,
   isPending,
+  documentType,
+  documentTypeMeta,
 }) => {
   const {
     register,
@@ -45,17 +54,14 @@ export const CategoryFormModal: React.FC<Props> = ({
     onSave({
       name: data.name,
       description: data.description?.trim() || undefined,
+      document_type: documentType,
     });
   };
 
+  const title = editing ? 'Edit Category' : `New ${documentTypeMeta.label} Category`;
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      title={editing ? 'Edit Category' : 'New Letter Category'}
-      maxWidth="480px"
-      position="right"
-    >
+    <Dialog open={open} onClose={onClose} title={title} maxWidth="480px" position="right">
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
         <div className={styles.field}>
           <label className={styles.label}>Category Name</label>

@@ -9,16 +9,21 @@ import {
 import { showToast } from '../../ToastFeature/ShowToast';
 
 import type { ApiError } from '../../../types/common';
-import type { CreateLetterCategoryParams, UpdateLetterCategoryParams } from '../types/letterTypes';
+import type {
+  CreateLetterCategoryParams,
+  UpdateLetterCategoryParams,
+  DocumentType,
+} from '../types/letterTypes';
 
-const QUERY_KEY = ['letter-categories'] as const;
+const QUERY_KEY = (documentType?: DocumentType) =>
+  documentType ? ['letter-categories', documentType] : ['letter-categories'];
 
-export const useLetterCategories = () =>
+export const useLetterCategories = (documentType?: DocumentType) =>
   useQuery({
-    queryKey: QUERY_KEY,
+    queryKey: QUERY_KEY(documentType),
     queryFn: async () => {
       try {
-        const res = await getLetterCategories();
+        const res = await getLetterCategories(documentType);
         return res.data;
       } catch (error) {
         showToast((error as ApiError)?.data?.message ?? 'Failed to fetch categories', 'error');
@@ -33,7 +38,7 @@ export const useCreateLetterCategory = () => {
   return useMutation({
     mutationFn: (params: CreateLetterCategoryParams) => createLetterCategory(params),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
       showToast('Category created', 'success');
     },
     onError: (error: ApiError) => {
@@ -48,7 +53,7 @@ export const useUpdateLetterCategory = () => {
     mutationFn: ({ id, params }: { id: string; params: UpdateLetterCategoryParams }) =>
       updateLetterCategory(id, params),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
       showToast('Category updated', 'success');
     },
     onError: (error: ApiError) => {
@@ -62,7 +67,7 @@ export const useDeleteLetterCategory = () => {
   return useMutation({
     mutationFn: (id: string) => deleteLetterCategory(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
       showToast('Category deleted', 'success');
     },
     onError: (error: ApiError) => {

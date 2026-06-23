@@ -4,6 +4,57 @@
   margin: 0 auto;
 }
 
+// ── Document type tab bar ─────────────────────────────────────────────────────
+
+.typeTabBar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1.5px solid var(--color-border, #eaecf0);
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.typeTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  padding: 0.625rem 1.125rem 0.5625rem;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -1.5px;
+  background: transparent;
+  color: var(--color-gray-400, #98a2b3);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.14s, border-color 0.14s;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--color-gray-700, #344054);
+  }
+}
+
+.typeTabActive {
+  color: var(--tab-color, #6941c6);
+  border-bottom-color: var(--tab-color, #6941c6);
+  font-weight: 600;
+
+  &:hover { color: var(--tab-color, #6941c6); }
+}
+
+.typeTabEmoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.typeTabLabel {
+  line-height: 1;
+}
+
 // ── Two-panel layout ──────────────────────────────────────────────────────────
 
 .layout {

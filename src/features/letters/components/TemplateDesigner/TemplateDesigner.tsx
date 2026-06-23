@@ -55,6 +55,8 @@ interface Props {
   categoryId: string;
   editing?: LetterTemplate | null;
   isPending?: boolean;
+  /** When true, opens in preview-only mode — no editing or saving */
+  viewOnly?: boolean;
 }
 
 // ── Inner component (always mounted when open=true) ───────────────────────────
@@ -65,6 +67,7 @@ const TemplateDesignerInner: React.FC<Omit<Props, 'open'>> = ({
   categoryId,
   editing,
   isPending,
+  viewOnly,
 }) => {
   const [name, setName] = useState(editing?.name ?? '');
   const [design, setDesign] = useState<TemplateDesign>(() => {
@@ -77,7 +80,7 @@ const TemplateDesignerInner: React.FC<Omit<Props, 'open'>> = ({
     };
   });
   const [focusedBlockId, setFocusedBlockId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('editor');
+  const [viewMode, setViewMode] = useState<ViewMode>(viewOnly ? 'preview' : 'editor');
   const [leftTab, setLeftTab] = useState<LeftTab>('blocks');
   const [cvKey, setCvKey] = useState('');
   const [cvLabel, setCvLabel] = useState('');
@@ -245,7 +248,8 @@ const TemplateDesignerInner: React.FC<Omit<Props, 'open'>> = ({
       } else {
         navigator.clipboard
           .writeText(`{{${varKey}}}`)
-          .then(() => showToast(`Copied {{${varKey}}}`, 'success'));
+          .then(() => showToast(`Copied {{${varKey}}}`, 'success'))
+          .catch(() => showToast('Could not copy to clipboard', 'error'));
       }
     },
     [focusedBlockId],
@@ -322,34 +326,47 @@ const TemplateDesignerInner: React.FC<Omit<Props, 'open'>> = ({
           Close
         </button>
         <div className={styles.topBarDivider} />
-        <input
-          className={styles.nameInput}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Template name…"
-        />
+        {viewOnly ? (
+          <span className={styles.nameInputReadOnly}>{name || 'Platform Template'}</span>
+        ) : (
+          <input
+            className={styles.nameInput}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Template name…"
+          />
+        )}
         <div className={styles.topBarSpacer} />
-        <div className={styles.modeToggleGroup}>
-          {(
-            [
-              ['editor', 'Editor', PenLine],
-              ['split', 'Split', Columns2],
-              ['preview', 'Preview', Eye],
-            ] as const
-          ).map(([mode, label, Icon]) => (
-            <button
-              key={mode}
-              className={`${styles.modeToggleBtn} ${viewMode === mode ? styles.modeToggleBtnActive : ''}`}
-              onClick={() => setViewMode(mode)}
-            >
-              <Icon size={13} />
-              {label}
-            </button>
-          ))}
-        </div>
-        <Button variant="primary" onClick={handleSave} disabled={isPending}>
-          {isPending ? 'Saving…' : editing ? 'Update Template' : 'Create Template'}
-        </Button>
+        {viewOnly ? (
+          <span className={styles.viewOnlyBadge}>
+            <Check size={12} />
+            Platform Template — View Only
+          </span>
+        ) : (
+          <>
+            <div className={styles.modeToggleGroup}>
+              {(
+                [
+                  ['editor', 'Editor', PenLine],
+                  ['split', 'Split', Columns2],
+                  ['preview', 'Preview', Eye],
+                ] as const
+              ).map(([mode, label, Icon]) => (
+                <button
+                  key={mode}
+                  className={`${styles.modeToggleBtn} ${viewMode === mode ? styles.modeToggleBtnActive : ''}`}
+                  onClick={() => setViewMode(mode)}
+                >
+                  <Icon size={13} />
+                  {label}
+                </button>
+              ))}
+            </div>
+            <Button variant="primary" onClick={handleSave} disabled={isPending}>
+              {isPending ? 'Saving…' : editing ? 'Update Template' : 'Create Template'}
+            </Button>
+          </>
+        )}
       </div>
 
       {/* Body */}

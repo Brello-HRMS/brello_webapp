@@ -1,0 +1,273 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+// ── Loader ────────────────────────────────────────────────────────────────────
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spin {
+  color: var(--color-primary-purple);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// ── Expiry warning banner ─────────────────────────────────────────────────────
+
+.expiryBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: var(--radius-md);
+
+  // 600px content + 230px sidebar
+  @media (max-width: 830px) {
+    flex-direction: column;
+    align-items: flex-start;
+
+    button { align-self: flex-end; }
+  }
+}
+
+.expiryLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.expiryIcon {
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.expiryTitle {
+  display: block;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+}
+
+.expiryPlanName {
+  color: #d97706;
+}
+
+.expiryDesc {
+  display: block;
+  font-size: 13px;
+  color: #78350f;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+.expiryDays {
+  font-weight: var(--font-weight-bold);
+}
+
+.expiryDate {
+  font-weight: var(--font-weight-semibold);
+}
+
+// ── Pending change banner ─────────────────────────────────────────────────────
+
+.pendingBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-5);
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--radius-md);
+
+  // 600px content + 230px sidebar
+  @media (max-width: 830px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.pendingLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.pendingIcon {
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pendingTitle {
+  display: block;
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  color: #92400e;
+}
+
+.pendingDesc {
+  display: block;
+  font-size: 13px;
+  color: #78350f;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+.pendingCancelBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #d97706;
+  background: transparent;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: #fef3c7;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ── Danger zone ───────────────────────────────────────────────────────────────
+
+.dangerZone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--color-white);
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-md);
+
+  // 600px content + 230px sidebar
+  @media (max-width: 830px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.dangerText {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.dangerIcon {
+  color: #dc2626;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.dangerTitle {
+  display: block;
+  font-size: 13px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary-500);
+}
+
+.dangerDesc {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+.dangerBtn {
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: #dc2626 !important;
+  border-color: #dc2626 !important;
+
+  &:hover {
+    background: #fef2f2 !important;
+  }
+}
+
+// ── Cancel subscription modal ─────────────────────────────────────────────────
+
+.cancelModalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-6);
+  gap: var(--spacing-4);
+  text-align: center;
+}
+
+.cancelIconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fef2f2;
+  flex-shrink: 0;
+}
+
+.cancelIcon {
+  color: #dc2626;
+}
+
+.cancelTitle {
+  font-size: 20px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary-500);
+  margin: 0;
+}
+
+.cancelDesc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+.cancelActions {
+  display: flex;
+  gap: var(--spacing-3);
+  width: 100%;
+
+  button {
+    flex: 1;
+  }
+}
+
+.cancelConfirmBtn {
+  background: #dc2626 !important;
+  border-color: #dc2626 !important;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c !important;
+  }
+}

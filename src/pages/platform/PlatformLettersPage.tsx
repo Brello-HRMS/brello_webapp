@@ -17,10 +17,15 @@ import {
 import { CategoryFormModal } from '../../features/letters/components/CategoryFormModal/CategoryFormModal';
 import { TemplateDesigner } from '../../features/letters/components/TemplateDesigner/TemplateDesigner';
 import { TemplateCard } from '../../features/letters/components/TemplateCard/TemplateCard';
+import { DOCUMENT_TYPES, DOCUMENT_TYPE_META } from '../../features/letters/types/letterTypes';
 
 import styles from './PlatformLettersPage.module.scss';
 
-import type { LetterCategory, LetterTemplate } from '../../features/letters/types/letterTypes';
+import type {
+  LetterCategory,
+  LetterTemplate,
+  DocumentType,
+} from '../../features/letters/types/letterTypes';
 import type {
   CreateLetterCategoryParams,
   CreateLetterTemplateParams,
@@ -30,6 +35,7 @@ import type {
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 const PlatformLettersPage: React.FC = () => {
+  const [activeDocType, setActiveDocType] = useState<DocumentType>('hr_letter');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   const [categoryFormOpen, setCategoryFormOpen] = useState(false);
@@ -40,7 +46,7 @@ const PlatformLettersPage: React.FC = () => {
   const [editingTemplate, setEditingTemplate] = useState<LetterTemplate | null>(null);
   const [deleteTemplateTarget, setDeleteTemplateTarget] = useState<LetterTemplate | null>(null);
 
-  const { data: categories = [], isLoading: isCatsLoading } = useLetterCategories();
+  const { data: categories = [], isLoading: isCatsLoading } = useLetterCategories(activeDocType);
 
   const activeCategoryId = selectedCategoryId ?? categories[0]?.id ?? null;
 
@@ -64,6 +70,11 @@ const PlatformLettersPage: React.FC = () => {
     activeCategoryId ?? '',
   );
   const { mutate: deleteTemplate } = useDeleteLetterTemplate(activeCategoryId ?? '');
+
+  const switchDocType = useCallback((type: DocumentType) => {
+    setActiveDocType(type);
+    setSelectedCategoryId(null);
+  }, []);
 
   const handleSaveCategory = useCallback(
     (params: CreateLetterCategoryParams) => {
@@ -119,16 +130,19 @@ const PlatformLettersPage: React.FC = () => {
     setEditingTemplate(null);
     setTemplateFormOpen(true);
   }, []);
+
   const openEditTemplate = useCallback((tpl: LetterTemplate) => {
     setEditingTemplate(tpl);
     setTemplateFormOpen(true);
   }, []);
 
+  const activeDocMeta = DOCUMENT_TYPE_META[activeDocType];
+
   return (
     <div className={styles.container}>
       <PageHeader
-        title="Letter Templates"
-        subtitle="Design reusable HR letters with dynamic variables and a visual block editor."
+        title="Document Templates"
+        subtitle="Design reusable documents with dynamic variables and a visual block editor."
         actions={
           activeCategoryId && (
             <Button variant="primary" onClick={openNewTemplate}>
@@ -138,6 +152,29 @@ const PlatformLettersPage: React.FC = () => {
           )
         }
       />
+
+      {/* Document type tab bar */}
+      <div className={styles.typeTabBar}>
+        {DOCUMENT_TYPES.map((type) => {
+          const meta = DOCUMENT_TYPE_META[type];
+          const isActive = activeDocType === type;
+          return (
+            <button
+              key={type}
+              className={`${styles.typeTab} ${isActive ? styles.typeTabActive : ''}`}
+              style={
+                isActive
+                  ? ({ '--tab-color': meta.color, '--tab-bg': meta.bg } as React.CSSProperties)
+                  : undefined
+              }
+              onClick={() => switchDocType(type)}
+            >
+              <span className={styles.typeTabEmoji}>{meta.emoji}</span>
+              <span className={styles.typeTabLabel}>{meta.label}</span>
+            </button>
+          );
+        })}
+      </div>
 
       <div className={styles.layout}>
         {/* Sidebar */}
@@ -220,7 +257,7 @@ const PlatformLettersPage: React.FC = () => {
           {!activeCategoryId ? (
             <NoDataFound
               title="Select a category"
-              description="Choose a letter category from the sidebar or create one to get started."
+              description={`Choose a ${activeDocMeta.label} category from the sidebar or create one to get started.`}
             />
           ) : isTemplatesLoading ? (
             <div className={styles.skeletonGrid}>
@@ -231,7 +268,7 @@ const PlatformLettersPage: React.FC = () => {
           ) : templates.length === 0 ? (
             <NoDataFound
               title={`No templates in "${activeCategory?.name ?? 'this category'}"`}
-              description="Design your first HR letter with the visual block editor."
+              description={`Design your first ${activeDocMeta.label} template with the visual block editor.`}
               buttonText="New Template"
               onButtonClick={openNewTemplate}
               showButtonIcon
@@ -267,6 +304,8 @@ const PlatformLettersPage: React.FC = () => {
         onSave={handleSaveCategory}
         editing={editingCategory}
         isPending={isCreatingCat || isUpdatingCat}
+        documentType={activeDocType}
+        documentTypeMeta={activeDocMeta}
       />
 
       <TemplateDesigner
@@ -282,7 +321,7 @@ const PlatformLettersPage: React.FC = () => {
         isOpen={!!deleteCategoryTarget}
         onClose={() => setDeleteCategoryTarget(null)}
         title={`Delete "${deleteCategoryTarget?.name}"?`}
-        description="All letter templates in this category will also be removed. This cannot be undone."
+        description="All templates in this category will also be removed. This cannot be undone."
         actionLabel="Delete Category"
         onAction={handleDeleteCategory}
       />
@@ -291,7 +330,7 @@ const PlatformLettersPage: React.FC = () => {
         isOpen={!!deleteTemplateTarget}
         onClose={() => setDeleteTemplateTarget(null)}
         title={`Delete "${deleteTemplateTarget?.name}"?`}
-        description="This letter template will be permanently removed."
+        description="This template will be permanently removed."
         actionLabel="Delete Template"
         onAction={handleDeleteTemplate}
       />

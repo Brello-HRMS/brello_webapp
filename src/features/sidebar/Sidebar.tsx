@@ -14,12 +14,15 @@ import {
   Network,
   Lock,
   FileText,
-  Clock,
+  LifeBuoy,
+  ScrollText,
 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { useSearchStore } from '../search/store/search.store';
-import { isPlatformAdmin } from '../../utils/authUtils';
+import { isPlatformAdmin, isAdminApp } from '../../utils/authUtils';
+import { useOrgSetupStatus } from '../dashboard/hooks/useOrgSetupStatus';
+import { SETUP_FREE_PATHS } from '../../components/common/SetupGuard/SetupGuard';
 
 import styles from './Sidebar.module.scss';
 import { NavItem } from './components/NavItem';
@@ -27,6 +30,14 @@ import { useSidebarMenu } from './hooks/useSidebarMenu';
 import { getIconComponent } from './utils/iconMapper';
 
 import type { MenuItem } from './sidebarConfig';
+
+const isPathFree = (path?: string) => !!path && SETUP_FREE_PATHS.some((r) => r.test(path));
+
+const isMenuItemFree = (item: { path?: string; children?: { path: string }[] }) => {
+  if (item.path && isPathFree(item.path)) return true;
+  if (item.children?.length) return item.children.every((c) => isPathFree(c.path));
+  return false;
+};
 
 const PLATFORM_ADMIN_MENU: MenuItem[] = [
   {
@@ -85,6 +96,19 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
     icon: FileText,
     path: '/platform/letters',
   },
+  {
+    label: 'Audit Logs',
+    icon: ScrollText,
+    path: '/platform/audit-logs',
+  },
+  {
+    label: 'Support',
+    icon: LifeBuoy,
+    children: [
+      { label: 'Feedback', path: '/platform/support/feedback' },
+      { label: 'Reports', path: '/platform/support/report' },
+    ],
+  },
 ];
 
 export interface SidebarProps {
@@ -96,60 +120,45 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const location = useLocation();
-  const isAdmin = isPlatformAdmin();
-  const { data: menuResponse, isLoading, error } = useSidebarMenu({ enabled: !isAdmin });
+  const isPlatformAdminUser = isPlatformAdmin();
+  const {
+    data: menuResponse,
+    isLoading,
+    error,
+  } = useSidebarMenu({ enabled: !isPlatformAdminUser });
+  const { data: setupData } = useOrgSetupStatus({ enabled: !isPlatformAdminUser });
   const { openModal } = useSearchStore();
 
+  const isSetupIncomplete =
+    !isPlatformAdminUser &&
+    isAdminApp() &&
+    setupData != null &&
+    setupData.completionPercentage < 100;
+
   const MENU_ITEMS: MenuItem[] = useMemo(() => {
-    if (isAdmin) return PLATFORM_ADMIN_MENU;
+    if (isPlatformAdminUser) return PLATFORM_ADMIN_MENU;
     if (!menuResponse?.data?.length) return [];
+    return menuResponse.data.map((item) => {
+      const children = item.children?.map((child) => ({
+        label: child.label,
+        path: child.path || '',
+        actions: child.actions,
+      }));
 
-    let hasAddedTimesheet = false;
-    const items = menuResponse.data.map((item) => {
-      const children = item.children ? [...item.children] : [];
-      const isProjectMenu =
-        item.label.toLowerCase() === 'project' || item.label.toLowerCase() === 'projects';
-
-      if (isProjectMenu) {
-        // Only push if not already present
-        if (!children.some((child) => child.path === '/project/timesheet')) {
-          children.push({
-            id: 'timesheet-menu-item',
-            label: 'Timesheet',
-            path: '/project/timesheet',
-            actions: ['view', 'create', 'edit', 'delete'],
-            module_id: 'timesheet',
-            created_at: '',
-            updated_at: '',
-          });
-        }
-        hasAddedTimesheet = true;
-      }
-
-      return {
+      const menuItem = {
         label: item.label,
         icon: getIconComponent(item.icon),
         path: item.path || undefined,
         actions: item.actions,
-        children: children.map((child) => ({
-          label: child.label,
-          path: child.path || '',
-          actions: child.actions,
-        })),
+        children,
+      };
+
+      return {
+        ...menuItem,
+        isLocked: isSetupIncomplete ? !isMenuItemFree(menuItem) : false,
       };
     });
-
-    if (!hasAddedTimesheet) {
-      items.push({
-        label: 'Timesheet',
-        icon: Clock,
-        path: '/project/timesheet',
-        children: [],
-      });
-    }
-
-    return items;
-  }, [isAdmin, menuResponse]);
+  }, [isPlatformAdminUser, menuResponse, isSetupIncomplete]);
 
   const toggleMenu = (label: string) => {
     if (isCollapsed) return;
@@ -166,8 +175,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     return item.children?.some((child) => isActive(child.path)) ?? false;
   };
 
-  const showLoading = !isAdmin && isLoading;
-  const showError = !isAdmin && !!error;
+  const showLoading = !isPlatformAdminUser && isLoading;
+  const showError = !isPlatformAdminUser && !!error;
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
@@ -185,7 +194,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
             animate={{ opacity: 1 }}
             className={styles.brandName}
           >
-            Layers
+            Brello
           </motion.span>
         )}
       </div>
@@ -227,6 +236,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
               onToggle={toggleMenu}
               hoveredMenu={hoveredMenu}
               setHoveredMenu={setHoveredMenu}
+              isLocked={item.isLocked}
             />
           ))
         )}

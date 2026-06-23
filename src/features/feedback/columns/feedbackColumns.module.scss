@@ -1,0 +1,70 @@
+.titleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.titleText {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary-500);
+}
+
+.categoryChip {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.clickable {
+  cursor: pointer;
+  color: var(--color-primary-border);
+  font-size: 13px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.typeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.typeFeedback {
+  background: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.typeIssue {
+  background: var(--color-error-100);
+  color: var(--color-error-700);
+}
+
+.priorityBadge {
+  display: inline-flex;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.low {
+    background: var(--color-priority-low-bg);
+    color: var(--color-priority-low-text);
+    border: 1px solid var(--color-priority-low-border);
+  }
+  &.medium {
+    background: var(--color-priority-medium-bg);
+    color: var(--color-priority-medium-text);
+    border: 1px solid var(--color-priority-medium-border);
+  }
+  &.high, &.critical {
+    background: var(--color-priority-high-bg);
+    color: var(--color-priority-high-text);
+    border: 1px solid var(--color-priority-high-border);
+  }
+}

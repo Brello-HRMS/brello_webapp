@@ -11,6 +11,9 @@ import styles from './PlatformRolesPage.module.scss';
 
 import type { PlatformRole } from '../../features/platform/roles/types';
 
+const roleAppIds = (role: PlatformRole): string[] =>
+  role.roleApps?.length ? role.roleApps.map((ra) => ra.app_id) : [role.app_id];
+
 const PlatformRolesPage = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<PlatformRole | null>(null);
@@ -23,14 +26,14 @@ const PlatformRolesPage = () => {
   const { mutate: remove } = useDeletePlatformRole();
 
   const apps = useMemo(() => appsResp?.data ?? [], [appsResp]);
-
   const appMap = useMemo(() => new Map(apps.map((a) => [a.id, a.name])), [apps]);
 
   const filtered = useMemo(() => {
     if (!appFilter) return roles;
-    return roles.filter((r) => r.app_id === appFilter);
+    return roles.filter((r) => roleAppIds(r).includes(appFilter));
   }, [roles, appFilter]);
 
+  // Group by primary app_id; multi-app roles appear under their primary app
   const grouped = useMemo(() => {
     const map = new Map<string, PlatformRole[]>();
     for (const role of filtered) {
@@ -124,6 +127,7 @@ const PlatformRolesPage = () => {
                   <div className={styles.table}>
                     <div className={styles.tableHead}>
                       <span>Role Name</span>
+                      <span>Apps</span>
                       <span>Code</span>
                       <span>Description</span>
                       <span>Auto-assign</span>
@@ -133,6 +137,13 @@ const PlatformRolesPage = () => {
                     {appRoles.map((role) => (
                       <div key={role.id} className={styles.tableRow}>
                         <span className={styles.roleName}>{role.name}</span>
+                        <span className={styles.appBadges}>
+                          {roleAppIds(role).map((appId) => (
+                            <span key={appId} className={styles.appChip}>
+                              {appMap.get(appId) ?? appId}
+                            </span>
+                          ))}
+                        </span>
                         <span className={styles.code}>
                           {role.code ? (
                             <code className={styles.codeTag}>{role.code}</code>

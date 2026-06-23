@@ -135,6 +135,12 @@
   opacity: 0;
 }
 
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

@@ -3,12 +3,12 @@ import { useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
 import { useOrgSetupStatus } from '../../../features/dashboard/hooks/useOrgSetupStatus';
-import { AppId } from '../../../enum/app';
-import { getCurrentAppId, isPlatformAdmin } from '../../../utils/authUtils';
+import { isAdminApp, isPlatformAdmin } from '../../../utils/authUtils';
 import { SetupRequiredBlocker } from '../RequireAccess/SetupRequiredBlocker';
 import styles from '../RequireAccess/RequireAccess.module.scss'; // Reuse loader styles
 
-const ALLOWED_PATHS_REGEX = [
+// eslint-disable-next-line react-refresh/only-export-components
+export const SETUP_FREE_PATHS = [
   /^\/$/,
   /^\/dashboard\/?$/,
   /^\/organisation\/departments(\/.*)?$/,
@@ -18,6 +18,7 @@ const ALLOWED_PATHS_REGEX = [
   /^\/organisation\/leave-config(\/.*)?$/,
   /^\/attendance\/setup(\/.*)?$/,
   /^\/employee\/directory(\/.*)?$/,
+  /^\/billing(\/.*)?$/,
 ];
 
 export const SetupGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -26,8 +27,7 @@ export const SetupGuard: React.FC<{ children: React.ReactNode }> = ({ children }
     enabled: !isPlatformAdminUser,
   });
   const location = useLocation();
-  const currentAppId = getCurrentAppId();
-  const isAdmin = currentAppId === AppId.ADMIN;
+  const isAdmin = isAdminApp();
 
   const isSetupIncomplete = isAdmin && setupData && setupData.completionPercentage < 100;
 
@@ -40,7 +40,7 @@ export const SetupGuard: React.FC<{ children: React.ReactNode }> = ({ children }
   }
 
   // If setup is incomplete and the current path is NOT allowed
-  const isAllowedPath = ALLOWED_PATHS_REGEX.some((regex) => regex.test(location.pathname));
+  const isAllowedPath = SETUP_FREE_PATHS.some((regex) => regex.test(location.pathname));
 
   if (isSetupIncomplete && !isAllowedPath) {
     return <SetupRequiredBlocker />;
