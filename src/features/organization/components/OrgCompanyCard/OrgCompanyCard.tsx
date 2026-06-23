@@ -72,7 +72,11 @@ export const OrgCompanyCard: React.FC<OrgCompanyCardProps> = ({ profile }) => {
 
   const rows = [
     { icon: <Building2 size={18} />, label: 'Legal Name', value: profile.name },
-    { icon: <FileText size={18} />, label: 'Registration No', value: profile.registration_no || '—' },
+    {
+      icon: <FileText size={18} />,
+      label: 'Registration No',
+      value: profile.registration_no || '—',
+    },
     { icon: <Hash size={18} />, label: 'GST Number', value: profile.gst_no || '—' },
     { icon: <Globe size={18} />, label: 'Website', value: profile.domain || '—' },
     {
@@ -123,10 +127,19 @@ export const OrgCompanyCard: React.FC<OrgCompanyCardProps> = ({ profile }) => {
             onChange={(e) => setForm((f) => ({ ...f, industry_type_id: e.target.value }))}
           />
           <div className={styles.actions}>
-            <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)} disabled={isPending}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsEditing(false)}
+              disabled={isPending}
+            >
               <X size={14} /> Cancel
             </Button>
-            <Button size="sm" onClick={handleSave} disabled={isPending || !form.name || !form.registration_no}>
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={isPending || !form.name || !form.registration_no}
+            >
               <Check size={14} /> {isPending ? 'Saving…' : 'Save'}
             </Button>
           </div>

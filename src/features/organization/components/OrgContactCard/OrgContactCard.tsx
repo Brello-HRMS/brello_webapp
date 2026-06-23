@@ -65,10 +65,19 @@ export const OrgContactCard: React.FC<OrgContactCardProps> = ({ profile }) => {
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           />
           <div className={styles.actions}>
-            <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)} disabled={isPending}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsEditing(false)}
+              disabled={isPending}
+            >
               <X size={14} /> Cancel
             </Button>
-            <Button size="sm" onClick={handleSave} disabled={isPending || !form.email || !form.phone}>
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={isPending || !form.email || !form.phone}
+            >
               <Check size={14} /> {isPending ? 'Saving…' : 'Save'}
             </Button>
           </div>
@@ -76,14 +85,18 @@ export const OrgContactCard: React.FC<OrgContactCardProps> = ({ profile }) => {
       ) : (
         <div className={styles.list}>
           <div className={styles.row}>
-            <div className={styles.icon}><Mail size={18} /></div>
+            <div className={styles.icon}>
+              <Mail size={18} />
+            </div>
             <div className={styles.content}>
               <span className={styles.label}>Official Email</span>
               <span className={styles.value}>{profile.email}</span>
             </div>
           </div>
           <div className={styles.row}>
-            <div className={styles.icon}><Phone size={18} /></div>
+            <div className={styles.icon}>
+              <Phone size={18} />
+            </div>
             <div className={styles.content}>
               <span className={styles.label}>Phone</span>
               <span className={styles.value}>{profile.phone}</span>

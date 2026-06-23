@@ -3,8 +3,6 @@ import { motion } from 'framer-motion';
 import {
   Search,
   Command,
-  Layers,
-  Loader2,
   LayoutDashboard,
   Settings,
   CreditCard,
@@ -23,10 +21,10 @@ import { useSearchStore } from '../search/store/search.store';
 import { isPlatformAdmin, isAdminApp } from '../../utils/authUtils';
 import { useOrgSetupStatus } from '../dashboard/hooks/useOrgSetupStatus';
 import { SETUP_FREE_PATHS } from '../../components/common/SetupGuard/SetupGuard';
-
-import styles from './Sidebar.module.scss';
 import { Logo } from '../../components/common/Logo/Logo';
 import { Loader } from '../../components/common/Loader/Loader';
+
+import styles from './Sidebar.module.scss';
 import { NavItem } from './components/NavItem';
 import { useSidebarMenu } from './hooks/useSidebarMenu';
 import { getIconComponent } from './utils/iconMapper';

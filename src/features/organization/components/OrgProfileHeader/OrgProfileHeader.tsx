@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Building2, Camera, Loader2 } from 'lucide-react';
 
-import { getDocumentSignedUrl, uploadDocumentData, uploadDocumentUrl } from '../../../../api/documents';
+import {
+  getDocumentSignedUrl,
+  uploadDocumentData,
+  uploadDocumentUrl,
+} from '../../../../api/documents';
 import { getOrganizationId } from '../../../../utils/authUtils';
 import { resolveAssetUrl } from '../../../../utils/assetUrl';
 import { showToast } from '../../../ToastFeature/ShowToast';
@@ -19,9 +23,10 @@ interface OrgProfileHeaderProps {
 // so the actual URL is at res.data.url even though the TS type says res.url.
 function extractSignedUrl(res: unknown): string | null {
   if (!res || typeof res !== 'object') return null;
-  const r = res as Record<string, any>;
-  const raw = r?.data?.url ?? r?.url ?? null;
-  return resolveAssetUrl(raw);
+  const r = res as Record<string, unknown>;
+  const data = r.data as Record<string, unknown> | undefined;
+  const raw = data?.url ?? r.url ?? null;
+  return resolveAssetUrl(typeof raw === 'string' ? raw : null);
 }
 
 export const OrgProfileHeader: React.FC<OrgProfileHeaderProps> = ({ profile }) => {

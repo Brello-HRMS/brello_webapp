@@ -15,9 +15,10 @@ interface OrgBannerProps {
 
 function extractSignedUrl(res: unknown): string | null {
   if (!res || typeof res !== 'object') return null;
-  const r = res as Record<string, any>;
-  const raw = r?.data?.url ?? r?.url ?? null;
-  return resolveAssetUrl(raw);
+  const r = res as Record<string, unknown>;
+  const data = r.data as Record<string, unknown> | undefined;
+  const raw = data?.url ?? r.url ?? null;
+  return resolveAssetUrl(typeof raw === 'string' ? raw : null);
 }
 
 export const OrgBanner = ({ isCollapsed, onToggleCollapse }: OrgBannerProps) => {
@@ -26,13 +27,18 @@ export const OrgBanner = ({ isCollapsed, onToggleCollapse }: OrgBannerProps) => 
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile?.logo_id) {
-      setLogoUrl(null);
-      return;
-    }
-    getDocumentSignedUrl(profile.logo_id)
-      .then((res) => setLogoUrl(extractSignedUrl(res)))
-      .catch(() => setLogoUrl(null));
+    void (async () => {
+      if (!profile?.logo_id) {
+        setLogoUrl(null);
+        return;
+      }
+      try {
+        const res = await getDocumentSignedUrl(profile.logo_id);
+        setLogoUrl(extractSignedUrl(res));
+      } catch {
+        setLogoUrl(null);
+      }
+    })();
   }, [profile?.logo_id]);
 
   const orgName = profile?.organization?.name ?? profile?.name ?? 'Organisation';

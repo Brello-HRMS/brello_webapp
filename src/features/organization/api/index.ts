@@ -1,11 +1,7 @@
 import { apiClient } from '../../../lib/axios';
 import { envVars } from '../../../utils/envVars';
 
-import type {
-  OrgProfileResponse,
-  OrgStatsResponse,
-  UpdateOrgProfilePayload,
-} from '../types';
+import type { OrgProfileResponse, OrgStatsResponse, UpdateOrgProfilePayload } from '../types';
 
 const BASE = envVars.BRELLO_BASE_API;
 

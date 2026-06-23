@@ -116,7 +116,12 @@ export const OrgAddressCard: React.FC<OrgAddressCardProps> = ({ profile }) => {
             />
           </div>
           <div className={styles.actions}>
-            <Button variant="ghost" size="sm" onClick={() => setIsEditing(false)} disabled={isPending}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsEditing(false)}
+              disabled={isPending}
+            >
               <X size={14} /> Cancel
             </Button>
             <Button size="sm" onClick={handleSave} disabled={isPending}>
@@ -127,7 +132,9 @@ export const OrgAddressCard: React.FC<OrgAddressCardProps> = ({ profile }) => {
       ) : (
         <div className={styles.list}>
           <div className={styles.rowView}>
-            <div className={styles.icon}><MapPin size={18} /></div>
+            <div className={styles.icon}>
+              <MapPin size={18} />
+            </div>
             <div className={styles.content}>
               <span className={styles.label}>Full Address</span>
               <span className={styles.value}>{formatAddress(profile)}</span>
