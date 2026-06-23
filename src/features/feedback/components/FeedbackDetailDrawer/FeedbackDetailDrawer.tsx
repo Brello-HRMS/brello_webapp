@@ -54,7 +54,7 @@ export const FeedbackDetailDrawer: React.FC<FeedbackDetailDrawerProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [ticket?.id]);
+  }, [ticket?.id, ticket?.attachments]);
 
   const handleSendReply = async () => {
     if (!replyBody.trim()) return;

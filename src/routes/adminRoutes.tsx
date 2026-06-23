@@ -37,6 +37,7 @@ import BillingPaymentHistoryPage from '../pages/billing/BillingPaymentHistoryPag
 import OrgLetterTemplatesPage from '../pages/letters/OrgLetterTemplatesPage';
 import FeedbackPage from '../pages/feedback/FeedbackPage';
 import { FeedbackType } from '../features/feedback/types/feedbackTypes';
+import AuditPage from '../pages/audit/AuditPage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 
 import type { RouteObject } from 'react-router-dom';
@@ -296,6 +297,16 @@ export const adminRoutes: RouteObject[] = [
   { path: 'billing/plan', element: <BillingPlanPage /> },
   { path: 'billing/invoice', element: <BillingInvoicePage /> },
   { path: 'billing/payments', element: <BillingPaymentHistoryPage /> },
+
+  // ── Audit ─────────────────────────────────────────────────────────────────
+  {
+    path: 'audit-logs',
+    element: (
+      <RequireAccess module={ModuleCode.AUDIT_LOG}>
+        <AuditPage />
+      </RequireAccess>
+    ),
+  },
 
   // ── Support ───────────────────────────────────────────────────────────────
   {

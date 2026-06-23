@@ -1,0 +1,51 @@
+.entityCell,
+.actorCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.entityType {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.entityName {
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.actorName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.actorEmail {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.time {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.viewBtn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: background 0.15s;
+}
+
+.viewBtn:hover {
+  background: var(--color-surface);
+}
