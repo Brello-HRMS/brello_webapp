@@ -89,15 +89,15 @@ type CategoryMeta = {
 };
 
 const CATEGORY_META: Record<DocCategory, CategoryMeta> = {
-  image:        { Icon: FileImage,       label: 'Image',        colorClass: styles.colorImage },
-  video:        { Icon: FileVideo,       label: 'Video',        colorClass: styles.colorVideo },
-  pdf:          { Icon: FileText,        label: 'PDF',          colorClass: styles.colorPdf },
-  csv:          { Icon: FileCode2,       label: 'CSV',          colorClass: styles.colorCsv },
-  spreadsheet:  { Icon: FileSpreadsheet, label: 'Spreadsheet',  colorClass: styles.colorSpreadsheet },
-  document:     { Icon: FileText,        label: 'Document',     colorClass: styles.colorDocument },
-  presentation: { Icon: FileText,        label: 'Presentation', colorClass: styles.colorPresentation },
-  archive:      { Icon: FileArchive,     label: 'Archive',      colorClass: styles.colorArchive },
-  other:        { Icon: File,            label: 'File',         colorClass: styles.colorOther },
+  image: { Icon: FileImage, label: 'Image', colorClass: styles.colorImage },
+  video: { Icon: FileVideo, label: 'Video', colorClass: styles.colorVideo },
+  pdf: { Icon: FileText, label: 'PDF', colorClass: styles.colorPdf },
+  csv: { Icon: FileCode2, label: 'CSV', colorClass: styles.colorCsv },
+  spreadsheet: { Icon: FileSpreadsheet, label: 'Spreadsheet', colorClass: styles.colorSpreadsheet },
+  document: { Icon: FileText, label: 'Document', colorClass: styles.colorDocument },
+  presentation: { Icon: FileText, label: 'Presentation', colorClass: styles.colorPresentation },
+  archive: { Icon: FileArchive, label: 'Archive', colorClass: styles.colorArchive },
+  other: { Icon: File, label: 'File', colorClass: styles.colorOther },
 };
 
 // ── Sub-renderers ────────────────────────────────────────────────────────────
@@ -118,9 +118,7 @@ const DownloadCard: React.FC<DownloadCardProps> = ({ url, name, meta, variant })
       <div className={`${styles.cardIcon} ${colorClass}`}>
         <Icon size={iconSize} />
       </div>
-      {variant !== 'thumbnail' && (
-        <span className={styles.cardLabel}>{label}</span>
-      )}
+      {variant !== 'thumbnail' && <span className={styles.cardLabel}>{label}</span>}
       <span className={styles.cardName} title={name}>
         {name}
       </span>
@@ -170,7 +168,9 @@ export const DocumentRender: React.FC<DocumentRenderProps> = ({
       return (
         <div className={`${rootClass} ${styles.errorBox}`}>
           <AlertCircle size={18} className={styles.errorIcon} />
-          {variant !== 'thumbnail' && <span className={styles.errorText}>Failed to load image</span>}
+          {variant !== 'thumbnail' && (
+            <span className={styles.errorText}>Failed to load image</span>
+          )}
         </div>
       );
     }
@@ -212,11 +212,7 @@ export const DocumentRender: React.FC<DocumentRenderProps> = ({
     }
     return (
       <div className={rootClass}>
-        <iframe
-          src={url}
-          title={name}
-          className={`${styles.pdfFrame} ${styles[variant]}`}
-        />
+        <iframe src={url} title={name} className={`${styles.pdfFrame} ${styles[variant]}`} />
       </div>
     );
   }
