@@ -1,0 +1,70 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 16px 14px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 64px;
+  border-bottom: 1px solid var(--color-border, rgba(0,0,0,0.06));
+  margin-bottom: 4px;
+
+  &.collapsed {
+    justify-content: center;
+    padding: 16px 8px 14px;
+  }
+}
+
+.logoBox {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid rgba(124, 58, 237, 0.2);
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.12);
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+  display: block;
+}
+
+.logoFallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c3aed;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+
+.orgName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  letter-spacing: -0.1px;
+}
+
+.appLabel {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--color-secondary);
+  letter-spacing: 0.01em;
+}

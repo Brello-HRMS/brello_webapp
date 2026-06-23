@@ -3,8 +3,6 @@ import { motion } from 'framer-motion';
 import {
   Search,
   Command,
-  Layers,
-  Loader2,
   LayoutDashboard,
   Settings,
   CreditCard,
@@ -23,6 +21,8 @@ import { useSearchStore } from '../search/store/search.store';
 import { isPlatformAdmin, isAdminApp } from '../../utils/authUtils';
 import { useOrgSetupStatus } from '../dashboard/hooks/useOrgSetupStatus';
 import { SETUP_FREE_PATHS } from '../../components/common/SetupGuard/SetupGuard';
+import { Logo } from '../../components/common/Logo/Logo';
+import { Loader } from '../../components/common/Loader/Loader';
 
 import styles from './Sidebar.module.scss';
 import { NavItem } from './components/NavItem';
@@ -186,7 +186,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
           onClick={() => setIsCollapsed(!isCollapsed)}
           style={{ cursor: 'pointer' }}
         >
-          <Layers />
+          <Logo showWordmark={false} />
         </div>
         {!isCollapsed && (
           <motion.span
@@ -214,11 +214,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       <nav className={styles.nav}>
         {showLoading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-            <Loader2
-              className="animate-spin"
-              size={24}
-              style={{ animation: 'spin 1s linear infinite' }}
-            />
+            <Loader size="sm" />
           </div>
         ) : showError ? (
           <div style={{ textAlign: 'center', padding: '1rem', color: 'red', fontSize: '14px' }}>

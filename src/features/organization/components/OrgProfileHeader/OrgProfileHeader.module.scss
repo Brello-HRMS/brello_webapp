@@ -1,0 +1,154 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, #f8f5ff 0%, #fdfcff 60%, #f0f4ff 100%);
+  border: 1px solid rgba(124, 58, 237, 0.12);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7c3aed 0%, #a855f7 50%, #6366f1 100%);
+    border-radius: 16px 16px 0 0;
+  }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 20px;
+    gap: 16px;
+  }
+}
+
+.logoWrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+  border: 2px solid rgba(124, 58, 237, 0.1);
+
+  &:hover .cameraOverlay {
+    opacity: 1;
+  }
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.25);
+  }
+
+  transition: box-shadow 0.2s ease;
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #fff;
+}
+
+.logoPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c3aed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.cameraOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  backdrop-filter: blur(2px);
+}
+
+.fileInput {
+  display: none;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.orgName {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--color-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(4px);
+
+  &.industry {
+    background: rgba(124, 58, 237, 0.1);
+    color: #7c3aed;
+    border-color: rgba(124, 58, 237, 0.2);
+    font-weight: 600;
+  }
+}
+
+.legalName {
+  font-size: 12.5px;
+  color: var(--color-secondary);
+  margin: 0;
+  font-style: italic;
+}
+
+.uploadHint {
+  font-size: 11px;
+  color: rgba(124, 58, 237, 0.6);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

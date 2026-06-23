@@ -1,0 +1,30 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoMark {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+  width: 32px;
+  height: 32px;
+}
+
+.logoMark .block {
+  border-radius: 4px;
+  background: var(--brand, #6D28D9);
+}
+
+.logoMark .block.x {
+  background: var(--inactive, #E5E7EB);
+}
+
+.logoWordmark {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--color-text-primary, #0F0820);
+  line-height: 1;
+}

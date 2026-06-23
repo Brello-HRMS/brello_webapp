@@ -38,6 +38,7 @@ import OrgLetterTemplatesPage from '../pages/letters/OrgLetterTemplatesPage';
 import FeedbackPage from '../pages/feedback/FeedbackPage';
 import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 import AuditPage from '../pages/audit/AuditPage';
+import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 
 import type { RouteObject } from 'react-router-dom';
@@ -46,6 +47,14 @@ export const adminRoutes: RouteObject[] = [
   { path: '/dashboard', element: <HomePage /> },
 
   // ── Organisation ─────────────────────────────────────────────────────────
+  {
+    path: 'organisation/profile',
+    element: (
+      <RequireAccess module={ModuleCode.ORG_PROFILE}>
+        <OrganizationProfilePage />
+      </RequireAccess>
+    ),
+  },
   {
     path: 'organisation/departments',
     element: (
