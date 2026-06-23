@@ -39,6 +39,7 @@ import FeedbackPage from '../pages/feedback/FeedbackPage';
 import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 import AuditPage from '../pages/audit/AuditPage';
 import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
+import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -330,6 +331,15 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.SUPPORT_REPORT}>
         <FeedbackPage defaultType={FeedbackType.ISSUE_REPORT} />
+      </RequireAccess>
+    ),
+  },
+
+  {
+    path: 'project/timesheet',
+    element: (
+      <RequireAccess module={ModuleCode.PROJECT_TIMESHEET}>
+        <TimesheetPage />
       </RequireAccess>
     ),
   },
