@@ -38,6 +38,7 @@ export enum ModuleCode {
   BILLING = 'BILLING',
   SUPPORT_FEEDBACK = 'SUPPORT_FEEDBACK',
   SUPPORT_REPORT = 'SUPPORT_REPORT',
+  PROJECT_TIMESHEET = 'PROJECT_TIMESHEET',
 }
 
 export const ActionCode = {
