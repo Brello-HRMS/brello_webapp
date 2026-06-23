@@ -36,6 +36,7 @@ export enum ModuleCode {
   ANNOUNCEMENT = 'ANNOUNCEMENT',
   ATTENDANCE_SETUP = 'ATTENDANCE_SETUP',
   BILLING = 'BILLING',
+  PROJECT_TIMESHEET = 'PROJECT_TIMESHEET',
 }
 
 export const ActionCode = {

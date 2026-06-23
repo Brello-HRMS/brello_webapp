@@ -20,6 +20,7 @@ import DesignationPage from '../pages/designation/DesignationPage';
 import DesignationDetailPage from '../pages/designation/DesignationDetailPage';
 import ProjectPage from '../pages/project/ProjectPage';
 import ProjectDetailPage from '../pages/project/ProjectDetailPage';
+import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 import PoliciesPage from '../pages/policies/PoliciesPage';
 import HolidaysPage from '../pages/holidays/HolidaysPage';
 import HolidayCalendarView from '../pages/holidays/HolidayCalendarView';
@@ -314,6 +315,15 @@ const router = createBrowserRouter([
         element: (
           <RequireAccess module={ModuleCode.PROJECT_PROJECTS}>
             <ProjectDetailPage />
+          </RequireAccess>
+        ),
+      },
+      {
+        path: 'project/timesheet',
+        // element: <TimesheetPage />,
+        element: (
+          <RequireAccess module={ModuleCode.PROJECT_TIMESHEET}>
+            <TimesheetPage />
           </RequireAccess>
         ),
       },
