@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { usePushSubscription } from '../../../../hooks/usePushSubscription';
 import { usePreferences, useUpdatePreference } from '../../hooks/useNotifications';
 
 import styles from './NotificationSettings.module.scss';
@@ -87,6 +88,13 @@ function getEnabled(
 export const NotificationSettings: React.FC = () => {
   const { data: preferences = [], isLoading } = usePreferences();
   const { mutate: updatePref } = useUpdatePreference();
+  const {
+    permission,
+    isSubscribed,
+    isLoading: pushLoading,
+    subscribe,
+    unsubscribe,
+  } = usePushSubscription();
 
   const handleToggle = (event_type: string, channel: Channel, enabled: boolean) => {
     updatePref({ channel, event_type, enabled });
@@ -100,6 +108,31 @@ export const NotificationSettings: React.FC = () => {
     <div className={styles.container}>
       <p className={styles.heading}>Notification Settings</p>
       <p className={styles.subheading}>Control which notifications you receive and how.</p>
+
+      {/* Push permission banner */}
+      {permission !== 'unsupported' && (
+        <div className={styles.pushBanner}>
+          <div className={styles.pushBannerInfo}>
+            <strong>Browser Push Notifications</strong>
+            <span>
+              {permission === 'denied'
+                ? 'Blocked in browser settings. Allow notifications for this site to enable.'
+                : isSubscribed
+                  ? 'Enabled — you will receive push notifications in this browser.'
+                  : 'Get notified even when the app is in the background.'}
+            </span>
+          </div>
+          {permission !== 'denied' && (
+            <button
+              className={`${styles.pushBtn} ${isSubscribed ? styles.pushBtnOff : styles.pushBtnOn}`}
+              onClick={isSubscribed ? unsubscribe : subscribe}
+              disabled={pushLoading}
+            >
+              {pushLoading ? '…' : isSubscribed ? 'Disable' : 'Enable'}
+            </button>
+          )}
+        </div>
+      )}
 
       <table className={styles.table}>
         <thead>

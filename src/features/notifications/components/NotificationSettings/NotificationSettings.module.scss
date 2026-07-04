@@ -107,6 +107,69 @@
   font-size: 12px;
 }
 
+.pushBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--color-bg-subtle, #f8f9fa);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.pushBannerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+}
+
+.pushBtn {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.pushBtnOn {
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+}
+
+.pushBtnOff {
+  background: var(--color-border);
+  color: var(--color-text-primary);
+
+  &:hover:not(:disabled) {
+    opacity: 0.7;
+  }
+}
+
 .section {
   margin-bottom: 24px;
 }

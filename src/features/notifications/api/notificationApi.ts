@@ -104,3 +104,31 @@ export async function updatePreference(
   );
   return res.data;
 }
+
+// --- Web Push ---
+
+export async function getVapidPublicKey(): Promise<string | null> {
+  const res: { data: { publicKey: string | null } } = await apiClient.get(
+    `${BASE}/notifications/vapid-public-key`,
+  );
+  return res.data.publicKey;
+}
+
+export async function registerPushSubscription(subscription: PushSubscriptionJSON): Promise<void> {
+  const keys = subscription.keys as { p256dh: string; auth: string } | undefined;
+  if (!subscription.endpoint || !keys?.p256dh || !keys?.auth) {
+    throw new Error('Invalid push subscription object');
+  }
+  await apiClient.post(`${BASE}/notifications/push-subscription`, {
+    endpoint: subscription.endpoint,
+    p256dh: keys.p256dh,
+    auth: keys.auth,
+    platform: 'web',
+  });
+}
+
+export async function unregisterPushSubscription(endpoint: string): Promise<void> {
+  await apiClient.delete(`${BASE}/notifications/push-subscription`, {
+    data: { endpoint },
+  });
+}
