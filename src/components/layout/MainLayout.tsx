@@ -5,6 +5,7 @@ import { Sidebar } from '../../features/sidebar/Sidebar';
 import { SearchModal } from '../../features/search/components/SearchModal/SearchModal';
 import { useSearchStore } from '../../features/search/store/search.store';
 import { SetupGuard } from '../common/SetupGuard/SetupGuard';
+import { useNotificationStream } from '../../hooks/useNotificationStream';
 
 import { Header } from './Header';
 import styles from './MainLayout.module.scss';
@@ -12,6 +13,8 @@ import styles from './MainLayout.module.scss';
 export const MainLayout = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { openModal } = useSearchStore();
+
+  useNotificationStream();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

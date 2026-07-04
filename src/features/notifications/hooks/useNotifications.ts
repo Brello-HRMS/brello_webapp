@@ -21,8 +21,9 @@ export const useUnreadCount = () => {
   return useQuery({
     queryKey: UNREAD_COUNT_KEY,
     queryFn: getUnreadCount,
-    // Poll every 30s as a fallback until SSE is wired in Phase 2
-    refetchInterval: 30_000,
+    // SSE (useNotificationStream) keeps this fresh in real time.
+    // 5-minute stale refetch as a resilience backstop if SSE reconnects.
+    staleTime: 5 * 60 * 1000,
   });
 };
 

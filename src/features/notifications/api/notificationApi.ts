@@ -6,7 +6,7 @@ import type { Notification, NotificationIconVariant } from '../types/notificatio
 
 const BASE = envVars.BRELLO_BASE_API;
 
-interface RawNotification {
+export interface RawNotification {
   id: string;
   user_id: string;
   title: string;
@@ -42,7 +42,7 @@ const ICON_VARIANT_MAP: Record<string, NotificationIconVariant> = {
   'payroll.reminder': 'warning',
 };
 
-function mapNotification(raw: RawNotification): Notification {
+export function mapNotification(raw: RawNotification): Notification {
   const eventType = (raw.metadata?.event_type as string) ?? '';
   return {
     id: raw.id,
