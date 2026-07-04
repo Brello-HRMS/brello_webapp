@@ -1,4 +1,4 @@
-import { BookCheck } from 'lucide-react';
+import { BookCheck, Settings } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
 import { Dialog } from '../../../../components/common/Dialog/Dialog';
@@ -10,6 +10,7 @@ import {
   NotificationType,
 } from '../../types/notificationTypes';
 import { NotificationItem } from '../NotificationItem/NotificationItem';
+import { NotificationSettings } from '../NotificationSettings/NotificationSettings';
 
 import styles from './NotificationPanel.module.scss';
 
@@ -70,6 +71,7 @@ function groupByDate(
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<NotificationTab>('all');
+  const [showSettings, setShowSettings] = useState(false);
 
   const { data: notifications = [], isLoading } = useNotifications();
   const { mutate: markRead } = useMarkAsRead();
@@ -113,17 +115,31 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
             key={key}
             role="tab"
             aria-selected={activeTab === key}
-            className={`${styles.tab} ${activeTab === key ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab(key)}
+            className={`${styles.tab} ${activeTab === key && !showSettings ? styles.activeTab : ''}`}
+            onClick={() => {
+              setActiveTab(key);
+              setShowSettings(false);
+            }}
           >
             {label}
             {counts[key] > 0 && (
-              <span className={`${styles.badge} ${activeTab === key ? styles.activeBadge : ''}`}>
+              <span
+                className={`${styles.badge} ${activeTab === key && !showSettings ? styles.activeBadge : ''}`}
+              >
                 {counts[key]}
               </span>
             )}
           </button>
         ))}
+        <button
+          role="tab"
+          aria-selected={showSettings}
+          className={`${styles.tab} ${showSettings ? styles.activeTab : ''}`}
+          onClick={() => setShowSettings((s) => !s)}
+          title="Notification settings"
+        >
+          <Settings size={14} />
+        </button>
       </div>
     </div>
   );
@@ -139,7 +155,9 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
       contentClassName={styles.noContentPadding}
     >
       <div className={styles.listWrapper}>
-        {isLoading ? (
+        {showSettings ? (
+          <NotificationSettings />
+        ) : isLoading ? (
           <div className={styles.empty}>Loading...</div>
         ) : grouped.length === 0 ? (
           <div className={styles.empty}>No notifications</div>

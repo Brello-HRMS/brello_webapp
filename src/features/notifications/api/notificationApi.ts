@@ -75,3 +75,32 @@ export async function markAsRead(id: string): Promise<void> {
 export async function markAllAsRead(): Promise<void> {
   await apiClient.patch(`${BASE}/notifications/read-all`);
 }
+
+// --- Preferences ---
+
+export interface NotificationPreference {
+  id: string;
+  user_id: string;
+  channel: 'IN_APP' | 'EMAIL' | 'PUSH';
+  event_type: string;
+  enabled: boolean;
+}
+
+export async function getPreferences(): Promise<NotificationPreference[]> {
+  const res: { data: NotificationPreference[] } = await apiClient.get(
+    `${BASE}/notifications/preferences`,
+  );
+  return res.data;
+}
+
+export async function updatePreference(
+  channel: 'IN_APP' | 'EMAIL' | 'PUSH',
+  event_type: string,
+  enabled: boolean,
+): Promise<NotificationPreference> {
+  const res: { data: NotificationPreference } = await apiClient.patch(
+    `${BASE}/notifications/preferences`,
+    { channel, event_type, enabled },
+  );
+  return res.data;
+}

@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getAllNotifications,
   getUnreadCount,
+  getPreferences,
+  updatePreference,
   markAllAsRead,
   markAsRead,
 } from '../api/notificationApi';
@@ -44,6 +46,29 @@ export const useMarkAllAsRead = () => {
     mutationFn: markAllAsRead,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: NOTIFICATIONS_KEY });
+    },
+  });
+};
+
+export const PREFERENCES_KEY = [...NOTIFICATIONS_KEY, 'preferences'] as const;
+
+export const usePreferences = () =>
+  useQuery({ queryKey: PREFERENCES_KEY, queryFn: getPreferences });
+
+export const useUpdatePreference = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      channel,
+      event_type,
+      enabled,
+    }: {
+      channel: 'IN_APP' | 'EMAIL' | 'PUSH';
+      event_type: string;
+      enabled: boolean;
+    }) => updatePreference(channel, event_type, enabled),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PREFERENCES_KEY });
     },
   });
 };
