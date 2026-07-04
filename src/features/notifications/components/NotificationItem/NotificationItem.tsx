@@ -31,7 +31,8 @@ const fallbackIconMap: Record<NotificationType, React.ReactNode> = {
 };
 
 function formatTime(isoString: string): string {
-  const date = new Date(isoString);
+  // Postgres returns timestamps without 'Z'; append it so JS treats them as UTC, not local
+  const date = new Date(isoString.endsWith('Z') ? isoString : `${isoString}Z`);
   return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
