@@ -1,0 +1,68 @@
+.container {
+  position: sticky;
+  top: var(--spacing-4);
+  height: fit-content;
+}
+
+.documentPanel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-6);
+  min-height: 400px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.emptyState {
+  color: var(--color-text-secondary);
+  font-size: 0.8125rem;
+  text-align: center;
+  padding: var(--spacing-6) var(--spacing-4);
+}
+
+.heading {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--spacing-4);
+}
+
+.paragraph {
+  margin: 0 0 var(--spacing-3);
+  white-space: pre-wrap;
+}
+
+.bulletList {
+  margin: 0 0 var(--spacing-4);
+  padding-left: 1.25rem;
+
+  li {
+    margin-bottom: var(--spacing-2);
+  }
+}
+
+.salaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--spacing-4);
+  font-size: 0.8125rem;
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--spacing-2) var(--spacing-3);
+    border: 1px solid var(--color-border);
+  }
+
+  th {
+    background: var(--color-surface);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .totalRow td {
+    font-weight: var(--font-weight-semibold);
+    background: var(--color-surface);
+  }
+}
