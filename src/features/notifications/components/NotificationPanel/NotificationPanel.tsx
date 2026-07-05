@@ -1,15 +1,16 @@
-import { BookCheck } from 'lucide-react';
+import { BookCheck, Settings } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
 import { Dialog } from '../../../../components/common/Dialog/Dialog';
-import { DUMMY_NOTIFICATIONS } from '../../data/dummyNotifications';
+import { useMarkAllAsRead, useMarkAsRead, useNotifications } from '../../hooks/useNotifications';
 import {
-  type Notification,
+  type Notification as AppNotification,
   type NotificationCounts,
   type NotificationTab,
   NotificationType,
 } from '../../types/notificationTypes';
 import { NotificationItem } from '../NotificationItem/NotificationItem';
+import { NotificationSettings } from '../NotificationSettings/NotificationSettings';
 
 import styles from './NotificationPanel.module.scss';
 
@@ -27,7 +28,7 @@ const TABS: { key: NotificationTab; label: string }[] = [
 ];
 
 function getDateLabel(isoString: string): string {
-  const date = new Date(isoString);
+  const date = new Date(isoString.endsWith('Z') ? isoString : `${isoString}Z`);
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const notifDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -38,7 +39,10 @@ function getDateLabel(isoString: string): string {
   return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-function filterNotifications(notifications: Notification[], tab: NotificationTab): Notification[] {
+function filterNotifications(
+  notifications: AppNotification[],
+  tab: NotificationTab,
+): AppNotification[] {
   switch (tab) {
     case 'unread':
       return notifications.filter((n) => !n.isRead);
@@ -53,8 +57,10 @@ function filterNotifications(notifications: Notification[], tab: NotificationTab
   }
 }
 
-function groupByDate(notifications: Notification[]): { label: string; items: Notification[] }[] {
-  const groups = new Map<string, Notification[]>();
+function groupByDate(
+  notifications: AppNotification[],
+): { label: string; items: AppNotification[] }[] {
+  const groups = new Map<string, AppNotification[]>();
   for (const n of notifications) {
     const label = getDateLabel(n.timestamp);
     if (!groups.has(label)) groups.set(label, []);
@@ -65,7 +71,11 @@ function groupByDate(notifications: Notification[]): { label: string; items: Not
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<NotificationTab>('all');
-  const [notifications, setNotifications] = useState<Notification[]>(DUMMY_NOTIFICATIONS);
+  const [showSettings, setShowSettings] = useState(false);
+
+  const { data: notifications = [], isLoading } = useNotifications();
+  const { mutate: markRead } = useMarkAsRead();
+  const { mutate: markAllRead } = useMarkAllAsRead();
 
   const counts: NotificationCounts = useMemo(() => {
     const unread = notifications.filter((n) => !n.isRead);
@@ -85,15 +95,13 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
 
   const grouped = useMemo(() => groupByDate(filtered), [filtered]);
 
-  const handleMarkRead = (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
-  };
-
   const handleMarkGroupRead = (label: string) => {
-    const idsInGroup = grouped.find((g) => g.label === label)?.items.map((n) => n.id) ?? [];
-    setNotifications((prev) =>
-      prev.map((n) => (idsInGroup.includes(n.id) ? { ...n, isRead: true } : n)),
-    );
+    const ids =
+      grouped
+        .find((g) => g.label === label)
+        ?.items.filter((n) => !n.isRead)
+        .map((n) => n.id) ?? [];
+    ids.forEach((id) => markRead(id));
   };
 
   const hasUnreadInGroup = (label: string) =>
@@ -107,17 +115,31 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
             key={key}
             role="tab"
             aria-selected={activeTab === key}
-            className={`${styles.tab} ${activeTab === key ? styles.activeTab : ''}`}
-            onClick={() => setActiveTab(key)}
+            className={`${styles.tab} ${activeTab === key && !showSettings ? styles.activeTab : ''}`}
+            onClick={() => {
+              setActiveTab(key);
+              setShowSettings(false);
+            }}
           >
             {label}
             {counts[key] > 0 && (
-              <span className={`${styles.badge} ${activeTab === key ? styles.activeBadge : ''}`}>
+              <span
+                className={`${styles.badge} ${activeTab === key && !showSettings ? styles.activeBadge : ''}`}
+              >
                 {counts[key]}
               </span>
             )}
           </button>
         ))}
+        <button
+          role="tab"
+          aria-selected={showSettings}
+          className={`${styles.tab} ${showSettings ? styles.activeTab : ''}`}
+          onClick={() => setShowSettings((s) => !s)}
+          title="Notification settings"
+        >
+          <Settings size={14} />
+        </button>
       </div>
     </div>
   );
@@ -133,7 +155,11 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
       contentClassName={styles.noContentPadding}
     >
       <div className={styles.listWrapper}>
-        {grouped.length === 0 ? (
+        {showSettings ? (
+          <NotificationSettings />
+        ) : isLoading ? (
+          <div className={styles.empty}>Loading...</div>
+        ) : grouped.length === 0 ? (
           <div className={styles.empty}>No notifications</div>
         ) : (
           grouped.map(({ label, items }) => (
@@ -164,13 +190,19 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                     Mark as read
                   </button>
                 )}
+                {label === 'Today' && counts.all > 0 && (
+                  <button className={styles.markReadBtn} onClick={() => markAllRead()}>
+                    <BookCheck size={14} />
+                    Mark all read
+                  </button>
+                )}
               </div>
 
               {items.map((notification) => (
                 <NotificationItem
                   key={notification.id}
                   notification={notification}
-                  onMarkRead={handleMarkRead}
+                  onMarkRead={markRead}
                 />
               ))}
             </section>
