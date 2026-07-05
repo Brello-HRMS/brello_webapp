@@ -12,6 +12,7 @@ import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { NotificationPanel } from '../../../features/notifications/components/NotificationPanel/NotificationPanel';
+import { useUnreadCount } from '../../../features/notifications/hooks/useNotifications';
 import profileAvatar from '../../../assets/image/dummy_profile.png';
 import { Popover } from '../../common/Popover';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
@@ -30,6 +31,7 @@ export interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapsed }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { data: unreadCount = 0 } = useUnreadCount();
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
   const { mutate: logout } = useLogout();
@@ -145,12 +147,12 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
                 {showNotification && (
                   <button
                     className={`icon-button ${styles.notificationButton}`}
-                    aria-label="Notifications"
+                    aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
                     onClick={() => setIsNotificationOpen(true)}
                   >
                     <div className={styles.notificationWrapper}>
                       <Bell size={20} />
-                      <span className={styles.notificationDot} />
+                      {unreadCount > 0 && <span className={styles.notificationDot} />}
                     </div>
                   </button>
                 )}
