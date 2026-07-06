@@ -1,5 +1,5 @@
 import React from 'react';
-import { Archive, Edit2, Star } from 'lucide-react';
+import { Archive, ArchiveRestore, Edit2, Star } from 'lucide-react';
 
 import { StatusBadge } from '../../../../components/common/StatusBadge/StatusBadge';
 import { getInitials } from '../../utils/getInitials';
@@ -13,6 +13,7 @@ export interface SignatoryCardProps {
   onEdit?: () => void;
   onSetDefault?: () => void;
   onArchive?: () => void;
+  onUnarchive?: () => void;
 }
 
 export const SignatoryCard: React.FC<SignatoryCardProps> = ({
@@ -20,6 +21,7 @@ export const SignatoryCard: React.FC<SignatoryCardProps> = ({
   onEdit,
   onSetDefault,
   onArchive,
+  onUnarchive,
 }) => {
   const { name, designation, status, is_default } = signatory;
 
@@ -40,14 +42,14 @@ export const SignatoryCard: React.FC<SignatoryCardProps> = ({
       <div className={styles.footer}>
         <StatusBadge status={status} />
 
-        {(onEdit || (onSetDefault && !is_default) || onArchive) && (
+        {(onEdit || (onSetDefault && !is_default) || onArchive || onUnarchive) && (
           <div className={styles.actions}>
-            {onEdit && (
+            {onEdit && status !== 'ARCHIVED' && (
               <button type="button" className={styles.iconButton} title="Edit" onClick={onEdit}>
                 <Edit2 size={16} />
               </button>
             )}
-            {onSetDefault && !is_default && (
+            {onSetDefault && !is_default && status !== 'ARCHIVED' && (
               <button
                 type="button"
                 className={styles.iconButton}
@@ -57,7 +59,7 @@ export const SignatoryCard: React.FC<SignatoryCardProps> = ({
                 <Star size={16} />
               </button>
             )}
-            {onArchive && (
+            {onArchive && status !== 'ARCHIVED' && (
               <button
                 type="button"
                 className={`${styles.iconButton} ${styles.deleteButton}`}
@@ -65,6 +67,16 @@ export const SignatoryCard: React.FC<SignatoryCardProps> = ({
                 onClick={onArchive}
               >
                 <Archive size={16} />
+              </button>
+            )}
+            {onUnarchive && status === 'ARCHIVED' && (
+              <button
+                type="button"
+                className={styles.iconButton}
+                title="Unarchive"
+                onClick={onUnarchive}
+              >
+                <ArchiveRestore size={16} />
               </button>
             )}
           </div>

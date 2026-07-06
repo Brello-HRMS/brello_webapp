@@ -48,5 +48,8 @@ export const previewLetterTemplate = async (id: string): Promise<ApiResponse<Ren
 export const archiveLetterTemplate = async (id: string): Promise<ApiResponse<LetterTemplate>> =>
   apiClient.delete(`${BASE}/${id}`);
 
+export const unarchiveLetterTemplate = async (id: string): Promise<ApiResponse<LetterTemplate>> =>
+  apiClient.post(`${BASE}/${id}/unarchive`);
+
 export const getVariableRegistry = async (): Promise<ApiResponse<VariableGroup[]>> =>
   apiClient.get(VARIABLES_BASE);

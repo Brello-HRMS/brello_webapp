@@ -1,5 +1,5 @@
 import React from 'react';
-import { Archive, Copy, Edit2, Eye, FileText, SendHorizonal } from 'lucide-react';
+import { Archive, ArchiveRestore, Copy, Edit2, Eye, FileText, SendHorizonal } from 'lucide-react';
 
 import { StatusBadge } from '../../../../components/common/StatusBadge/StatusBadge';
 
@@ -15,6 +15,7 @@ export interface TemplateListCardProps {
   onPublish?: () => void;
   onDuplicate?: () => void;
   onArchive?: () => void;
+  onUnarchive?: () => void;
 }
 
 export const TemplateListCard: React.FC<TemplateListCardProps> = ({
@@ -25,11 +26,16 @@ export const TemplateListCard: React.FC<TemplateListCardProps> = ({
   onPublish,
   onDuplicate,
   onArchive,
+  onUnarchive,
 }) => {
   const { name, template_status, version } = template;
 
   const handleCardClick = () => {
-    onEdit();
+    if (template_status === 'ARCHIVED') {
+      onPreview();
+    } else {
+      onEdit();
+    }
   };
 
   const stopAnd = (fn: () => void) => (e: React.MouseEvent) => {
@@ -63,14 +69,16 @@ export const TemplateListCard: React.FC<TemplateListCardProps> = ({
           >
             <Eye size={16} />
           </button>
-          <button
-            type="button"
-            className={styles.iconButton}
-            title="Edit"
-            onClick={stopAnd(onEdit)}
-          >
-            <Edit2 size={16} />
-          </button>
+          {template_status !== 'ARCHIVED' && (
+            <button
+              type="button"
+              className={styles.iconButton}
+              title="Edit"
+              onClick={stopAnd(onEdit)}
+            >
+              <Edit2 size={16} />
+            </button>
+          )}
           {onPublish && template_status === 'DRAFT' && (
             <button
               type="button"
@@ -91,7 +99,7 @@ export const TemplateListCard: React.FC<TemplateListCardProps> = ({
               <Copy size={16} />
             </button>
           )}
-          {onArchive && (
+          {onArchive && template_status !== 'ARCHIVED' && (
             <button
               type="button"
               className={`${styles.iconButton} ${styles.deleteButton}`}
@@ -99,6 +107,16 @@ export const TemplateListCard: React.FC<TemplateListCardProps> = ({
               onClick={stopAnd(onArchive)}
             >
               <Archive size={16} />
+            </button>
+          )}
+          {onUnarchive && template_status === 'ARCHIVED' && (
+            <button
+              type="button"
+              className={styles.iconButton}
+              title="Unarchive"
+              onClick={stopAnd(onUnarchive)}
+            >
+              <ArchiveRestore size={16} />
             </button>
           )}
         </div>

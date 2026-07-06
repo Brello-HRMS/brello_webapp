@@ -1,12 +1,11 @@
-import { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import {
   Button,
   ListControls,
   NoDataFound,
-  PageHeader,
   PermissionGate,
   WarningModal,
 } from '../../components/common';
@@ -18,6 +17,7 @@ import {
   useDuplicateLetterTemplate,
   useLetterTemplates,
   usePublishLetterTemplate,
+  useUnarchiveLetterTemplate,
 } from '../../features/letter-management/hooks/useLetterTemplates';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useModuleAccess } from '../../hooks/useModuleAccess';
@@ -27,11 +27,16 @@ import styles from './TemplatesPage.module.scss';
 
 import type { LetterTemplate } from '../../features/letter-management/types/letterTypes';
 
-const TemplatesPage = () => {
+interface TemplatesPageProps {
+  setHeaderActions: (actions: React.ReactNode) => void;
+}
+
+const TemplatesPage: React.FC<TemplatesPageProps> = ({ setHeaderActions }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [showUnarchiveModal, setShowUnarchiveModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<LetterTemplate | null>(null);
   const [previewingTemplate, setPreviewingTemplate] = useState<LetterTemplate | null>(null);
 
@@ -59,6 +64,7 @@ const TemplatesPage = () => {
   const { mutate: publishTemplate } = usePublishLetterTemplate();
   const { mutate: duplicateTemplate } = useDuplicateLetterTemplate();
   const { mutate: archiveTemplate, isPending: isArchiving } = useArchiveLetterTemplate();
+  const { mutate: unarchiveTemplate, isPending: isUnarchiving } = useUnarchiveLetterTemplate();
 
   const templateList = useMemo(() => response?.data || [], [response]);
 
@@ -92,6 +98,11 @@ const TemplatesPage = () => {
     setShowArchiveModal(true);
   }, []);
 
+  const handleUnarchiveClick = useCallback((template: LetterTemplate) => {
+    setSelectedTemplate(template);
+    setShowUnarchiveModal(true);
+  }, []);
+
   const handlePreviewClick = useCallback((template: LetterTemplate) => {
     setPreviewingTemplate(template);
   }, []);
@@ -103,6 +114,14 @@ const TemplatesPage = () => {
       });
     }
   }, [selectedTemplate, archiveTemplate]);
+
+  const handleUnarchive = useCallback(() => {
+    if (selectedTemplate) {
+      unarchiveTemplate(selectedTemplate.id, {
+        onSuccess: () => setShowUnarchiveModal(false),
+      });
+    }
+  }, [selectedTemplate, unarchiveTemplate]);
 
   const renderContent = () => {
     if (templateList.length === 0) {
@@ -130,11 +149,24 @@ const TemplatesPage = () => {
             }
             onDuplicate={hasCloneAccess ? () => handleDuplicate(template) : undefined}
             onArchive={hasDeleteAccess ? () => handleArchiveClick(template) : undefined}
+            onUnarchive={hasDeleteAccess ? () => handleUnarchiveClick(template) : undefined}
           />
         ))}
       </div>
     );
   };
+
+  // Sync header actions
+  React.useEffect(() => {
+    setHeaderActions(
+      <PermissionGate module={ModuleCode.LETTER_TEMPLATES} action={ActionCode.CREATE}>
+        <Button variant="primary" onClick={handleAddTemplate}>
+          <Plus size={16} />
+          New Template
+        </Button>
+      </PermissionGate>,
+    );
+  }, [setHeaderActions, handleAddTemplate]);
 
   if (!isLoading && templateList.length === 0 && !debouncedSearchQuery && !selectedCategoryId) {
     return (
@@ -150,24 +182,6 @@ const TemplatesPage = () => {
 
   return (
     <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
-      <PageHeader
-        title="Letter Templates"
-        titleExtra={
-          <span className={styles.pageIcon}>
-            <FileText size={20} />
-          </span>
-        }
-        subtitle="Create and manage reusable templates used to generate employee letters."
-        actions={
-          <PermissionGate module={ModuleCode.LETTER_TEMPLATES} action={ActionCode.CREATE}>
-            <Button variant="primary" onClick={handleAddTemplate}>
-              <Plus size={16} />
-              New Template
-            </Button>
-          </PermissionGate>
-        }
-      />
-
       <ListControls
         showSearch
         showFilters={categoryFilterOptions.length > 0}
@@ -202,6 +216,17 @@ const TemplatesPage = () => {
         actionVariant="danger"
         onAction={handleArchive}
         isActionLoading={isArchiving}
+      />
+
+      <WarningModal
+        isOpen={showUnarchiveModal}
+        onClose={() => setShowUnarchiveModal(false)}
+        title="Restore Template"
+        description={`Are you sure you want to restore "${selectedTemplate?.name}"? The template will be moved to draft status.`}
+        actionLabel="Restore"
+        actionVariant="primary"
+        onAction={handleUnarchive}
+        isActionLoading={isUnarchiving}
       />
     </div>
   );

@@ -40,11 +40,8 @@ import AuditPage from '../pages/audit/AuditPage';
 import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 import IssuedLettersPage from '../pages/letter-management/IssuedLettersPage';
-import TemplatesPage from '../pages/letter-management/TemplatesPage';
+import LetterSetupPage from '../pages/letter-management/LetterSetupPage';
 import TemplateEditorPage from '../pages/letter-management/TemplateEditorPage';
-import CategoriesPage from '../pages/letter-management/CategoriesPage';
-import SignatoriesPage from '../pages/letter-management/SignatoriesPage';
-import LetterSettingsPage from '../pages/letter-management/LetterSettingsPage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -118,10 +115,10 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'letter-management/templates',
+    path: 'letter-management/setup',
     element: (
       <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
-        <TemplatesPage />
+        <LetterSetupPage />
       </RequireAccess>
     ),
   },
@@ -138,30 +135,6 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
         <TemplateEditorPage />
-      </RequireAccess>
-    ),
-  },
-  {
-    path: 'letter-management/categories',
-    element: (
-      <RequireAccess module={ModuleCode.LETTER_CATEGORIES}>
-        <CategoriesPage />
-      </RequireAccess>
-    ),
-  },
-  {
-    path: 'letter-management/signatories',
-    element: (
-      <RequireAccess module={ModuleCode.LETTER_SIGNATORIES}>
-        <SignatoriesPage />
-      </RequireAccess>
-    ),
-  },
-  {
-    path: 'letter-management/settings',
-    element: (
-      <RequireAccess module={ModuleCode.LETTER_SETTINGS}>
-        <LetterSettingsPage />
       </RequireAccess>
     ),
   },

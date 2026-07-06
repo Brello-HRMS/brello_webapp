@@ -6,6 +6,7 @@ import {
   updateSignatory,
   setDefaultSignatory,
   archiveSignatory,
+  unarchiveSignatory,
 } from '../api/signatory';
 import { showToast } from '../../ToastFeature/ShowToast';
 
@@ -89,6 +90,22 @@ export const useArchiveSignatory = () => {
     },
     onError: (error: ApiError) => {
       const message = error?.data?.message || 'Failed to archive signatory';
+      showToast(message, 'error');
+    },
+  });
+};
+
+export const useUnarchiveSignatory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => unarchiveSignatory(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['signatories'] });
+      showToast('Signatory restored successfully', 'success');
+    },
+    onError: (error: ApiError) => {
+      const message = error?.data?.message || 'Failed to restore signatory';
       showToast(message, 'error');
     },
   });

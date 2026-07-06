@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { FileCheck2 } from 'lucide-react';
 
-import { ListControls, NoDataFound, PageHeader } from '../../components/common';
+import { NoDataFound, PageHeader } from '../../components/common';
 import { getMyLetterDownloadUrl } from '../../features/letter-management/api/issuedLetter';
 import { LetterPreviewModal } from '../../features/letter-management/components/LetterPreviewModal/LetterPreviewModal';
 import { MyLetterCard } from '../../features/letter-management/components/MyLetterCard/MyLetterCard';
 import {
+  useAcknowledgeLetter,
   useMyLetterDownload,
   useMyLetters,
 } from '../../features/letter-management/hooks/useIssuedLetters';
@@ -18,8 +20,10 @@ import type { IssuedLetter } from '../../features/letter-management/types/letter
 const MyLettersPage = () => {
   const [previewingLetter, setPreviewingLetter] = useState<IssuedLetter | null>(null);
 
+  const queryClient = useQueryClient();
   const { data: response, isLoading } = useMyLetters();
   const { mutate: downloadLetter } = useMyLetterDownload();
+  const { mutate: acknowledgeLetter } = useAcknowledgeLetter();
 
   const letterList = useMemo(() => response?.data || [], [response]);
 
@@ -28,6 +32,13 @@ const MyLettersPage = () => {
       downloadLetter(letter.id);
     },
     [downloadLetter],
+  );
+
+  const handleAcknowledge = useCallback(
+    (letter: IssuedLetter) => {
+      acknowledgeLetter(letter.id);
+    },
+    [acknowledgeLetter],
   );
 
   const handleClosePreview = useCallback(() => setPreviewingLetter(null), []);
@@ -53,14 +64,6 @@ const MyLettersPage = () => {
         subtitle="View and download letters issued to you."
       />
 
-      <ListControls
-        showSearch={false}
-        showFilters={false}
-        showSort={false}
-        showMultiSelect={false}
-        showViewSwitcher={false}
-      />
-
       <div className={styles.grid}>
         {letterList.map((letter) => (
           <MyLetterCard
@@ -68,6 +71,7 @@ const MyLettersPage = () => {
             letter={letter}
             onDownload={() => handleDownload(letter)}
             onPreview={() => setPreviewingLetter(letter)}
+            onAcknowledge={() => handleAcknowledge(letter)}
           />
         ))}
       </div>
@@ -78,6 +82,7 @@ const MyLettersPage = () => {
         onClose={handleClosePreview}
         fetchUrl={async () => {
           const { data } = await getMyLetterDownloadUrl(previewingLetter!.id);
+          queryClient.invalidateQueries({ queryKey: ['my-letters'] });
           return resolveAssetUrl(data.url) ?? data.url;
         }}
       />

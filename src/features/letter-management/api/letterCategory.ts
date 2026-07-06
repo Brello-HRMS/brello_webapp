@@ -25,3 +25,6 @@ export const updateLetterCategory = async (
 
 export const archiveLetterCategory = async (id: string): Promise<ApiResponse<LetterCategory>> =>
   apiClient.delete(`${BASE}/${id}`);
+
+export const unarchiveLetterCategory = async (id: string): Promise<ApiResponse<LetterCategory>> =>
+  apiClient.post(`${BASE}/${id}/unarchive`);

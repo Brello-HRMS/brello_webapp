@@ -44,3 +44,6 @@ export const getMyLetters = async (): Promise<ApiResponse<IssuedLetter[]>> =>
 
 export const getMyLetterDownloadUrl = async (id: string): Promise<ApiResponse<{ url: string }>> =>
   apiClient.get(`${BASE}/me/${id}/download`);
+
+export const acknowledgeMyLetter = async (id: string): Promise<ApiResponse<IssuedLetter>> =>
+  apiClient.post(`${BASE}/me/${id}/acknowledge`);

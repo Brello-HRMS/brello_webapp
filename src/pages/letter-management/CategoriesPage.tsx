@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
-import { FolderTree, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import React from 'react';
 
 import {
   Button,
   ListControls,
   NoDataFound,
-  PageHeader,
   PermissionGate,
   WarningModal,
 } from '../../components/common';
@@ -14,6 +14,7 @@ import { CategoryFormModal } from '../../features/letter-management/components/C
 import {
   useArchiveLetterCategory,
   useLetterCategories,
+  useUnarchiveLetterCategory,
 } from '../../features/letter-management/hooks/useLetterCategories';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useModuleAccess } from '../../hooks/useModuleAccess';
@@ -23,21 +24,27 @@ import styles from './CategoriesPage.module.scss';
 
 import type { LetterCategory } from '../../features/letter-management/types/letterTypes';
 
-const CategoriesPage = () => {
+interface CategoriesPageProps {
+  setHeaderActions: (actions: React.ReactNode) => void;
+}
+
+const CategoriesPage: React.FC<CategoriesPageProps> = ({ setHeaderActions }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<LetterCategory | null>(null);
   const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [showUnarchiveModal, setShowUnarchiveModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<LetterCategory | null>(null);
 
   const { hasCreateAccess, hasEditAccess, hasDeleteAccess } = useModuleAccess(
-    ModuleCode.LETTER_CATEGORIES,
+    ModuleCode.LETTER_TEMPLATES,
   );
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const { data: response, isLoading } = useLetterCategories(debouncedSearchQuery || undefined);
   const { mutate: archiveCategory, isPending: isArchiving } = useArchiveLetterCategory();
+  const { mutate: unarchiveCategory, isPending: isUnarchiving } = useUnarchiveLetterCategory();
 
   const categoryList = useMemo(() => response?.data || [], [response]);
 
@@ -56,6 +63,11 @@ const CategoriesPage = () => {
     setShowArchiveModal(true);
   }, []);
 
+  const handleUnarchiveClick = useCallback((category: LetterCategory) => {
+    setSelectedCategory(category);
+    setShowUnarchiveModal(true);
+  }, []);
+
   const handleArchive = useCallback(() => {
     if (selectedCategory) {
       archiveCategory(selectedCategory.id, {
@@ -63,6 +75,14 @@ const CategoriesPage = () => {
       });
     }
   }, [selectedCategory, archiveCategory]);
+
+  const handleUnarchive = useCallback(() => {
+    if (selectedCategory) {
+      unarchiveCategory(selectedCategory.id, {
+        onSuccess: () => setShowUnarchiveModal(false),
+      });
+    }
+  }, [selectedCategory, unarchiveCategory]);
 
   const renderContent = () => {
     if (categoryList.length === 0) {
@@ -82,11 +102,23 @@ const CategoriesPage = () => {
             category={category}
             onEdit={hasEditAccess ? () => handleEditCategory(category) : undefined}
             onArchive={hasDeleteAccess ? () => handleArchiveClick(category) : undefined}
+            onUnarchive={hasDeleteAccess ? () => handleUnarchiveClick(category) : undefined}
           />
         ))}
       </div>
     );
   };
+
+  React.useEffect(() => {
+    setHeaderActions(
+      <PermissionGate module={ModuleCode.LETTER_TEMPLATES} action={ActionCode.CREATE}>
+        <Button variant="primary" onClick={handleAddCategory}>
+          <Plus size={16} />
+          Add Category
+        </Button>
+      </PermissionGate>,
+    );
+  }, [setHeaderActions, handleAddCategory]);
 
   if (!isLoading && categoryList.length === 0 && !debouncedSearchQuery) {
     return (
@@ -113,24 +145,6 @@ const CategoriesPage = () => {
 
   return (
     <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
-      <PageHeader
-        title="Letter Categories"
-        titleExtra={
-          <span className={styles.pageIcon}>
-            <FolderTree size={20} />
-          </span>
-        }
-        subtitle="Define and manage categories used to organize letter templates."
-        actions={
-          <PermissionGate module={ModuleCode.LETTER_CATEGORIES} action={ActionCode.CREATE}>
-            <Button variant="primary" onClick={handleAddCategory}>
-              <Plus size={16} />
-              Add Category
-            </Button>
-          </PermissionGate>
-        }
-      />
-
       <ListControls
         showSearch
         showFilters={false}
@@ -153,6 +167,17 @@ const CategoriesPage = () => {
         actionVariant="danger"
         onAction={handleArchive}
         isActionLoading={isArchiving}
+      />
+
+      <WarningModal
+        isOpen={showUnarchiveModal}
+        onClose={() => setShowUnarchiveModal(false)}
+        title="Restore Category"
+        description={`Are you sure you want to restore the "${selectedCategory?.name}" category?`}
+        actionLabel="Restore"
+        actionVariant="primary"
+        onAction={handleUnarchive}
+        isActionLoading={isUnarchiving}
       />
 
       <CategoryFormModal

@@ -2,6 +2,8 @@ export type EntityStatus = 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
 
 export type TemplateStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 
+export type IssuedLetterDeliveryStatus = 'ISSUED' | 'VIEWED' | 'ACKNOWLEDGED';
+
 export interface LetterCategory {
   id: string;
   organization_id: string;
@@ -107,6 +109,9 @@ export interface IssuedLetter {
   generated_by: string;
   generated_at: string;
   archived_at: string | null;
+  delivery_status: IssuedLetterDeliveryStatus;
+  viewed_at: string | null;
+  acknowledged_at: string | null;
 }
 
 export interface IssuedLetterFilters {
@@ -116,6 +121,7 @@ export interface IssuedLetterFilters {
   letter_number?: string;
   date_from?: string;
   date_to?: string;
+  delivery_status?: IssuedLetterDeliveryStatus;
 }
 
 export interface GenerateLetterParams {

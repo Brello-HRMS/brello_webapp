@@ -1,6 +1,8 @@
 import React from 'react';
 import { Download, Eye, Send } from 'lucide-react';
 
+import { IssuedLetterStatusBadge } from '../IssuedLetterStatusBadge/IssuedLetterStatusBadge';
+
 import styles from './IssuedLetterCard.module.scss';
 
 import type { IssuedLetter } from '../../types/letterTypes';
@@ -36,12 +38,15 @@ export const IssuedLetterCard: React.FC<IssuedLetterCardProps> = ({
       </div>
 
       <div className={styles.footer}>
-        <button type="button" className={styles.iconButton} title="Preview" onClick={onPreview}>
-          <Eye size={16} />
-        </button>
-        <button type="button" className={styles.iconButton} title="Download" onClick={onDownload}>
-          <Download size={16} />
-        </button>
+        <IssuedLetterStatusBadge status={letter.delivery_status} />
+        <div className={styles.actions}>
+          <button type="button" className={styles.iconButton} title="Preview" onClick={onPreview}>
+            <Eye size={16} />
+          </button>
+          <button type="button" className={styles.iconButton} title="Download" onClick={onDownload}>
+            <Download size={16} />
+          </button>
+        </div>
       </div>
     </div>
   );

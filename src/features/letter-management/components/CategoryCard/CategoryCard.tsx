@@ -1,5 +1,5 @@
 import React from 'react';
-import { Archive, Edit2, FolderTree } from 'lucide-react';
+import { Archive, ArchiveRestore, Edit2, FolderTree } from 'lucide-react';
 
 import { StatusBadge } from '../../../../components/common/StatusBadge/StatusBadge';
 
@@ -11,9 +11,15 @@ export interface CategoryCardProps {
   category: LetterCategory;
   onEdit?: () => void;
   onArchive?: () => void;
+  onUnarchive?: () => void;
 }
 
-export const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, onArchive }) => {
+export const CategoryCard: React.FC<CategoryCardProps> = ({
+  category,
+  onEdit,
+  onArchive,
+  onUnarchive,
+}) => {
   const { name, description, status } = category;
 
   return (
@@ -32,14 +38,14 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, on
       <div className={styles.footer}>
         <StatusBadge status={status} />
 
-        {(onEdit || onArchive) && (
+        {(onEdit || onArchive || onUnarchive) && (
           <div className={styles.actions}>
-            {onEdit && (
+            {onEdit && status !== 'ARCHIVED' && (
               <button type="button" className={styles.iconButton} title="Edit" onClick={onEdit}>
                 <Edit2 size={16} />
               </button>
             )}
-            {onArchive && (
+            {onArchive && status !== 'ARCHIVED' && (
               <button
                 type="button"
                 className={`${styles.iconButton} ${styles.deleteButton}`}
@@ -47,6 +53,16 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category, onEdit, on
                 onClick={onArchive}
               >
                 <Archive size={16} />
+              </button>
+            )}
+            {onUnarchive && status === 'ARCHIVED' && (
+              <button
+                type="button"
+                className={styles.iconButton}
+                title="Unarchive"
+                onClick={onUnarchive}
+              >
+                <ArchiveRestore size={16} />
               </button>
             )}
           </div>

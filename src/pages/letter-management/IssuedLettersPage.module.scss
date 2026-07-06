@@ -9,11 +9,21 @@
   }
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
+.controlsRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  > *:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.statusFilter {
+  width: 200px;
+  flex-shrink: 0;
 }
 
 .pageIcon {

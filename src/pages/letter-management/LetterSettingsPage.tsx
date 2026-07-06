@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { PageHeader } from '../../components/common/PageHeader/PageHeader';
 import { Input } from '../../components/ui/Input/Input';
 import { Button } from '../../components/ui/Button/Button';
 import { Select } from '../../components/common/Select/Select';
@@ -24,17 +23,15 @@ import styles from './LetterSettingsPage.module.scss';
 import type { SelectOption } from '../../components/common/Select/Select';
 import type { Signatory } from '../../features/letter-management/types/letterTypes';
 
-const defaultValues: LetterSettingsFormInput = {
-  letter_prefix: '',
-  default_signatory_id: '',
-  date_format: '',
-};
+interface LetterSettingsPageProps {
+  setHeaderActions: (actions: React.ReactNode) => void;
+}
 
-const LetterSettingsPage: React.FC = () => {
+const LetterSettingsPage: React.FC<LetterSettingsPageProps> = ({ setHeaderActions }) => {
   const { data: response, isLoading } = useLetterSettings();
   const { mutate: updateSettings, isPending: isSaving } = useUpdateLetterSettings();
   const { data: signatoriesResponse } = useSignatories();
-  const { hasEditAccess } = useModuleAccess(ModuleCode.LETTER_SETTINGS);
+  const { hasEditAccess } = useModuleAccess(ModuleCode.LETTER_TEMPLATES);
 
   const settings = response?.data;
   const signatories: Signatory[] = signatoriesResponse?.data || [];
@@ -43,6 +40,15 @@ const LetterSettingsPage: React.FC = () => {
     label: `${s.name} — ${s.designation}`,
     value: s.id,
   }));
+
+  const defaultValues: LetterSettingsFormInput = useMemo(
+    () => ({
+      letter_prefix: '',
+      default_signatory_id: '',
+      date_format: '',
+    }),
+    [],
+  );
 
   const {
     control,
@@ -75,21 +81,25 @@ const LetterSettingsPage: React.FC = () => {
 
   const isDisabled = !hasEditAccess || isLoading;
 
+  useEffect(() => {
+    setHeaderActions(
+      hasEditAccess ? (
+        <Button
+          variant="primary"
+          type="submit"
+          form="letter-settings-form"
+          isLoading={isSaving}
+          disabled={isLoading}
+        >
+          Save
+        </Button>
+      ) : undefined,
+    );
+  }, [setHeaderActions, hasEditAccess, isSaving, isLoading]);
+
   return (
     <div className={styles.container}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <PageHeader
-          title="Letter Settings"
-          subtitle="Configure numbering, date format, and the default signatory for issued letters."
-          actions={
-            hasEditAccess ? (
-              <Button variant="primary" type="submit" isLoading={isSaving} disabled={isLoading}>
-                Save
-              </Button>
-            ) : undefined
-          }
-        />
-
+      <form id="letter-settings-form" onSubmit={handleSubmit(onSubmit)}>
         <div className={styles.card}>
           <div className={styles.header}>
             <h3>Numbering & Format</h3>

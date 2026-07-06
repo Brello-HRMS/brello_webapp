@@ -43,3 +43,6 @@ export const setDefaultSignatory = async (id: string): Promise<ApiResponse<Signa
 
 export const archiveSignatory = async (id: string): Promise<ApiResponse<Signatory>> =>
   apiClient.delete(`${BASE}/${id}`);
+
+export const unarchiveSignatory = async (id: string): Promise<ApiResponse<Signatory>> =>
+  apiClient.post(`${BASE}/${id}/unarchive`);

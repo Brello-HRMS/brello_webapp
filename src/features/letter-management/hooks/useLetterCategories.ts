@@ -3,8 +3,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getLetterCategories,
   createLetterCategory,
-  updateLetterCategory,
   archiveLetterCategory,
+  unarchiveLetterCategory,
+  updateLetterCategory,
 } from '../api/letterCategory';
 import { showToast } from '../../ToastFeature/ShowToast';
 
@@ -72,6 +73,22 @@ export const useArchiveLetterCategory = () => {
     },
     onError: (error: ApiError) => {
       const message = error?.data?.message || 'Failed to archive category';
+      showToast(message, 'error');
+    },
+  });
+};
+
+export const useUnarchiveLetterCategory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => unarchiveLetterCategory(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['letter-categories'] });
+      showToast('Category restored successfully', 'success');
+    },
+    onError: (error: ApiError) => {
+      const message = error?.data?.message || 'Failed to restore category';
       showToast(message, 'error');
     },
   });

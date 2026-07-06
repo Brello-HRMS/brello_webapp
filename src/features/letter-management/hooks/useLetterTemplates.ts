@@ -9,6 +9,7 @@ import {
   duplicateLetterTemplate,
   previewLetterTemplate,
   archiveLetterTemplate,
+  unarchiveLetterTemplate,
   getVariableRegistry,
 } from '../api/letterTemplate';
 import { showToast } from '../../ToastFeature/ShowToast';
@@ -137,6 +138,22 @@ export const useTemplatePreview = (id: string) => {
     mutationFn: () => previewLetterTemplate(id),
     onError: (error: ApiError) => {
       const message = error?.data?.message || 'Failed to generate preview';
+      showToast(message, 'error');
+    },
+  });
+};
+
+export const useUnarchiveLetterTemplate = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => unarchiveLetterTemplate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['letter-templates'] });
+      showToast('Template restored successfully', 'success');
+    },
+    onError: (error: ApiError) => {
+      const message = error?.data?.message || 'Failed to restore template';
       showToast(message, 'error');
     },
   });

@@ -8,6 +8,7 @@ import {
   getIssuedLetterDownloadUrl,
   getMyLetters,
   getMyLetterDownloadUrl,
+  acknowledgeMyLetter,
 } from '../api/issuedLetter';
 import { showToast } from '../../ToastFeature/ShowToast';
 import { resolveAssetUrl } from '../../../utils/assetUrl';
@@ -114,14 +115,33 @@ export const useMyLetters = () => {
 };
 
 export const useMyLetterDownload = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (id: string) => getMyLetterDownloadUrl(id),
     onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['my-letters'] });
       const url = resolveAssetUrl(response.data.url);
       if (url) window.open(url, '_blank');
     },
     onError: (error: ApiError) => {
       const message = error?.data?.message || 'Failed to download letter';
+      showToast(message, 'error');
+    },
+  });
+};
+
+export const useAcknowledgeLetter = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => acknowledgeMyLetter(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-letters'] });
+      showToast('Letter acknowledged', 'success');
+    },
+    onError: (error: ApiError) => {
+      const message = error?.data?.message || 'Failed to acknowledge letter';
       showToast(message, 'error');
     },
   });
