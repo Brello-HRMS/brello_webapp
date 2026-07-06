@@ -1,0 +1,59 @@
+# Module: Department (webapp)
+
+## 1. Purpose & Current Usage
+
+- **Pages**: `src/pages/department/DepartmentPage.tsx` (list/grid of departments — create, edit, deactivate/activate, delete, export, multi-select) and `src/pages/department/DepartmentDetailPage.tsx` (drill-in view showing employees assigned to one department, add/remove employees).
+- **Feature folder** (`src/features/department/`):
+  - `api/department.ts` — `getDepartments`, `getDepartmentById`, `createDepartment`, `updateDepartment`, `deleteDepartment` (thin `apiClient` wrappers over `/departments`).
+  - `hooks/` — `useDepartments`, `useCreateDepartment`, `useUpdateDepartment`, `useDeleteDepartment` (React Query, all invalidate `['departments']` on success, all show a toast via `showToast`).
+  - `components/AddDepartmentModal/AddDepartmentModal.tsx` — create/edit form (name, code, description, active toggle, icon picker).
+  - `components/DepartmentCard/DepartmentCard.tsx` + `components/DepartmentActionMenu/DepartmentActionMenu.tsx` — grid-view card and its Edit/Deactivate/Delete popover menu.
+  - `columns/departmentColumns.tsx` (table view) and `columns/employeeColumns.tsx` + `components/ActionCell.tsx` (employee table on the detail page).
+  - `types/departmentType.ts` — `Department`, request/response DTOs.
+- **Routes**: registered in `src/routes/adminRoutes.tsx:61-73` as `organisation/departments` → `DepartmentPage`, `organisation/departments/:id` → `DepartmentDetailPage`, both wrapped in `RequireAccess module={ModuleCode.ORG_DEPARTMENTS}`.
+- **Cross-feature reuse**: `src/features/employee/components/AddEmployeeWizard/steps/EmploymentDetailsStep.tsx:11,39,43` imports `useDepartments` directly from this feature to populate the department dropdown when onboarding an employee.
+- **Dead/unused parts**:
+  - `getDepartmentById` (`src/features/department/api/department.ts:29-31`) is exported but never called anywhere — no hook wraps it, and `DepartmentDetailPage.tsx` re-derives the department by filtering the *list* endpoint's result instead (see Gaps).
+  - `src/features/department/data/departmentData.ts` and `src/features/department/data/dummyEmployees.ts` are leftover mock-data files with zero imports anywhere in `src/` (confirmed via repo-wide grep) — pure dead code from an earlier prototype stage.
+
+## 2. Intended / Ideal Usage
+
+- Deactivating or deleting a department that still has active employees assigned should be blocked (or require reassignment first), consistently, for both actions, and the UI should tell the admin *why* — mirroring what `DepartmentPage.tsx` already does correctly for deactivate (`handleDeactivateClick`, lines 96-103): check `memberAvatars.length`, and if non-zero, show the `AlertModal` explaining the block instead of a plain confirm dialog.
+- The same check should apply to delete, since deleting a department leaves orphaned `department_id` references on employee records (per the backend audit, this isn't enforced server-side either — see Cross-Module Connections).
+- Fetching a single department (e.g. for the detail page) should use the by-ID endpoint rather than paging through the list and hoping the target row is on the first page.
+- A create/edit form that renders `required` fields and an icon picker with a required-looking asterisk should actually validate those fields client-side and persist the selected icon.
+
+## 3. Cross-Module Connections
+
+- **Depends on**: `apiClient`/`envVars` (`src/lib/axios`), `ToastFeature` (`showToast`), `useModuleAccess`/`PermissionGate`/`RequireAccess` (RBAC gating via `ModuleCode.ORG_DEPARTMENTS`), shared `components/common` (`DataTable`, `WarningModal`, `AlertModal`, `Dialog`, `StatusBadge`, `AvatarGroup`, etc.), `features/users` (`useUsersList`, `useUnmapUsers`, `AddEmployeeModal`) for the detail page's employee list.
+- **Depended on by**: `src/features/employee/components/AddEmployeeWizard/steps/EmploymentDetailsStep.tsx` (department dropdown when creating an employee) and, per the backend audit, letter-management variable resolution, attendance rule assignment, and announcement targeting all key off `department_id` set through this flow.
+- **Missing/expected connections**:
+  - `src/pages/department/DepartmentDetailPage.tsx:34` and `src/features/employee/components/AddEmployeeWizard/steps/EmploymentDetailsStep.tsx:39` both call `useDepartments()` with **no params**. The backend's `ListQueryDto`/`PaginationDto` (`brello_server/src/common/dto/pagination.dto.ts:4-15`) defaults `limit` to **10**, so both call sites silently receive only the first 10 departments — the detail page's `.find(d => d.id === id)` (`DepartmentDetailPage.tsx:35`) will fail to find any department beyond the 10th (rendering "undefined Department" in the header, `PageHeader` at line 71), and the employee-onboarding department dropdown simply can't offer departments 11+ at all. Neither call site uses the already-exported `getDepartmentById`.
+  - There is no frontend equivalent of the backend's separate platform-admin department CRUD (`src/features/platform/departments/DepartmentFormModal.tsx`) sharing any code with this feature — two independent department-editing UIs exist in the webapp, matching the two independent backend surfaces already flagged in `brello_server/docs/Module Gaps/departments.md`.
+
+## 4. Gaps
+
+### Structural (architecture, component boundaries, coupling, missing abstractions)
+
+- **No shared "single department" data path.** `getDepartmentById` exists in the API layer (`src/features/department/api/department.ts:29-31`) but has no hook and no caller; every consumer that needs one department (`DepartmentDetailPage.tsx:34-35`) instead fetches the paginated list and does a client-side `.find()`, which silently breaks past page 1 (see Cross-Module Connections). This matters because it's an easy, already-half-built fix (the API function is right there) that nobody wired up.
+- **Two parallel department-editing UIs with no shared logic.** `src/features/department/components/AddDepartmentModal/AddDepartmentModal.tsx` (org-facing) and `src/features/platform/departments/DepartmentFormModal.tsx` (platform-admin-facing) duplicate the same form concept independently, mirroring the backend's duplicated service layer — future field changes (e.g. adding a new department attribute) require touching both.
+
+### Coding (bugs, dead code, inconsistent patterns, missing validation/error handling, unsafe assumptions)
+
+- **Delete has no active-employee guard; deactivate does — confirmed asymmetry.** `handleDeactivateClick` (`src/pages/department/DepartmentPage.tsx:96-103`) checks `dept.memberAvatars?.length > 0` and routes to the blocking `AlertModal` (lines 305-321) if true. `handleDeleteClick` (`src/pages/department/DepartmentPage.tsx:105-108`) does no such check — it unconditionally sets `showDeleteDeptModal(true)`, and the resulting `WarningModal` (lines 323-330) shows only a generic "Are you sure you want to delete the {name} department? This action cannot be undone." with no mention of assigned employees, regardless of `memberAvatars.length`. Combined with the backend's dead `// TODO (Phase 2)` guard (per `brello_server/docs/Module Gaps/departments.md`), a department with active employees can be deleted end-to-end (UI → API → DB) with zero warning anywhere in the stack that it still has staff assigned, risking orphaned `User.department_id` references.
+- **Icon picker is fully disconnected from persistence.** `AddDepartmentModal.tsx:43,66,196-211` renders a "Department Icon *" grid and tracks `selectedIcon` in state, but `handleSubmit` (`AddDepartmentModal.tsx:84-89`) builds its payload from only `name`/`code`/`description`/`status` — `selectedIcon` is never included, and neither `CreateDepartmentParams` nor `UpdateDepartmentParams` (`src/features/department/types/departmentType.ts:53-62`) has an `icon` field. On edit, `selectedIcon` is also always reset to `null` (`AddDepartmentModal.tsx:66`) regardless of the department's existing `icon` value. The icon selector is decorative UI with no effect on saved data, despite looking required.
+- **`required` attributes provide no real client-side validation.** The submit `Button` is passed via `Dialog`'s `actions` prop and rendered in a separate `.footer` div (`src/components/common/Dialog/Dialog.tsx:94-95`), outside the `<form>` that wraps the inputs (`AddDepartmentModal.tsx:141-212`) — the button is wired straight to `onClick={handleSubmit}` and never triggers the form's native submit/constraint-validation path. `handleSubmit` (`AddDepartmentModal.tsx:81-107`) also performs no manual required-field check, so despite `required` markers on the Name and Code inputs, an admin can submit with either field empty; only the backend can reject it. The form's own `onSubmit` handler (`AddDepartmentModal.tsx:143-146`, `e.preventDefault(); onClose();`) is dead code that can never usefully fire given this wiring.
+- **Duplicate `UpdateDepartmentParams` interface declaration.** `src/features/department/types/departmentType.ts` declares `UpdateDepartmentParams` twice — once at lines 46-51 (`name?, code?, description?, status?`) and again at lines 59-62 (`name?, status?`). TypeScript merges these harmlessly, but it's redundant, confusing dead code that obscures which fields are actually intended to be updatable.
+- **Two mock-data files are fully dead.** `src/features/department/data/departmentData.ts` and `src/features/department/data/dummyEmployees.ts` have no importers anywhere in `src/` — leftover scaffolding from before `useUsersList`/real API integration replaced them on the detail page.
+
+### Technical (performance, security, accessibility, test coverage)
+
+- **Silent pagination cap breaks correctness, not just performance.** As described above, `useDepartments()` called with no `limit` defaults to the backend's 10-row page (`brello_server/src/common/dto/pagination.dto.ts:4-15`) in both `DepartmentDetailPage.tsx:34` and `EmploymentDetailsStep.tsx:39` — any org with more than 10 departments has employees unable to be assigned to a subset of their own departments through the onboarding wizard, and the department detail page header/redirect logic (`DepartmentDetailPage.tsx:40-44`) silently misbehaves for those departments (no error shown, no redirect, just missing data).
+- **No test coverage.** No `*.test.tsx`/`*.spec.tsx` files exist under `src/features/department/` or `src/pages/department/` for any component, hook, or page.
+- **Employee count shown to the admin can be misleading.** `memberAvatars` is capped at 3 server-side per the backend audit, yet `DepartmentPage.tsx:310-312` displays `{selectedDepartment?.memberAvatars?.length} active employees` verbatim in the "Cannot Deactivate" alert — for any department with more than 3 members, the admin is shown an undercount of exactly how many employees are blocking the action.
+
+## 5. Top 3 Priorities
+
+1. **Add the same active-employee check to delete that already exists for deactivate.** `handleDeleteClick` (`DepartmentPage.tsx:105-108`) is the one place a client-side fix is cheap and immediate, and it's the exact asymmetry flagged from the backend side — right now delete is unprotected at every layer of the stack.
+2. **Fix the unpaginated `useDepartments()` calls in `DepartmentDetailPage.tsx` and `EmploymentDetailsStep.tsx`**, either by using the existing (but unwired) `getDepartmentById` for the detail page or by requesting a high enough `limit`/dedicated "all departments" mode for dropdowns — this is a correctness bug that silently breaks any org with more than 10 departments.
+3. **Either wire up or remove the department icon picker** in `AddDepartmentModal.tsx` — it currently renders as a required-looking field that has zero effect on what gets saved, which is confusing and misleading to admins filling out the form.
