@@ -2,15 +2,15 @@ import React, { useState, useMemo } from 'react';
 
 import { Dialog, Button, DataTable } from '../../../../components/common';
 import { Input } from '../../../../components/ui/Input/Input';
-import { useUsersList } from '../../hooks/useUsersList';
-import { useMapUsers } from '../../hooks/useMapUsers';
+import { useEmployees } from '../../hooks/useEmployees';
+import { useMapEmployee } from '../../hooks/useMapEmployee';
 import { useDebounce } from '../../../../hooks/useDebounce';
 import { showToast } from '../../../../features/ToastFeature/ShowToast';
 
 import styles from './AddEmployeeModal.module.scss';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import type { User } from '../../types/userType';
+import type { Employee } from '../../types/employeeType';
 
 interface AddEmployeeModalProps {
   open: boolean;
@@ -19,7 +19,7 @@ interface AddEmployeeModalProps {
   designationId?: string;
 }
 
-const selectableEmployeeColumns: ColumnDef<User>[] = [
+const selectableEmployeeColumns: ColumnDef<Employee>[] = [
   {
     id: 'name',
     header: 'Employee',
@@ -81,8 +81,8 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { data: usersResponse } = useUsersList();
-  const { mutate: mapUsers, isPending: isMapping } = useMapUsers();
+  const { data: usersResponse } = useEmployees({ limit: 1000 });
+  const { mutate: mapUsers, isPending: isMapping } = useMapEmployee();
 
   const handleClose = () => {
     setSearchQuery('');
@@ -92,7 +92,7 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
   };
 
   const filteredUsers = useMemo(() => {
-    const allUsers = usersResponse?.data || [];
+    const allUsers = usersResponse?.data?.data || [];
 
     // Users are now filtered or checked during submission to provide feedback
     // Instead of hiding them, we show them and validate on submit as per requirements.
@@ -117,7 +117,7 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
       return;
     }
 
-    const allUsers = usersResponse?.data || [];
+    const allUsers = usersResponse?.data?.data || [];
     const validUserIds: string[] = [];
 
     selectedIds.forEach((id) => {
@@ -126,9 +126,9 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
 
       const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
 
-      if (departmentId && user.departmentId) {
+      if (departmentId && user.department) {
         showToast(`${fullName} already belongs to this department`, 'error');
-      } else if (designationId && user.designationId) {
+      } else if (designationId && user.role) {
         showToast(`${fullName} already has a designation`, 'error');
       } else {
         validUserIds.push(id);

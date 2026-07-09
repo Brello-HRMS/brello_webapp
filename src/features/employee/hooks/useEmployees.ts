@@ -16,7 +16,6 @@ export const useEmployees = (
     queryFn: async () => {
       try {
         const data = await getEmployees(params);
-        showToast('Employees fetched successfully', 'success');
         return data;
       } catch (error) {
         const message = (error as ApiError)?.data?.message || 'Failed to fetch employees';

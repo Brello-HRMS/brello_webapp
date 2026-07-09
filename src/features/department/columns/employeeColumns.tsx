@@ -1,9 +1,9 @@
 import { ActionCell } from '../components/ActionCell';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import type { User } from '../../users/types/userType';
+import type { Employee } from '../../employee/types/employeeType';
 
-export const employeeColumns: ColumnDef<User>[] = [
+export const employeeColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'id',
     header: 'Employee ID',

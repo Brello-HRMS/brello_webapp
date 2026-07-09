@@ -12,6 +12,8 @@ import type {
   SystemAccessDto,
   EducationDto,
   ExperienceDto,
+  MapUsersPayload,
+  UnmapUserPayload,
 } from '../types/employeeType';
 
 export const getEmployees = async (params?: GetEmployeesParams): Promise<GetEmployeesResponse> => {
@@ -109,4 +111,12 @@ export const uploadDocumentBinary = async (uploadUrl: string, file: File) => {
       'Content-Type': 'multipart/form-data',
     },
   });
+};
+
+export const mapUsers = async (payload: MapUsersPayload): Promise<void> => {
+  return apiClient.patch(`${envVars.BRELLO_BASE_API}/users/map`, payload);
+};
+
+export const unmapUsers = async (payload: UnmapUserPayload): Promise<void> => {
+  return apiClient.patch(`${envVars.BRELLO_BASE_API}/users/unmap`, payload);
 };

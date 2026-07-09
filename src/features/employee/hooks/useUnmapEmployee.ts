@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { unmapUsers } from '../api/user';
+import { unmapUsers } from '../api/employee';
 import { showToast } from '../../ToastFeature/ShowToast';
 
 import type { ApiError } from '../../../types/common';
 import type { UseMutationOptions } from '@tanstack/react-query';
-import type { UnmapMultipleUsersPayload } from '../types/userType';
+import type { UnmapMultipleUsersPayload } from '../types/employeeType';
 
-export const useUnmapUsers = (
+export const useUnmapEmployee = (
   options?: Omit<UseMutationOptions<void, Error, UnmapMultipleUsersPayload>, 'mutationFn'>,
 ) => {
   const queryClient = useQueryClient();
@@ -24,16 +24,15 @@ export const useUnmapUsers = (
             }),
           ),
         );
-        showToast('User Removed successfully', 'success');
+        showToast('Employees removed successfully', 'success');
       } catch (error) {
-        const message = (error as ApiError)?.response?.data?.message || 'Failed to unmap users';
+        const message = (error as ApiError)?.data?.message || 'Failed to unmap employees';
         showToast(message, 'error');
         throw error;
       }
     },
     onSuccess: (...args) => {
-      // Refresh the users list and relevant department/designation data
-      queryClient.invalidateQueries({ queryKey: ['usersList'] });
+      queryClient.invalidateQueries({ queryKey: ['employees'] });
       if (options?.onSuccess) {
         options.onSuccess(...args);
       }
