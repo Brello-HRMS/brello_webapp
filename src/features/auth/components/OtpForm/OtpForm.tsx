@@ -8,7 +8,7 @@ import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { useVerifyLoginOtp } from '../../api/useLogin';
 import { useResendOtp } from '../../api/useResendOtp';
 import { showToast } from '../../../ToastFeature/ShowToast';
-import { setCookie } from '../../../../utils/cookieUtils';
+import { persistAuthResponse } from '../../../../utils/cookieUtils';
 
 import styles from './OtpForm.module.scss';
 
@@ -108,7 +108,7 @@ export const OtpForm: React.FC = () => {
           onSuccess: (data: LoginResponse) => {
             const { user, setup_required } = data.data;
 
-            setCookie('auth_response', JSON.stringify(data));
+            persistAuthResponse(data);
             if (user.is_platform_admin) {
               navigate('/platform/dashboard');
             } else if (setup_required) {

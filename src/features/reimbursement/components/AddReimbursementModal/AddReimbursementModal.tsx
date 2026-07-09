@@ -58,7 +58,7 @@ export const AddReimbursementModal: React.FC<AddReimbursementModalProps> = ({
     handleSubmit,
     control,
     reset,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<AddReimbursementFormData>({
     resolver: zodResolver(addReimbursementSchema),
     defaultValues: { title: '', expense_description: '', expense_date: '', amount: '' },
@@ -184,7 +184,7 @@ export const AddReimbursementModal: React.FC<AddReimbursementModalProps> = ({
           <Button
             variant="primary"
             onClick={handleSubmit(onSubmit)}
-            disabled={isSaving || uploadingCount > 0 || isDirty}
+            disabled={isSaving || uploadingCount > 0}
           >
             {isSaving ? 'Saving...' : isEditing ? 'Save Changes' : 'Submit Reimbursement'}
           </Button>

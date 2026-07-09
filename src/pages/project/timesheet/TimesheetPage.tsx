@@ -14,6 +14,8 @@ import { useTimesheetCalendar } from '../../../features/project/hooks/useTimeshe
 import { useCreateTimesheet } from '../../../features/project/hooks/useCreateTimesheet';
 import { useUpdateTimesheet } from '../../../features/project/hooks/useUpdateTimesheet';
 import { useDeleteTimesheet } from '../../../features/project/hooks/useDeleteTimesheet';
+import { useModuleAccess } from '../../../hooks/useModuleAccess';
+import { ModuleCode } from '../../../enum/modules';
 
 import { TimesheetHeader } from './components/TimesheetHeader';
 import { ProjectHoursTable } from './components/ProjectHoursTable';
@@ -77,6 +79,9 @@ export const TimesheetPage: React.FC = () => {
   const { mutate: createTimesheet } = useCreateTimesheet();
   const { mutate: updateTimesheet } = useUpdateTimesheet();
   const { mutate: deleteTimesheet } = useDeleteTimesheet();
+  const { hasCreateAccess, hasEditAccess, hasDeleteAccess } = useModuleAccess(
+    ModuleCode.PROJECT_TIMESHEET,
+  );
 
   // Map Projects
   const projects = useMemo<ProjectData[]>(() => {
@@ -135,18 +140,21 @@ export const TimesheetPage: React.FC = () => {
   }, [entries, searchQuery, projectFilter, startDateFilter, endDateFilter]);
 
   const handleAddClick = () => {
+    if (!hasCreateAccess) return;
     setSelectedEntry(null);
     setPreselectedSlot(null);
     setIsModalOpen(true);
   };
 
   const handleEventClick = (entry: TimesheetEntryData) => {
+    if (!hasEditAccess) return;
     setSelectedEntry(entry);
     setPreselectedSlot(null);
     setIsModalOpen(true);
   };
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
+    if (!hasCreateAccess) return;
     setSelectedEntry(null);
     setPreselectedSlot({
       date: moment(start).format('YYYY-MM-DD'),
@@ -198,6 +206,7 @@ export const TimesheetPage: React.FC = () => {
   };
 
   const handleDeleteClick = (id: string) => {
+    if (!hasDeleteAccess) return;
     setEntryToDelete(id);
     setShowDeleteModal(true);
   };
@@ -239,7 +248,7 @@ export const TimesheetPage: React.FC = () => {
         selectedProjectId={projectFilter || undefined}
         startDate={startDateFilter || undefined}
         endDate={endDateFilter || undefined}
-        onAddClick={handleAddClick}
+        onAddClick={hasCreateAccess ? handleAddClick : undefined}
       />
 
       {/* Filter panel */}

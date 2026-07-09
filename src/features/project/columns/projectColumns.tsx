@@ -6,8 +6,8 @@ import type { Project } from '../types/projectType';
 
 interface ProjectColumnProps {
   onView: (project: Project) => void;
-  onEdit: (project: Project) => void;
-  onDelete: (project: Project) => void;
+  onEdit?: (project: Project) => void;
+  onDelete?: (project: Project) => void;
 }
 
 export const projectColumns = ({
@@ -96,8 +96,8 @@ export const projectColumns = ({
     cell: (info) => (
       <TableActions
         onView={() => onView(info.row.original)}
-        onEdit={() => onEdit(info.row.original)}
-        onDelete={() => onDelete(info.row.original)}
+        onEdit={onEdit ? () => onEdit(info.row.original) : undefined}
+        onDelete={onDelete ? () => onDelete(info.row.original) : undefined}
       />
     ),
   },

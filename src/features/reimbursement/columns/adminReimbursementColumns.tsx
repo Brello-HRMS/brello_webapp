@@ -10,7 +10,7 @@ import type { Reimbursement } from '../types/reimbursementTypes';
 import type { ColumnDef } from '@tanstack/react-table';
 
 interface AdminReimbursementColumnsProps {
-  onEdit: (reimbursement: Reimbursement) => void;
+  onEdit?: (reimbursement: Reimbursement) => void;
 }
 
 const renderStatusBadge = (status: ReimbursementStatus) => {
@@ -103,14 +103,15 @@ export const adminReimbursementColumns = ({
     id: 'action',
     header: 'Action',
     size: 80,
-    cell: (info) => (
-      <button
-        className={styles.actionBtn}
-        onClick={() => onEdit(info.row.original)}
-        title="Edit reimbursement"
-      >
-        <Pencil size={15} />
-      </button>
-    ),
+    cell: (info) =>
+      onEdit && (
+        <button
+          className={styles.actionBtn}
+          onClick={() => onEdit(info.row.original)}
+          title="Edit reimbursement"
+        >
+          <Pencil size={15} />
+        </button>
+      ),
   },
 ];

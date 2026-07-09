@@ -147,7 +147,9 @@ const PoliciesPage = () => {
     });
   };
 
-  const { hasCreateAccess } = useModuleAccess(ModuleCode.ORG_POLICIES);
+  const { hasCreateAccess, hasEditAccess, hasDeleteAccess, hasActivateAccess } = useModuleAccess(
+    ModuleCode.ORG_POLICIES,
+  );
 
   if (!isLoading && groups.length === 0) {
     return (
@@ -223,11 +225,14 @@ const PoliciesPage = () => {
                 <PolicyAccordionItem
                   key={policy.id}
                   policy={policy}
+                  // Opens the view dialog — a read action, available to
+                  // anyone who can see this list. Write actions (Edit/
+                  // Deactivate) are gated further down, inside the dialog.
                   onEdit={(p) => {
                     setSelectedPolicyId(p.id);
                     setViewPolicy(p);
                   }}
-                  onDelete={(p) => setDeletePolicy(p)}
+                  onDelete={hasDeleteAccess ? (p) => setDeletePolicy(p) : undefined}
                 />
               ))}
               {group.policies.length === 0 && (
@@ -279,16 +284,20 @@ const PoliciesPage = () => {
           setViewPolicy(null);
           setSelectedPolicyId(null);
         }}
-        onEdit={(updatedPolicy) => {
-          updatePolicyMutation({
-            id: updatedPolicy.id,
-            params: {
-              title: updatedPolicy.title,
-              content: updatedPolicy.content,
-            },
-          });
-        }}
-        onDeactivate={handleDeactivate}
+        onEdit={
+          hasEditAccess
+            ? (updatedPolicy) => {
+                updatePolicyMutation({
+                  id: updatedPolicy.id,
+                  params: {
+                    title: updatedPolicy.title,
+                    content: updatedPolicy.content,
+                  },
+                });
+              }
+            : undefined
+        }
+        onDeactivate={hasActivateAccess ? handleDeactivate : undefined}
         isDeactivating={isUpdating}
         isLoading={isLoadingDetails}
       />

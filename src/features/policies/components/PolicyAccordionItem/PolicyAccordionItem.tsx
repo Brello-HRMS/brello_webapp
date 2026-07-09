@@ -21,24 +21,24 @@ export const PolicyAccordionItem: React.FC<PolicyAccordionItemProps> = ({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const menuItems = [
-    {
+    onEdit && {
       icon: <Edit2 size={16} />,
       title: 'Edit',
       action: () => {
-        onEdit?.(policy);
+        onEdit(policy);
         setIsPopoverOpen(false);
       },
     },
-    {
+    onDelete && {
       icon: <Trash2 size={16} />,
       title: 'Delete',
       action: () => {
-        onDelete?.(policy);
+        onDelete(policy);
         setIsPopoverOpen(false);
       },
       className: styles.danger,
     },
-  ];
+  ].filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   return (
     <div className={styles.policyItem}>
