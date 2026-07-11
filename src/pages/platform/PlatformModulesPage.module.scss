@@ -97,9 +97,43 @@
 .row {
   border-bottom: 1px solid var(--color-border);
   transition: background 0.1s;
+  position: relative;
 
   &:last-child {
     border-bottom: none;
+  }
+}
+
+// ── Drag & drop states ───────────────────────────────────────────────────────
+
+.dragging {
+  opacity: 0.4;
+}
+
+.dropBefore {
+  box-shadow: inset 0 2px 0 0 var(--color-primary);
+}
+
+.dropAfter {
+  box-shadow: inset 0 -2px 0 0 var(--color-primary);
+}
+
+.dropInto {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent) !important;
+  box-shadow: inset 0 0 0 1.5px var(--color-primary);
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: var(--color-gray-300, #d1d5db);
+  cursor: grab;
+  flex-shrink: 0;
+
+  &:active {
+    cursor: grabbing;
   }
 }
 

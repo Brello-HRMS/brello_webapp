@@ -1,0 +1,94 @@
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 0;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #94a3b8;
+  background: #fff;
+  transition: all 0.2s;
+  z-index: 1;
+}
+
+.stepLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: #94a3b8;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.step.active {
+  .circle {
+    border-color: var(--primary, #6366f1);
+    color: var(--primary, #6366f1);
+    background: #eef2ff;
+  }
+  .stepLabel {
+    color: var(--primary, #6366f1);
+  }
+}
+
+.step.done {
+  .circle {
+    border-color: #10b981;
+    background: #10b981;
+    color: #fff;
+  }
+  .stepLabel {
+    color: #10b981;
+  }
+}
+
+.connector {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 4px;
+  margin-top: -20px;
+  transition: background 0.2s;
+}
+
+.connectorDone {
+  background: #10b981;
+}
+
+.content {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.stepTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+}

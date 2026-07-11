@@ -1,0 +1,355 @@
+.page {
+  padding: 0 24px 48px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.topBar {
+  margin-bottom: 20px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: color 0.15s;
+
+  &:hover { color: var(--text-primary); }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.offerNumber {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expiry {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: #f59e0b;
+}
+
+.headerActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+// ── Body layout ───────────────────────────────────────────────────────────────
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mainCol {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+
+.card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+// ── Candidate ──────────────────────────────────────────────────────────────────
+
+.candidateInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.candidateName {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.candidateEmail {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+// ── Details ────────────────────────────────────────────────────────────────────
+
+.dl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detailRow {
+  display: flex;
+  font-size: 14px;
+
+  dt {
+    width: 160px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+}
+
+.dim {
+  color: var(--text-secondary);
+}
+
+// ── Salary table ──────────────────────────────────────────────────────────────
+
+.salaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 13px;
+
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  tr:not(:last-child) td {
+    border-bottom: 1px solid var(--bg-subtle, #f8fafc);
+  }
+}
+
+.right { text-align: right !important; }
+
+// ── Timeline ──────────────────────────────────────────────────────────────────
+
+.timelineCol {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timelineEntry {
+  display: flex;
+  gap: 12px;
+  position: relative;
+
+  &:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 16px;
+    bottom: -8px;
+    width: 2px;
+    background: var(--border-color, #e2e8f0);
+  }
+
+  padding-bottom: 16px;
+}
+
+.timelineDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary, #6366f1);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--primary, #6366f1);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.timelineContent {
+  flex: 1;
+}
+
+.timelineLabel {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+  margin: 0 0 2px;
+}
+
+.timelineTime {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.emptyTimeline {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px 0;
+}
+
+// ── Feedback ──────────────────────────────────────────────────────────────────
+
+.feedback {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+// ── Withdraw modal ────────────────────────────────────────────────────────────
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--card-bg, #fff);
+  border-radius: 14px;
+  padding: 28px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+}
+
+.textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  font-size: 14px;
+  resize: vertical;
+  outline: none;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: var(--primary, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

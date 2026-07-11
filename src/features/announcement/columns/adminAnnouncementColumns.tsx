@@ -1,5 +1,6 @@
 import { Pencil, Archive, Trash2, SendHorizonal } from 'lucide-react';
 
+import { ReadersCell } from '../components/ReadersCell/ReadersCell';
 import { AnnouncementPriority, AnnouncementStatus } from '../types/announcementTypes';
 
 import styles from './adminAnnouncementColumns.module.scss';
@@ -115,7 +116,12 @@ export const adminAnnouncementColumns = ({
     id: 'read_count',
     header: 'Read',
     size: 80,
-    cell: (info) => <span className={styles.readCount}>{info.row.original.read_count ?? 0}</span>,
+    cell: (info) => (
+      <ReadersCell
+        announcementId={info.row.original.id}
+        readCount={info.row.original.read_count ?? 0}
+      />
+    ),
   },
   {
     id: 'actions',

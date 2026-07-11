@@ -65,6 +65,12 @@ export interface Announcement {
   updated_at: string;
 }
 
+export interface AnnouncementReader {
+  employee_id: string;
+  name: string;
+  viewed_at: string;
+}
+
 export interface EmployeeAnnouncement {
   id: string;
   title: string;
@@ -102,6 +108,8 @@ export interface CreateAnnouncementPayload {
   send_email: boolean;
   attachments?: AnnouncementAttachment[];
 }
+
+export type UpdateAnnouncementPayload = Partial<CreateAnnouncementPayload>;
 
 export interface AdminAnnouncementQuery {
   status?: AnnouncementStatus;
