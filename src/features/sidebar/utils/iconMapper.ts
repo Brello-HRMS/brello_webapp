@@ -21,6 +21,7 @@ import {
   UserCog,
   DollarSign,
   Shield,
+  Plug,
   Circle,
   type LucideIcon,
 } from 'lucide-react';
@@ -48,6 +49,7 @@ export const iconMap: Record<string, LucideIcon> = {
   UserCog,
   DollarSign,
   Shield,
+  Plug,
 };
 
 export const getIconComponent = (iconName: string | null): LucideIcon => {

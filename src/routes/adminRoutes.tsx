@@ -40,6 +40,7 @@ import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 import AuditPage from '../pages/audit/AuditPage';
 import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
+import EmailIntegrationPage from '../pages/integration/EmailIntegrationPage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -340,6 +341,16 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.PROJECT_TIMESHEET}>
         <TimesheetPage />
+      </RequireAccess>
+    ),
+  },
+
+  // ── Integration ───────────────────────────────────────────────────────────
+  {
+    path: 'integration/email',
+    element: (
+      <RequireAccess module={ModuleCode.INTEGRATION_EMAIL}>
+        <EmailIntegrationPage />
       </RequireAccess>
     ),
   },
