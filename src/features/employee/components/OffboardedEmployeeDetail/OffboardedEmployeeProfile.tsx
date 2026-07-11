@@ -47,8 +47,12 @@ export const OffboardedEmployeeProfile: React.FC<Props> = ({
   const diffTime = lastDate.getTime() - today.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+  // `employeeExited` is derived purely from comparing last_working_day to
+  // today's date on the client — it does not confirm the backend has
+  // actually processed the account (that happens via a daily cron). Avoid
+  // asserting "Access revoked" as a completed fact we can't confirm here.
   const remainingText = employeeExited
-    ? 'Access revoked'
+    ? 'Last working day has passed — access is being revoked'
     : `${diffDays} days remaining: access will be auto-revoked`;
 
   const currentStatusText = employeeExited ? 'Final settlement done' : 'Pending final settlement';

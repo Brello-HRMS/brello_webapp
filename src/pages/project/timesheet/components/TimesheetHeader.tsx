@@ -15,7 +15,7 @@ interface TimesheetHeaderProps {
   selectedProjectId?: string;
   startDate?: string;
   endDate?: string;
-  onAddClick: () => void;
+  onAddClick?: () => void;
 }
 
 export const TimesheetHeader: React.FC<TimesheetHeaderProps> = ({
@@ -39,10 +39,12 @@ export const TimesheetHeader: React.FC<TimesheetHeaderProps> = ({
             startDate={startDate}
             endDate={endDate}
           />
-          <Button onClick={onAddClick} variant="primary" className="flex items-center gap-2">
-            <Plus size={16} />
-            <span>Add Entry</span>
-          </Button>
+          {onAddClick && (
+            <Button onClick={onAddClick} variant="primary" className="flex items-center gap-2">
+              <Plus size={16} />
+              <span>Add Entry</span>
+            </Button>
+          )}
         </div>
       }
     />

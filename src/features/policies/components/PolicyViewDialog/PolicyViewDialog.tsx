@@ -12,8 +12,8 @@ interface PolicyViewDialogProps {
   open: boolean;
   policy: Policy | null;
   onClose: () => void;
-  onEdit: (policy: Policy) => void;
-  onDeactivate: (policy: Policy) => void;
+  onEdit?: (policy: Policy) => void;
+  onDeactivate?: (policy: Policy) => void;
   isDeactivating?: boolean;
   isLoading?: boolean;
 }
@@ -34,7 +34,7 @@ export const PolicyViewDialog: React.FC<PolicyViewDialogProps> = ({
   if (!policy && !isLoading) return null;
 
   const handleSave = () => {
-    if (!policy) return;
+    if (!policy || !onEdit) return;
     onEdit({ ...policy, title: editTitle, content: editContent });
     setIsEditing(false);
   };
@@ -52,28 +52,32 @@ export const PolicyViewDialog: React.FC<PolicyViewDialogProps> = ({
         </>
       ) : (
         <>
-          <Button
-            variant="secondary"
-            type="button"
-            onClick={() => policy && onDeactivate(policy)}
-            isLoading={isDeactivating}
-            disabled={isLoading || !policy}
-          >
-            Deactivate
-          </Button>
-          <Button
-            variant="primary"
-            type="button"
-            onClick={() => {
-              setEditTitle(policy?.title || '');
-              setEditContent(policy?.content || '');
-              setIsEditing(true);
-            }}
-            disabled={isLoading || !policy}
-          >
-            <FilePen size={16} />
-            Edit Policy
-          </Button>
+          {onDeactivate && (
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => policy && onDeactivate(policy)}
+              isLoading={isDeactivating}
+              disabled={isLoading || !policy}
+            >
+              Deactivate
+            </Button>
+          )}
+          {onEdit && (
+            <Button
+              variant="primary"
+              type="button"
+              onClick={() => {
+                setEditTitle(policy?.title || '');
+                setEditContent(policy?.content || '');
+                setIsEditing(true);
+              }}
+              disabled={isLoading || !policy}
+            >
+              <FilePen size={16} />
+              Edit Policy
+            </Button>
+          )}
         </>
       )}
     </div>

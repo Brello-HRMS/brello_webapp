@@ -7,6 +7,7 @@ export interface Employee {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   status: EmployeeStatus | string;
   employeeStatus?: string | null;
   avatar: string | null;
@@ -40,6 +41,8 @@ export interface GetEmployeesParams {
   page?: number;
   limit?: number;
   search?: string;
+  departmentId?: string;
+  designationId?: string;
 }
 
 export interface CreateEmployeeDto {
@@ -246,4 +249,28 @@ export interface GetEmployeeDetailResponse {
   success: boolean;
   data: EmployeeDetail;
   timestamp: string;
+}
+
+export interface MapUsersPayload {
+  userId: string;
+  departmentId?: string;
+  designationId?: string;
+}
+
+export interface MapMultipleUsersPayload {
+  userIds: string[];
+  departmentId?: string;
+  designationId?: string;
+}
+
+export interface UnmapUserPayload {
+  userId: string;
+  unmapDepartment?: boolean;
+  unmapDesignation?: boolean;
+}
+
+export interface UnmapMultipleUsersPayload {
+  userIds: string[];
+  unmapDepartment?: boolean;
+  unmapDesignation?: boolean;
 }

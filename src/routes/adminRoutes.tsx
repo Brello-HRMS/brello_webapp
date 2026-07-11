@@ -329,9 +329,30 @@ export const adminRoutes: RouteObject[] = [
   },
 
   // ── Billing ───────────────────────────────────────────────────────────────
-  { path: 'billing/plan', element: <BillingPlanPage /> },
-  { path: 'billing/invoice', element: <BillingInvoicePage /> },
-  { path: 'billing/payments', element: <BillingPaymentHistoryPage /> },
+  {
+    path: 'billing/plan',
+    element: (
+      <RequireAccess module={ModuleCode.BILLING}>
+        <BillingPlanPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'billing/invoice',
+    element: (
+      <RequireAccess module={ModuleCode.BILLING}>
+        <BillingInvoicePage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'billing/payments',
+    element: (
+      <RequireAccess module={ModuleCode.BILLING}>
+        <BillingPaymentHistoryPage />
+      </RequireAccess>
+    ),
+  },
 
   // ── Audit ─────────────────────────────────────────────────────────────────
   {
