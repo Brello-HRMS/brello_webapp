@@ -1,0 +1,118 @@
+.card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 20px;
+  height: 230px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -8px rgba(71, 84, 103, 0.12);
+    border-color: var(--color-primary-purple);
+    z-index: 10;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.iconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-warning-50);
+  color: var(--color-warning-700);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+  min-height: 0;
+}
+
+.letterNumber {
+  font-family: 'DM Mono', 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text-header);
+  margin: 0 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.employeeName {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.categoryName {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin: 4px 0 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding-top: var(--spacing-2);
+  border-top: 1px solid var(--color-surface);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: var(--color-gray-100);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

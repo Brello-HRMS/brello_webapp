@@ -34,12 +34,14 @@ import LeaveRequestsPage from '../pages/attendance/LeaveRequestsPage';
 import BillingPlanPage from '../pages/billing/BillingPlanPage';
 import BillingInvoicePage from '../pages/billing/BillingInvoicePage';
 import BillingPaymentHistoryPage from '../pages/billing/BillingPaymentHistoryPage';
-import OrgLetterTemplatesPage from '../pages/letters/OrgLetterTemplatesPage';
 import FeedbackPage from '../pages/feedback/FeedbackPage';
 import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 import AuditPage from '../pages/audit/AuditPage';
 import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
+import IssuedLettersPage from '../pages/letter-management/IssuedLettersPage';
+import LetterSetupPage from '../pages/letter-management/LetterSetupPage';
+import TemplateEditorPage from '../pages/letter-management/TemplateEditorPage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -103,6 +105,40 @@ export const adminRoutes: RouteObject[] = [
       </RequireAccess>
     ),
   },
+  // ── Letter Management ────────────────────────────────────────────────────
+  {
+    path: 'letter-management/issued-letters',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_ISSUED}>
+        <IssuedLettersPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'letter-management/setup',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
+        <LetterSetupPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'letter-management/templates/new',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
+        <TemplateEditorPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'letter-management/templates/:id',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
+        <TemplateEditorPage />
+      </RequireAccess>
+    ),
+  },
+
   {
     path: 'organisation/leave-config',
     element: (
@@ -288,16 +324,6 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.ACCESS_PERMISSIONS}>
         <PermissionsPage />
-      </RequireAccess>
-    ),
-  },
-
-  // ── Organisation Letter Templates ───────────────────────────────────────
-  {
-    path: 'organisation/letter-templates',
-    element: (
-      <RequireAccess module={ModuleCode.OFFER_TEMPLATES}>
-        <OrgLetterTemplatesPage />
       </RequireAccess>
     ),
   },

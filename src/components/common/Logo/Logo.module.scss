@@ -8,23 +8,23 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 3px;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
 }
 
 .logoMark .block {
   border-radius: 4px;
-  background: var(--brand, #6D28D9);
+  background: var(--brand, #6d28d9);
 }
 
 .logoMark .block.x {
-  background: var(--inactive, #E5E7EB);
+  background: var(--inactive, #e5e7eb);
 }
 
 .logoWordmark {
   font-size: 24px;
   font-weight: 800;
   letter-spacing: -1px;
-  color: var(--color-text-primary, #0F0820);
+  color: var(--color-text-primary, #0f0820);
   line-height: 1;
 }
