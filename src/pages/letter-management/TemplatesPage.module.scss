@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  transition: opacity 0.2s;
+
+  &.loading {
+    opacity: 0.6;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.pageIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--color-success-50);
+  color: var(--color-success-700);
+}

@@ -1,0 +1,74 @@
+.loaderWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8) 0;
+}
+
+.mutedText {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.previewPanel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-6);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.previewHeading {
+  font-size: 1.125rem;
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--spacing-4);
+}
+
+.previewParagraph {
+  margin: 0 0 var(--spacing-3);
+  white-space: pre-wrap;
+}
+
+.previewBulletList {
+  margin: 0 0 var(--spacing-4);
+  padding-left: 1.25rem;
+
+  li {
+    margin-bottom: var(--spacing-2);
+  }
+}
+
+.previewSalaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--spacing-4);
+  font-size: 0.8125rem;
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--spacing-2) var(--spacing-3);
+    border: 1px solid var(--color-border);
+  }
+
+  th {
+    background: var(--color-surface);
+    font-weight: var(--font-weight-semibold);
+  }
+}
+
+.previewTotalRow td {
+  font-weight: var(--font-weight-semibold);
+  background: var(--color-surface);
+}
+
+.previewSignatory {
+  margin-top: var(--spacing-6);
+
+  p {
+    margin: 0;
+  }
+}

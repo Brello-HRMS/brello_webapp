@@ -8,6 +8,8 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { useAllReimbursements } from '../../features/reimbursement/hooks/useAdminReimbursement';
 import { adminReimbursementColumns } from '../../features/reimbursement/columns/adminReimbursementColumns';
 import { EditReimbursementDrawer } from '../../features/reimbursement/components/EditReimbursementDrawer/EditReimbursementDrawer';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode } from '../../enum/modules';
 
 import styles from './ReimbursementPage.module.scss';
 
@@ -25,6 +27,7 @@ const ReimbursementPage: React.FC = () => {
   );
 
   const { items, isLoading, pagination: meta } = useAllReimbursements(queryParams);
+  const { hasEditAccess } = useModuleAccess(ModuleCode.REIMBURSEMENT);
 
   const filteredItems = useMemo(() => {
     if (!debouncedSearch) return items;
@@ -40,7 +43,10 @@ const ReimbursementPage: React.FC = () => {
   const handleEdit = useCallback((r: Reimbursement) => setSelectedReimbursement(r), []);
   const handleCloseDrawer = useCallback(() => setSelectedReimbursement(null), []);
 
-  const columns = useMemo(() => adminReimbursementColumns({ onEdit: handleEdit }), [handleEdit]);
+  const columns = useMemo(
+    () => adminReimbursementColumns({ onEdit: hasEditAccess ? handleEdit : undefined }),
+    [handleEdit, hasEditAccess],
+  );
 
   const pageCount = meta ? Math.ceil(meta.total / meta.limit) : 0;
 

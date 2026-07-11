@@ -1,0 +1,36 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .row {
+    display: flex;
+    gap: 16px;
+
+    & > * {
+      flex: 1;
+    }
+  }
+
+  .checkboxGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .daysBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    background-color: var(--primary-50);
+    color: var(--primary-600);
+    border: 1px solid var(--primary-200);
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    width: fit-content;
+    margin-top: -8px;
+  }
+}

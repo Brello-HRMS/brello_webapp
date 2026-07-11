@@ -8,6 +8,7 @@ import { RegisterForm } from '../features/auth/components/Register/RegisterForm'
 import { LeadForm } from '../features/auth/components/Lead/LeadForm';
 import { WelcomeScreen } from '../features/auth/components/Welcome/WelcomeScreen';
 import { OtpForm } from '../features/auth/components/OtpForm/OtpForm';
+import OfferPortalPage from '../pages/offer-portal/OfferPortalPage';
 
 import { adminRoutes } from './adminRoutes';
 import { employeeRoutes } from './employeeRoutes';
@@ -76,6 +77,12 @@ const router = createBrowserRouter([
     path: '/auth/welcome',
     element: <WelcomeScreen />,
   },
+  // ── Public: Candidate Offer Portal (no auth) ──────────────────────────────
+  {
+    path: '/offer/portal/:token',
+    element: <OfferPortalPage />,
+  },
+
   {
     path: '/platform',
     element: <MainLayout />,

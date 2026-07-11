@@ -22,3 +22,4 @@ export * from './Modal/Modal';
 export * from './TimePicker/TimePicker';
 export * from './LocationPickerMap/LocationPickerMap';
 export * from './DocumentRender/DocumentRender';
+export * from './IconPicker/IconPicker';

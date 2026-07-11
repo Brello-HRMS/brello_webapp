@@ -34,13 +34,20 @@ import LeaveRequestsPage from '../pages/attendance/LeaveRequestsPage';
 import BillingPlanPage from '../pages/billing/BillingPlanPage';
 import BillingInvoicePage from '../pages/billing/BillingInvoicePage';
 import BillingPaymentHistoryPage from '../pages/billing/BillingPaymentHistoryPage';
-import OrgLetterTemplatesPage from '../pages/letters/OrgLetterTemplatesPage';
 import FeedbackPage from '../pages/feedback/FeedbackPage';
 import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 import AuditPage from '../pages/audit/AuditPage';
 import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 import EmailIntegrationPage from '../pages/integration/EmailIntegrationPage';
+import IssuedLettersPage from '../pages/letter-management/IssuedLettersPage';
+import LetterSetupPage from '../pages/letter-management/LetterSetupPage';
+import TemplateEditorPage from '../pages/letter-management/TemplateEditorPage';
+import OfferCandidatesPage from '../pages/offer-management/OfferCandidatesPage';
+import OfferCreatePage from '../pages/offer-management/OfferCreatePage';
+import OfferDetailPage from '../pages/offer-management/OfferDetailPage';
+import OfferAnalyticsPage from '../pages/offer-management/OfferAnalyticsPage';
+import OfferSettingsPage from '../pages/offer-management/OfferSettingsPage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -104,6 +111,40 @@ export const adminRoutes: RouteObject[] = [
       </RequireAccess>
     ),
   },
+  // ── Letter Management ────────────────────────────────────────────────────
+  {
+    path: 'letter-management/issued-letters',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_ISSUED}>
+        <IssuedLettersPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'letter-management/setup',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
+        <LetterSetupPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'letter-management/templates/new',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
+        <TemplateEditorPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'letter-management/templates/:id',
+    element: (
+      <RequireAccess module={ModuleCode.LETTER_TEMPLATES}>
+        <TemplateEditorPage />
+      </RequireAccess>
+    ),
+  },
+
   {
     path: 'organisation/leave-config',
     element: (
@@ -293,20 +334,31 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
 
-  // ── Organisation Letter Templates ───────────────────────────────────────
+  // ── Billing ───────────────────────────────────────────────────────────────
   {
-    path: 'organisation/letter-templates',
+    path: 'billing/plan',
     element: (
-      <RequireAccess module={ModuleCode.OFFER_TEMPLATES}>
-        <OrgLetterTemplatesPage />
+      <RequireAccess module={ModuleCode.BILLING_PLAN}>
+        <BillingPlanPage />
       </RequireAccess>
     ),
   },
-
-  // ── Billing ───────────────────────────────────────────────────────────────
-  { path: 'billing/plan', element: <BillingPlanPage /> },
-  { path: 'billing/invoice', element: <BillingInvoicePage /> },
-  { path: 'billing/payments', element: <BillingPaymentHistoryPage /> },
+  {
+    path: 'billing/invoice',
+    element: (
+      <RequireAccess module={ModuleCode.BILLING_INVOICE}>
+        <BillingInvoicePage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'billing/payments',
+    element: (
+      <RequireAccess module={ModuleCode.BILLING_PAYMENT}>
+        <BillingPaymentHistoryPage />
+      </RequireAccess>
+    ),
+  },
 
   // ── Audit ─────────────────────────────────────────────────────────────────
   {
@@ -351,6 +403,48 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.INTEGRATION_EMAIL}>
         <EmailIntegrationPage />
+      </RequireAccess>
+    ),
+  },
+
+  // ── Offer Management ─────────────────────────────────────────────────────
+  {
+    path: 'offer-management',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferCandidatesPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/create',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferCreatePage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/offers/:id',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferDetailPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/analytics',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_ANALYTICS}>
+        <OfferAnalyticsPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/settings',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_SETTINGS}>
+        <OfferSettingsPage />
       </RequireAccess>
     ),
   },

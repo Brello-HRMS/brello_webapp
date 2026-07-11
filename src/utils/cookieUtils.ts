@@ -23,3 +23,15 @@ export const setCookie = (name: string, value: string): void => {
 export const removeCookie = (name: string): void => {
   document.cookie = `${name}=; Max-Age=0; Path=/`;
 };
+
+/**
+ * Persists the login response to the (JS-readable) `auth_response` cookie,
+ * minus `refresh_token`. The backend already issues a separate HttpOnly
+ * refresh cookie that /auth/refresh relies on via `withCredentials` — the
+ * client never reads refresh_token back out of this cookie, so keeping it
+ * here is pure unnecessary exposure to any injected script.
+ */
+export const persistAuthResponse = (data: { data: Record<string, unknown> }): void => {
+  const { refresh_token: _refresh_token, ...rest } = data.data;
+  setCookie('auth_response', JSON.stringify({ ...data, data: rest }));
+};

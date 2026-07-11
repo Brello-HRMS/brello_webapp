@@ -11,6 +11,8 @@ import {
 } from '../../components/common';
 import { useAllProjects } from '../../features/project/hooks/useAllProjects';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode } from '../../enum/modules';
 import { SortOrder } from '../../types/common';
 import { ProjectStatus } from '../../features/project/types/projectType';
 import { allProjectColumns } from '../../features/project/columns/allProjectsColumns';
@@ -47,6 +49,7 @@ const ProjectPage = () => {
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
 
   const navigate = useNavigate();
+  const { hasExportAccess } = useModuleAccess(ModuleCode.PROJECT_PROJECTS);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -107,7 +110,7 @@ const ProjectPage = () => {
         title="Project Management"
         subtitle="List of all projects under the organization."
         actions={
-          <>
+          hasExportAccess && (
             <ExcelExport
               data={excelExportData}
               filename="projects.xlsx"
@@ -122,7 +125,7 @@ const ProjectPage = () => {
                 isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
               }
             />
-          </>
+          )
         }
       />
 

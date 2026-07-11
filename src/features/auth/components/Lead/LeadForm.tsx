@@ -10,7 +10,7 @@ import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Button } from '../../../../components/ui/Button/Button';
 import { Input } from '../../../../components/ui/Input/Input';
 import { Select } from '../../../../components/ui/Select/Select';
-import { setCookie } from '../../../../utils/cookieUtils';
+import { persistAuthResponse } from '../../../../utils/cookieUtils';
 
 import styles from './LeadForm.module.scss';
 
@@ -40,7 +40,7 @@ export const LeadForm: React.FC = () => {
     error: apiError,
   } = useSetupCompany({
     onSuccess: (data: LoginResponse) => {
-      setCookie('auth_response', JSON.stringify(data));
+      persistAuthResponse(data);
 
       navigate('/auth/welcome');
     },

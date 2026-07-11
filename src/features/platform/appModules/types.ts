@@ -40,6 +40,7 @@ export type UpdateModuleRequest = {
   name?: string;
   code?: string;
   wbs_code?: string;
+  parent_id?: string | null;
   type?: ModuleType;
   icon?: string;
   path?: string;
@@ -47,4 +48,16 @@ export type UpdateModuleRequest = {
 
 export type ModuleTreeNode = AppModule & {
   children: AppModule[];
+};
+
+/** One module's new position — used by the drag-and-drop reorder endpoint. */
+export type ReorderModuleItem = {
+  id: string;
+  parent_id: string | null;
+  wbs_code: string;
+  type: ModuleType;
+};
+
+export type ReorderModulesRequest = {
+  updates: ReorderModuleItem[];
 };

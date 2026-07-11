@@ -8,7 +8,7 @@ import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { useVerifyLoginOtp } from '../../api/useLogin';
 import { useResendOtp } from '../../api/useResendOtp';
 import { showToast } from '../../../ToastFeature/ShowToast';
-import { setCookie } from '../../../../utils/cookieUtils';
+import { persistAuthResponse } from '../../../../utils/cookieUtils';
 
 import styles from './OtpForm.module.scss';
 
@@ -22,7 +22,11 @@ export const OtpForm: React.FC = () => {
 
   const { mutate: verifyOtp, isPending, error: apiError } = useVerifyOtp();
 
-  const { mutate: verifyLoginOtp } = useVerifyLoginOtp();
+  const {
+    mutate: verifyLoginOtp,
+    isPending: isLoginPending,
+    error: loginError,
+  } = useVerifyLoginOtp();
 
   const { mutate: resendOtp, isPending: isResending, error: resendError } = useResendOtp();
 
@@ -95,38 +99,51 @@ export const OtpForm: React.FC = () => {
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const otpCode = otp.join('');
-    if (otpCode.length === 6 && email) {
-      if (resource === 'login') {
-        verifyLoginOtp(
-          { email, otp: otpCode, device_fingerprint: 'admin_panel' },
-          {
-            onSuccess: (data: LoginResponse) => {
-              const { user, setup_required } = data.data;
+  const submitOtp = (otpCode: string) => {
+    if (!email) return;
+    if (resource === 'login') {
+      verifyLoginOtp(
+        { email, otp: otpCode, device_fingerprint: 'admin_panel' },
+        {
+          onSuccess: (data: LoginResponse) => {
+            const { user, setup_required } = data.data;
 
-              setCookie('auth_response', JSON.stringify(data));
-              if (user.is_platform_admin) {
-                navigate('/platform/dashboard');
-              } else if (setup_required) {
-                navigate('/auth/lead', { state: { userId: user.id } });
-              } else {
-                navigate('/dashboard');
-              }
-            },
+            persistAuthResponse(data);
+            if (user.is_platform_admin) {
+              navigate('/platform/dashboard');
+            } else if (setup_required) {
+              navigate('/auth/lead', { state: { userId: user.id } });
+            } else {
+              navigate('/dashboard');
+            }
           },
-        );
-      } else {
-        verifyOtp(
-          { email, otp: otpCode },
-          {
-            onSuccess: () => {
-              navigate('/auth/login');
-            },
+        },
+      );
+    } else {
+      verifyOtp(
+        { email, otp: otpCode },
+        {
+          onSuccess: () => {
+            navigate('/auth/login');
           },
-        );
-      }
+        },
+      );
+    }
+  };
+
+  useEffect(() => {
+    const otpCode = otp.join('');
+    if (otpCode.length === 6 && !otp.includes('')) {
+      submitOtp(otpCode);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otp]);
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const otpCode = otp.join('');
+    if (otpCode.length === 6 && !otp.includes('')) {
+      submitOtp(otpCode);
     }
   };
 
@@ -168,18 +185,23 @@ export const OtpForm: React.FC = () => {
         </div>
 
         <div className={styles.actions}>
-          {(apiError || resendError) && (
+          {(apiError || resendError || loginError) && (
             <span
               className={elementsStyles.error}
               style={{ display: 'block', marginBottom: '16px' }}
             >
               {(apiError as Error)?.message ||
+                (loginError as Error)?.message ||
                 (resendError as Error)?.message ||
                 'OTP operation failed.'}
             </span>
           )}
-          <Button type="submit" variant="primary" disabled={otp.join('').length !== 6 || isPending}>
-            {isPending ? 'Verifying...' : 'Continue'}
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={otp.join('').length !== 6 || isPending || isLoginPending}
+          >
+            {isPending || isLoginPending ? 'Verifying...' : 'Continue'}
           </Button>
         </div>
 

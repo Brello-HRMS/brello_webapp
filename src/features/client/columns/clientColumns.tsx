@@ -7,8 +7,8 @@ import type { Client } from '../types/clientType';
 interface ClientColumnProps {
   isMultiSelectActive: boolean;
   onView: (client: Client) => void;
-  onEdit: (client: Client) => void;
-  onDelete: (client: Client) => void;
+  onEdit?: (client: Client) => void;
+  onDelete?: (client: Client) => void;
 }
 
 export const clientColumns = ({
@@ -116,8 +116,8 @@ export const clientColumns = ({
         isMultiSelectActive ? null : (
           <TableActions
             onView={() => onView(info.row.original)}
-            onEdit={() => onEdit(info.row.original)}
-            onDelete={() => onDelete(info.row.original)}
+            onEdit={onEdit ? () => onEdit(info.row.original) : undefined}
+            onDelete={onDelete ? () => onDelete(info.row.original) : undefined}
           />
         ),
     },

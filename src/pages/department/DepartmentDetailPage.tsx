@@ -5,16 +5,16 @@ import { Plus, Download } from 'lucide-react';
 import { Button, DataTable, ListControls, PageHeader, WarningModal } from '../../components/common';
 import { employeeColumns } from '../../features/department/columns/employeeColumns';
 import { useDepartments } from '../../features/department/hooks/useDepartments';
-import { useUsersList } from '../../features/users/hooks/useUsersList';
-import { useUnmapUsers } from '../../features/users/hooks/useUnmapUsers';
-import { AddEmployeeModal } from '../../features/users/components/AddEmployeeModal/AddEmployeeModal';
+import { useEmployees } from '../../features/employee/hooks/useEmployees';
+import { useUnmapEmployee } from '../../features/employee/hooks/useUnmapEmployee';
+import { AddEmployeeModal } from '../../features/employee/components/AddEmployeeModal/AddEmployeeModal';
 import { useDebounce } from '../../hooks/useDebounce';
 import { SortOrder, Status } from '../../types/common';
 
 import styles from './DepartmentDetailPage.module.scss';
 
 import type { SortOption } from '../../components/common';
-import type { User } from '../../features/users/types/userType';
+import type { Employee } from '../../features/employee/types/employeeType';
 
 const SORT_OPTIONS: SortOption[] = [
   { label: 'Alphabetical (A-Z)', value: `name:${SortOrder.ASC}` },
@@ -34,8 +34,8 @@ const DepartmentDetailPage = () => {
   const { data: response, isLoading: isDepartmentLoading } = useDepartments();
   const department = response?.data?.data?.find((department) => department.id === id);
 
-  const { data: usersResponse } = useUsersList();
-  const { mutate: unmapUsers } = useUnmapUsers();
+  const { data: usersResponse } = useEmployees({ departmentId: id, limit: 1000 });
+  const { mutate: unmapUsers } = useUnmapEmployee();
 
   useEffect(() => {
     if (!isDepartmentLoading && department && department.status === Status.INACTIVE) {
@@ -46,12 +46,7 @@ const DepartmentDetailPage = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const filteredEmployees = useMemo(() => {
-    let allUsers: User[] = usersResponse?.data || [];
-
-    // Strict Filtering for this Department Drill
-    if (id) {
-      allUsers = allUsers.filter((u) => u.departmentId === id);
-    }
+    const allUsers: Employee[] = usersResponse?.data?.data || [];
 
     if (!debouncedSearchQuery) return allUsers;
     const query = debouncedSearchQuery.toLowerCase();
@@ -63,7 +58,7 @@ const DepartmentDetailPage = () => {
         (emp.phone || '').includes(query)
       );
     });
-  }, [usersResponse, debouncedSearchQuery, id]);
+  }, [usersResponse, debouncedSearchQuery]);
 
   return (
     <div className={styles.container}>

@@ -96,6 +96,16 @@ export const usePublishAnnouncement = () => {
   return { publishAnnouncement: mutation.mutateAsync, isPublishing: mutation.isPending };
 };
 
+export const useAnnouncementReaders = (id: string, enabled: boolean) => {
+  const query = useQuery({
+    queryKey: ['announcements', 'admin', id, 'readers'],
+    queryFn: () => api.getAnnouncementReaders(id),
+    enabled,
+  });
+
+  return { readers: query.data ?? [], isLoading: query.isLoading };
+};
+
 export const useArchiveAnnouncement = () => {
   const queryClient = useQueryClient();
 

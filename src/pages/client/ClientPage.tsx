@@ -10,12 +10,15 @@ import {
   ListControls,
   NoDataFound,
   PageHeader,
+  PermissionGate,
   WarningModal,
 } from '../../components/common';
 import { clientColumns } from '../../features/client/columns/clientColumns';
 import { useDeleteClient } from '../../features/client/hooks/useDeleteClient';
 import { useClients } from '../../features/client/hooks/useClients';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode, ActionCode } from '../../enum/modules';
 import { SortOrder, Status } from '../../types/common';
 import { AddClientModal } from '../../features/client/components/AddClientModal/AddClientModal';
 
@@ -56,6 +59,9 @@ const ClientPage = () => {
   const [selectedIds, setSelectedIds] = useState<Record<string, boolean>>({});
 
   const { mutate: deleteClient } = useDeleteClient();
+  const { hasCreateAccess, hasEditAccess, hasDeleteAccess, hasExportAccess } = useModuleAccess(
+    ModuleCode.PROJECT_CLIENTS,
+  );
 
   const navigate = useNavigate();
 
@@ -134,9 +140,9 @@ const ClientPage = () => {
           description="Create your first client to start organizing projects, contacts, and business relationships."
           noDataImage={no_client}
           noDataImageAlt="No Client Found"
-          buttonText="Add new client"
-          onButtonClick={handleAddClient}
-          showButtonIcon
+          buttonText={hasCreateAccess ? 'Add new client' : undefined}
+          onButtonClick={hasCreateAccess ? handleAddClient : undefined}
+          showButtonIcon={hasCreateAccess}
         />
         <AddClientModal
           open={isAddClientOpen}
@@ -157,29 +163,33 @@ const ClientPage = () => {
         subtitle="Manage client information linked to projects."
         actions={
           <>
-            <ExcelExport
-              data={excelExportData}
-              filename="clients.xlsx"
-              sheetName="Clients"
-              buttonText={
-                isMultiSelectActive
-                  ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
-                  : 'Export All'
-              }
-              variant="secondary"
-              disabled={
-                isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
-              }
-            />
-            <Button
-              variant="primary"
-              onClick={handleAddClient}
-              disabled={isMultiSelectActive}
-              title={isMultiSelectActive ? 'Disable multi-select to add client' : undefined}
-            >
-              <Plus size={16} />
-              Add client
-            </Button>
+            {hasExportAccess && (
+              <ExcelExport
+                data={excelExportData}
+                filename="clients.xlsx"
+                sheetName="Clients"
+                buttonText={
+                  isMultiSelectActive
+                    ? `Export Selected (${Object.values(selectedIds).filter(Boolean).length})`
+                    : 'Export All'
+                }
+                variant="secondary"
+                disabled={
+                  isMultiSelectActive && Object.values(selectedIds).filter(Boolean).length === 0
+                }
+              />
+            )}
+            <PermissionGate module={ModuleCode.PROJECT_CLIENTS} action={ActionCode.CREATE}>
+              <Button
+                variant="primary"
+                onClick={handleAddClient}
+                disabled={isMultiSelectActive}
+                title={isMultiSelectActive ? 'Disable multi-select to add client' : undefined}
+              >
+                <Plus size={16} />
+                Add client
+              </Button>
+            </PermissionGate>
           </>
         }
       />
@@ -212,8 +222,8 @@ const ClientPage = () => {
         columns={clientColumns({
           isMultiSelectActive,
           onView: handleView,
-          onEdit: handleEditClient,
-          onDelete: handleDeleteClick,
+          onEdit: hasEditAccess ? handleEditClient : undefined,
+          onDelete: hasDeleteAccess ? handleDeleteClick : undefined,
         })}
         data={clientList}
         pagination={pagination}

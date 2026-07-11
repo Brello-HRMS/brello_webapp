@@ -16,10 +16,12 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ''
     switch (status) {
       case Status.ACTIVE:
       case 'ACTIVE':
+      case 'PUBLISHED':
         return styles.active;
       case Status.INACTIVE:
       case 'INACTIVE':
       case 'OFFBOARDED':
+      case 'ARCHIVED':
         return styles.inactive;
       case 'OFFBOARDING':
         return styles.offboarding;

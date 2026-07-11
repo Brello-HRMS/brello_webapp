@@ -8,12 +8,15 @@ import {
   DataTable,
   NoDataFound,
   ListControls,
+  PermissionGate,
   WarningModal,
 } from '../../components/common';
 import { useClient } from '../../features/client/hooks/useClient';
 import { useProjects } from '../../features/project/hooks/useProjects';
 import { projectColumns } from '../../features/project/columns/projectColumns';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { ModuleCode, ActionCode } from '../../enum/modules';
 import { AddProjectModal } from '../../features/project/components/AddProjectModal';
 import { useDeleteProject } from '../../features/project/hooks/useDeleteProject';
 
@@ -41,6 +44,7 @@ const ClientDetailPage = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const { mutate: deleteProject, isPending: isDeleting } = useDeleteProject();
+  const { hasEditAccess, hasDeleteAccess } = useModuleAccess(ModuleCode.PROJECT_PROJECTS);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
@@ -96,10 +100,10 @@ const ClientDetailPage = () => {
     () =>
       projectColumns({
         onView: handleViewProject,
-        onEdit: handleEditProject,
-        onDelete: handleDeleteClick,
+        onEdit: hasEditAccess ? handleEditProject : undefined,
+        onDelete: hasDeleteAccess ? handleDeleteClick : undefined,
       }),
-    [handleViewProject, handleEditProject, handleDeleteClick],
+    [handleViewProject, handleEditProject, handleDeleteClick, hasEditAccess, hasDeleteAccess],
   );
 
   if (isClientLoading) {
@@ -223,17 +227,19 @@ const ClientDetailPage = () => {
             <h3>Projects</h3>
             <span className={styles.countBadge}>{projectCount} total</span>
           </div>
-          <Button
-            variant="primary"
-            onClick={() => {
-              setEditingProject(undefined);
-              setIsAddModalOpen(true);
-            }}
-            disabled={isDeleting}
-          >
-            <Plus size={16} />
-            Add project
-          </Button>
+          <PermissionGate module={ModuleCode.PROJECT_PROJECTS} action={ActionCode.CREATE}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setEditingProject(undefined);
+                setIsAddModalOpen(true);
+              }}
+              disabled={isDeleting}
+            >
+              <Plus size={16} />
+              Add project
+            </Button>
+          </PermissionGate>
         </div>
         <p className={styles.sectionSubtitle}>View and manage projects under this client</p>
 

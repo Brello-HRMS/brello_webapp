@@ -18,7 +18,7 @@ import { Popover } from '../../common/Popover';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { useLogout } from '../../../features/auth/api/useLogout';
 import { getAuthUser } from '../../../utils/authUtils';
-import { useGetUserById } from '../../../features/users/hooks/useGetUserById';
+import { useEmployeeDetail } from '../../../features/employee/hooks/useEmployeeDetail';
 
 import { AppSwitcher } from './AppSwitcher';
 import styles from './Header.module.scss';
@@ -37,20 +37,18 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
   const { mutate: logout } = useLogout();
 
   const authUser = getAuthUser();
-  const { data: userDetails } = useGetUserById(authUser?.id);
+  const { data: employeeResponse } = useEmployeeDetail(authUser?.id);
+  const employeeDetails = employeeResponse?.data;
 
-  const fullName = userDetails
-    ? `${userDetails.first_name || ''} ${userDetails.last_name || ''}`.trim()
+  const fullName = employeeDetails
+    ? `${employeeDetails.firstName || ''} ${employeeDetails.lastName || ''}`.trim()
     : authUser
       ? `${authUser.first_name || ''} ${authUser.last_name || ''}`.trim()
       : 'User';
 
-  const designation = userDetails?.designation?.title || 'Employee';
+  const designation = employeeDetails?.profile?.designation || 'Employee';
 
-  const photo = userDetails?.user_profile?.photo;
-  const avatarUrl = photo
-    ? `https://${photo.bucket}.s3.us-east-1.amazonaws.com/${photo.object_key}`
-    : profileAvatar;
+  const avatarUrl = employeeDetails?.avatar || profileAvatar;
 
   const breadcrumbs = useMemo(() => {
     const segments = location.pathname.split('/').filter(Boolean);

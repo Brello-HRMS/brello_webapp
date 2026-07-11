@@ -3,6 +3,8 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { envVars } from '../utils/envVars';
 import { getCookie, setCookie, removeCookie } from '../utils/cookieUtils';
 
+import { queryClient } from './react-query';
+
 const baseURL = envVars.BRELLO_BASE_API;
 
 export const apiClient = axios.create({
@@ -30,6 +32,7 @@ function getAuthToken(): string | null {
 
 function handleUnauthorizedClient() {
   removeCookie('auth_response');
+  queryClient.clear();
   window.location.href = '/auth/login';
 }
 

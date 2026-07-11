@@ -11,7 +11,6 @@ import {
   Building2,
   Network,
   Lock,
-  FileText,
   LifeBuoy,
   ScrollText,
 } from 'lucide-react';
@@ -90,11 +89,6 @@ const PLATFORM_ADMIN_MENU: MenuItem[] = [
       { label: 'Departments', path: '/platform/setup/departments' },
       { label: 'Designations', path: '/platform/setup/designations' },
     ],
-  },
-  {
-    label: 'Letter Templates',
-    icon: FileText,
-    path: '/platform/letters',
   },
   {
     label: 'Audit Logs',
@@ -214,7 +208,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
       <nav className={styles.nav}>
         {showLoading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-            <Loader size="sm" />
+            <Loader size="xs" />
           </div>
         ) : showError ? (
           <div style={{ textAlign: 'center', padding: '1rem', color: 'red', fontSize: '14px' }}>

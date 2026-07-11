@@ -54,10 +54,13 @@ export const useEmployeeWizard = () => {
   const systemAccessMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => updateSystemAccess(id, data),
     onSuccess: () => {
-      showToast('System access updated', 'success');
+      // Worded as "saved", not "updated" / "granted" — the backend endpoint
+      // this calls does not yet confirm the selected role actually took
+      // effect as a real permission grant, so this shouldn't claim it did.
+      showToast('Role selection saved', 'success');
     },
     onError: (error: any) => {
-      showToast(error?.response?.data?.message || 'Failed to update system access', 'error');
+      showToast(error?.response?.data?.message || 'Failed to save role selection', 'error');
     },
   });
 

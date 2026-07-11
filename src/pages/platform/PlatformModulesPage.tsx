@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ChevronDown, ChevronRight, GitBranch, Plus } from 'lucide-react';
+import { ChevronDown, ChevronRight, GitBranch, GripVertical, Plus } from 'lucide-react';
 
 import {
   Button,
@@ -8,14 +8,23 @@ import {
   TableActions,
   WarningModal,
 } from '../../components/common';
+import { showToast } from '../../features/ToastFeature/ShowToast';
 import { useAppsList } from '../../features/platform/apps/hooks';
-import { useModulesByApp, useDeleteModule } from '../../features/platform/appModules/hooks';
+import {
+  useModulesByApp,
+  useDeleteModule,
+  useReorderModules,
+} from '../../features/platform/appModules/hooks';
 import { ModuleFormModal } from '../../features/platform/appModules/ModuleFormModal';
 import { ModuleType } from '../../features/platform/appModules/types';
 
 import styles from './PlatformModulesPage.module.scss';
 
-import type { AppModule, ModuleTreeNode } from '../../features/platform/appModules/types';
+import type {
+  AppModule,
+  ModuleTreeNode,
+  ReorderModuleItem,
+} from '../../features/platform/appModules/types';
 
 const buildTree = (modules: AppModule[]): ModuleTreeNode[] =>
   modules
@@ -32,6 +41,123 @@ const buildTree = (modules: AppModule[]): ModuleTreeNode[] =>
     }))
     .sort((a, b) => (parseInt(a.wbs_code) || 0) - (parseInt(b.wbs_code) || 0));
 
+type DropMode = 'before' | 'after' | 'into';
+
+interface DropIndicator {
+  targetId: string;
+  mode: DropMode;
+}
+
+const wbsSuffix = (wbs: string): number => parseInt(wbs.split('.').at(-1) ?? '0', 10) || 0;
+
+/**
+ * Computes the full batch of {id, parent_id, wbs_code, type} updates needed to
+ * apply a single drag-and-drop move: reordering siblings, promoting a
+ * sub-module to a top-level module (drop target is a root row), or demoting a
+ * module into a sub-module (dropped "into" another module's middle band).
+ * Renumbers every sibling list touched by the move so wbs_code stays gap-free.
+ */
+const computeReorderBatch = (
+  allModules: AppModule[],
+  draggedId: string,
+  targetId: string,
+  mode: DropMode,
+): { updates: ReorderModuleItem[] } | { error: string } => {
+  const dragged = allModules.find((m) => m.id === draggedId);
+  const target = allModules.find((m) => m.id === targetId);
+  if (!dragged || !target || dragged.id === target.id) return { updates: [] };
+
+  const oldParentId = dragged.parent_id;
+  const newParentId =
+    mode === 'into' ? target.id : target.type === ModuleType.MOD ? null : target.parent_id;
+
+  if (mode === 'into' && target.type !== ModuleType.MOD) return { updates: [] };
+
+  const newType = newParentId ? ModuleType.SUBMOD : ModuleType.MOD;
+
+  // Demoting a module (MOD → SUBMOD) is only allowed once it has no children left.
+  if (dragged.type === ModuleType.MOD && newType === ModuleType.SUBMOD) {
+    const children = allModules.filter((m) => m.parent_id === dragged.id);
+    if (children.length > 0) {
+      return { error: `Move "${dragged.name}"'s sub-modules out first before nesting it.` };
+    }
+  }
+
+  const siblingsOf = (parentId: string | null) =>
+    allModules
+      .filter((m) => m.parent_id === parentId && m.id !== dragged.id)
+      .sort((a, b) => wbsSuffix(a.wbs_code) - wbsSuffix(b.wbs_code));
+
+  let newSiblings = siblingsOf(newParentId);
+  if (mode === 'into') {
+    newSiblings = [...newSiblings, dragged];
+  } else {
+    const targetIndex = newSiblings.findIndex((m) => m.id === target.id);
+    const insertAt = mode === 'before' ? targetIndex : targetIndex + 1;
+    newSiblings = [...newSiblings.slice(0, insertAt), dragged, ...newSiblings.slice(insertAt)];
+  }
+
+  const newParentWbs = newParentId ? allModules.find((p) => p.id === newParentId)?.wbs_code : null;
+  const updates: ReorderModuleItem[] = newSiblings.map((m, idx) => ({
+    id: m.id,
+    parent_id: newParentId,
+    wbs_code: newParentId ? `${newParentWbs}.${idx + 1}` : String(idx + 1),
+    type: newType,
+  }));
+
+  // Close the gap in the old parent's children if the item left it for a different parent.
+  if (oldParentId && oldParentId !== newParentId) {
+    const oldParent = allModules.find((p) => p.id === oldParentId);
+    if (oldParent) {
+      updates.push(
+        ...siblingsOf(oldParentId).map((m, idx) => ({
+          id: m.id,
+          parent_id: oldParentId,
+          wbs_code: `${oldParent.wbs_code}.${idx + 1}`,
+          type: ModuleType.SUBMOD,
+        })),
+      );
+    }
+  }
+
+  // Close the gap in the root list if the item left it to become nested.
+  if (!oldParentId && newParentId) {
+    updates.push(
+      ...siblingsOf(null).map((m, idx) => ({
+        id: m.id,
+        parent_id: null,
+        wbs_code: String(idx + 1),
+        type: ModuleType.MOD,
+      })),
+    );
+  }
+
+  // Cascade: any root module whose own wbs_code just changed must have its
+  // children's wbs_code recomputed too, since a child's wbs encodes its
+  // parent's wbs as a prefix (e.g. "9.1" under root "9"). Without this, a
+  // root reorder leaves every other root's children stamped with a stale
+  // prefix pointing at the parent's old position.
+  for (const rootUpdate of updates.filter((u) => u.type === ModuleType.MOD)) {
+    const before = allModules.find((m) => m.id === rootUpdate.id);
+    if (!before || before.wbs_code === rootUpdate.wbs_code) continue;
+
+    const children = allModules
+      .filter((m) => m.parent_id === rootUpdate.id && m.id !== dragged.id)
+      .sort((a, b) => wbsSuffix(a.wbs_code) - wbsSuffix(b.wbs_code));
+
+    children.forEach((c, idx) => {
+      updates.push({
+        id: c.id,
+        parent_id: rootUpdate.id,
+        wbs_code: `${rootUpdate.wbs_code}.${idx + 1}`,
+        type: ModuleType.SUBMOD,
+      });
+    });
+  }
+
+  return { updates };
+};
+
 const PlatformModulesPage = () => {
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -39,6 +165,8 @@ const PlatformModulesPage = () => {
   const [editingModule, setEditingModule] = useState<AppModule | null>(null);
   const [defaultParentId, setDefaultParentId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AppModule | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dropIndicator, setDropIndicator] = useState<DropIndicator | null>(null);
 
   const { data: appsResponse, isLoading: isAppsLoading } = useAppsList();
   const apps = useMemo(() => appsResponse?.data ?? [], [appsResponse]);
@@ -49,6 +177,7 @@ const PlatformModulesPage = () => {
   const allModules = useMemo(() => modulesResponse?.data ?? [], [modulesResponse]);
 
   const { mutate: remove } = useDeleteModule(activeAppId ?? '');
+  const { mutate: reorder } = useReorderModules(activeAppId ?? '');
 
   const tree = useMemo(() => buildTree(allModules), [allModules]);
   const rootModules = useMemo(
@@ -98,6 +227,71 @@ const PlatformModulesPage = () => {
     remove(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) });
   }, [deleteTarget, remove]);
 
+  const handleDragStart = useCallback((e: React.DragEvent, mod: AppModule) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', mod.id);
+    setDraggedId(mod.id);
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    setDraggedId(null);
+    setDropIndicator(null);
+  }, []);
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent, target: AppModule) => {
+      e.preventDefault();
+      if (!draggedId || draggedId === target.id) return;
+
+      const rect = e.currentTarget.getBoundingClientRect();
+      const ratio = (e.clientY - rect.top) / rect.height;
+
+      let mode: DropMode;
+      if (target.type === ModuleType.MOD) {
+        mode = ratio < 0.25 ? 'before' : ratio > 0.75 ? 'after' : 'into';
+      } else {
+        mode = ratio < 0.5 ? 'before' : 'after';
+      }
+      setDropIndicator({ targetId: target.id, mode });
+    },
+    [draggedId],
+  );
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent, target: AppModule) => {
+      e.preventDefault();
+      const indicator = dropIndicator;
+      setDraggedId(null);
+      setDropIndicator(null);
+
+      if (!draggedId || !indicator || indicator.targetId !== target.id || draggedId === target.id) {
+        return;
+      }
+
+      const result = computeReorderBatch(allModules, draggedId, target.id, indicator.mode);
+      if ('error' in result) {
+        showToast(result.error, 'error');
+        return;
+      }
+      if (result.updates.length === 0) return;
+
+      if (indicator.mode === 'into') {
+        setExpandedRows((prev) => new Set([...prev, target.id]));
+      }
+      reorder({ updates: result.updates });
+    },
+    [draggedId, dropIndicator, allModules, reorder],
+  );
+
+  const rowDropClass = (mod: AppModule) => {
+    if (dropIndicator?.targetId !== mod.id) return '';
+    return dropIndicator.mode === 'into'
+      ? styles.dropInto
+      : dropIndicator.mode === 'before'
+        ? styles.dropBefore
+        : styles.dropAfter;
+  };
+
   if (isAppsLoading) {
     return (
       <div className={styles.container}>
@@ -118,7 +312,7 @@ const PlatformModulesPage = () => {
     <div className={styles.container}>
       <PageHeader
         title="Modules & Sub-Modules"
-        subtitle="Define the module tree for each app. Modules map to sidebar nav and RBAC permissions."
+        subtitle="Define the module tree for each app. Drag rows to reorder, nest, or promote them. Modules map to sidebar nav and RBAC permissions."
         actions={
           activeAppId && (
             <Button variant="primary" onClick={handleAddModule}>
@@ -174,9 +368,19 @@ const PlatformModulesPage = () => {
                 return (
                   <React.Fragment key={node.id}>
                     {/* MOD row */}
-                    <tr className={`${styles.row} ${styles.modRow}`}>
+                    <tr
+                      className={`${styles.row} ${styles.modRow} ${draggedId === node.id ? styles.dragging : ''} ${rowDropClass(node)}`}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, node)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={(e) => handleDragOver(e, node)}
+                      onDrop={(e) => handleDrop(e, node)}
+                    >
                       <td>
                         <div className={styles.wbsCell}>
+                          <span className={styles.dragHandle} title="Drag to reorder or nest">
+                            <GripVertical size={14} />
+                          </span>
                           <button
                             className={styles.chevronBtn}
                             onClick={() => hasChildren && toggleRow(node.id)}
@@ -226,9 +430,23 @@ const PlatformModulesPage = () => {
                       node.children.map((child, idx, arr) => {
                         const isLast = idx === arr.length - 1;
                         return (
-                          <tr key={child.id} className={`${styles.row} ${styles.submodRow}`}>
+                          <tr
+                            key={child.id}
+                            className={`${styles.row} ${styles.submodRow} ${draggedId === child.id ? styles.dragging : ''} ${rowDropClass(child)}`}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, child)}
+                            onDragEnd={handleDragEnd}
+                            onDragOver={(e) => handleDragOver(e, child)}
+                            onDrop={(e) => handleDrop(e, child)}
+                          >
                             <td>
                               <div className={styles.wbsCell} style={{ paddingLeft: '2.25rem' }}>
+                                <span
+                                  className={styles.dragHandle}
+                                  title="Drag to reorder or promote"
+                                >
+                                  <GripVertical size={13} />
+                                </span>
                                 <span className={`${styles.wbsBadge} ${styles.wbsBadgeSub}`}>
                                   {child.wbs_code}
                                 </span>
