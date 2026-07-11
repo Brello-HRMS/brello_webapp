@@ -3,6 +3,7 @@ import { envVars } from '../../../utils/envVars';
 
 import type {
   Announcement,
+  AnnouncementReader,
   PaginatedAnnouncements,
   PaginatedEmployeeAnnouncements,
   CreateAnnouncementPayload,
@@ -61,6 +62,13 @@ export const publishAnnouncement = async (id: string): Promise<Announcement> => 
 
 export const archiveAnnouncement = async (id: string): Promise<Announcement> => {
   const res = await apiClient.post<unknown, ApiResponse<Announcement>>(`${BASE_URL}/${id}/archive`);
+  return res.data;
+};
+
+export const getAnnouncementReaders = async (id: string): Promise<AnnouncementReader[]> => {
+  const res = await apiClient.get<unknown, ApiResponse<AnnouncementReader[]>>(
+    `${BASE_URL}/${id}/readers`,
+  );
   return res.data;
 };
 

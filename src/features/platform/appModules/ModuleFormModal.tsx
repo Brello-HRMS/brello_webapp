@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import { Dialog, Button, Select } from '../../../components/common';
+import { Dialog, Button, Select, IconPicker } from '../../../components/common';
 import { Input } from '../../../components/ui/Input/Input';
 
 import { useCreateModule, useUpdateModule } from './hooks';
@@ -212,7 +212,17 @@ export const ModuleFormModal: React.FC<Props> = ({
         )}
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <Input {...register('icon')} label="Icon" placeholder="e.g., CalendarDays" />
+          <Controller
+            name="icon"
+            control={control}
+            render={({ field }) => (
+              <IconPicker
+                label="Icon"
+                value={field.value || null}
+                onChange={(iconName) => field.onChange(iconName ?? '')}
+              />
+            )}
+          />
           <Input {...register('path')} label="Path" placeholder="e.g., /attendance/balance" />
         </div>
 

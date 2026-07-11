@@ -1,0 +1,400 @@
+// Shared styles for all wizard step components
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hint {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.input {
+  padding: 9px 12px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: var(--input-bg, #fff);
+  color: var(--text-primary);
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: var(--primary, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+  }
+}
+
+.select {
+  @extend .input;
+  cursor: pointer;
+}
+
+// ── Candidate Card ────────────────────────────────────────────────────────────
+
+.candidateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.candidateCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+  background: var(--card-bg, #fff);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+
+  &:hover {
+    border-color: var(--primary, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.06);
+  }
+
+  &.selected {
+    border-color: var(--primary, #6366f1);
+    background: #f5f3ff;
+  }
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.candidateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.candidateName {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.candidateEmail {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.appliedFor {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.selectedDot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary, #6366f1);
+}
+
+// ── Compensation ──────────────────────────────────────────────────────────────
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-subtle, #f8fafc);
+  border-radius: 10px;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.componentList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.componentRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.flex2 { flex: 2; }
+.flex1 { flex: 1; }
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  &:hover { background: #fee2e2; }
+}
+
+.ctcSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-secondary);
+
+  strong { color: var(--text-primary); }
+}
+
+.mismatch {
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+// ── Policy ────────────────────────────────────────────────────────────────────
+
+.policyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.policyCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+  background: var(--card-bg, #fff);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s;
+
+  &:hover { border-color: var(--primary, #6366f1); }
+
+  &.policySelected {
+    border-color: var(--primary, #6366f1);
+    background: #f5f3ff;
+  }
+}
+
+.policyCheck {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color, #e2e8f0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+
+  .policySelected & {
+    background: var(--primary, #6366f1);
+    border-color: var(--primary, #6366f1);
+  }
+}
+
+.checkmark {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.policyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.policyName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.policyDesc {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+// ── Preview ───────────────────────────────────────────────────────────────────
+
+.previewCard {
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.previewSection {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+
+  &:last-child { border-bottom: none; }
+}
+
+.previewSectionTitle {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin: 0 0 10px 0;
+}
+
+.previewRow {
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.previewTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  td { padding: 4px 0; }
+}
+
+.previewLabel {
+  width: 160px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.componentsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 12px;
+
+  th, td {
+    padding: 6px 8px;
+    text-align: left;
+  }
+
+  th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  tr:not(:last-child) td { border-bottom: 1px solid var(--bg-subtle, #f8fafc); }
+}
+
+.right { text-align: right !important; }
+
+.sendConfirm {
+  padding: 14px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #065f46;
+  cursor: pointer;
+  line-height: 1.4;
+
+  input[type="checkbox"] { margin-top: 2px; flex-shrink: 0; }
+}
+
+.warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #92400e;
+}
+
+// ── Shared ────────────────────────────────────────────────────────────────────
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+}
+
+.secondary {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.loading, .empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 24px;
+  font-size: 14px;
+}

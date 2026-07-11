@@ -42,6 +42,11 @@ import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
 import IssuedLettersPage from '../pages/letter-management/IssuedLettersPage';
 import LetterSetupPage from '../pages/letter-management/LetterSetupPage';
 import TemplateEditorPage from '../pages/letter-management/TemplateEditorPage';
+import OfferCandidatesPage from '../pages/offer-management/OfferCandidatesPage';
+import OfferCreatePage from '../pages/offer-management/OfferCreatePage';
+import OfferDetailPage from '../pages/offer-management/OfferDetailPage';
+import OfferAnalyticsPage from '../pages/offer-management/OfferAnalyticsPage';
+import OfferSettingsPage from '../pages/offer-management/OfferSettingsPage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -332,7 +337,7 @@ export const adminRoutes: RouteObject[] = [
   {
     path: 'billing/plan',
     element: (
-      <RequireAccess module={ModuleCode.BILLING}>
+      <RequireAccess module={ModuleCode.BILLING_PLAN}>
         <BillingPlanPage />
       </RequireAccess>
     ),
@@ -340,7 +345,7 @@ export const adminRoutes: RouteObject[] = [
   {
     path: 'billing/invoice',
     element: (
-      <RequireAccess module={ModuleCode.BILLING}>
+      <RequireAccess module={ModuleCode.BILLING_INVOICE}>
         <BillingInvoicePage />
       </RequireAccess>
     ),
@@ -348,7 +353,7 @@ export const adminRoutes: RouteObject[] = [
   {
     path: 'billing/payments',
     element: (
-      <RequireAccess module={ModuleCode.BILLING}>
+      <RequireAccess module={ModuleCode.BILLING_PAYMENT}>
         <BillingPaymentHistoryPage />
       </RequireAccess>
     ),
@@ -387,6 +392,48 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.PROJECT_TIMESHEET}>
         <TimesheetPage />
+      </RequireAccess>
+    ),
+  },
+
+  // ── Offer Management ─────────────────────────────────────────────────────
+  {
+    path: 'offer-management',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferCandidatesPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/create',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferCreatePage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/offers/:id',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferDetailPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/analytics',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_ANALYTICS}>
+        <OfferAnalyticsPage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/settings',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_SETTINGS}>
+        <OfferSettingsPage />
       </RequireAccess>
     ),
   },

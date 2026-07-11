@@ -1,7 +1,12 @@
 import { apiClient } from '../../../lib/axios';
 import { envVars } from '../../../utils/envVars';
 
-import type { AppModulesResponse, CreateModuleRequest, UpdateModuleRequest } from './types';
+import type {
+  AppModulesResponse,
+  CreateModuleRequest,
+  UpdateModuleRequest,
+  ReorderModulesRequest,
+} from './types';
 
 const BASE = `${envVars.BRELLO_BASE_API}/app-modules`;
 
@@ -19,3 +24,6 @@ export const updateModule = (
   apiClient.patch(`${BASE}/${id}`, data);
 
 export const deleteModule = (id: string): Promise<void> => apiClient.delete(`${BASE}/${id}`);
+
+export const reorderModules = (data: ReorderModulesRequest): Promise<void> =>
+  apiClient.patch(`${BASE}/reorder`, data);
