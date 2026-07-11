@@ -1,23 +1,10 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Search,
-  Command,
-  LayoutDashboard,
-  Settings,
-  CreditCard,
-  Boxes,
-  Users,
-  Building2,
-  Network,
-  Lock,
-  LifeBuoy,
-  ScrollText,
-} from 'lucide-react';
+import { Search, Command } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { useSearchStore } from '../search/store/search.store';
-import { isPlatformAdmin, isAdminApp } from '../../utils/authUtils';
+import { isAdminApp } from '../../utils/authUtils';
 import { useOrgSetupStatus } from '../dashboard/hooks/useOrgSetupStatus';
 import { SETUP_FREE_PATHS } from '../../components/common/SetupGuard/SetupGuard';
 import { Logo } from '../../components/common/Logo/Logo';
@@ -38,73 +25,6 @@ const isMenuItemFree = (item: { path?: string; children?: { path: string }[] }) 
   return false;
 };
 
-const PLATFORM_ADMIN_MENU: MenuItem[] = [
-  {
-    label: 'Dashboard',
-    icon: LayoutDashboard,
-    path: '/platform/dashboard',
-  },
-  {
-    label: 'Leads',
-    icon: Users,
-    path: '/platform/leads',
-  },
-  {
-    label: 'Enterprises',
-    icon: Building2,
-    path: '/platform/enterprises',
-  },
-  {
-    label: 'Organisations',
-    icon: Network,
-    path: '/platform/organizations',
-  },
-  {
-    label: 'Plans',
-    icon: CreditCard,
-    path: '/platform/plans',
-  },
-  {
-    label: 'Access',
-    icon: Lock,
-    children: [
-      { label: 'Roles', path: '/platform/access/roles' },
-      { label: 'Permissions', path: '/platform/access/permissions' },
-    ],
-  },
-  {
-    label: 'App & Modules',
-    icon: Boxes,
-    children: [
-      { label: 'Apps', path: '/platform/apps' },
-      { label: 'Modules', path: '/platform/modules' },
-    ],
-  },
-  {
-    label: 'Setup',
-    icon: Settings,
-    children: [
-      { label: 'Actions', path: '/platform/setup/actions' },
-      { label: 'Industry Types', path: '/platform/setup/industry-types' },
-      { label: 'Departments', path: '/platform/setup/departments' },
-      { label: 'Designations', path: '/platform/setup/designations' },
-    ],
-  },
-  {
-    label: 'Audit Logs',
-    icon: ScrollText,
-    path: '/platform/audit-logs',
-  },
-  {
-    label: 'Support',
-    icon: LifeBuoy,
-    children: [
-      { label: 'Feedback', path: '/platform/support/feedback' },
-      { label: 'Reports', path: '/platform/support/report' },
-    ],
-  },
-];
-
 export interface SidebarProps {
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
@@ -114,23 +34,14 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
   const location = useLocation();
-  const isPlatformAdminUser = isPlatformAdmin();
-  const {
-    data: menuResponse,
-    isLoading,
-    error,
-  } = useSidebarMenu({ enabled: !isPlatformAdminUser });
-  const { data: setupData } = useOrgSetupStatus({ enabled: !isPlatformAdminUser });
+  const { data: menuResponse, isLoading, error } = useSidebarMenu();
+  const { data: setupData } = useOrgSetupStatus();
   const { openModal } = useSearchStore();
 
   const isSetupIncomplete =
-    !isPlatformAdminUser &&
-    isAdminApp() &&
-    setupData != null &&
-    setupData.completionPercentage < 100;
+    isAdminApp() && setupData != null && setupData.completionPercentage < 100;
 
   const MENU_ITEMS: MenuItem[] = useMemo(() => {
-    if (isPlatformAdminUser) return PLATFORM_ADMIN_MENU;
     if (!menuResponse?.data?.length) return [];
     return menuResponse.data.map((item) => {
       const children = item.children?.map((child) => ({
@@ -152,7 +63,7 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
         isLocked: isSetupIncomplete ? !isMenuItemFree(menuItem) : false,
       };
     });
-  }, [isPlatformAdminUser, menuResponse, isSetupIncomplete]);
+  }, [menuResponse, isSetupIncomplete]);
 
   const toggleMenu = (label: string) => {
     if (isCollapsed) return;
@@ -169,8 +80,8 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
     return item.children?.some((child) => isActive(child.path)) ?? false;
   };
 
-  const showLoading = !isPlatformAdminUser && isLoading;
-  const showError = !isPlatformAdminUser && !!error;
+  const showLoading = isLoading;
+  const showError = !!error;
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : styles.expanded}`}>

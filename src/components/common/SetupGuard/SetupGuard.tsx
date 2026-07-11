@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 
 import { useOrgSetupStatus } from '../../../features/dashboard/hooks/useOrgSetupStatus';
-import { isAdminApp, isPlatformAdmin } from '../../../utils/authUtils';
+import { isAdminApp } from '../../../utils/authUtils';
 import { SetupRequiredBlocker } from '../RequireAccess/SetupRequiredBlocker';
 import styles from '../RequireAccess/RequireAccess.module.scss'; // Reuse loader styles
 
@@ -22,10 +22,7 @@ export const SETUP_FREE_PATHS = [
 ];
 
 export const SetupGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isPlatformAdminUser = isPlatformAdmin();
-  const { data: setupData, isLoading: isSetupLoading } = useOrgSetupStatus({
-    enabled: !isPlatformAdminUser,
-  });
+  const { data: setupData, isLoading: isSetupLoading } = useOrgSetupStatus();
   const location = useLocation();
   const isAdmin = isAdminApp();
 

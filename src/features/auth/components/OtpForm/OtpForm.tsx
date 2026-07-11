@@ -108,10 +108,13 @@ export const OtpForm: React.FC = () => {
           onSuccess: (data: LoginResponse) => {
             const { user, setup_required } = data.data;
 
-            persistAuthResponse(data);
             if (user.is_platform_admin) {
-              navigate('/platform/dashboard');
-            } else if (setup_required) {
+              showToast('Platform admins should log in via the Platform Admin app.', 'error');
+              return;
+            }
+
+            persistAuthResponse(data);
+            if (setup_required) {
               navigate('/auth/lead', { state: { userId: user.id } });
             } else {
               navigate('/dashboard');

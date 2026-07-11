@@ -12,7 +12,6 @@ import OfferPortalPage from '../pages/offer-portal/OfferPortalPage';
 
 import { adminRoutes } from './adminRoutes';
 import { employeeRoutes } from './employeeRoutes';
-import { platformAdminRoutes } from './platformAdminRoutes';
 
 const isAuthenticated = () => {
   const authResponse = getCookie('auth_response');
@@ -27,29 +26,10 @@ const isAuthenticated = () => {
   return false;
 };
 
-const isPlatformAdmin = () => {
-  const authResponse = getCookie('auth_response');
-  if (authResponse) {
-    try {
-      const parsed = JSON.parse(authResponse);
-      return !!parsed?.data?.user?.is_platform_admin;
-    } catch {
-      return false;
-    }
-  }
-  return false;
-};
-
 const protectedLoader = () => {
   if (!isAuthenticated()) {
     return redirect('/auth/login');
   }
-  return null;
-};
-
-const platformAdminLoader = () => {
-  if (!isAuthenticated()) return redirect('/auth/login');
-  if (!isPlatformAdmin()) return redirect('/dashboard');
   return null;
 };
 
@@ -83,12 +63,6 @@ const router = createBrowserRouter([
     element: <OfferPortalPage />,
   },
 
-  {
-    path: '/platform',
-    element: <MainLayout />,
-    loader: platformAdminLoader,
-    children: platformAdminRoutes,
-  },
   {
     path: '/',
     element: <MainLayout />,

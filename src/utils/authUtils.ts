@@ -54,8 +54,3 @@ export const getCurrentAppName = (): string | undefined => {
 };
 
 export const isAdminApp = (): boolean => getCurrentAppName() === 'ADMIN';
-
-export const isPlatformAdmin = (): boolean => {
-  const response = getAuthResponse();
-  return !!response?.data?.user?.is_platform_admin;
-};
