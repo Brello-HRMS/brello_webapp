@@ -48,6 +48,7 @@ import OfferCreatePage from '../pages/offer-management/OfferCreatePage';
 import OfferDetailPage from '../pages/offer-management/OfferDetailPage';
 import OfferAnalyticsPage from '../pages/offer-management/OfferAnalyticsPage';
 import OfferSettingsPage from '../pages/offer-management/OfferSettingsPage';
+import CompanyStructurePage from '../pages/company-structure/CompanyStructurePage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -150,6 +151,16 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.LEAVE_SETUP}>
         <LeaveConfigPage />
+      </RequireAccess>
+    ),
+  },
+
+  // ── Company Structure ─────────────────────────────────────────────────────
+  {
+    path: 'company-structure',
+    element: (
+      <RequireAccess module={ModuleCode.COMPANY_STRUCTURE}>
+        <CompanyStructurePage />
       </RequireAccess>
     ),
   },

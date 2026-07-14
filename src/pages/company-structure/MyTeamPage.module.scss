@@ -1,0 +1,33 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.reportingLine {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: var(--color-primary-100);
+  border: 1px solid var(--color-primary-200);
+  border-radius: 14px;
+}
+
+.reportingLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary-700);
+}
+
+.chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
