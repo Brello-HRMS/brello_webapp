@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { PersonCard } from '../PersonCard/PersonCard';
 
@@ -64,12 +64,14 @@ const OrgTreeNode = ({
         {hasChildren && (
           <button
             type="button"
-            className={styles.expander}
+            className={[styles.expander, open ? styles.expanderOpen : ''].filter(Boolean).join(' ')}
             onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
             aria-label={open ? 'Collapse reportees' : 'Expand reportees'}
+            title={open ? 'Collapse reportees' : 'Expand reportees'}
           >
-            {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-            <span>{node.directReportsCount}</span>
+            <span className={styles.expanderCount}>{node.directReportsCount}</span>
+            {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
         )}
       </div>

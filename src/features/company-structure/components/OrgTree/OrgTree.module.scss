@@ -50,8 +50,7 @@
 
 .children {
   justify-content: center;
-  gap: 20px;
-  padding-top: 28px;
+  padding-top: 22px;
   position: relative;
 }
 
@@ -63,51 +62,81 @@
   padding: 0 8px;
 }
 
-/* Vertical line coming down from a parent to the horizontal connector. */
-.node > .children::before {
+/*
+ * Connectors — only children get them, never the top-level roots. Sibling
+ * spacing comes from node padding (NOT gap) so the horizontal bar stays
+ * continuous across siblings:
+ *
+ *        parent
+ *          │           ← .children::before  (single drop onto the bar)
+ *     ┌────┴────┐      ← each child's ::before/::after are half-width top
+ *     │         │        borders that join into one bar, each with a drop
+ *   child     child
+ */
+.children::before {
   content: '';
   position: absolute;
   top: 0;
   left: 50%;
-  height: 28px;
   width: 2px;
+  height: 22px;
   background: var(--color-border-hover);
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
-/* Each child grows a stub up to the shared horizontal bar. */
-.children > .node::before {
-  content: '';
-  position: absolute;
-  top: -28px;
-  left: 50%;
-  height: 28px;
-  width: 2px;
-  background: var(--color-border-hover);
+.children > .node {
+  padding-top: 22px;
 }
 
-/* Horizontal bar spanning siblings. */
+.children > .node::before,
 .children > .node::after {
   content: '';
   position: absolute;
-  top: -28px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--color-border-hover);
+  top: 0;
+  width: 50%;
+  height: 22px;
+  border-top: 2px solid var(--color-border-hover);
+  pointer-events: none;
 }
 
-/* Trim the horizontal bar so it stops at the outer edges of the first/last child. */
-.children > .node:first-child::after {
-  left: 50%;
-}
-
-.children > .node:last-child::after {
+.children > .node::before {
   right: 50%;
 }
 
-/* A lone child needs no horizontal bar. */
-.children > .node:only-child::after {
+.children > .node::after {
+  left: 50%;
+  border-left: 2px solid var(--color-border-hover);
+}
+
+/* End siblings: trim the outer overhang and round the inner corner. */
+.children > .node:first-child::before {
+  border: 0;
+}
+
+.children > .node:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+.children > .node:last-child::after {
+  border-top: 0;
+  border-left: 0;
+}
+
+.children > .node:last-child::before {
+  border-right: 2px solid var(--color-border-hover);
+  border-radius: 0 6px 0 0;
+}
+
+/* Only child: one straight drop, no horizontal bar. */
+.children > .node:only-child::before {
   display: none;
+}
+
+.children > .node:only-child::after {
+  left: 50%;
+  border-top: 0;
+  border-radius: 0;
 }
 
 .nodeCard {
@@ -120,10 +149,12 @@
 }
 
 .expander {
+  position: relative;
+  z-index: 2; /* always above the connector lines so it stays clickable */
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 10px;
+  padding: 3px 8px 3px 10px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-white);
@@ -131,12 +162,34 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 1px 2px var(--color-shadow-light);
   transition:
     border-color 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    background 0.2s ease;
+
+  svg {
+    transition: transform 0.2s ease;
+  }
 
   &:hover {
     border-color: var(--color-primary-purple);
     color: var(--color-primary-purple);
+    background: var(--color-primary-100);
   }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-border);
+    outline-offset: 2px;
+  }
+}
+
+.expanderOpen {
+  border-color: var(--color-primary-border);
+  color: var(--color-primary-purple);
+  background: var(--color-primary-100);
+}
+
+.expanderCount {
+  line-height: 1;
 }
