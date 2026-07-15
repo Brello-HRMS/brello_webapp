@@ -69,14 +69,28 @@ function mapEmployeeToFormData(employee: any): any {
 interface WizardContentProps {
   onClose: () => void;
   editEmployeeId?: string;
+  /** Prefill the ADD flow (e.g. from an accepted offer) — ignored when editEmployeeId is set. */
+  prefillData?: any;
+  /** Prefilled fields that should render read-only (e.g. name locked to the accepted offer). */
+  lockedFields?: string[];
+  /** Fired the moment a fresh employeeId first appears in ADD mode (i.e. right after Step 1's
+   * draft is created) — used to link the new employee back to whatever prefilled this wizard. */
+  onEmployeeCreated?: (employeeId: string) => void;
 }
 
-const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editEmployeeId }) => {
+const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({
+  onClose,
+  editEmployeeId,
+  prefillData,
+  lockedFields,
+  onEmployeeCreated,
+}) => {
   const {
     currentStep,
     prevStep,
     isEditMode,
     initEditMode,
+    initAddMode,
     resetWizard,
     employeeId: contextEmployeeId,
   } = useWizard();
@@ -91,6 +105,25 @@ const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editE
     // Intentionally mount-only: re-running this on context changes would clobber legitimate state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Apply the prefill once, on mount, for the ADD flow only.
+  const hasAppliedPrefill = React.useRef(false);
+  React.useEffect(() => {
+    if (!isEditIntent && prefillData && !hasAppliedPrefill.current) {
+      initAddMode(prefillData, lockedFields);
+      hasAppliedPrefill.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Notify the caller the first time a real employeeId shows up in ADD mode (Step 1 success).
+  const hasNotifiedCreation = React.useRef(false);
+  React.useEffect(() => {
+    if (!isEditIntent && onEmployeeCreated && contextEmployeeId && !hasNotifiedCreation.current) {
+      hasNotifiedCreation.current = true;
+      onEmployeeCreated(contextEmployeeId);
+    }
+  }, [isEditIntent, onEmployeeCreated, contextEmployeeId]);
 
   // Fetch employee data when in edit mode
   const { data: employeeResponse, isLoading: isLoadingEmployee } = useEmployeeDetail(
@@ -124,11 +157,19 @@ const AddEmployeeWizardContent: React.FC<WizardContentProps> = ({ onClose, editE
   // captures empty defaults before initEditMode runs, leaving fields blank on first open.
   const isPrefilling = isEditIntent && contextEmployeeId !== editEmployeeId;
 
-  // Show a loading state while fetching employee data for edit
-  if (isEditIntent && (isLoadingEmployee || isPrefilling)) {
+  // Same problem, same fix, for the ADD-with-prefill path: initAddMode() only takes effect
+  // on the render AFTER the effect above runs, but PersonalInfoStep's useForm captures
+  // `formData` as its defaultValues on first render — so without this gate, the step would
+  // mount with stale/empty formData and never pick up the prefill (until the next time the
+  // wizard opens, when the WizardProvider's localStorage-persisted state already has it).
+  const isPreparingAddPrefill = !isEditIntent && !!prefillData && !hasAppliedPrefill.current;
+
+  // Show a loading state while fetching employee data for edit, or while the add-mode
+  // prefill is being applied.
+  if ((isEditIntent && (isLoadingEmployee || isPrefilling)) || isPreparingAddPrefill) {
     return (
       <Dialog
-        title="Loading Employee..."
+        title={isEditIntent ? 'Loading Employee...' : 'Preparing...'}
         open={true}
         onClose={handleClose}
         maxWidth="600px"
@@ -224,14 +265,28 @@ interface AddEmployeeWizardProps {
   open: boolean;
   onClose: () => void;
   editEmployeeId?: string;
+  prefillData?: any;
+  lockedFields?: string[];
+  onEmployeeCreated?: (employeeId: string) => void;
 }
 
 export const AddEmployeeWizard: React.FC<AddEmployeeWizardProps> = ({
   open,
   onClose,
   editEmployeeId,
+  prefillData,
+  lockedFields,
+  onEmployeeCreated,
 }) => {
   if (!open) return null;
 
-  return <AddEmployeeWizardContent onClose={onClose} editEmployeeId={editEmployeeId} />;
+  return (
+    <AddEmployeeWizardContent
+      onClose={onClose}
+      editEmployeeId={editEmployeeId}
+      prefillData={prefillData}
+      lockedFields={lockedFields}
+      onEmployeeCreated={onEmployeeCreated}
+    />
+  );
 };

@@ -5,18 +5,23 @@ interface WizardSlice {
   currentStep: number;
   employeeId: string | null;
   formData: any;
+  /** Field names (formData keys) steps should render read-only — e.g. identity fields that
+   * must match an accepted offer/candidate record and shouldn't drift during sync. */
+  lockedFields: string[];
 }
 
 const emptySlice = (): WizardSlice => ({
   currentStep: 1,
   employeeId: null,
   formData: {},
+  lockedFields: [],
 });
 
 interface WizardState {
   currentStep: number;
   employeeId: string | null;
   formData: any;
+  lockedFields: string[];
   isEditMode: boolean;
   setEmployeeId: (id: string) => void;
   setFormData: (data: any) => void;
@@ -26,6 +31,7 @@ interface WizardState {
   goToStep: (step: number) => void;
   resetWizard: () => void;
   initEditMode: (employeeId: string, prefillData: any) => void;
+  initAddMode: (prefillData: any, lockedFields?: string[]) => void;
 }
 
 const WizardContext = createContext<WizardState | undefined>(undefined);
@@ -41,6 +47,7 @@ const loadPersistedAddSlice = (): WizardSlice => {
       currentStep: parsed.currentStep || 1,
       employeeId: parsed.employeeId || null,
       formData: parsed.formData || {},
+      lockedFields: parsed.lockedFields || [],
     };
   } catch {
     return emptySlice();
@@ -102,8 +109,23 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   );
 
   const initEditMode = useCallback((editEmployeeId: string, prefillData: any) => {
-    setEditSlice({ currentStep: 1, employeeId: editEmployeeId, formData: prefillData });
+    setEditSlice({
+      currentStep: 1,
+      employeeId: editEmployeeId,
+      formData: prefillData,
+      lockedFields: [],
+    });
     setMode('edit');
+  }, []);
+
+  // Seeds the ADD slice with prefill data (e.g. from an accepted offer) — unlike
+  // initEditMode, there's no employeeId yet; PersonalInfoStep's normal "Next" flow still
+  // creates a fresh employee, it just starts pre-filled instead of blank. lockedFields lets
+  // the caller mark specific prefilled fields (e.g. name, which must match the offer) as
+  // read-only so HR can't accidentally drift them from the source record during sync.
+  const initAddMode = useCallback((prefillData: any, lockedFields: string[] = []) => {
+    setAddSlice({ currentStep: 1, employeeId: null, formData: prefillData, lockedFields });
+    setMode('add');
   }, []);
 
   const resetWizard = useCallback(() => {
@@ -123,6 +145,7 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         currentStep: active.currentStep,
         employeeId: active.employeeId,
         formData: active.formData,
+        lockedFields: active.lockedFields,
         isEditMode,
         setEmployeeId,
         setFormData,
@@ -132,6 +155,7 @@ export const WizardProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         goToStep,
         resetWizard,
         initEditMode,
+        initAddMode,
       }}
     >
       {children}

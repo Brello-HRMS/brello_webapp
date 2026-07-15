@@ -422,6 +422,14 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
+    path: 'offer-management/offers/:id/edit',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
+        <OfferCreatePage />
+      </RequireAccess>
+    ),
+  },
+  {
     path: 'offer-management/analytics',
     element: (
       <RequireAccess module={ModuleCode.OFFER_ANALYTICS}>

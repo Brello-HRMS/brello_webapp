@@ -5,6 +5,7 @@ import type { ApiResponse, PaginatedResponse } from '../../../types/common';
 import type {
   Offer,
   OfferTimeline,
+  OfferVersion,
   CreateOfferParams,
   UpdateOfferParams,
   SendOfferParams,
@@ -49,8 +50,17 @@ export const extendOfferExpiry = (
 export const syncOffer = (id: string): Promise<ApiResponse<{ userId: string }>> =>
   apiClient.post(`${BASE}/${id}/sync`);
 
+export const linkEmployeeToOffer = (
+  id: string,
+  employeeId: string,
+): Promise<ApiResponse<{ userId: string }>> =>
+  apiClient.post(`${BASE}/${id}/link-employee`, { employee_id: employeeId });
+
 export const getOfferTimeline = (id: string): Promise<ApiResponse<OfferTimeline[]>> =>
   apiClient.get(`${BASE}/${id}/timeline`);
+
+export const getOfferVersions = (id: string): Promise<ApiResponse<OfferVersion[]>> =>
+  apiClient.get(`${BASE}/${id}/versions`);
 
 // ── Approval ─────────────────────────────────────────────────────────────────
 
@@ -79,3 +89,30 @@ export const updateOfferSettings = (
 
 export const getOfferAnalytics = (): Promise<ApiResponse<OfferAnalytics>> =>
   apiClient.get(ANALYTICS_BASE);
+
+// ── Documents ────────────────────────────────────────────────────────────────
+
+export const getOfferDocuments = (offerId: string) => apiClient.get(`${BASE}/${offerId}/documents`);
+
+export const addOfferDocument = (
+  offerId: string,
+  params: { document_type: string; file_url: string; original_filename?: string },
+) => apiClient.post(`${BASE}/${offerId}/documents`, params);
+
+export const verifyOfferDocument = (
+  offerId: string,
+  documentId: string,
+  params: { status: 'verified' | 'rejected'; reason?: string },
+) => apiClient.patch(`${BASE}/${offerId}/documents/${documentId}/verify`, params);
+
+export const deleteOfferDocument = (offerId: string, documentId: string) =>
+  apiClient.delete(`${BASE}/${offerId}/documents/${documentId}`);
+
+// ── Messages ─────────────────────────────────────────────────────────────────
+
+export const getOfferMessages = (offerId: string) => apiClient.get(`${BASE}/${offerId}/messages`);
+
+export const sendOfferMessage = (
+  offerId: string,
+  params: { message: string; attachments?: string[] },
+) => apiClient.post(`${BASE}/${offerId}/messages`, params);

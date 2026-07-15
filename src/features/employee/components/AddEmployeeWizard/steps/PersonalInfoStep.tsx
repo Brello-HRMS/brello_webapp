@@ -33,7 +33,16 @@ interface PersonalInfoStepProps {
 }
 
 export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) => {
-  const { employeeId, setEmployeeId, updateFormData, nextStep, formData, isEditMode } = useWizard();
+  const {
+    employeeId,
+    setEmployeeId,
+    updateFormData,
+    nextStep,
+    formData,
+    isEditMode,
+    lockedFields,
+  } = useWizard();
+  const isLocked = (field: string) => lockedFields.includes(field);
   const { createDraftMutation, updatePersonalMutation } = useEmployeeWizard();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(
@@ -202,6 +211,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
           placeholder="First name"
           {...register('firstName')}
           error={errors.firstName?.message}
+          disabled={isLocked('firstName')}
         />
         <Input
           label="Last Name"
@@ -209,6 +219,7 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
           placeholder="Last name"
           {...register('lastName')}
           error={errors.lastName?.message}
+          disabled={isLocked('lastName')}
         />
       </div>
 
@@ -219,8 +230,13 @@ export const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ onClose }) =
         {...register('email')}
         error={errors.email?.message}
         className={styles.fullWidth}
-        disabled={isEditMode}
+        disabled={isEditMode || isLocked('email')}
       />
+      {isLocked('firstName') && (
+        <p className={styles.infoAlert} style={{ marginTop: '-8px' }}>
+          Enter the candidate's official company email — not the personal email they applied with.
+        </p>
+      )}
 
       <div className={styles.infoAlert}>
         <div className={styles.infoContent}>

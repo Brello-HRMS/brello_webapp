@@ -183,10 +183,10 @@ const OfferPortalPage = () => {
                         <tr key={i}>
                           <td>{c.name}</td>
                           <td className={styles.dim}>{c.type}</td>
-                          <td className={styles.right}>₹{c.amount.toLocaleString('en-IN')}</td>
                           <td className={styles.right}>
-                            ₹{(c.amount * 12).toLocaleString('en-IN')}
+                            ₹{Math.round(c.amount / 12).toLocaleString('en-IN')}
                           </td>
+                          <td className={styles.right}>₹{c.amount.toLocaleString('en-IN')}</td>
                         </tr>
                       ))}
                     </tbody>

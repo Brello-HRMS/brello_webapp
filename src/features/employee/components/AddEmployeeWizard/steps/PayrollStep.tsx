@@ -11,13 +11,31 @@ import { useEmployeeWizard } from '../../../hooks/useEmployeeWizard';
 
 import styles from './PayrollStep.module.scss';
 
+const ACCOUNT_NUMBER_REGEX = /^\d{9,18}$/;
+const BANK_NAME_REGEX = /^[A-Za-z][A-Za-z .&'-]*$/;
+const IFSC_REGEX = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
+const UAN_REGEX = /^\d{12}$/;
+
 const schema = z.object({
   taxRegime: z.string().min(1, 'Tax regime is required'),
-  pan: z.string().min(1, 'PAN is required'),
-  uan: z.string().optional(),
-  accountNumber: z.string().min(1, 'Account number is required'),
-  bankName: z.string().min(1, 'Bank name is required'),
-  ifscCode: z.string().min(1, 'IFSC code is required'),
+  pan: z.string().min(1, 'PAN is required').regex(PAN_REGEX, 'Enter a valid PAN (e.g. ABCDE1234F)'),
+  uan: z
+    .string()
+    .optional()
+    .refine((val) => !val || UAN_REGEX.test(val), 'UAN must be 12 digits'),
+  accountNumber: z
+    .string()
+    .min(1, 'Account number is required')
+    .regex(ACCOUNT_NUMBER_REGEX, 'Account number must be 9-18 digits'),
+  bankName: z
+    .string()
+    .min(1, 'Bank name is required')
+    .regex(BANK_NAME_REGEX, 'Enter a valid bank name'),
+  ifscCode: z
+    .string()
+    .min(1, 'IFSC code is required')
+    .regex(IFSC_REGEX, 'Enter a valid IFSC code (e.g. ABCD0123456)'),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -122,7 +140,7 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
         <Input
           label="IFSC Code"
           required
-          placeholder="Enter code"
+          placeholder="e.g. ABCD0123456"
           {...register('ifscCode')}
           error={errors.ifscCode?.message}
         />
@@ -136,7 +154,7 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
         <Input
           label="Pan Number"
           required
-          placeholder="Enter Pan"
+          placeholder="e.g. ABCDE1234F"
           {...register('pan')}
           error={errors.pan?.message}
         />
@@ -158,7 +176,7 @@ export const PayrollStep: React.FC<PayrollStepProps> = ({ onClose }) => {
 
       <Input
         label="UAN Number (Only if Yes)"
-        placeholder="Enter UAN"
+        placeholder="12-digit UAN"
         {...register('uan')}
         error={errors.uan?.message}
       />

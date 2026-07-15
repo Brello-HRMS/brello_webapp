@@ -1,6 +1,9 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import { Button } from '../../../../components/common';
+import { Select } from '../../../../components/common/Select/Select';
+import { Input } from '../../../../components/ui/Input/Input';
+import { DatePicker } from '../../../../components/ui/DatePicker/DatePicker';
 
 import styles from './WizardStep.module.scss';
 
@@ -27,80 +30,118 @@ interface Props {
 }
 
 export const Step2OfferDetails = ({ defaultValues, onBack, onNext }: Props) => {
-  const { register, handleSubmit } = useForm<OfferDetailsParams>({ defaultValues });
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<OfferDetailsParams>({ defaultValues, mode: 'onSubmit' });
 
   return (
     <form onSubmit={handleSubmit(onNext)} className={styles.stepBody}>
       <div className={styles.grid2}>
         <div className={styles.field}>
-          <label className={styles.label}>Position / Role *</label>
-          <input
-            className={styles.input}
-            {...register('position')}
+          <Input
+            label="Position / Role"
+            required
             placeholder="Software Engineer"
+            error={errors.position?.message}
+            {...register('position', { required: 'Position is required' })}
           />
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Employment Type</label>
-          <select className={styles.select} {...register('employment_type')}>
-            <option value="">Select...</option>
-            {EMPLOYMENT_TYPES.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          <Controller
+            name="employment_type"
+            control={control}
+            rules={{ required: 'Employment type is required' }}
+            render={({ field }) => (
+              <Select
+                label="Employment Type"
+                required
+                placeholder="Select..."
+                options={EMPLOYMENT_TYPES}
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                error={errors.employment_type?.message}
+              />
+            )}
+          />
         </div>
       </div>
 
       <div className={styles.grid2}>
         <div className={styles.field}>
-          <label className={styles.label}>Joining Date</label>
-          <input className={styles.input} type="date" {...register('joining_date')} />
+          <Controller
+            name="joining_date"
+            control={control}
+            rules={{ required: 'Joining date is required' }}
+            render={({ field }) => (
+              <DatePicker
+                label="Joining Date"
+                required
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.joining_date?.message}
+              />
+            )}
+          />
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Work Mode</label>
-          <select className={styles.select} {...register('work_mode')}>
-            <option value="">Select...</option>
-            {WORK_MODES.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          <Controller
+            name="work_mode"
+            control={control}
+            rules={{ required: 'Work mode is required' }}
+            render={({ field }) => (
+              <Select
+                label="Work Mode"
+                required
+                placeholder="Select..."
+                options={WORK_MODES}
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                error={errors.work_mode?.message}
+              />
+            )}
+          />
         </div>
       </div>
 
       <div className={styles.grid2}>
         <div className={styles.field}>
-          <label className={styles.label}>Work Location</label>
-          <input
-            className={styles.input}
-            {...register('work_location')}
+          <Input
+            label="Work Location"
             placeholder="Bengaluru, Karnataka"
+            error={errors.work_location?.message}
+            {...register('work_location')}
           />
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Probation Period (days)</label>
-          <input
-            className={styles.input}
+          <Input
+            label="Probation Period (days)"
             type="number"
             min={0}
-            {...register('probation_days', { valueAsNumber: true })}
             placeholder="90"
+            error={errors.probation_days?.message}
+            {...register('probation_days', {
+              valueAsNumber: true,
+              min: { value: 0, message: 'Probation period cannot be negative' },
+            })}
           />
         </div>
       </div>
 
       <div className={styles.grid2}>
         <div className={styles.field}>
-          <label className={styles.label}>Notice Period (days)</label>
-          <input
-            className={styles.input}
+          <Input
+            label="Notice Period (days)"
             type="number"
             min={0}
-            {...register('notice_period_days', { valueAsNumber: true })}
             placeholder="30"
+            error={errors.notice_period_days?.message}
+            {...register('notice_period_days', {
+              valueAsNumber: true,
+              min: { value: 0, message: 'Notice period cannot be negative' },
+            })}
           />
         </div>
       </div>

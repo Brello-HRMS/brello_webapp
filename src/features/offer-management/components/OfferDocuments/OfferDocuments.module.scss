@@ -1,0 +1,149 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  background: var(--card-bg, #fff);
+  border: 1px dashed var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  color: var(--text-secondary);
+
+  .emptyIcon {
+    margin-bottom: 12px;
+    color: var(--text-muted, #cbd5e1);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.docInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+
+  &.pending {
+    background: #fef3c7;
+    color: #d97706;
+  }
+  &.verified {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  &.rejected {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+}
+
+.fileName {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  word-break: break-all;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--bg-subtle, #f1f5f9);
+}
+
+.viewLink {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--primary, #6366f1);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.verifyActions {
+  display: flex;
+  gap: 8px;
+}
+
+.rejectBtn {
+  color: #dc2626;
+  border-color: #fca5a5;
+  background: #fef2f2;
+  
+  &:hover {
+    background: #fee2e2;
+  }
+}
+
+.rejectionReason {
+  font-size: 12px;
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 8px;
+  border-radius: 6px;
+}
