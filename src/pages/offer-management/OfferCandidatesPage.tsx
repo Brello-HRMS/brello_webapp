@@ -14,6 +14,7 @@ import { useOfferCandidates } from '../../features/offer-management/hooks/useOff
 import { useOffers } from '../../features/offer-management/hooks/useOffers';
 import { OfferStatusBadge } from '../../features/offer-management/components/OfferStatusBadge/OfferStatusBadge';
 import { AddCandidateModal } from '../../features/offer-management/components/AddCandidateModal/AddCandidateModal';
+import { CandidateCard } from '../../features/offer-management/components/CandidateCard/CandidateCard';
 import { ModuleCode, ActionCode } from '../../enum/modules';
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -78,11 +79,11 @@ const buildColumns = (
   },
   {
     id: 'actions',
-    header: '',
+    header: 'Action',
     cell: ({ row }) => {
       const { candidate, offer } = row.original;
       return (
-        <div className={styles.actions}>
+        <div>
           {offer ? (
             <Button variant="ghost" size="sm" onClick={() => onViewOffer(offer)}>
               View Offer
@@ -103,6 +104,7 @@ const buildColumns = (
 const OfferCandidatesPage = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewType, setViewType] = useState<'grid' | 'table'>('grid');
   const [isAddCandidateOpen, setIsAddCandidateOpen] = useState(false);
   const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -170,7 +172,7 @@ const OfferCandidatesPage = () => {
   }
 
   return (
-    <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
+    <div className={`${isLoading ? styles.loading : ''}`}>
       <PageHeader
         title="Offer Management"
         titleExtra={
@@ -192,7 +194,9 @@ const OfferCandidatesPage = () => {
         showSearch
         showFilters={false}
         showSort={false}
-        showViewSwitcher={false}
+        showViewSwitcher={true}
+        viewType={viewType}
+        onViewTypeChange={setViewType}
         showMultiSelect={false}
         searchPlaceholder="Search candidates by name or email..."
         searchQuery={searchQuery}
@@ -201,6 +205,18 @@ const OfferCandidatesPage = () => {
 
       {rows.length === 0 ? (
         <NoDataFound title="No Candidates Found" description="No candidates match your search." />
+      ) : viewType === 'grid' ? (
+        <div className={styles.candidateGrid}>
+          {rows.map((row) => (
+            <CandidateCard
+              key={row.id}
+              candidate={row.candidate}
+              offer={row.offer}
+              onCreateOffer={handleCreateOffer}
+              onViewOffer={handleViewOffer}
+            />
+          ))}
+        </div>
       ) : (
         <DataTable columns={columns} data={rows} rowIdField="id" />
       )}

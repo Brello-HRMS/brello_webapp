@@ -1,6 +1,8 @@
-.page { padding: 0 24px 48px; }
-
-.pageIcon { color: var(--primary); display: flex; align-items: center; }
+.pageIcon {
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+}
 
 .loading {
   text-align: center;
@@ -35,7 +37,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 
-  @media (max-width: 600px) { grid-template-columns: 1fr; }
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .field {
@@ -88,10 +92,14 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  &:hover { background: #f1f5f9; }
+  &:hover {
+    background: #f1f5f9;
+  }
 }
 
-.toggleInfo { flex: 1; }
+.toggleInfo {
+  flex: 1;
+}
 
 .toggleLabel {
   font-size: 14px;

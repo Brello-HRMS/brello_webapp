@@ -39,7 +39,7 @@ const OfferSettingsPage = () => {
   if (isLoading) return <div className={styles.loading}>Loading settings...</div>;
 
   return (
-    <div className={styles.page}>
+    <div>
       <PageHeader
         title="Offer Settings"
         titleExtra={
