@@ -203,10 +203,22 @@ export interface OfferAnalytics {
 
 // ── Portal types ──────────────────────────────────────────────────────────────
 
+export interface OfferPortalPolicy {
+  id: string;
+  title: string;
+  content?: string;
+  type?: {
+    id: string;
+    name: string;
+    icon?: string;
+  };
+}
+
 export interface OfferPortalData {
   offer: Offer;
   version: OfferVersion;
   candidate: OfferCandidate;
+  policies: OfferPortalPolicy[];
 }
 
 // ── Params ────────────────────────────────────────────────────────────────────

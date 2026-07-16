@@ -16,8 +16,6 @@ import {
 } from '../../features/offer-management/hooks/useOffers';
 import { useOfferCandidate } from '../../features/offer-management/hooks/useOfferCandidates';
 
-import styles from './OfferCreatePage.module.scss';
-
 import type {
   OfferWizardState,
   OfferDetailsParams,
@@ -186,13 +184,13 @@ const OfferCreatePage = () => {
   }, [state, savedOfferId, createOffer, updateOffer, sendOffer, buildUpdatePayload, afterMutation]);
 
   if (isEditMode && isLoadingEditOffer) {
-    return <div className={styles.page}>Loading offer...</div>;
+    return <div>Loading offer...</div>;
   }
 
   const currentStep = state.step;
 
   return (
-    <div className={styles.page}>
+    <div>
       <PageHeader
         title={isEditMode ? 'Edit Offer' : 'Create Offer'}
         subtitle={
