@@ -39,6 +39,7 @@ import { FeedbackType } from '../features/feedback/types/feedbackTypes';
 import AuditPage from '../pages/audit/AuditPage';
 import OrganizationProfilePage from '../pages/organization/OrganizationProfilePage';
 import TimesheetPage from '../pages/project/timesheet/TimesheetPage';
+import EmailIntegrationPage from '../pages/integration/EmailIntegrationPage';
 import IssuedLettersPage from '../pages/letter-management/IssuedLettersPage';
 import LetterSetupPage from '../pages/letter-management/LetterSetupPage';
 import TemplateEditorPage from '../pages/letter-management/TemplateEditorPage';
@@ -47,6 +48,7 @@ import OfferCreatePage from '../pages/offer-management/OfferCreatePage';
 import OfferDetailPage from '../pages/offer-management/OfferDetailPage';
 import OfferAnalyticsPage from '../pages/offer-management/OfferAnalyticsPage';
 import OfferSettingsPage from '../pages/offer-management/OfferSettingsPage';
+import CompanyStructurePage from '../pages/company-structure/CompanyStructurePage';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -149,6 +151,16 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.LEAVE_SETUP}>
         <LeaveConfigPage />
+      </RequireAccess>
+    ),
+  },
+
+  // ── Company Structure ─────────────────────────────────────────────────────
+  {
+    path: 'company-structure',
+    element: (
+      <RequireAccess module={ModuleCode.COMPANY_STRUCTURE}>
+        <CompanyStructurePage />
       </RequireAccess>
     ),
   },
@@ -392,6 +404,16 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.PROJECT_TIMESHEET}>
         <TimesheetPage />
+      </RequireAccess>
+    ),
+  },
+
+  // ── Integration ───────────────────────────────────────────────────────────
+  {
+    path: 'integration/email',
+    element: (
+      <RequireAccess module={ModuleCode.INTEGRATION_EMAIL}>
+        <EmailIntegrationPage />
       </RequireAccess>
     ),
   },

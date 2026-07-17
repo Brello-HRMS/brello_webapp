@@ -1,0 +1,195 @@
+.scroll {
+  width: 100%;
+  overflow: auto;
+  padding: 24px 16px 16px;
+
+  /* Thin, theme-matched scrollbar (matches DataTable / Sidebar). */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 10px;
+
+    &:hover {
+      background: var(--color-text-secondary);
+    }
+  }
+}
+
+/* Classic centered org-chart built from nested <ul>/<li> with CSS connectors. */
+.tree,
+.children {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/*
+ * Top-level row: center when it fits, but scroll from the left when it's wider
+ * than the viewport. `justify-content: center` would push overflow off both
+ * edges and browsers can't scroll to left-overflow — so cards get clipped.
+ * `width: max-content` + `margin: 0 auto` centers-when-small, left-aligns-when-big.
+ */
+.tree {
+  gap: 24px;
+  align-items: flex-start;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.children {
+  justify-content: center;
+  padding-top: 22px;
+  position: relative;
+}
+
+.node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 8px;
+}
+
+/*
+ * Connectors — only children get them, never the top-level roots. Sibling
+ * spacing comes from node padding (NOT gap) so the horizontal bar stays
+ * continuous across siblings:
+ *
+ *        parent
+ *          │           ← .children::before  (single drop onto the bar)
+ *     ┌────┴────┐      ← each child's ::before/::after are half-width top
+ *     │         │        borders that join into one bar, each with a drop
+ *   child     child
+ */
+.children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 22px;
+  background: var(--color-border-hover);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.children > .node {
+  padding-top: 22px;
+}
+
+.children > .node::before,
+.children > .node::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 22px;
+  border-top: 2px solid var(--color-border-hover);
+  pointer-events: none;
+}
+
+.children > .node::before {
+  right: 50%;
+}
+
+.children > .node::after {
+  left: 50%;
+  border-left: 2px solid var(--color-border-hover);
+}
+
+/* End siblings: trim the outer overhang and round the inner corner. */
+.children > .node:first-child::before {
+  border: 0;
+}
+
+.children > .node:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+.children > .node:last-child::after {
+  border-top: 0;
+  border-left: 0;
+}
+
+.children > .node:last-child::before {
+  border-right: 2px solid var(--color-border-hover);
+  border-radius: 0 6px 0 0;
+}
+
+/* Only child: one straight drop, no horizontal bar. */
+.children > .node:only-child::before {
+  display: none;
+}
+
+.children > .node:only-child::after {
+  left: 50%;
+  border-top: 0;
+  border-radius: 0;
+}
+
+.nodeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.expander {
+  position: relative;
+  z-index: 2; /* always above the connector lines so it stays clickable */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px var(--color-shadow-light);
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
+
+  svg {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    border-color: var(--color-primary-purple);
+    color: var(--color-primary-purple);
+    background: var(--color-primary-100);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-border);
+    outline-offset: 2px;
+  }
+}
+
+.expanderOpen {
+  border-color: var(--color-primary-border);
+  color: var(--color-primary-purple);
+  background: var(--color-primary-100);
+}
+
+.expanderCount {
+  line-height: 1;
+}

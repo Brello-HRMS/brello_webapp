@@ -1,0 +1,59 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 8px;
+
+  &:hover {
+    background: var(--color-gray-50);
+  }
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-icon-gray);
+  border-radius: 6px;
+
+  &:hover {
+    background: var(--color-gray-100);
+  }
+}
+
+.toggleHidden {
+  visibility: hidden;
+  cursor: default;
+}
+
+.chevron {
+  transition: transform 0.18s ease;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
