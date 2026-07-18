@@ -16,12 +16,6 @@ import {
   syncOffer,
   linkEmployeeToOffer,
   getOfferVersions,
-  getOfferDocuments,
-  addOfferDocument,
-  verifyOfferDocument,
-  deleteOfferDocument,
-  getOfferMessages,
-  sendOfferMessage,
 } from '../api/offer.api';
 
 import type {
@@ -40,8 +34,6 @@ const KEYS = {
   offerDetail: (id: string) => [...KEYS.offers, 'detail', id] as const,
   timeline: (id: string) => [...KEYS.offers, 'timeline', id] as const,
   versions: (id: string) => [...KEYS.offers, 'versions', id] as const,
-  documents: (id: string) => [...KEYS.offers, 'documents', id] as const,
-  messages: (id: string) => [...KEYS.offers, 'messages', id] as const,
   analytics: ['offer-analytics'] as const,
   settings: ['offer-settings'] as const,
 };
@@ -185,81 +177,5 @@ export function useLinkEmployeeToOffer() {
       toast.success('Salary assigned and offer marked as synced');
     },
     onError: () => toast.error('Employee was created, but linking it to the offer failed'),
-  });
-}
-
-// ── Documents ────────────────────────────────────────────────────────────────
-
-export function useOfferDocuments(offerId: string) {
-  return useQuery({
-    queryKey: KEYS.documents(offerId),
-    queryFn: () => getOfferDocuments(offerId),
-    enabled: !!offerId,
-  });
-}
-
-export function useAddOfferDocument(offerId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (params: { document_type: string; file_url: string; original_filename?: string }) =>
-      addOfferDocument(offerId, params),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: KEYS.documents(offerId) });
-      toast.success('Document uploaded');
-    },
-    onError: () => toast.error('Failed to upload document'),
-  });
-}
-
-export function useVerifyOfferDocument(offerId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      documentId,
-      params,
-    }: {
-      documentId: string;
-      params: { status: 'verified' | 'rejected'; reason?: string };
-    }) => verifyOfferDocument(offerId, documentId, params),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: KEYS.documents(offerId) });
-      toast.success('Document status updated');
-    },
-    onError: () => toast.error('Failed to update document status'),
-  });
-}
-
-export function useDeleteOfferDocument(offerId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (documentId: string) => deleteOfferDocument(offerId, documentId),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: KEYS.documents(offerId) });
-      toast.success('Document deleted');
-    },
-    onError: () => toast.error('Failed to delete document'),
-  });
-}
-
-// ── Messages ─────────────────────────────────────────────────────────────────
-
-export function useOfferMessages(offerId: string) {
-  return useQuery({
-    queryKey: KEYS.messages(offerId),
-    queryFn: () => getOfferMessages(offerId),
-    enabled: !!offerId,
-    refetchInterval: 10000, // Poll every 10s for new messages
-  });
-}
-
-export function useSendOfferMessage(offerId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (params: { message: string; attachments?: string[] }) =>
-      sendOfferMessage(offerId, params),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: KEYS.messages(offerId) });
-    },
-    onError: () => toast.error('Failed to send message'),
   });
 }

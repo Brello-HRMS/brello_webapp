@@ -16,8 +16,6 @@ import {
 
 import { Button, PermissionGate } from '../../components/common';
 import { OfferStatusBadge } from '../../features/offer-management/components/OfferStatusBadge/OfferStatusBadge';
-import { OfferDocuments } from '../../features/offer-management/components/OfferDocuments/OfferDocuments';
-import { OfferMessages } from '../../features/offer-management/components/OfferMessages/OfferMessages';
 import { OfferVersions } from '../../features/offer-management/components/OfferVersions/OfferVersions';
 import { OfferEmployeeSyncWizard } from '../../features/offer-management/components/OfferEmployeeSyncWizard/OfferEmployeeSyncWizard';
 import {
@@ -68,9 +66,7 @@ const OfferDetailPage = () => {
   const [withdrawReason, setWithdrawReason] = useState('');
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [showSyncWizard, setShowSyncWizard] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'messages' | 'versions'>(
-    'overview',
-  );
+  const [activeTab, setActiveTab] = useState<'overview' | 'versions'>('overview');
 
   if (isLoading) return <div className={styles.loading}>Loading offer...</div>;
   if (!offer) return <div className={styles.loading}>Offer not found.</div>;
@@ -164,16 +160,12 @@ const OfferDetailPage = () => {
       <div className={styles.tabsContainer}>
         {[
           { id: 'overview', label: 'Overview' },
-          { id: 'documents', label: 'Documents' },
-          { id: 'messages', label: 'Messages' },
           { id: 'versions', label: 'Version History' },
         ].map((tab) => (
           <button
             key={tab.id}
             className={`${styles.tabButton} ${activeTab === tab.id ? styles.active : ''}`}
-            onClick={() =>
-              setActiveTab(tab.id as 'overview' | 'documents' | 'messages' | 'versions')
-            }
+            onClick={() => setActiveTab(tab.id as 'overview' | 'versions')}
           >
             {tab.label}
           </button>
@@ -328,22 +320,6 @@ const OfferDetailPage = () => {
                 timeline.map((entry) => <TimelineCard key={entry.id} entry={entry} />)
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'documents' && (
-        <div className={styles.body}>
-          <div className={styles.mainCol}>
-            <OfferDocuments offerId={offer.id} />
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'messages' && (
-        <div className={styles.body}>
-          <div className={styles.mainCol}>
-            <OfferMessages offerId={offer.id} />
           </div>
         </div>
       )}

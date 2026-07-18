@@ -149,33 +149,6 @@ export interface OfferApprovalStep {
   actioned_at: string | null;
 }
 
-export interface OfferDocument {
-  id: string;
-  offer_id: string;
-  document_type: string;
-  file_url: string;
-  original_filename: string | null;
-  verification_status: 'pending' | 'verified' | 'rejected';
-  verified_by: string | null;
-  verified_at: string | null;
-  rejection_reason: string | null;
-  uploaded_by_candidate: boolean;
-  created_at: string;
-}
-
-export interface OfferMessage {
-  id: string;
-  offer_id: string;
-  sender_type: 'hr' | 'candidate';
-  sender_id: string | null;
-  sender_name: string;
-  message: string;
-  attachments: string[];
-  is_read: boolean;
-  read_at: string | null;
-  created_at: string;
-}
-
 export interface OfferSettings {
   id: string;
   organization_id: string;

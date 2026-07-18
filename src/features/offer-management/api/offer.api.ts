@@ -89,30 +89,3 @@ export const updateOfferSettings = (
 
 export const getOfferAnalytics = (): Promise<ApiResponse<OfferAnalytics>> =>
   apiClient.get(ANALYTICS_BASE);
-
-// ── Documents ────────────────────────────────────────────────────────────────
-
-export const getOfferDocuments = (offerId: string) => apiClient.get(`${BASE}/${offerId}/documents`);
-
-export const addOfferDocument = (
-  offerId: string,
-  params: { document_type: string; file_url: string; original_filename?: string },
-) => apiClient.post(`${BASE}/${offerId}/documents`, params);
-
-export const verifyOfferDocument = (
-  offerId: string,
-  documentId: string,
-  params: { status: 'verified' | 'rejected'; reason?: string },
-) => apiClient.patch(`${BASE}/${offerId}/documents/${documentId}/verify`, params);
-
-export const deleteOfferDocument = (offerId: string, documentId: string) =>
-  apiClient.delete(`${BASE}/${offerId}/documents/${documentId}`);
-
-// ── Messages ─────────────────────────────────────────────────────────────────
-
-export const getOfferMessages = (offerId: string) => apiClient.get(`${BASE}/${offerId}/messages`);
-
-export const sendOfferMessage = (
-  offerId: string,
-  params: { message: string; attachments?: string[] },
-) => apiClient.post(`${BASE}/${offerId}/messages`, params);
