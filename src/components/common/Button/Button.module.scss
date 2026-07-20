@@ -4,12 +4,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  height: 40px;
-  padding: 10px 14px;
+  gap: 6px;
+  height: 36px;
+  padding: 6px 12px;
   border-radius: var(--radius-md);
   font-family: var(--font-family-base);
-  font-size: clamp(0.75rem, 0.6607rem + 0.2381vw, 0.875rem);
+  font-size: 13px;
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   transition: all 0.2s;

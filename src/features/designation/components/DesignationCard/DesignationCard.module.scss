@@ -2,8 +2,8 @@
   background: var(--color-white);
   border: 1px solid var(--color-border-light);
   border-radius: 12px;
-  padding: 20px;
-  height: 230px;
+  padding: 16px;
+  height: 190px;
   display: flex;
   flex-direction: column;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -46,13 +46,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .iconWrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -79,18 +79,18 @@
 
 .name {
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.2;
   color: var(--color-text-header);
   margin: 0;
 }
 
 .code {
   font-family: 'DM Mono', 'JetBrains Mono', monospace;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.2;
   color: var(--color-text-muted);
   margin: 0;
 }

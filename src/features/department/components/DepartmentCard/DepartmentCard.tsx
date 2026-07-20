@@ -60,9 +60,9 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
       <div className={styles.header}>
         <div className={styles.iconWrapper} style={{ backgroundColor: iconBg, color: iconColor }}>
           {icon ? (
-            <img src={icon} alt={name} width={24} height={24} className={styles.icon} />
+            <img src={icon} alt={name} width={20} height={20} className={styles.icon} />
           ) : (
-            <Users size={24} />
+            <Users size={20} />
           )}
         </div>
         {!isSelecting && (

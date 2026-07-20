@@ -58,7 +58,7 @@ export const DesignationCard: React.FC<DesignationCardProps> = ({
     >
       <div className={styles.header}>
         <div className={styles.iconWrapper} style={{ backgroundColor: iconBg, color: iconColor }}>
-          <Briefcase size={24} />
+          <Briefcase size={20} />
         </div>
         {!isSelecting && (
           <DesignationActionMenu

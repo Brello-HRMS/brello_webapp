@@ -5,8 +5,8 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 16px;
-  margin-top: clamp(20px, 4vw, 28px);
-  margin-bottom: clamp(20px, 5vw, 24px);
+  margin-top: 16px;
+  margin-bottom: 16px;
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -34,8 +34,8 @@
 .title {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-bold);
-  font-size: clamp(1.25rem, 4vw, 1.75rem); // 20px to 28px
-  line-height: 100%;
+  font-size: 20px;
+  line-height: 1.2;
   color: var(--color-text-primary-500);
   margin: 0;
 }
@@ -43,8 +43,8 @@
 .subtitle {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-regular);
-  font-size: clamp(0.75rem, 2vw, 0.875rem); // 12px to 14px
-  line-height: 24px;
+  font-size: 13px;
+  line-height: 20px;
   color: var(--color-secondary);
   margin: 0;
 }
