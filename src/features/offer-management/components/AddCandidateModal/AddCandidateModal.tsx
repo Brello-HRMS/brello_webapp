@@ -36,6 +36,17 @@ export const AddCandidateModal = ({ isOpen, onClose }: Props) => {
     onClose();
   };
 
+  const actions = (
+    <>
+      <Button variant="ghost" type="button" onClick={handleClose} disabled={isPending}>
+        Cancel
+      </Button>
+      <Button variant="primary" type="submit" form="add-candidate-form" disabled={isPending}>
+        {isPending ? 'Adding...' : 'Add Candidate'}
+      </Button>
+    </>
+  );
+
   return (
     <Dialog
       open={isOpen}
@@ -43,8 +54,10 @@ export const AddCandidateModal = ({ isOpen, onClose }: Props) => {
       title="Add Candidate"
       maxWidth="600px"
       position="right"
+      expandable
+      actions={actions}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+      <form id="add-candidate-form" onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={styles.row}>
           <div className={styles.field}>
             <label className={styles.label}>First Name *</label>
@@ -117,15 +130,6 @@ export const AddCandidateModal = ({ isOpen, onClose }: Props) => {
               placeholder="3"
             />
           </div>
-        </div>
-
-        <div className={styles.actions}>
-          <Button variant="ghost" type="button" onClick={handleClose} disabled={isPending}>
-            Cancel
-          </Button>
-          <Button variant="primary" type="submit" disabled={isPending}>
-            {isPending ? 'Adding...' : 'Add Candidate'}
-          </Button>
         </div>
       </form>
     </Dialog>

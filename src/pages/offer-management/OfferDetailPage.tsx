@@ -12,6 +12,8 @@ import {
   MessageSquareWarning,
   Activity,
   Pencil,
+  Download,
+  FolderOpen,
 } from 'lucide-react';
 
 import { Button, PermissionGate } from '../../components/common';
@@ -304,6 +306,53 @@ const OfferDetailPage = () => {
                 {offer.candidate_comment && (
                   <p className={styles.feedback}>{offer.candidate_comment}</p>
                 )}
+              </InfoCard>
+            )}
+
+            {candidate?.onboarding_documents && candidate.onboarding_documents.length > 0 && (
+              <InfoCard title="Pre-Onboarding Documents" icon={<FolderOpen size={16} />}>
+                <div className={styles.documentList}>
+                  {candidate.onboarding_documents.map((doc, idx) => (
+                    <div
+                      key={idx}
+                      className={styles.documentItem}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '8px 0',
+                        borderBottom: '1px solid #f1f5f9',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <FileText size={16} color="#64748b" />
+                        <div>
+                          <p style={{ margin: 0, fontSize: 14, fontWeight: 500 }}>{doc.name}</p>
+                          <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
+                            Uploaded: {new Date(doc.uploaded_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      <a
+                        href={`${doc.url}&download=1`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.downloadBtn}
+                        style={{
+                          color: '#0ea5e9',
+                          padding: '4px 8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          fontSize: 13,
+                          textDecoration: 'none',
+                        }}
+                      >
+                        <Download size={14} /> Download
+                      </a>
+                    </div>
+                  ))}
+                </div>
               </InfoCard>
             )}
           </div>

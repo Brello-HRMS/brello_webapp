@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { PageHeader } from '../../components/common';
@@ -31,13 +31,29 @@ const STEP_TITLES = [
   'Preview & Send',
 ];
 
-const initState = (candidateId: string): OfferWizardState => ({
-  step: candidateId ? 2 : 1,
-  candidate_id: candidateId,
-  details: {},
-  compensation: { salary_components: [] },
-  policy_ids: [],
-});
+const LOCAL_STORAGE_KEY = 'offer_wizard_draft';
+
+const initState = (candidateId: string): OfferWizardState => {
+  try {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // If we are given a preselected candidate, only use the draft if candidate matches
+      if (!candidateId || parsed.candidate_id === candidateId) {
+        return parsed;
+      }
+    }
+  } catch {
+    // Ignore parse errors
+  }
+  return {
+    step: candidateId ? 2 : 1,
+    candidate_id: candidateId,
+    details: {},
+    compensation: { salary_components: [] },
+    policy_ids: [],
+  };
+};
 
 const OfferCreatePage = () => {
   const navigate = useNavigate();
@@ -51,6 +67,13 @@ const OfferCreatePage = () => {
   // fresh. In create mode it starts null and is filled in once the first draft save succeeds.
   const [savedOfferId, setSavedOfferId] = useState<string | null>(editOfferId ?? null);
   const [hasHydratedEdit, setHasHydratedEdit] = useState(false);
+
+  // Persist state to localStorage on every change (only for drafts, not edits)
+  React.useEffect(() => {
+    if (!isEditMode) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+    }
+  }, [state, isEditMode]);
 
   const { data: editOfferResponse, isLoading: isLoadingEditOffer } = useOffer(editOfferId ?? '');
   const editOffer = editOfferResponse?.data;
@@ -92,6 +115,7 @@ const OfferCreatePage = () => {
         salary_components: editOffer.salary_components ?? [],
       },
       policy_ids: editOffer.policy_ids ?? [],
+      custom_letter_html: editOffer.custom_letter_html ?? undefined,
     });
   }
 
@@ -101,8 +125,8 @@ const OfferCreatePage = () => {
     setState((s) => ({ ...s, candidate_id: candidateId }));
   }, []);
 
-  const handleStep2 = useCallback((details: OfferDetailsParams) => {
-    setState((s) => ({ ...s, details, step: 3 }));
+  const handleStep2 = useCallback((details: OfferDetailsParams, template_id?: string) => {
+    setState((s) => ({ ...s, details, template_id, step: 3 }));
   }, []);
 
   const handleStep3 = useCallback((compensation: OfferCompensationParams) => {
@@ -111,6 +135,10 @@ const OfferCreatePage = () => {
 
   const handleStep4 = useCallback((policy_ids: string[]) => {
     setState((s) => ({ ...s, policy_ids, step: 5 }));
+  }, []);
+
+  const handleHtmlChange = useCallback((html: string) => {
+    setState((s) => ({ ...s, custom_letter_html: html }));
   }, []);
 
   // UpdateOfferDto (backend) has no candidate_id field — the global ValidationPipe
@@ -122,12 +150,16 @@ const OfferCreatePage = () => {
       details: state.details,
       compensation: state.compensation,
       policy_ids: state.policy_ids,
+      custom_letter_html: state.custom_letter_html,
     }),
     [state],
   );
 
   const afterMutation = useCallback(
-    (offerId: string) => navigate(`/offer-management/offers/${offerId}`),
+    (offerId: string) => {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      navigate(`/offer-management/offers/${offerId}`);
+    },
     [navigate],
   );
 
@@ -141,9 +173,11 @@ const OfferCreatePage = () => {
       createOffer(
         {
           candidate_id: state.candidate_id,
+          template_id: state.template_id,
           details: state.details,
           compensation: state.compensation,
           policy_ids: state.policy_ids,
+          custom_letter_html: state.custom_letter_html,
         },
         {
           onSuccess: (res) => {
@@ -169,6 +203,7 @@ const OfferCreatePage = () => {
       createOffer(
         {
           candidate_id: state.candidate_id,
+          template_id: state.template_id,
           details: state.details,
           compensation: state.compensation,
           policy_ids: state.policy_ids,
@@ -211,6 +246,7 @@ const OfferCreatePage = () => {
         {currentStep === 2 && (
           <Step2OfferDetails
             defaultValues={state.details}
+            templateId={state.template_id}
             onBack={() => goTo(1)}
             onNext={handleStep2}
           />
@@ -238,6 +274,7 @@ const OfferCreatePage = () => {
             onBack={() => goTo(4)}
             onSaveDraft={handleSaveDraft}
             onSend={handleSend}
+            onHtmlChange={handleHtmlChange}
           />
         )}
       </OfferWizardLayout>

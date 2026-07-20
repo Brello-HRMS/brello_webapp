@@ -52,6 +52,7 @@ export interface OfferCandidate {
   resume_url: string | null;
   recruiter_id: string | null;
   recruiter_notes: string | null;
+  onboarding_documents: { name: string; url: string; uploaded_at: string }[] | null;
   created_at: string;
   updated_at: string;
 }
@@ -98,6 +99,7 @@ export interface Offer {
   synced_employee_id: string | null;
   rejection_reason: string | null;
   candidate_comment: string | null;
+  custom_letter_html: string | null;
   requires_approval: boolean;
   current_approval_step: number | null;
   created_at: string;
@@ -113,6 +115,7 @@ export interface OfferVersion {
   access_token: string;
   token_expires_at: string | null;
   pdf_url: string | null;
+  accepted_pdf_url: string | null;
   viewed_at: string | null;
   candidate_response: 'accepted' | 'rejected' | 'changes_requested' | null;
   responded_at: string | null;
@@ -164,6 +167,11 @@ export interface OfferSettings {
   approval_chain: Array<{ role_name: string; requires_at_ctc_above?: number }>;
   last_sequence: number;
   sequence_year: number;
+  required_onboarding_documents?: Array<{
+    name: string;
+    is_required: boolean;
+    description?: string;
+  }>;
 }
 
 export interface OfferAnalytics {
@@ -192,6 +200,7 @@ export interface OfferPortalData {
   version: OfferVersion;
   candidate: OfferCandidate;
   policies: OfferPortalPolicy[];
+  settings: OfferSettings;
 }
 
 // ── Params ────────────────────────────────────────────────────────────────────
@@ -257,6 +266,7 @@ export interface CreateOfferParams {
   details?: OfferDetailsParams;
   compensation?: OfferCompensationParams;
   policy_ids?: string[];
+  custom_letter_html?: string;
 }
 
 export type UpdateOfferParams = Partial<CreateOfferParams>;
@@ -291,6 +301,11 @@ export interface UpdateOfferSettingsParams {
   enable_digital_signature?: boolean;
   auto_welcome_email?: boolean;
   approval_chain?: Array<{ role_name: string; requires_at_ctc_above?: number }>;
+  required_onboarding_documents?: Array<{
+    name: string;
+    is_required: boolean;
+    description?: string;
+  }>;
 }
 
 // ── Wizard State ──────────────────────────────────────────────────────────────
@@ -302,4 +317,5 @@ export interface OfferWizardState {
   details: OfferDetailsParams;
   compensation: OfferCompensationParams;
   policy_ids: string[];
+  custom_letter_html?: string;
 }

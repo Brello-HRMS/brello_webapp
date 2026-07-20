@@ -42,7 +42,7 @@
 }
 
 .brandName {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -1px;
   color: #0f0820;
@@ -59,7 +59,7 @@
   align-items: center;
   gap: var(--spacing-2);
   width: 100%;
-  background-color: var(--color-gray);
+  background-color: var(--color-gray-100);
   border-radius: var(--radius-md);
   padding: var(--spacing-2) var(--spacing-3);
   color: var(--color-secondary);
@@ -70,13 +70,17 @@
 
   &:hover {
     background-color: var(--color-gray-200);
+    color: var(--color-text-primary);
   }
 }
 
 .searchPlaceholder {
   flex: 1;
-  font-size: 0.875rem;
+  font-size: 0.775rem;
   color: var(--color-secondary);
+  &:hover {
+    color: var(--color-text-primary);
+  }
 }
 
 .shortcut {

@@ -96,6 +96,16 @@ export const OfferVersions = ({ offerId }: { offerId: string }) => {
                 ) : (
                   <span className={styles.dim}>No PDF available</span>
                 )}
+                {v.candidate_response === 'accepted' && v.accepted_pdf_url && (
+                  <a
+                    href={v.accepted_pdf_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.downloadLink}
+                  >
+                    <Download size={14} /> View Accepted Copy (Proof)
+                  </a>
+                )}
               </div>
             </div>
           ))}

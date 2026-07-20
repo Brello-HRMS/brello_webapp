@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -32,6 +32,33 @@ export const Dialog: React.FC<DialogProps> = ({
   headerAddon,
   contentClassName,
 }) => {
+  const [customWidth, setCustomWidth] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = window.innerWidth - e.clientX;
+      setCustomWidth(Math.max(400, Math.min(newWidth, window.innerWidth - 40)));
+    };
+    const handleMouseUp = () => setIsDragging(false);
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.body.style.userSelect = 'none';
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+    };
+  }, [isDragging]);
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -67,7 +94,11 @@ export const Dialog: React.FC<DialogProps> = ({
         >
           <motion.div
             className={`${styles.dialog} ${position === 'right' ? styles.dialogRight : ''}`}
-            style={{ maxWidth }}
+            style={{
+              maxWidth: customWidth ? `${customWidth}px` : maxWidth,
+              width: customWidth ? `${customWidth}px` : '100%',
+              transition: isDragging ? 'none' : undefined,
+            }}
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -77,17 +108,22 @@ export const Dialog: React.FC<DialogProps> = ({
             exit="hidden"
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           >
+            {position === 'right' && (
+              <div className={styles.dragHandle} onMouseDown={handleDragStart} />
+            )}
             <div className={styles.header}>
               <div className={styles.headerMain}>
                 <div className={styles.titleGroup}>
                   {typeof title === 'string' ? <h2>{title}</h2> : title}
                   {description && <p className={styles.description}>{description}</p>}
                 </div>
-                {showCloseButton && (
-                  <button className={styles.closeButton} onClick={onClose} aria-label="Close">
-                    <X size={20} />
-                  </button>
-                )}
+                <div className={styles.headerActions}>
+                  {showCloseButton && (
+                    <button className={styles.iconButton} onClick={onClose} aria-label="Close">
+                      <X size={20} />
+                    </button>
+                  )}
+                </div>
               </div>
               {headerAddon && <div className={styles.headerAddon}>{headerAddon}</div>}
             </div>

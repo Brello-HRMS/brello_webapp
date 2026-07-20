@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Send, FileText, AlertCircle } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 import { Button } from '../../../../components/common';
 
@@ -15,6 +17,7 @@ interface Props {
   onBack: () => void;
   onSaveDraft: () => void;
   onSend: () => void;
+  onHtmlChange: (html: string) => void;
 }
 
 export const Step5Preview = ({
@@ -25,6 +28,7 @@ export const Step5Preview = ({
   onBack,
   onSaveDraft,
   onSend,
+  onHtmlChange,
 }: Props) => {
   const [sendConfirmed, setSendConfirmed] = useState(false);
   const { details, compensation } = wizardState;
@@ -128,6 +132,24 @@ export const Step5Preview = ({
             </h3>
           </div>
         )}
+      </div>
+
+      <div className={styles.previewCard} style={{ marginTop: 24 }}>
+        <div className={styles.previewSection}>
+          <h3 className={styles.previewSectionTitle}>Custom Offer Letter (Optional Override)</h3>
+          <p className={styles.secondary} style={{ marginBottom: 12 }}>
+            Use this editor to write a custom offer letter. If left blank, the system will use the
+            standard PDF template.
+          </p>
+          <div style={{ backgroundColor: 'white' }}>
+            <ReactQuill
+              theme="snow"
+              value={wizardState.custom_letter_html || ''}
+              onChange={onHtmlChange}
+              style={{ height: 200, marginBottom: 50 }}
+            />
+          </div>
+        </div>
       </div>
 
       <div className={styles.sendConfirm}>

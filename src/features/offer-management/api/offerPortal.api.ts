@@ -19,7 +19,9 @@ const PORTAL_BASE = '/offer-portal';
 export const getPortalOffer = (token: string): Promise<ApiResponse<OfferPortalData>> =>
   publicClient.get(`${PORTAL_BASE}/${token}`);
 
-export const acceptOffer = (token: string): Promise<ApiResponse<void>> =>
+export const acceptOffer = (
+  token: string,
+): Promise<ApiResponse<{ accepted_pdf_url: string | null }>> =>
   publicClient.post(`${PORTAL_BASE}/accept`, { access_token: token });
 
 export const rejectOffer = (
@@ -38,3 +40,13 @@ export const requestOfferChanges = (
   },
 ): Promise<ApiResponse<void>> =>
   publicClient.post(`${PORTAL_BASE}/request-changes`, { access_token: token, ...payload });
+
+export const uploadOnboardingDocument = async (token: string, name: string, file: File) => {
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('file', file);
+  const res = await publicClient.post(`${PORTAL_BASE}/${token}/documents`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res;
+};

@@ -1,14 +1,15 @@
 .menuItem {
   display: flex;
   align-items: center;
-  padding: var(--spacing-2) var(--spacing-3);
+  justify-content: center;
+  padding: var(--spacing-2) var(--spacing-2);
   border-radius: var(--radius-md);
   color: var(--color-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
   white-space: nowrap;
-  gap: var(--spacing-3);
+  gap: var(--spacing-2);
 
   &:hover {
     background-color: var(--color-gray);
@@ -24,8 +25,8 @@
 
 .itemIcon {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,7 +34,7 @@
 
 .itemLabel {
   flex: 1;
-  font-size: 0.875rem;
+  font-size: 0.7rem;
   font-weight: var(--font-weight-medium);
 }
 

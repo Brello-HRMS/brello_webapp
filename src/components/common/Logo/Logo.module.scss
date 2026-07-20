@@ -8,8 +8,8 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 3px;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 }
 
 .logoMark .block {
@@ -22,7 +22,7 @@
 }
 
 .logoWordmark {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 800;
   letter-spacing: -1px;
   color: var(--color-text-primary, #0f0820);

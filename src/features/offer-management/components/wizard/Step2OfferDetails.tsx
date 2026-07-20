@@ -4,6 +4,7 @@ import { Button } from '../../../../components/common';
 import { Select } from '../../../../components/common/Select/Select';
 import { Input } from '../../../../components/ui/Input/Input';
 import { DatePicker } from '../../../../components/ui/DatePicker/DatePicker';
+import { useLetterTemplates } from '../../../letter-management/hooks/useLetterTemplates';
 
 import styles from './WizardStep.module.scss';
 
@@ -25,20 +26,57 @@ const WORK_MODES: { label: string; value: WorkMode }[] = [
 
 interface Props {
   defaultValues: OfferDetailsParams;
+  templateId?: string;
   onBack: () => void;
-  onNext: (data: OfferDetailsParams) => void;
+  onNext: (data: OfferDetailsParams, templateId?: string) => void;
 }
 
-export const Step2OfferDetails = ({ defaultValues, onBack, onNext }: Props) => {
+type FormValues = OfferDetailsParams & { template_id?: string };
+
+export const Step2OfferDetails = ({ defaultValues, templateId, onBack, onNext }: Props) => {
+  const { data: templatesRes, isLoading: isLoadingTemplates } = useLetterTemplates({
+    status: 'PUBLISHED',
+  });
+  const templates = templatesRes?.data ?? [];
+  const templateOptions = templates.map((t) => ({ label: t.name, value: t.id }));
+
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<OfferDetailsParams>({ defaultValues, mode: 'onSubmit' });
+  } = useForm<FormValues>({
+    defaultValues: { ...defaultValues, template_id: templateId },
+    mode: 'onSubmit',
+  });
+
+  const onSubmit = (values: FormValues) => {
+    const { template_id, ...details } = values;
+    onNext(details, template_id);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onNext)} className={styles.stepBody}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.stepBody}>
+      <div className={styles.grid2}>
+        <div className={styles.field}>
+          <Controller
+            name="template_id"
+            control={control}
+            rules={{ required: 'Offer template is required' }}
+            render={({ field }) => (
+              <Select
+                label="Offer Template"
+                required
+                placeholder={isLoadingTemplates ? 'Loading...' : 'Select Template'}
+                options={templateOptions}
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                error={errors.template_id?.message}
+              />
+            )}
+          />
+        </div>
+      </div>
       <div className={styles.grid2}>
         <div className={styles.field}>
           <Input

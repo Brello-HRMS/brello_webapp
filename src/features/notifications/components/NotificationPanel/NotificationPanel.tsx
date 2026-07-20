@@ -184,18 +184,23 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                   </svg>
                   {label}
                 </div>
-                {hasUnreadInGroup(label) && (
-                  <button className={styles.markReadBtn} onClick={() => handleMarkGroupRead(label)}>
-                    <BookCheck size={14} />
-                    Mark as read
-                  </button>
-                )}
-                {label === 'Today' && counts.all > 0 && (
-                  <button className={styles.markReadBtn} onClick={() => markAllRead()}>
-                    <BookCheck size={14} />
-                    Mark all read
-                  </button>
-                )}
+                <div className={styles.dateActions}>
+                  {hasUnreadInGroup(label) && (
+                    <button
+                      className={styles.markReadBtn}
+                      onClick={() => handleMarkGroupRead(label)}
+                    >
+                      <BookCheck size={14} />
+                      Mark as read
+                    </button>
+                  )}
+                  {label === 'Today' && counts.all > 0 && (
+                    <button className={styles.markReadBtn} onClick={() => markAllRead()}>
+                      <BookCheck size={14} />
+                      Mark all read
+                    </button>
+                  )}
+                </div>
               </div>
 
               {items.map((notification) => (
