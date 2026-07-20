@@ -2,15 +2,17 @@ import {
   Bell,
   ChevronDown,
   ChevronRight,
+  ChevronLeft,
   Globe,
   LogOut,
-  PanelLeftClose,
-  PanelRightClose,
   Settings,
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, matchPath } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
+import { adminRoutes } from '../../../routes/adminRoutes';
+import { employeeRoutes } from '../../../routes/employeeRoutes';
 import { NotificationPanel } from '../../../features/notifications/components/NotificationPanel/NotificationPanel';
 import { useUnreadCount } from '../../../features/notifications/hooks/useNotifications';
 import profileAvatar from '../../../assets/image/dummy_profile.png';
@@ -23,17 +25,46 @@ import { useEmployeeDetail } from '../../../features/employee/hooks/useEmployeeD
 import { AppSwitcher } from './AppSwitcher';
 import styles from './Header.module.scss';
 
+const ALL_ROUTES = [...adminRoutes, ...employeeRoutes]
+  .map((r) => r.path)
+  .filter(Boolean) as string[];
+
+const MODULE_ROOTS: Record<string, string> = {
+  organisation: '/organisation/profile',
+  'letter-management': '/letter-management/issued-letters',
+  employee: '/employee/directory',
+  attendance: '/attendance/daily',
+  project: '/project/clients',
+  payroll: '/payroll/listing',
+  reimbursement: '/reimbursement/list',
+  announcements: '/announcements/list',
+  access: '/access/roles',
+  billing: '/billing/plan',
+  support: '/support/feedback',
+  integration: '/integration/email',
+  'offer-management': '/offer-management/candidate',
+  'company-structure': '/company-structure',
+};
+
+const isValidPath = (pathToCheck: string) => {
+  if (pathToCheck === '' || pathToCheck === '/' || pathToCheck === '/dashboard') return true;
+  return ALL_ROUTES.some((routePath) =>
+    matchPath({ path: `/${routePath}`, end: true }, pathToCheck),
+  );
+};
+
 export interface HeaderProps {
   isSidebarCollapsed: boolean;
   toggleSidebar: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapsed }) => {
+export const Header: React.FC<HeaderProps> = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { data: unreadCount = 0 } = useUnreadCount();
   const isDesktop = useMediaQuery('(min-width: 601px)');
   const location = useLocation();
+  const navigate = useNavigate();
   const { mutate: logout } = useLogout();
 
   const authUser = getAuthUser();
@@ -50,24 +81,51 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
 
   const avatarUrl = employeeDetails?.avatar || profileAvatar;
 
-  const breadcrumbs = useMemo(() => {
+  const { breadcrumbs, backPath, hasBack } = useMemo(() => {
     const segments = location.pathname.split('/').filter(Boolean);
 
-    const truncateId = (id: string, startChars = 8, endChars = 8) => {
-      if (id.length > 20 && id.includes('-')) {
-        return `${id.substring(0, startChars)}...${id.substring(id.length - endChars)}`;
+    const formatSegment = (segment: string) => {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuidRegex.test(segment)) {
+        return `${segment.substring(0, 8)}...${segment.substring(segment.length - 4)}`;
       }
-      return id.charAt(0).toUpperCase() + id.slice(1);
+      return segment
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
     };
 
-    const allCrumbs = segments.reduce<{ label: string; path: string }[]>((crumbs, segment) => {
-      const cumulativePath = `${crumbs.length > 0 ? crumbs[crumbs.length - 1].path : ''}/${segment}`;
-      return [...crumbs, { label: truncateId(segment), path: cumulativePath }];
-    }, []);
+    const allCrumbs = segments.reduce<{ label: string; path: string; isClickable: boolean }[]>(
+      (crumbs, segment, index) => {
+        let cumulativePath = `/${segments.slice(0, index + 1).join('/')}`;
+        let isClickable = isValidPath(cumulativePath);
 
-    if (allCrumbs.length <= 4) return allCrumbs;
+        // Fallback for module roots that aren't valid explicit routes
+        if (!isClickable && index === 0 && MODULE_ROOTS[segment]) {
+          cumulativePath = MODULE_ROOTS[segment];
+          isClickable = true;
+        }
 
-    return [allCrumbs[0], { label: '...', path: '' }, ...allCrumbs.slice(-2)];
+        return [...crumbs, { label: formatSegment(segment), path: cumulativePath, isClickable }];
+      },
+      [],
+    );
+
+    const clickableCrumbs = allCrumbs.filter((c) => c.isClickable);
+    const hasBack = clickableCrumbs.length > 1;
+    const backPath = hasBack ? clickableCrumbs[clickableCrumbs.length - 2].path : '/dashboard';
+
+    if (allCrumbs.length <= 3) return { breadcrumbs: allCrumbs, backPath, hasBack };
+
+    return {
+      breadcrumbs: [
+        allCrumbs[0],
+        { label: '...', path: '', isClickable: false },
+        allCrumbs[allCrumbs.length - 1],
+      ],
+      backPath,
+      hasBack,
+    };
   }, [location.pathname]);
 
   const showNotification = useMediaQuery('(min-width: 801px)');
@@ -106,26 +164,52 @@ export const Header: React.FC<HeaderProps> = ({ toggleSidebar, isSidebarCollapse
     <>
       <header className={styles.header}>
         <div className={styles.leftSection}>
-          <button className="icon-button" aria-label="Toggle Navigation" onClick={toggleSidebar}>
-            {isSidebarCollapsed ? <PanelRightClose size={20} /> : <PanelLeftClose size={20} />}
-          </button>
-
-          {isDesktop && <div className={styles.divider} />}
+          <AnimatePresence mode="popLayout">
+            {hasBack && (
+              <motion.div
+                key="back-button"
+                initial={{ opacity: 0, width: 0, x: -10 }}
+                animate={{ opacity: 1, width: 'auto', x: 0 }}
+                exit={{ opacity: 0, width: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}
+              >
+                <button
+                  className="icon-button"
+                  aria-label="Go Back"
+                  onClick={() => navigate(backPath)}
+                  style={{ flexShrink: 0 }}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                {isDesktop && <div className={styles.divider} style={{ flexShrink: 0 }} />}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className={styles.breadcrumbsContainer}>
             {isDesktop && <Globe size={18} className={styles.breadcrumbIcon} />}
 
-            {breadcrumbs.map((crumb, index) => {
-              const isActive = index === breadcrumbs.length - 1 && crumb.path !== '';
-              return (
-                <div key={`${crumb.path}-${index}`} className={styles.breadcrumbSegment}>
-                  {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
-                  <div className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''}`}>
-                    {crumb.label}
-                  </div>
-                </div>
-              );
-            })}
+            <AnimatePresence mode="popLayout">
+              {breadcrumbs.map((crumb, index) => {
+                const isActive = index === breadcrumbs.length - 1 && crumb.path !== '';
+                return (
+                  <motion.div
+                    key={`${crumb.path}-${index}`}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                    className={styles.breadcrumbSegment}
+                  >
+                    {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
+                    <div className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''}`}>
+                      {crumb.label}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         </div>
 

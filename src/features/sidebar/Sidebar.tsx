@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Command } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Command, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { useSearchStore } from '../search/store/search.store';
@@ -33,6 +33,7 @@ export interface SidebarProps {
 export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
+  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
   const location = useLocation();
   const { data: menuResponse, isLoading, error } = useSidebarMenu();
   const { data: setupData } = useOrgSetupStatus();
@@ -85,13 +86,41 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
 
   return (
     <aside className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : styles.expanded}`}>
-      <div className={styles.header}>
+      <div
+        className={styles.header}
+        onMouseEnter={() => setIsHeaderHovered(true)}
+        onMouseLeave={() => setIsHeaderHovered(false)}
+      >
         <div
           className={styles.logo}
           onClick={() => setIsCollapsed(!isCollapsed)}
           style={{ cursor: 'pointer' }}
         >
-          <Logo showWordmark={false} />
+          <AnimatePresence mode="wait">
+            {isCollapsed && isHeaderHovered ? (
+              <motion.div
+                key="icon"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                style={{ display: 'flex' }}
+              >
+                <PanelRightClose size={24} color="#6b7280" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="logo"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                style={{ display: 'flex' }}
+              >
+                <Logo showWordmark={false} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         {!isCollapsed && (
           <motion.span
@@ -101,6 +130,25 @@ export const Sidebar = ({ isCollapsed, setIsCollapsed }: SidebarProps) => {
           >
             Brello
           </motion.span>
+        )}
+        {!isCollapsed && (
+          <button
+            aria-label="Toggle Navigation"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{
+              marginLeft: 'auto',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              color: '#6b7280',
+              padding: '4px',
+              borderRadius: '4px',
+            }}
+          >
+            <PanelLeftClose size={20} />
+          </button>
         )}
       </div>
 
