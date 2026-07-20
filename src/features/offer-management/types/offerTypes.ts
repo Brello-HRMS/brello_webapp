@@ -180,6 +180,7 @@ export interface OfferAnalytics {
   acceptance_rate: number;
   negotiation_rate: number;
   avg_acceptance_days: number | null;
+  weekly_counts: { week: string; count: number }[];
 }
 
 // ── Portal types ──────────────────────────────────────────────────────────────

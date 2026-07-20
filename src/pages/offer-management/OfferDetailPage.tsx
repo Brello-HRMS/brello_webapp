@@ -67,6 +67,8 @@ const OfferDetailPage = () => {
   const { mutate: extendExpiry } = useExtendOfferExpiry();
   const [withdrawReason, setWithdrawReason] = useState('');
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [showExtendModal, setShowExtendModal] = useState(false);
+  const [extendDays, setExtendDays] = useState(7);
   const [showSyncWizard, setShowSyncWizard] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'versions'>('overview');
 
@@ -131,11 +133,8 @@ const OfferDetailPage = () => {
             </PermissionGate>
           )}
           {canExtend && (
-            <Button
-              variant="outline"
-              onClick={() => extendExpiry({ id: offer.id, params: { extra_days: 7 } })}
-            >
-              <Calendar size={15} /> Extend +7 days
+            <Button variant="outline" onClick={() => setShowExtendModal(true)}>
+              <Calendar size={15} /> Extend Expiry
             </Button>
           )}
           {canWithdraw && (
@@ -377,6 +376,46 @@ const OfferDetailPage = () => {
         <div className={styles.body}>
           <div className={styles.mainCol}>
             <OfferVersions offerId={offer.id} />
+          </div>
+        </div>
+      )}
+
+      {/* Extend Expiry Modal */}
+      {showExtendModal && (
+        <div className={styles.overlay}>
+          <div className={styles.modal}>
+            <h3>Extend Offer Expiry</h3>
+            <p>How many days would you like to extend the expiry by?</p>
+            <input
+              type="number"
+              className={styles.input}
+              min="1"
+              max="60"
+              value={extendDays}
+              onChange={(e) => setExtendDays(parseInt(e.target.value) || 1)}
+              style={{
+                padding: '8px',
+                borderRadius: '6px',
+                border: '1px solid #ccc',
+                width: '100%',
+              }}
+            />
+            <div className={styles.modalActions}>
+              <Button variant="ghost" onClick={() => setShowExtendModal(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  extendExpiry(
+                    { id: offer.id, params: { extra_days: extendDays } },
+                    { onSuccess: () => setShowExtendModal(false) },
+                  );
+                }}
+              >
+                Confirm
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -16,6 +16,9 @@ import {
   syncOffer,
   linkEmployeeToOffer,
   getOfferVersions,
+  getPendingApprovals,
+  approveOfferStep,
+  rejectOfferStep,
 } from '../api/offer.api';
 
 import type {
@@ -36,6 +39,7 @@ const KEYS = {
   versions: (id: string) => [...KEYS.offers, 'versions', id] as const,
   analytics: ['offer-analytics'] as const,
   settings: ['offer-settings'] as const,
+  pendingApprovals: ['offer-pending-approvals'] as const,
 };
 
 export function useOffers(filters?: OfferFilters) {
@@ -177,5 +181,39 @@ export function useLinkEmployeeToOffer() {
       toast.success('Salary assigned and offer marked as synced');
     },
     onError: () => toast.error('Employee was created, but linking it to the offer failed'),
+  });
+}
+
+export function usePendingApprovals() {
+  return useQuery({
+    queryKey: KEYS.pendingApprovals,
+    queryFn: () => getPendingApprovals(),
+  });
+}
+
+export function useApproveOfferStep() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, comment }: { id: string; comment?: string }) =>
+      approveOfferStep(id, comment),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEYS.pendingApprovals });
+      qc.invalidateQueries({ queryKey: KEYS.offers });
+      toast.success('Offer step approved');
+    },
+    onError: () => toast.error('Failed to approve offer step'),
+  });
+}
+
+export function useRejectOfferStep() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, comment }: { id: string; comment: string }) => rejectOfferStep(id, comment),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEYS.pendingApprovals });
+      qc.invalidateQueries({ queryKey: KEYS.offers });
+      toast.success('Offer step rejected');
+    },
+    onError: () => toast.error('Failed to reject offer step'),
   });
 }

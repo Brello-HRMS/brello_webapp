@@ -187,7 +187,24 @@ const OfferAnalyticsPage = () => {
     );
   }
 
-  const { by_status: byStatus } = analytics;
+  const { by_status: byStatus, weekly_counts } = analytics;
+
+  const currentWeek = weekly_counts.length > 0 ? weekly_counts[weekly_counts.length - 1].count : 0;
+  const previousWeek = weekly_counts.length > 1 ? weekly_counts[weekly_counts.length - 2].count : 0;
+
+  const getTrend = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? '+100%' : '0%';
+    const pct = Math.round(((current - previous) / previous) * 100);
+    return pct > 0 ? `+${pct}%` : `${pct}%`;
+  };
+
+  const totalTrend = getTrend(currentWeek, previousWeek);
+  const sparklineData =
+    weekly_counts.length > 0 ? weekly_counts.map((w) => w.count) : [0, 0, 0, 0, 0, 0, 0];
+  // Extend sparkline if not enough data points
+  while (sparklineData.length < 7) {
+    sparklineData.unshift(0);
+  }
 
   return (
     <div className={styles.page}>
@@ -212,32 +229,32 @@ const OfferAnalyticsPage = () => {
           <KpiCard
             title="Total Offers"
             value={analytics.total}
-            trend="+12%"
+            trend={totalTrend}
             color="#3b82f6"
-            sparklineData={[10, 15, 12, 20, 18, 25, analytics.total]}
+            sparklineData={sparklineData}
           />
           <KpiCard
             title="Acceptance Rate"
             value={`${analytics.acceptance_rate}%`}
-            trend="+5%"
+            trend=""
             color="#10b981"
-            sparklineData={[60, 65, 70, 68, 75, 80, analytics.acceptance_rate]}
+            sparklineData={[]}
           />
           <KpiCard
             title="Negotiation Rate"
             value={`${analytics.negotiation_rate}%`}
-            trend="-2%"
+            trend=""
             color="#f59e0b"
-            sparklineData={[15, 12, 14, 10, 8, 5, analytics.negotiation_rate]}
+            sparklineData={[]}
             trendDownIsGood
           />
           <KpiCard
             title="Avg. Acceptance Days"
             value={analytics.avg_acceptance_days != null ? analytics.avg_acceptance_days : '-'}
             suffix=" days"
-            trend="-1.2d"
+            trend=""
             color="#8b5cf6"
-            sparklineData={[5, 6, 4, 3, 4, 2, analytics.avg_acceptance_days ?? 0]}
+            sparklineData={[]}
             trendDownIsGood
           />
         </div>
@@ -343,26 +360,30 @@ const KpiCard = ({
     <motion.div className={styles.analyticCard} variants={cardVariants}>
       <div className={styles.analyticHeader}>
         <span className={styles.analyticTitle}>{title}</span>
-        <div
-          className={`${styles.trendBadge} ${isGood ? styles.trendGood : styles.trendBad}`}
-          style={{ '--trend-color': color } as React.CSSProperties}
-        >
-          {isPositiveTrend ? (
-            <ArrowUpRight size={14} />
-          ) : (
-            <ArrowUpRight size={14} style={{ transform: 'rotate(90deg)' }} />
-          )}
-          {trend}
-        </div>
+        {trend && (
+          <div
+            className={`${styles.trendBadge} ${isGood ? styles.trendGood : styles.trendBad}`}
+            style={{ '--trend-color': color } as React.CSSProperties}
+          >
+            {isPositiveTrend ? (
+              <ArrowUpRight size={14} />
+            ) : (
+              <ArrowUpRight size={14} style={{ transform: 'rotate(90deg)' }} />
+            )}
+            {trend}
+          </div>
+        )}
       </div>
       <div className={styles.analyticBody}>
         <div className={styles.analyticValueGroup}>
           <span className={styles.analyticValue}>{value}</span>
           {suffix && <span className={styles.analyticSuffix}>{suffix}</span>}
         </div>
-        <div className={styles.sparklineContainer}>
-          <Sparkline color={color} data={sparklineData} />
-        </div>
+        {sparklineData.length > 0 && (
+          <div className={styles.sparklineContainer}>
+            <Sparkline color={color} data={sparklineData} />
+          </div>
+        )}
       </div>
     </motion.div>
   );

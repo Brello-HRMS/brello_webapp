@@ -15,6 +15,7 @@ import type {
   OfferAnalytics,
   OfferSettings,
   UpdateOfferSettingsParams,
+  OfferApprovalStep,
 } from '../types/offerTypes';
 
 const BASE = `${envVars.BRELLO_BASE_API}/offer-management/offers`;
@@ -75,6 +76,10 @@ export const approveOfferStep = (offerId: string, comment?: string) =>
 
 export const rejectOfferStep = (offerId: string, comment: string) =>
   apiClient.post(`${BASE}/${offerId}/approval/reject`, { comment });
+
+export const getPendingApprovals = (): Promise<
+  ApiResponse<{ step: OfferApprovalStep; offer: Offer }[]>
+> => apiClient.get(`${BASE}/approvals/pending`);
 
 // ── Settings ─────────────────────────────────────────────────────────────────
 

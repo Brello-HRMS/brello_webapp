@@ -46,6 +46,7 @@ import TemplateEditorPage from '../pages/letter-management/TemplateEditorPage';
 import OfferCandidatesPage from '../pages/offer-management/OfferCandidatesPage';
 import OfferCreatePage from '../pages/offer-management/OfferCreatePage';
 import OfferDetailPage from '../pages/offer-management/OfferDetailPage';
+import OfferApprovalsPage from '../pages/offer-management/OfferApprovalsPage';
 import OfferAnalyticsPage from '../pages/offer-management/OfferAnalyticsPage';
 import OfferSettingsPage from '../pages/offer-management/OfferSettingsPage';
 import CompanyStructurePage from '../pages/company-structure/CompanyStructurePage';
@@ -420,7 +421,7 @@ export const adminRoutes: RouteObject[] = [
 
   // ── Offer Management ─────────────────────────────────────────────────────
   {
-    path: 'offer-management',
+    path: 'offer-management/candidate',
     element: (
       <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
         <OfferCandidatesPage />
@@ -448,6 +449,14 @@ export const adminRoutes: RouteObject[] = [
     element: (
       <RequireAccess module={ModuleCode.OFFER_CANDIDATES}>
         <OfferCreatePage />
+      </RequireAccess>
+    ),
+  },
+  {
+    path: 'offer-management/approvals',
+    element: (
+      <RequireAccess module={ModuleCode.OFFER_APPROVALS}>
+        <OfferApprovalsPage />
       </RequireAccess>
     ),
   },

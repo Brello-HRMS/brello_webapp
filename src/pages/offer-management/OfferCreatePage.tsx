@@ -38,9 +38,18 @@ const initState = (candidateId: string): OfferWizardState => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      // If we are given a preselected candidate, only use the draft if candidate matches
-      if (!candidateId || parsed.candidate_id === candidateId) {
-        return parsed;
+      const savedAt = parsed.saved_at || 0;
+      const isExpired = Date.now() - savedAt > 7 * 24 * 60 * 60 * 1000; // 7 days
+
+      if (!isExpired) {
+        const draftState = parsed.state ? parsed.state : parsed; // Handle legacy format
+        // If we are given a preselected candidate, only use the draft if candidate matches
+        if (!candidateId || draftState.candidate_id === candidateId) {
+          return draftState;
+        }
+      } else {
+        // Clear expired draft
+        localStorage.removeItem(LOCAL_STORAGE_KEY);
       }
     }
   } catch {
@@ -71,7 +80,7 @@ const OfferCreatePage = () => {
   // Persist state to localStorage on every change (only for drafts, not edits)
   React.useEffect(() => {
     if (!isEditMode) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ state, saved_at: Date.now() }));
     }
   }, [state, isEditMode]);
 
