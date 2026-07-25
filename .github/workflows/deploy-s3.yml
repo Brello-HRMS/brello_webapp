@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - uat
+      - prod
       - develop
 
 jobs:
@@ -37,7 +38,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
-      - name: Deploy dist/ to S3 Bucket
+      - name: Deploy dist/ to S3 Bucket with Public ACL
         run: |
-          aws s3 sync dist/ s3://brello-webapp --delete
+          aws s3 sync dist/ s3://brello-webapp --acl public-read --delete
           echo "✅ Brello Web App deployed to http://brello-webapp.s3-website.ap-south-1.amazonaws.com"
