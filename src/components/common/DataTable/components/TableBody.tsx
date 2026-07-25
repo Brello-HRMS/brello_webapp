@@ -5,9 +5,32 @@ import styles from '../DataTable.module.scss';
 interface TableBodyProps<TData> {
   table: Table<TData>;
   onRowClick?: (row: TData) => void;
+  isLoading?: boolean;
 }
 
-export const TableBody = <TData,>({ table, onRowClick }: TableBodyProps<TData>) => {
+const SKELETON_ROW_COUNT = 6;
+
+export const TableBody = <TData,>({ table, onRowClick, isLoading }: TableBodyProps<TData>) => {
+  const visibleColumns = table.getVisibleLeafColumns();
+
+  // While loading with no data yet, show skeleton rows instead of flashing the
+  // "No results found" empty state before the first response arrives.
+  if (isLoading && table.getRowModel().rows.length === 0) {
+    return (
+      <tbody>
+        {Array.from({ length: SKELETON_ROW_COUNT }).map((_, rowIndex) => (
+          <tr key={`skeleton-${rowIndex}`} className={styles.row}>
+            {visibleColumns.map((column) => (
+              <td key={column.id} className={styles.td} style={{ width: column.getSize() }}>
+                <span className={styles.skeletonCell} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    );
+  }
+
   return (
     <tbody>
       {table.getRowModel().rows.length > 0 ? (

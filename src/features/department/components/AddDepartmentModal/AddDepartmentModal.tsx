@@ -49,6 +49,9 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({
   const isPending = isCreating || isUpdating;
   const isEdit = !!department;
 
+  // Name and code are mandatory — keep the submit button disabled until both are filled.
+  const isFormValid = formData.name.trim() !== '' && formData.code.trim() !== '';
+
   useEffect(() => {
     if (open) {
       const handleOpen = () => {
@@ -123,6 +126,7 @@ export const AddDepartmentModal: React.FC<AddDepartmentModalProps> = ({
         type="submit"
         className={styles.saveAction}
         isLoading={isPending}
+        disabled={isPending || !isFormValid}
       >
         {isEdit ? 'Save changes' : 'Create department'}
       </Button>

@@ -30,7 +30,7 @@ export const SearchModal: React.FC = () => {
     }
   }
 
-  const debouncedQuery = useDebounce(query, 200);
+  const debouncedQuery = useDebounce(query, 500);
   const [prevDebouncedQuery, setPrevDebouncedQuery] = useState(debouncedQuery);
 
   if (debouncedQuery !== prevDebouncedQuery) {

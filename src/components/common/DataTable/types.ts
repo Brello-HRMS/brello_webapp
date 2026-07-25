@@ -17,4 +17,6 @@ export interface DataTableProps<TData, TValue> {
   rowSelection?: Record<string, boolean>;
   onRowSelectionChange?: (rowSelection: Record<string, boolean>) => void;
   onRowClick?: (row: TData) => void;
+  /** Show skeleton rows instead of the empty "No results" state while data is loading. */
+  isLoading?: boolean;
 }

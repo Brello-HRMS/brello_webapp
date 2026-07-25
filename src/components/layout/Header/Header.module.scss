@@ -68,9 +68,14 @@
     transition: all 0.2s ease;
     border: 1px solid transparent;
 
-    &:hover {
-      background-color: var(--color-gray-200);
-      color: var(--color-primary);
+    // Only clickable crumbs get the interactive hover affordance.
+    &.clickable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--color-gray-200);
+        color: var(--color-primary);
+      }
     }
 
     &.active {
