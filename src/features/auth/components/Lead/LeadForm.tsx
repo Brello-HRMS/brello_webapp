@@ -118,12 +118,12 @@ export const LeadForm: React.FC = () => {
         />
 
         <Input
-          label="Workspace URL *"
+          label="Subdomain *"
           id="workspaceURL"
           type="text"
-          placeholder="your-workspace"
+          placeholder="acme-inc"
           {...register('workspaceURL', {
-            required: 'Please enter your workspace URL',
+            required: 'Please enter your subdomain',
             pattern: {
               value: WORKSPACE_URL_REGEX,
               message: 'Use lowercase letters, numbers and hyphens only (e.g. acme-inc)',

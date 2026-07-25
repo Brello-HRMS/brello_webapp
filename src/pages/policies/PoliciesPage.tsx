@@ -187,7 +187,7 @@ const PoliciesPage = () => {
   return (
     <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
       <PageHeader
-        title="Policies"
+        title="Policy"
         subtitle="Manage and view company policies."
         actions={
           hasCreateAccess && (

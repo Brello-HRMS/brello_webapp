@@ -51,7 +51,7 @@ const DesignationDetailPage = () => {
 
   useEffect(() => {
     if (!isDesignationLoading && designation && designation.status === Status.INACTIVE) {
-      navigate('/organisation/designations');
+      navigate('/organisation/designation');
     }
   }, [designation, isDesignationLoading, navigate]);
 

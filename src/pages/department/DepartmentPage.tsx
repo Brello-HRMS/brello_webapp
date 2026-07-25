@@ -146,7 +146,7 @@ const DepartmentPage = () => {
   }, []);
 
   const handleView = useCallback(
-    (dept: Department) => navigate(`/organisation/departments/${dept.id}`),
+    (dept: Department) => navigate(`/organisation/department/${dept.id}`),
     [navigate],
   );
 
@@ -326,7 +326,7 @@ const DepartmentPage = () => {
         actionLabel="View Employees"
         onAction={() => {
           setShowCannotDeactivateModal(false);
-          navigate(`/organisation/departments/${selectedDepartment?.id}`);
+          navigate(`/organisation/department/${selectedDepartment?.id}`);
         }}
       />
 

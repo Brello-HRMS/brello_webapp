@@ -185,7 +185,7 @@ const DesignationPage = () => {
 
   const handleView = useCallback(
     (desig: Designation) => {
-      navigate(`/organisation/designations/${desig.id}`);
+      navigate(`/organisation/designation/${desig.id}`);
     },
     [navigate],
   );
@@ -359,7 +359,7 @@ const DesignationPage = () => {
         actionLabel="View Employees"
         onAction={() => {
           setShowCannotDeactivateModal(false);
-          navigate(`/organisation/designations/${selectedDesignation?.id}`);
+          navigate(`/organisation/designation/${selectedDesignation?.id}`);
         }}
       />
 

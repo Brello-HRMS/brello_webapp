@@ -44,7 +44,7 @@ export const DepartmentCard: React.FC<DepartmentCardProps> = ({
       return;
     }
     if (status === Status.INACTIVE) return;
-    navigate(`/organisation/departments/${department.id}`);
+    navigate(`/organisation/department/${department.id}`);
   };
 
   const isInactive = status === Status.INACTIVE;

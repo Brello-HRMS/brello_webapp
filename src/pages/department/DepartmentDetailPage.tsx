@@ -52,7 +52,7 @@ const DepartmentDetailPage = () => {
 
   useEffect(() => {
     if (!isDepartmentLoading && department && department.status === Status.INACTIVE) {
-      navigate('/organisation/departments');
+      navigate('/organisation/department');
     }
   }, [department, isDepartmentLoading, navigate]);
 
