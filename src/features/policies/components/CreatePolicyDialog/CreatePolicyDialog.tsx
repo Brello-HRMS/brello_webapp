@@ -118,7 +118,9 @@ export const CreatePolicyDialog: React.FC<CreatePolicyDialogProps> = ({
         variant="primary"
         type="button"
         onClick={() => setStep(2)}
-        disabled={!formData.title || !formData.policyType}
+        // Title, Description and Policy Type are all mandatory (marked * in the form),
+        // so keep the CTA disabled until every one of them is filled.
+        disabled={!formData.title.trim() || !formData.description.trim() || !formData.policyType}
       >
         Continue to content
       </Button>
@@ -130,7 +132,13 @@ export const CreatePolicyDialog: React.FC<CreatePolicyDialogProps> = ({
       <Button variant="secondary" type="button" onClick={() => setStep(1)}>
         Back
       </Button>
-      <Button variant="primary" type="button" onClick={handleSaveAndPublish}>
+      <Button
+        variant="primary"
+        type="button"
+        onClick={handleSaveAndPublish}
+        // Policy content is mandatory — a policy with an empty body is not publishable.
+        disabled={!formData.content.trim()}
+      >
         Save &amp; Publish
       </Button>
     </div>
