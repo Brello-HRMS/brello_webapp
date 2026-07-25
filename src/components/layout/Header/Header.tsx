@@ -128,6 +128,24 @@ export const Header: React.FC<HeaderProps> = () => {
     };
   }, [location.pathname]);
 
+  // Prefer real browser history so Back returns the user to wherever they
+  // actually came from (e.g. dashboard, global search, a deep link). Only when
+  // there is no in-app history (direct load / refresh) do we fall back to the
+  // breadcrumb-derived parent path.
+  const handleBack = () => {
+    if (location.key && location.key !== 'default') {
+      navigate(-1);
+    } else {
+      navigate(backPath);
+    }
+  };
+
+  const handleCrumbClick = (crumb: { path: string; isClickable: boolean }, isActive: boolean) => {
+    if (crumb.isClickable && crumb.path && !isActive) {
+      navigate(crumb.path);
+    }
+  };
+
   const showNotification = useMediaQuery('(min-width: 801px)');
   const showSettings = useMediaQuery('(min-width: 701px)');
 
@@ -177,7 +195,7 @@ export const Header: React.FC<HeaderProps> = () => {
                 <button
                   className="icon-button"
                   aria-label="Go Back"
-                  onClick={() => navigate(backPath)}
+                  onClick={handleBack}
                   style={{ flexShrink: 0 }}
                 >
                   <ChevronLeft size={20} />
@@ -203,9 +221,28 @@ export const Header: React.FC<HeaderProps> = () => {
                     className={styles.breadcrumbSegment}
                   >
                     {index > 0 && <ChevronRight size={16} className={styles.chevronIcon} />}
-                    <div className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''}`}>
-                      {crumb.label}
-                    </div>
+                    {(() => {
+                      const isLinkable = crumb.isClickable && crumb.path !== '' && !isActive;
+                      return (
+                        <div
+                          className={`${styles.breadcrumbPill} ${isActive ? styles.active : ''} ${
+                            isLinkable ? styles.clickable : ''
+                          }`}
+                          onClick={() => handleCrumbClick(crumb, isActive)}
+                          role={isLinkable ? 'link' : undefined}
+                          tabIndex={isLinkable ? 0 : undefined}
+                          onKeyDown={(e) => {
+                            if (isLinkable && (e.key === 'Enter' || e.key === ' ')) {
+                              e.preventDefault();
+                              handleCrumbClick(crumb, isActive);
+                            }
+                          }}
+                          style={isLinkable ? { cursor: 'pointer' } : undefined}
+                        >
+                          {crumb.label}
+                        </div>
+                      );
+                    })()}
                   </motion.div>
                 );
               })}

@@ -24,7 +24,7 @@ export const WelcomeScreen: React.FC = () => {
       </p>
 
       <div className={styles.card}>
-        <h3 className={styles.cardTitle}>What Happens Next-</h3>
+        <h3 className={styles.cardTitle}>What Happens Next:</h3>
         <ul className={styles.list}>
           <li>
             <span className={styles.dot}></span> Add Your First Employee

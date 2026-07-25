@@ -192,6 +192,15 @@ const DesignationPage = () => {
 
   const renderContent = () => {
     if (viewType === 'grid') {
+      if (isLoading && filteredData.length === 0) {
+        return (
+          <div className={styles.grid}>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={`desig-skeleton-${index}`} className={styles.cardSkeleton} />
+            ))}
+          </div>
+        );
+      }
       if (filteredData.length === 0) {
         return (
           <NoDataFound
@@ -230,6 +239,7 @@ const DesignationPage = () => {
           onDelete: handleDeleteClick,
         })}
         data={paginatedData}
+        isLoading={isLoading}
         pagination={pagination}
         onPaginationChange={setPagination}
         manualPagination={false}
@@ -271,7 +281,7 @@ const DesignationPage = () => {
   return (
     <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
       <PageHeader
-        title="Designations"
+        title="Designation"
         subtitle="Define and manage company designations."
         actions={
           <>

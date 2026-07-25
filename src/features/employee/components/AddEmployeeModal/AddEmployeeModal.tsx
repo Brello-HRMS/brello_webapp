@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 
-import { Dialog, Button, DataTable } from '../../../../components/common';
+import { Dialog, Button, DataTable, NoDataFound } from '../../../../components/common';
 import { Input } from '../../../../components/ui/Input/Input';
 import { useEmployees } from '../../hooks/useEmployees';
 import { useMapEmployee } from '../../hooks/useMapEmployee';
@@ -81,7 +81,7 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
 
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  const { data: usersResponse } = useEmployees({ limit: 1000 });
+  const { data: usersResponse, isLoading: isUsersLoading } = useEmployees({ limit: 1000 });
   const { mutate: mapUsers, isPending: isMapping } = useMapEmployee();
 
   const handleClose = () => {
@@ -195,16 +195,28 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
           />
         </div>
 
-        <DataTable
-          columns={selectableEmployeeColumns}
-          data={filteredUsers}
-          pagination={pagination}
-          onPaginationChange={setPagination}
-          enableRowSelection
-          rowSelection={rowSelection}
-          onRowSelectionChange={setRowSelection}
-          rowIdField="id"
-        />
+        {!isUsersLoading && filteredUsers.length === 0 ? (
+          <NoDataFound
+            title={searchQuery ? 'No users found' : 'No users available'}
+            description={
+              searchQuery
+                ? 'No users match your search. Try a different name or email.'
+                : 'There are no users available to add right now.'
+            }
+          />
+        ) : (
+          <DataTable
+            columns={selectableEmployeeColumns}
+            data={filteredUsers}
+            isLoading={isUsersLoading}
+            pagination={pagination}
+            onPaginationChange={setPagination}
+            enableRowSelection
+            rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
+            rowIdField="id"
+          />
+        )}
       </div>
     </Dialog>
   );

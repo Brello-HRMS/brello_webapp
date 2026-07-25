@@ -22,6 +22,10 @@
 }
 
 .uploadSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     margin-bottom: var(--spacing-6);
 }
 
@@ -29,32 +33,43 @@
     display: block;
     font-size: 0.875rem;
     color: var(--color-text-secondary);
-    margin-top: var(--spacing-2);
+    margin-top: var(--spacing-3);
     cursor: pointer;
+
+    &:hover {
+        color: var(--color-primary-purple);
+    }
 }
 
 .uploadBox {
-    width: 64px;
-    height: 64px;
-    border: 1px dashed var(--color-border);
-    border-radius: var(--radius-md);
+    width: 96px;
+    height: 96px;
+    border: 1.5px dashed var(--color-border);
+    border-radius: var(--radius-lg, 12px);
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    background-color: var(--color-white);
+    background-color: var(--color-surface);
     position: relative;
     overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
 
     &:hover {
         border-color: var(--color-primary-purple);
-        background-color: var(--color-surface);
+        background-color: var(--color-white);
     }
 }
 
+.uploadPreview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .uploadIconPlaceholder {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     color: var(--color-primary-purple);
     fill: var(--color-primary-purple);
     transform: rotate(-15deg);

@@ -2,7 +2,14 @@ import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, Download } from 'lucide-react';
 
-import { Button, DataTable, ListControls, PageHeader, WarningModal } from '../../components/common';
+import {
+  Button,
+  DataTable,
+  ListControls,
+  NoDataFound,
+  PageHeader,
+  WarningModal,
+} from '../../components/common';
 import { employeeColumns } from '../../features/department/columns/employeeColumns';
 import { useDepartments } from '../../features/department/hooks/useDepartments';
 import { useEmployees } from '../../features/employee/hooks/useEmployees';
@@ -25,6 +32,7 @@ const DepartmentDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSort, setSelectedSort] = useState(`name:${SortOrder.ASC}`);
 
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -34,7 +42,12 @@ const DepartmentDetailPage = () => {
   const { data: response, isLoading: isDepartmentLoading } = useDepartments();
   const department = response?.data?.data?.find((department) => department.id === id);
 
-  const { data: usersResponse } = useEmployees({ departmentId: id, limit: 1000 });
+  const {
+    data: usersResponse,
+    isLoading: isEmployeesLoading,
+    isError: isEmployeesError,
+    refetch: refetchEmployees,
+  } = useEmployees({ departmentId: id, limit: 1000 });
   const { mutate: unmapUsers } = useUnmapEmployee();
 
   useEffect(() => {
@@ -48,17 +61,25 @@ const DepartmentDetailPage = () => {
   const filteredEmployees = useMemo(() => {
     const allUsers: Employee[] = usersResponse?.data?.data || [];
 
-    if (!debouncedSearchQuery) return allUsers;
     const query = debouncedSearchQuery.toLowerCase();
-    return allUsers.filter((emp) => {
-      const fullName = `${emp.firstName || ''} ${emp.lastName || ''}`.toLowerCase();
-      return (
-        fullName.includes(query) ||
-        (emp.email || '').toLowerCase().includes(query) ||
-        (emp.phone || '').includes(query)
-      );
+    const filtered = !debouncedSearchQuery
+      ? allUsers
+      : allUsers.filter((emp) => {
+          const fullName = `${emp.firstName || ''} ${emp.lastName || ''}`.toLowerCase();
+          return (
+            fullName.includes(query) ||
+            (emp.email || '').toLowerCase().includes(query) ||
+            (emp.phone || '').includes(query)
+          );
+        });
+
+    const [, order] = selectedSort.split(':');
+    return [...filtered].sort((a, b) => {
+      const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+      const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+      return order === SortOrder.DESC ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
     });
-  }, [usersResponse, debouncedSearchQuery]);
+  }, [usersResponse, debouncedSearchQuery, selectedSort]);
 
   return (
     <div className={styles.container}>
@@ -87,8 +108,8 @@ const DepartmentDetailPage = () => {
         viewType="table"
         onViewTypeChange={() => {}} // Only table view for now as per design
         sortOptions={SORT_OPTIONS}
-        selectedSort={`name:${SortOrder.ASC}`}
-        onSortChange={() => {}}
+        selectedSort={selectedSort}
+        onSortChange={setSelectedSort}
         filterOptions={[]}
         selectedFilter=""
         onFilterChange={() => {}}
@@ -98,16 +119,27 @@ const DepartmentDetailPage = () => {
         onDelete={() => setShowDeleteModal(true)}
       />
 
-      <DataTable
-        columns={employeeColumns}
-        data={filteredEmployees}
-        pagination={pagination}
-        onPaginationChange={setPagination}
-        enableRowSelection
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-        rowIdField="id"
-      />
+      {isEmployeesError ? (
+        <NoDataFound
+          title="Couldn't load employees"
+          description="Something went wrong while fetching employees for this department. Please try again."
+          buttonText="Retry"
+          onButtonClick={() => refetchEmployees()}
+          showButtonIcon={false}
+        />
+      ) : (
+        <DataTable
+          columns={employeeColumns}
+          data={filteredEmployees}
+          isLoading={isEmployeesLoading}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          enableRowSelection
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          rowIdField="id"
+        />
+      )}
 
       <WarningModal
         isOpen={showDeleteModal}

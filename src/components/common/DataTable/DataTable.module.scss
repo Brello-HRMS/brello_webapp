@@ -424,6 +424,32 @@
     font-weight: var(--font-weight-medium);
   }
 }
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeletonCell {
+  display: block;
+  height: 14px;
+  width: 70%;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-surface) 0px,
+    var(--color-gray-lighter) 40px,
+    var(--color-surface) 80px
+  );
+  background-size: 200px 100%;
+  background-repeat: no-repeat;
+  animation: skeletonShimmer 1.2s ease-in-out infinite;
+}
 // Utility to hide table and controls when only pagination is needed
 :global(.pagination-only) {
   border: none;

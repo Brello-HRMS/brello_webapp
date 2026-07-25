@@ -7,6 +7,11 @@
   justify-content: center;
   text-align: center;
   width: 100%;
+  // Fill the available viewport height so the empty state is vertically centred
+  // on the screen instead of collapsing to the content height.
+  min-height: 60vh;
+  flex: 1 1 auto;
+  padding: var(--spacing-6) var(--spacing-4);
 }
 
 .imageWrapper {

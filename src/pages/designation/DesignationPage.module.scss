@@ -15,3 +15,21 @@
   gap: 24px;
   margin-bottom: 24px;
 }
+
+@keyframes cardSkeletonPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.cardSkeleton {
+  height: 190px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-surface);
+  animation: cardSkeletonPulse 1.2s ease-in-out infinite;
+}

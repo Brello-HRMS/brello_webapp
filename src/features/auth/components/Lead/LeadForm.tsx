@@ -1,5 +1,5 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { Layers } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ import { AuthFormWrapper } from '../AuthFormWrapper/AuthFormWrapper';
 import elementsStyles from '../AuthFormWrapper/AuthFormElements.module.scss';
 import { Button } from '../../../../components/ui/Button/Button';
 import { Input } from '../../../../components/ui/Input/Input';
-import { Select } from '../../../../components/ui/Select/Select';
+import { Select } from '../../../../components/common/Select/Select';
 import { persistAuthResponse } from '../../../../utils/cookieUtils';
 
 import styles from './LeadForm.module.scss';
@@ -23,6 +23,11 @@ type LeadFormData = {
   workspaceURL: string;
 };
 
+// Workspace subdomains are used to build the tenant URL, so they must be a valid
+// DNS label: lowercase letters/numbers, single hyphens between segments, no
+// leading/trailing hyphen.
+const WORKSPACE_URL_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 export const LeadForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,8 +36,10 @@ export const LeadForm: React.FC = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<LeadFormData>();
+  const logoRegister = register('logo');
 
   const {
     mutate: setupCompany,
@@ -49,6 +56,19 @@ export const LeadForm: React.FC = () => {
   const { data: industryTypesResp, isLoading: isIndustryTypesLoading } = useIndustryTypes();
   const industryTypes = industryTypesResp?.data || [];
 
+  // Preview the selected logo. Object URLs are revoked on change/unmount to avoid leaks.
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    logoRegister.onChange(e); // keep react-hook-form in sync
+    const file = e.target.files?.[0];
+    setLogoPreview(file ? URL.createObjectURL(file) : null);
+  };
+  useEffect(() => {
+    return () => {
+      if (logoPreview) URL.revokeObjectURL(logoPreview);
+    };
+  }, [logoPreview]);
+
   const onSubmit = (data: LeadFormData) => {
     if (!userId) return;
     setupCompany({
@@ -62,23 +82,29 @@ export const LeadForm: React.FC = () => {
   return (
     <div>
       <AuthFormWrapper
-        title="Tell us about you company."
-        subtitle="This helps us set up workspace correctly."
+        title="Tell us about your company."
+        subtitle="This helps us set up your workspace correctly."
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className={styles.uploadSection}>
-          <div className={styles.uploadBox}>
-            <Layers className={styles.uploadIconPlaceholder} />
+          {/* The box itself is the label so clicking anywhere in it opens the file picker. */}
+          <label htmlFor="logo-upload" className={styles.uploadBox}>
+            {logoPreview ? (
+              <img src={logoPreview} alt="Company logo preview" className={styles.uploadPreview} />
+            ) : (
+              <Layers className={styles.uploadIconPlaceholder} />
+            )}
             <input
               type="file"
               accept="image/*"
               className={styles.hiddenInput}
               id="logo-upload"
-              {...register('logo')}
+              {...logoRegister}
+              onChange={handleLogoChange}
             />
-          </div>
+          </label>
           <label htmlFor="logo-upload" className={styles.uploadLabel}>
-            Click to upload your logo
+            {logoPreview ? 'Change your logo' : 'Click to upload your logo'}
           </label>
         </div>
 
@@ -95,19 +121,36 @@ export const LeadForm: React.FC = () => {
           label="Workspace URL *"
           id="workspaceURL"
           type="text"
-          placeholder="Workspace URL"
-          {...register('workspaceURL', { required: 'Please enter your workspace URL' })}
+          placeholder="your-workspace"
+          {...register('workspaceURL', {
+            required: 'Please enter your workspace URL',
+            pattern: {
+              value: WORKSPACE_URL_REGEX,
+              message: 'Use lowercase letters, numbers and hyphens only (e.g. acme-inc)',
+            },
+          })}
           error={errors.workspaceURL?.message}
         />
 
-        <Select
-          label="Industry / Business Type *"
-          id="industry"
-          placeholder={isIndustryTypesLoading ? 'Loading industries...' : 'Select an industry'}
-          options={industryTypes.map((industry) => ({ value: industry.id, label: industry.name }))}
-          disabled={isIndustryTypesLoading}
-          {...register('industry', { required: 'Please select an industry' })}
-          error={errors.industry?.message}
+        <Controller
+          name="industry"
+          control={control}
+          rules={{ required: 'Please select an industry' }}
+          render={({ field }) => (
+            <Select
+              label="Industry / Business Type"
+              required
+              placeholder={isIndustryTypesLoading ? 'Loading industries...' : 'Select an industry'}
+              options={industryTypes.map((industry) => ({
+                value: industry.id,
+                label: industry.name,
+              }))}
+              disabled={isIndustryTypesLoading}
+              value={field.value}
+              onChange={(value) => field.onChange(value)}
+              error={errors.industry?.message}
+            />
+          )}
         />
 
         {apiError && (
