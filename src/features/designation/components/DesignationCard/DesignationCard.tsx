@@ -43,7 +43,7 @@ export const DesignationCard: React.FC<DesignationCardProps> = ({
       return;
     }
     if (status === Status.INACTIVE) return;
-    navigate(`/organisation/designations/${designation.id}`);
+    navigate(`/organisation/designation/${designation.id}`);
   };
 
   const isInactive = status === Status.INACTIVE;

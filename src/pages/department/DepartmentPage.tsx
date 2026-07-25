@@ -146,12 +146,21 @@ const DepartmentPage = () => {
   }, []);
 
   const handleView = useCallback(
-    (dept: Department) => navigate(`/organisation/departments/${dept.id}`),
+    (dept: Department) => navigate(`/organisation/department/${dept.id}`),
     [navigate],
   );
 
   const renderContent = () => {
     if (viewType === 'grid') {
+      if (isLoading && departmentList.length === 0) {
+        return (
+          <div className={styles.grid}>
+            {Array.from({ length: 8 }).map((_, index) => (
+              <div key={`dept-skeleton-${index}`} className={styles.cardSkeleton} />
+            ))}
+          </div>
+        );
+      }
       if (departmentList.length === 0) {
         return (
           <NoDataFound
@@ -190,6 +199,7 @@ const DepartmentPage = () => {
           onDelete: hasDeleteAccess ? handleDeleteClick : undefined,
         })}
         data={departmentList}
+        isLoading={isLoading}
         pagination={pagination}
         onPaginationChange={setPagination}
         manualPagination={true}
@@ -235,7 +245,7 @@ const DepartmentPage = () => {
   return (
     <div className={`${styles.container} ${isLoading ? styles.loading : ''}`}>
       <PageHeader
-        title="Departments"
+        title="Department"
         subtitle="Define and manage company departments."
         actions={
           <>
@@ -316,7 +326,7 @@ const DepartmentPage = () => {
         actionLabel="View Employees"
         onAction={() => {
           setShowCannotDeactivateModal(false);
-          navigate(`/organisation/departments/${selectedDepartment?.id}`);
+          navigate(`/organisation/department/${selectedDepartment?.id}`);
         }}
       />
 

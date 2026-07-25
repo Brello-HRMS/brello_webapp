@@ -48,11 +48,11 @@ export const SetupGuide: React.FC = () => {
 
   const getNextStep = () => {
     if (!steps.DEPARTMENTS)
-      return { text: 'Setup Organisation (Department)', path: '/organisation/departments' };
+      return { text: 'Setup Organisation (Department)', path: '/organisation/department' };
     if (!steps.DESIGNATIONS)
-      return { text: 'Setup Organisation (Designation)', path: '/organisation/designations' };
+      return { text: 'Setup Organisation (Designation)', path: '/organisation/designation' };
     if (!steps.COMPANY_POLICIES)
-      return { text: 'Create your company policies', path: '/organisation/policies' };
+      return { text: 'Create your company policies', path: '/organisation/policy' };
     if (!steps.PAYROLL) return { text: 'Set up payrolls', path: '/organisation/payroll' };
     if (!steps.LEAVE)
       return { text: 'Set up leave configuration', path: '/organisation/leave-config' };
@@ -135,16 +135,12 @@ export const SetupGuide: React.FC = () => {
 
           {expandedSection === 'org' && (
             <div className={styles.accordionContent}>
-              {renderStep('Add your departments', steps.DEPARTMENTS, '/organisation/departments')}
-              {renderStep(
-                'Add your designations',
-                steps.DESIGNATIONS,
-                '/organisation/designations',
-              )}
+              {renderStep('Add your departments', steps.DEPARTMENTS, '/organisation/department')}
+              {renderStep('Add your designations', steps.DESIGNATIONS, '/organisation/designation')}
               {renderStep(
                 'Create your company policies',
                 steps.COMPANY_POLICIES,
-                '/organisation/policies',
+                '/organisation/policy',
               )}
               {renderStep('Set up payrolls', steps.PAYROLL, '/organisation/payroll')}
               {renderStep('Set up leave configuration', steps.LEAVE, '/organisation/leave-config')}

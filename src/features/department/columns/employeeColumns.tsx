@@ -40,12 +40,46 @@ export const employeeColumns: ColumnDef<Employee>[] = [
   {
     accessorKey: 'email',
     header: 'Email',
-    size: 200,
+    size: 220,
+    cell: (info) => {
+      const email = (info.getValue() as string) || '—';
+      return (
+        <span
+          title={email}
+          style={{
+            display: 'block',
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {email}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'phone',
     header: 'Phone',
-    size: 150,
+    size: 160,
+    cell: (info) => {
+      const phone = (info.getValue() as string) || '—';
+      return (
+        <span
+          title={phone}
+          style={{
+            display: 'block',
+            maxWidth: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {phone}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'status',

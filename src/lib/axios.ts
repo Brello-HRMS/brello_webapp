@@ -36,6 +36,19 @@ function handleUnauthorizedClient() {
   window.location.href = '/auth/login';
 }
 
+// Pre-authentication endpoints. A 401 here means bad/unknown credentials, not
+// an expired session — so we must NOT try to refresh the token or redirect
+// (which triggers a full page reload). We let the error propagate to the form.
+function isPreAuthRequest(url?: string): boolean {
+  if (!url) return false;
+  return (
+    url.includes('/auth/login') || // /auth/login, /auth/login/send-otp, /auth/login/verify-otp
+    url.includes('/auth/refresh') ||
+    url.includes('/auth/register') ||
+    url.includes('/leads/') // lead register + verify-otp
+  );
+}
+
 function parseApiError(error: unknown) {
   if (axios.isAxiosError(error) && error.response) {
     return {
@@ -92,7 +105,11 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isPreAuthRequest(originalRequest.url)
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

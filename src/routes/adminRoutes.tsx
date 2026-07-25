@@ -66,7 +66,7 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'organisation/departments',
+    path: 'organisation/department',
     element: (
       <RequireAccess module={ModuleCode.ORG_DEPARTMENTS}>
         <DepartmentPage />
@@ -74,7 +74,7 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'organisation/departments/:id',
+    path: 'organisation/department/:id',
     element: (
       <RequireAccess module={ModuleCode.ORG_DEPARTMENTS}>
         <DepartmentDetailPage />
@@ -82,7 +82,7 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'organisation/designations',
+    path: 'organisation/designation',
     element: (
       <RequireAccess module={ModuleCode.ORG_DESIGNATIONS}>
         <DesignationPage />
@@ -90,7 +90,7 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'organisation/designations/:id',
+    path: 'organisation/designation/:id',
     element: (
       <RequireAccess module={ModuleCode.ORG_DESIGNATIONS}>
         <DesignationDetailPage />
@@ -98,7 +98,7 @@ export const adminRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'organisation/policies',
+    path: 'organisation/policy',
     element: (
       <RequireAccess module={ModuleCode.ORG_POLICIES}>
         <PoliciesPage />
