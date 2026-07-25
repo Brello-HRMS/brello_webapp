@@ -1,0 +1,43 @@
+name: Deploy Brello Web App to AWS S3
+
+on:
+  push:
+    branches:
+      - main
+      - uat
+      - develop
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy dist to S3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build WebApp (dist)
+        env:
+          VITE_BRELLO_BASE_API: http://13.205.254.152:8000/api/v1
+        run: npm run build
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Deploy dist/ to S3 Bucket
+        run: |
+          aws s3 sync dist/ s3://brello-webapp --delete
+          echo "✅ Brello Web App deployed to http://brello-webapp.s3-website.ap-south-1.amazonaws.com"
