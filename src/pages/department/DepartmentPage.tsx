@@ -43,8 +43,22 @@ const STATUS_OPTIONS = [
   { label: 'Inactive', value: Status.INACTIVE },
 ];
 
+// Exportable columns for the Excel download, keyed by the table's column id so we
+// can honour the DataTable's column-visibility (only "shown" columns are exported).
+const DEPARTMENT_EXPORT_COLUMNS: {
+  id: string;
+  header: string;
+  get: (dept: Department) => string | number;
+}[] = [
+  { id: 'code', header: 'Code', get: (d) => d.code },
+  { id: 'name', header: 'Department Name', get: (d) => d.name },
+  { id: 'status', header: 'Status', get: (d) => d.status },
+  { id: 'members', header: 'Members', get: (d) => d.memberAvatars?.length || 0 },
+];
+
 const DepartmentPage = () => {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState('');
   const [viewType, setViewType] = useState<ViewType>('grid');
   const [selectedSort, setSelectedSort] = useState(`name:${SortOrder.ASC}`);
@@ -130,16 +144,22 @@ const DepartmentPage = () => {
   }, [selectedDepartment, deleteDept]);
 
   const excelExportData = useMemo(() => {
+    // Only selected rows (when multi-select is active) and only the columns
+    // currently shown in the table (column-visibility) are exported.
     const dataToExport = isMultiSelectActive
       ? departmentList.filter((dept) => selectedIds[dept.id])
       : departmentList;
-    return dataToExport.map((dept) => ({
-      Name: dept.name,
-      Code: dept.code,
-      Description: dept.description,
-      Status: dept.status,
-    }));
-  }, [departmentList, isMultiSelectActive, selectedIds]);
+    const visibleColumns = DEPARTMENT_EXPORT_COLUMNS.filter(
+      (col) => columnVisibility[col.id] !== false,
+    );
+    return dataToExport.map((dept) => {
+      const row: Record<string, string | number> = {};
+      visibleColumns.forEach((col) => {
+        row[col.header] = col.get(dept);
+      });
+      return row;
+    });
+  }, [departmentList, isMultiSelectActive, selectedIds, columnVisibility]);
 
   const handleToggleSelection = useCallback((id: string) => {
     setSelectedIds((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -200,6 +220,8 @@ const DepartmentPage = () => {
         })}
         data={departmentList}
         isLoading={isLoading}
+        columnVisibility={columnVisibility}
+        onColumnVisibilityChange={setColumnVisibility}
         pagination={pagination}
         onPaginationChange={setPagination}
         manualPagination={true}

@@ -35,8 +35,11 @@ export const DataTable = <TData, TValue>({
   onRowSelectionChange,
   onRowClick,
   isLoading = false,
+  columnVisibility: controlledColumnVisibility,
+  onColumnVisibilityChange,
 }: DataTableProps<TData, TValue>) => {
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [internalColumnVisibility, setInternalColumnVisibility] = useState<VisibilityState>({});
+  const columnVisibility = controlledColumnVisibility ?? internalColumnVisibility;
   const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
     left: [],
     right: [],
@@ -86,7 +89,14 @@ export const DataTable = <TData, TValue>({
       pagination: pagination || internalPagination,
       rowSelection: rowSelection || internalRowSelection,
     },
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange: (updater) => {
+      const next = typeof updater === 'function' ? updater(columnVisibility) : updater;
+      if (onColumnVisibilityChange) {
+        onColumnVisibilityChange(next);
+      } else {
+        setInternalColumnVisibility(next);
+      }
+    },
     onColumnPinningChange: setColumnPinning,
     onRowSelectionChange: (updater) => {
       const next =

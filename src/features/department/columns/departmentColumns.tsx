@@ -23,20 +23,41 @@ export const departmentColumns = ({
       accessorKey: 'code',
       header: 'Code',
       size: 150,
-      cell: (info) => (
-        <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>
-          {info.getValue() as string}
-        </span>
-      ),
+      cell: (info) => {
+        const code = info.getValue() as string;
+        return (
+          <span
+            title={code}
+            style={{
+              display: 'block',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontWeight: 'var(--font-weight-semibold)',
+            }}
+          >
+            {code}
+          </span>
+        );
+      },
     },
     {
       accessorKey: 'name',
       header: 'Department Name',
       size: 250,
       cell: (info) => {
+        const name = info.getValue() as string;
         return (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
-            <span>{info.getValue() as string}</span>
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)', minWidth: 0 }}
+          >
+            <span
+              title={name}
+              style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            >
+              {name}
+            </span>
           </div>
         );
       },
