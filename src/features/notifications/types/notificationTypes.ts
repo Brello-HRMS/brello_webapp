@@ -21,6 +21,7 @@ export interface Notification {
   avatar?: string; // employee photo URL
   iconVariant?: NotificationIconVariant;
   requiresAction?: boolean;
+  link?: string; // in-app route to open when the notification is clicked
 }
 
 export interface NotificationGroup {

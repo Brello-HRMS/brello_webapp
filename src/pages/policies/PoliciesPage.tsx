@@ -52,6 +52,12 @@ const SORT_OPTIONS = [
   { label: 'Alphabetical Z–A', value: 'desc' },
 ];
 
+const STATUS_FILTER_OPTIONS = [
+  { label: 'All statuses', value: '' },
+  { label: 'Active', value: 'ACTIVE' },
+  { label: 'Inactive', value: 'INACTIVE' },
+];
+
 const PoliciesPage = () => {
   const { data: groups = [], isLoading } = useGroupedPolicies();
   const { mutate: deletePolicyMutation, isPending: isDeleting } = useDeletePolicy();
@@ -60,12 +66,14 @@ const PoliciesPage = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<string>('newest');
+  const [statusFilter, setStatusFilter] = useState<string>('');
 
   const [createOpen, setCreateOpen] = useState(false);
   const [createdPolicy, setCreatedPolicy] = useState<PolicyFormData | null>(null);
   const [selectedPolicyId, setSelectedPolicyId] = useState<string | null>(null);
   const [viewPolicy, setViewPolicy] = useState<Policy | null>(null);
   const [deletePolicy, setDeletePolicy] = useState<Policy | null>(null);
+  const [deactivatePolicy, setDeactivatePolicy] = useState<Policy | null>(null);
 
   const { data: fullPolicy, isLoading: isLoadingDetails } = usePolicyById(selectedPolicyId);
 
@@ -83,7 +91,9 @@ const PoliciesPage = () => {
             )
           : group.policies;
 
-        const policies = [...(matchGroupName || !searchQuery ? group.policies : filteredPolicies)];
+        let policies = [...(matchGroupName || !searchQuery ? group.policies : filteredPolicies)];
+        // Status filter (All / Active / Inactive) — driven by the Filters dropdown.
+        if (statusFilter) policies = policies.filter((p) => p.status === statusFilter);
         if (sortBy === 'asc') policies.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
         if (sortBy === 'desc')
           policies.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
@@ -96,7 +106,7 @@ const PoliciesPage = () => {
     if (sortBy === 'desc') result.sort((a, b) => b.name.localeCompare(a.name));
 
     return result;
-  }, [groups, searchQuery, sortBy]);
+  }, [groups, searchQuery, sortBy, statusFilter]);
 
   const handleCreateSuccess = (data: PolicyFormData) => {
     // Map form data → API payload
@@ -140,11 +150,20 @@ const PoliciesPage = () => {
     });
   };
 
-  const handleDeactivate = (policy: Policy) => {
-    updatePolicyMutation({
-      id: policy.id,
-      params: { status: 'INACTIVE' },
-    });
+  const handleDeactivateConfirm = () => {
+    if (!deactivatePolicy) return;
+    updatePolicyMutation(
+      { id: deactivatePolicy.id, params: { status: 'INACTIVE' } },
+      {
+        onSuccess: () => {
+          // Close the confirmation AND the underlying view dialog so the user gets
+          // clear feedback the policy was deactivated; the list refetches via the hook.
+          setDeactivatePolicy(null);
+          setViewPolicy(null);
+          setSelectedPolicyId(null);
+        },
+      },
+    );
   };
 
   const { hasCreateAccess, hasEditAccess, hasDeleteAccess, hasActivateAccess } = useModuleAccess(
@@ -205,6 +224,11 @@ const PoliciesPage = () => {
         viewType="grid"
         onViewTypeChange={() => {}}
         showViewSwitcher={false}
+        filterTitle="Filter by status"
+        filterOptions={STATUS_FILTER_OPTIONS}
+        selectedFilter={statusFilter}
+        onFilterChange={(val) => setStatusFilter(val)}
+        filterCount={statusFilter ? 1 : 0}
         sortOptions={SORT_OPTIONS}
         selectedSort={sortBy}
         onSortChange={(val) => setSortBy(val)}
@@ -297,7 +321,7 @@ const PoliciesPage = () => {
               }
             : undefined
         }
-        onDeactivate={hasActivateAccess ? handleDeactivate : undefined}
+        onDeactivate={hasActivateAccess ? (p) => setDeactivatePolicy(p) : undefined}
         isDeactivating={isUpdating}
         isLoading={isLoadingDetails}
       />
@@ -315,6 +339,21 @@ const PoliciesPage = () => {
         onCancel={() => setDeletePolicy(null)}
         cancelLabel="Cancel"
         isActionLoading={isDeleting}
+      />
+
+      {/* Deactivate Confirmation */}
+      <AlertModal
+        isOpen={!!deactivatePolicy}
+        onClose={() => setDeactivatePolicy(null)}
+        title="Deactivate Policy"
+        alertMessage={`You are about to deactivate "${deactivatePolicy?.title}"`}
+        description="Employees will no longer see this policy. You can reactivate it later."
+        actionLabel="Deactivate Policy"
+        actionVariant="danger"
+        onAction={handleDeactivateConfirm}
+        onCancel={() => setDeactivatePolicy(null)}
+        cancelLabel="Cancel"
+        isActionLoading={isUpdating}
       />
     </div>
   );

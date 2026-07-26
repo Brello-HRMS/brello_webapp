@@ -4,12 +4,18 @@ import {
   ChevronRight,
   ChevronLeft,
   Globe,
+  LayoutGrid,
   LogOut,
   Settings,
+  Shield,
+  User,
+  Users,
+  Wallet,
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 import { useLocation, useNavigate, matchPath } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 import { adminRoutes } from '../../../routes/adminRoutes';
 import { employeeRoutes } from '../../../routes/employeeRoutes';
@@ -19,10 +25,12 @@ import profileAvatar from '../../../assets/image/dummy_profile.png';
 import { Popover } from '../../common/Popover';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { useLogout } from '../../../features/auth/api/useLogout';
-import { getAuthUser } from '../../../utils/authUtils';
+import { useAvailableApps } from '../../../features/auth/api/useAvailableApps';
+import { switchApp } from '../../../features/auth/api/auth';
+import { getAuthUser, getCurrentAppId, getCurrentAppName } from '../../../utils/authUtils';
+import { getCookie, setCookie } from '../../../utils/cookieUtils';
 import { useEmployeeDetail } from '../../../features/employee/hooks/useEmployeeDetail';
 
-import { AppSwitcher } from './AppSwitcher';
 import styles from './Header.module.scss';
 
 const ALL_ROUTES = [...adminRoutes, ...employeeRoutes]
@@ -53,6 +61,19 @@ const isValidPath = (pathToCheck: string) => {
   );
 };
 
+// "ADMIN" -> "Admin", "EMPLOYEE APP" -> "Employee App"
+const prettyAppName = (name: string) =>
+  name.replace(/\b\w+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+
+const getAppIcon = (name: string) => {
+  const n = name.toLowerCase();
+  if (n.includes('admin')) return <Shield size={16} />;
+  if (n.includes('employee')) return <User size={16} />;
+  if (n.includes('hr')) return <Users size={16} />;
+  if (n.includes('payroll')) return <Wallet size={16} />;
+  return <LayoutGrid size={16} />;
+};
+
 export interface HeaderProps {
   isSidebarCollapsed: boolean;
   toggleSidebar: () => void;
@@ -67,6 +88,30 @@ export const Header: React.FC<HeaderProps> = () => {
   const navigate = useNavigate();
   const { mutate: logout } = useLogout();
 
+  const { data: apps = [] } = useAvailableApps();
+  const currentAppId = getCurrentAppId();
+  const currentAppName = getCurrentAppName();
+
+  const handleAppSwitch = async (appId: string) => {
+    try {
+      const response = await switchApp({ appId });
+      const { data } = response;
+
+      const authResponseStr = getCookie('auth_response');
+      if (authResponseStr && data) {
+        const auth = JSON.parse(authResponseStr);
+        auth.data.access_token = data.access_token;
+        auth.data.defaultAppId = data.appId;
+        setCookie('auth_response', JSON.stringify(auth));
+
+        // Full reload so routing re-resolves against the newly active app.
+        window.location.assign('/dashboard');
+      }
+    } catch {
+      toast.error('Failed to switch app');
+    }
+  };
+
   const authUser = getAuthUser();
   const { data: employeeResponse } = useEmployeeDetail(authUser?.id);
   const employeeDetails = employeeResponse?.data;
@@ -78,6 +123,10 @@ export const Header: React.FC<HeaderProps> = () => {
       : 'User';
 
   const designation = employeeDetails?.profile?.designation || 'Employee';
+
+  // Show the ACTIVE workspace (Admin/Employee/…) so the header role matches the
+  // app switcher instead of defaulting to "Employee". Falls back to job designation.
+  const roleLabel = currentAppName ? prettyAppName(currentAppName) : designation;
 
   const avatarUrl = employeeDetails?.avatar || profileAvatar;
 
@@ -149,7 +198,27 @@ export const Header: React.FC<HeaderProps> = () => {
   const showNotification = useMediaQuery('(min-width: 801px)');
   const showSettings = useMediaQuery('(min-width: 701px)');
 
+  // Admin/Employee workspace switch — now lives inside this profile dropdown
+  // instead of a separate, easily-missed grid icon.
+  const appSwitchItems =
+    apps.length > 1
+      ? apps.map((app) => ({
+          icon: getAppIcon(app.name),
+          title:
+            app.id === currentAppId
+              ? `${prettyAppName(app.name)} (current)`
+              : `Switch to ${prettyAppName(app.name)}`,
+          action: () => {
+            setIsProfileOpen(false);
+            if (app.id !== currentAppId) handleAppSwitch(app.id);
+          },
+          className: app.id === currentAppId ? styles.activeApp : '',
+          disabled: app.id === currentAppId,
+        }))
+      : [];
+
   const profileActionItems = [
+    ...appSwitchItems,
     ...(!showNotification
       ? [
           {
@@ -171,6 +240,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <LogOut size={16} />,
       title: 'Logout',
+      color: '#d92d20',
       action: () => {
         setIsProfileOpen(false);
         logout();
@@ -252,7 +322,6 @@ export const Header: React.FC<HeaderProps> = () => {
 
         <div className={styles.rightSection}>
           <div className={styles.actions}>
-            <AppSwitcher />
             {/* <ThemeCustomizer /> */}
 
             {isDesktop && (
@@ -291,7 +360,7 @@ export const Header: React.FC<HeaderProps> = () => {
                 <img src={avatarUrl} alt={fullName} className={styles.avatar} />
                 <div className={styles.profileInfo}>
                   <span className={styles.profileName}>{fullName}</span>
-                  <span className={styles.profileRole}>{designation}</span>
+                  <span className={styles.profileRole}>{roleLabel}</span>
                 </div>
                 <ChevronDown
                   size={20}
