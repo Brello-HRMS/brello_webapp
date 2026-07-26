@@ -1,5 +1,6 @@
 import { AlertTriangle, Bell, CheckCircle, FileText, Info, Users, XCircle } from 'lucide-react';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   type Notification,
@@ -12,6 +13,8 @@ import styles from './NotificationItem.module.scss';
 interface NotificationItemProps {
   notification: Notification;
   onMarkRead: (id: string) => void;
+  /** Close the notification panel after navigating to the notification's target. */
+  onClose?: () => void;
 }
 
 const iconMap: Record<NotificationIconVariant, React.ReactNode> = {
@@ -36,11 +39,20 @@ function formatTime(isoString: string): string {
   return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 }
 
-export const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onMarkRead }) => {
-  const { id, type, title, message, timestamp, isRead, avatar, iconVariant } = notification;
+export const NotificationItem: React.FC<NotificationItemProps> = ({
+  notification,
+  onMarkRead,
+  onClose,
+}) => {
+  const { id, type, title, message, timestamp, isRead, avatar, iconVariant, link } = notification;
+  const navigate = useNavigate();
 
   const handleClick = () => {
     if (!isRead) onMarkRead(id);
+    if (link) {
+      navigate(link);
+      onClose?.();
+    }
   };
 
   return (

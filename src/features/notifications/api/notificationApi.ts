@@ -1,5 +1,6 @@
 import { apiClient } from '../../../lib/axios';
 import { envVars } from '../../../utils/envVars';
+import { isAdminApp } from '../../../utils/authUtils';
 import { NotificationType } from '../types/notificationTypes';
 
 import type { Notification, NotificationIconVariant } from '../types/notificationTypes';
@@ -42,6 +43,26 @@ const ICON_VARIANT_MAP: Record<string, NotificationIconVariant> = {
   'payroll.reminder': 'warning',
 };
 
+// Where a notification takes you when clicked, keyed by event category (the part
+// before the first dot in event_type). Targets differ per active app; unmapped
+// categories get no link (click just marks read, as before) so we never 404.
+const ADMIN_LINKS: Record<string, string> = {
+  reimbursement: '/reimbursement/list',
+  attendance: '/attendance/daily',
+  payroll: '/payroll/listing',
+  employee: '/employee/directory',
+};
+const EMPLOYEE_LINKS: Record<string, string> = {
+  leave: '/leave/me',
+  reimbursement: '/reimbursement/me',
+};
+
+function resolveLink(eventType: string): string | undefined {
+  const category = eventType.split('.')[0];
+  if (!category) return undefined;
+  return (isAdminApp() ? ADMIN_LINKS : EMPLOYEE_LINKS)[category];
+}
+
 export function mapNotification(raw: RawNotification): Notification {
   const eventType = (raw.metadata?.event_type as string) ?? '';
   return {
@@ -53,6 +74,7 @@ export function mapNotification(raw: RawNotification): Notification {
     type: EVENT_TYPE_MAP[eventType] ?? NotificationType.EMPLOYEE,
     iconVariant: ICON_VARIANT_MAP[eventType],
     requiresAction: (raw.metadata?.requires_action as boolean) ?? false,
+    link: resolveLink(eventType),
   };
 }
 

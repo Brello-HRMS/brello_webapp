@@ -19,4 +19,11 @@ export interface DataTableProps<TData, TValue> {
   onRowClick?: (row: TData) => void;
   /** Show skeleton rows instead of the empty "No results" state while data is loading. */
   isLoading?: boolean;
+  /**
+   * Controlled column visibility (columnId -> visible). Lets the parent read which
+   * columns are currently shown (e.g. to export only the visible columns). When
+   * omitted, the table manages visibility internally.
+   */
+  columnVisibility?: Record<string, boolean>;
+  onColumnVisibilityChange?: (visibility: Record<string, boolean>) => void;
 }

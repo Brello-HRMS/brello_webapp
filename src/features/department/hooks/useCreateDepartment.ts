@@ -11,8 +11,10 @@ export const useCreateDepartment = () => {
 
   return useMutation({
     mutationFn: (params: CreateDepartmentParams) => createDepartment(params),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['departments'] });
+    onSuccess: async () => {
+      // Await the refetch (and force ALL cached 'departments' queries, not just the
+      // active one) so the newly created department shows without a manual refresh.
+      await queryClient.invalidateQueries({ queryKey: ['departments'], refetchType: 'all' });
       showToast('Department created successfully', 'success');
     },
     onError: (error: ApiError) => {
