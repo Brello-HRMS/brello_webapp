@@ -208,6 +208,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ isOpen, on
                   key={notification.id}
                   notification={notification}
                   onMarkRead={markRead}
+                  onClose={onClose}
                 />
               ))}
             </section>
